@@ -1,0 +1,191 @@
+:root {
+  color-scheme: dark;
+  --color-primary: 139, 92, 246;
+  --color-primary-hover: 124, 58, 237;
+  --color-secondary: 99, 102, 241;
+  --color-secondary-hover: 79, 70, 229;
+  --color-accent: 236, 72, 153;
+
+  --color-bg-primary: 11, 18, 32;
+  --color-bg-secondary: 15, 23, 42;
+  --color-bg-tertiary: 17, 24, 39;
+
+  --color-text-primary: 229, 231, 235;
+  --color-text-secondary: 148, 163, 184;
+  --color-text-tertiary: 100, 116, 139;
+
+  --color-border: 55, 65, 81;
+  --color-border-hover: 75, 85, 99;
+
+  --color-success: 16, 185, 129;
+  --color-error: 239, 68, 68;
+  --color-warning: 245, 158, 11;
+  --color-info: 59, 130, 246;
+
+  --surface-panel-1: 17, 24, 39;
+  --surface-panel-2: 18, 28, 52;
+  --panel-border: 255, 255, 255;
+
+  --button-secondary: 139, 92, 246;
+  --button-secondary-hover: 124, 58, 237;
+  --button-danger: 239, 68, 68;
+  --button-danger-hover: 220, 38, 38;
+  --button-ghost-hover: 36, 42, 58;
+  --button-outline-hover-bg: 99, 102, 241;
+
+  --page-background: linear-gradient(180deg, #0a0f1a 0%, #0d1526 55%, #0b1220 100%);
+  --hero-spot-gradient:
+    radial-gradient(140% 120% at 32% 22%, rgba(var(--color-primary), 0.32), transparent 65%),
+    radial-gradient(130% 120% at 76% 18%, rgba(var(--color-secondary), 0.28), transparent 62%),
+    radial-gradient(130% 120% at 78% 72%, rgba(var(--color-accent), 0.26), transparent 70%);
+
+  --about-background: linear-gradient(145deg, rgba(15, 23, 42, 0.82), rgba(18, 28, 52, 0.88), rgba(10, 14, 30, 0.92));
+  --visual-card-background: radial-gradient(120% 120% at 30% 20%, rgba(var(--color-primary), 0.24), transparent 60%),
+    radial-gradient(140% 130% at 80% 40%, rgba(var(--color-secondary), 0.2), transparent 70%),
+    linear-gradient(125deg, rgba(17, 24, 39, 0.95), rgba(10, 14, 28, 0.92));
+  --visual-grid-color: rgba(var(--color-primary), 0.18);
+  --code-surface: linear-gradient(180deg, #0a1224, #050a1a);
+  --code-text: 226, 232, 240;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --color-primary: 99, 102, 241;
+    --color-primary-hover: 79, 70, 229;
+    --color-secondary: 139, 92, 246;
+    --color-secondary-hover: 124, 58, 237;
+    --color-accent: 236, 72, 153;
+
+    --color-bg-primary: 255, 255, 255;
+    --color-bg-secondary: 249, 250, 251;
+    --color-bg-tertiary: 243, 244, 246;
+
+    --color-text-primary: 17, 24, 39;
+    --color-text-secondary: 107, 114, 128;
+    --color-text-tertiary: 156, 163, 175;
+
+    --color-border: 229, 231, 235;
+    --color-border-hover: 209, 213, 219;
+
+    --color-success: 16, 185, 129;
+    --color-error: 239, 68, 68;
+    --color-warning: 245, 158, 11;
+    --color-info: 59, 130, 246;
+
+    --surface-panel-1: 249, 250, 251;
+    --surface-panel-2: 238, 242, 255;
+    --panel-border: 229, 231, 235;
+
+    --button-secondary: 139, 92, 246;
+    --button-secondary-hover: 124, 58, 237;
+    --button-danger: 239, 68, 68;
+    --button-danger-hover: 220, 38, 38;
+    --button-ghost-hover: 243, 244, 246;
+    --button-outline-hover-bg: 99, 102, 241;
+
+    --page-background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 35%, #f9fafc 100%);
+    --hero-spot-gradient:
+      radial-gradient(140% 120% at 32% 22%, rgba(var(--color-primary), 0.22), transparent 65%),
+      radial-gradient(130% 120% at 76% 18%, rgba(var(--color-secondary), 0.18), transparent 62%),
+      radial-gradient(130% 120% at 78% 72%, rgba(var(--color-accent), 0.16), transparent 70%);
+
+    --about-background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(249, 250, 255, 0.95), rgba(244, 245, 255, 0.95));
+    --visual-card-background: radial-gradient(120% 120% at 30% 20%, rgba(var(--color-primary), 0.16), transparent 60%),
+      radial-gradient(140% 130% at 80% 40%, rgba(var(--color-secondary), 0.14), transparent 70%),
+      linear-gradient(125deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
+    --visual-grid-color: rgba(var(--color-primary), 0.12);
+    --code-surface: linear-gradient(180deg, #0f172a, #0b1324);
+    --code-text: 226, 232, 240;
+  }
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --color-primary: 99, 102, 241;
+  --color-primary-hover: 79, 70, 229;
+  --color-secondary: 139, 92, 246;
+  --color-secondary-hover: 124, 58, 237;
+  --color-accent: 236, 72, 153;
+
+  --color-bg-primary: 255, 255, 255;
+  --color-bg-secondary: 249, 250, 251;
+  --color-bg-tertiary: 243, 244, 246;
+
+  --color-text-primary: 17, 24, 39;
+  --color-text-secondary: 107, 114, 128;
+  --color-text-tertiary: 156, 163, 175;
+
+  --color-border: 229, 231, 235;
+  --color-border-hover: 209, 213, 219;
+
+  --surface-panel-1: 249, 250, 251;
+  --surface-panel-2: 238, 242, 255;
+  --panel-border: 229, 231, 235;
+
+  --button-secondary: 139, 92, 246;
+  --button-secondary-hover: 124, 58, 237;
+  --button-danger: 239, 68, 68;
+  --button-danger-hover: 220, 38, 38;
+  --button-ghost-hover: 243, 244, 246;
+  --button-outline-hover-bg: 99, 102, 241;
+
+  --page-background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 35%, #f9fafc 100%);
+  --hero-spot-gradient:
+    radial-gradient(140% 120% at 32% 22%, rgba(var(--color-primary), 0.22), transparent 65%),
+    radial-gradient(130% 120% at 76% 18%, rgba(var(--color-secondary), 0.18), transparent 62%),
+    radial-gradient(130% 120% at 78% 72%, rgba(var(--color-accent), 0.16), transparent 70%);
+
+  --about-background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(249, 250, 255, 0.95), rgba(244, 245, 255, 0.95));
+  --visual-card-background: radial-gradient(120% 120% at 30% 20%, rgba(var(--color-primary), 0.16), transparent 60%),
+    radial-gradient(140% 130% at 80% 40%, rgba(var(--color-secondary), 0.14), transparent 70%),
+    linear-gradient(125deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
+  --visual-grid-color: rgba(var(--color-primary), 0.12);
+  --code-surface: linear-gradient(180deg, #0f172a, #0b1324);
+  --code-text: 226, 232, 240;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --color-primary: 139, 92, 246;
+  --color-primary-hover: 124, 58, 237;
+  --color-secondary: 99, 102, 241;
+  --color-secondary-hover: 79, 70, 229;
+  --color-accent: 236, 72, 153;
+
+  --color-bg-primary: 11, 18, 32;
+  --color-bg-secondary: 15, 23, 42;
+  --color-bg-tertiary: 17, 24, 39;
+
+  --color-text-primary: 229, 231, 235;
+  --color-text-secondary: 148, 163, 184;
+  --color-text-tertiary: 100, 116, 139;
+
+  --color-border: 55, 65, 81;
+  --color-border-hover: 75, 85, 99;
+
+  --surface-panel-1: 17, 24, 39;
+  --surface-panel-2: 18, 28, 52;
+  --panel-border: 255, 255, 255;
+
+  --button-secondary: 139, 92, 246;
+  --button-secondary-hover: 124, 58, 237;
+  --button-danger: 239, 68, 68;
+  --button-danger-hover: 220, 38, 38;
+  --button-ghost-hover: 36, 42, 58;
+  --button-outline-hover-bg: 99, 102, 241;
+
+  --page-background: linear-gradient(180deg, #0a0f1a 0%, #0d1526 55%, #0b1220 100%);
+  --hero-spot-gradient:
+    radial-gradient(140% 120% at 32% 22%, rgba(var(--color-primary), 0.32), transparent 65%),
+    radial-gradient(130% 120% at 76% 18%, rgba(var(--color-secondary), 0.28), transparent 62%),
+    radial-gradient(130% 120% at 78% 72%, rgba(var(--color-accent), 0.26), transparent 70%);
+
+  --about-background: linear-gradient(145deg, rgba(15, 23, 42, 0.82), rgba(18, 28, 52, 0.88), rgba(10, 14, 30, 0.92));
+  --visual-card-background: radial-gradient(120% 120% at 30% 20%, rgba(var(--color-primary), 0.24), transparent 60%),
+    radial-gradient(140% 130% at 80% 40%, rgba(var(--color-secondary), 0.2), transparent 70%),
+    linear-gradient(125deg, rgba(17, 24, 39, 0.95), rgba(10, 14, 28, 0.92));
+  --visual-grid-color: rgba(var(--color-primary), 0.18);
+  --code-surface: linear-gradient(180deg, #0a1224, #050a1a);
+  --code-text: 226, 232, 240;
+}
