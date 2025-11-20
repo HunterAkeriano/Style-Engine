@@ -7,7 +7,8 @@ const routes: RouteRecordRaw[] = [
     name: 'home',
     component: () => import('@/pages/home/HomePage.vue'),
     meta: {
-      title: 'CSS Lab - Главная'
+      title: 'CSS Lab - Главная',
+      layout: 'MainLayout'
     }
   },
   {
@@ -15,7 +16,8 @@ const routes: RouteRecordRaw[] = [
     name: 'gradient',
     component: () => import('@/pages/gradient/GradientPage.vue'),
     meta: {
-      title: 'Генератор градиентов'
+      title: 'Генератор градиентов',
+      layout: 'GeneratorLayout'
     }
   },
   {
@@ -23,7 +25,8 @@ const routes: RouteRecordRaw[] = [
     name: 'shadow',
     component: () => import('@/pages/shadow/ShadowPage.vue'),
     meta: {
-      title: 'Генератор теней'
+      title: 'Генератор теней',
+      layout: 'GeneratorLayout'
     }
   },
   {
@@ -31,7 +34,8 @@ const routes: RouteRecordRaw[] = [
     name: 'animation',
     component: () => import('@/pages/animation/AnimationPage.vue'),
     meta: {
-      title: 'Генератор анимаций'
+      title: 'Генератор анимаций',
+      layout: 'GeneratorLayout'
     }
   },
   {
@@ -40,7 +44,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/profile/ProfilePage.vue'),
     meta: {
       title: 'Личный кабинет',
-      requiresAuth: true
+      requiresAuth: true,
+      layout: 'MainLayout'
     }
   },
   {
@@ -49,7 +54,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/auth/AuthPage.vue'),
     meta: {
       title: 'Авторизация',
-      guestOnly: true
+      guestOnly: true,
+      layout: 'AuthLayout'
     }
   },
   {
@@ -57,7 +63,8 @@ const routes: RouteRecordRaw[] = [
     name: 'not-found',
     component: () => import('@/pages/not-found/NotFoundPage.vue'),
     meta: {
-      title: 'Страница не найдена'
+      title: 'Страница не найдена',
+      layout: 'MainLayout'
     }
   }
 ]

@@ -1,1 +1,1 @@
-export { useGradientStore } from './model/gradient-store'
+export * from './ui'

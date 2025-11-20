@@ -1,0 +1,45 @@
+.card {
+  border-radius: $border-radius-xl;
+  overflow: hidden;
+  transition: all $transition-base;
+
+  &__header {
+    padding: $space-lg;
+    border-bottom: 1px solid $color-border;
+    font-weight: $font-weight-semibold;
+  }
+
+  &__body {
+    padding: $space-lg;
+  }
+
+  &__footer {
+    padding: $space-lg;
+    border-top: 1px solid $color-border;
+  }
+
+  // Variants
+  &--default {
+    background: $color-bg-secondary;
+  }
+
+  &--bordered {
+    background: $color-bg-primary;
+    border: 1px solid $color-border;
+  }
+
+  &--elevated {
+    background: $color-bg-primary;
+    box-shadow: $shadow-md;
+  }
+
+  // Hoverable
+  &--hoverable {
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-lg;
+    }
+  }
+}

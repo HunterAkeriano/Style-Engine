@@ -26,35 +26,4 @@ withDefaults(defineProps<Props>(), {
 })
 </script>
 
-<style lang="scss" scoped>
-.logo {
-  display: inline-flex;
-  align-items: center;
-  gap: $space-sm;
-  text-decoration: none;
-  transition: all $transition-base;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-
-  &__icon {
-    width: 40px;
-    height: 40px;
-    transition: all $transition-base;
-
-    &:hover {
-      filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.3));
-    }
-  }
-
-  &__text {
-    font-size: $font-size-xl;
-    font-weight: $font-weight-bold;
-    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-}
-</style>
+<style lang="scss" scoped src="./Logo.scss"></style>

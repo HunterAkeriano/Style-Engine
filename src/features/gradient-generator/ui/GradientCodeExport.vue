@@ -1,7 +1,7 @@
 <template>
   <div class="code-export">
     <div class="code-export__header">
-      <h3 class="code-export__title">Экспорт кода</h3>
+      <h3 class="code-export__title">{{ t('GRADIENT.EXPORT_TITLE') }}</h3>
       <Select
         v-model="selectedFormat"
         :options="formatOptions"
@@ -16,7 +16,7 @@
         class="code-export__copy-button"
         @click="handleCopy"
       >
-        {{ copied ? '✓ Скопировано' : 'Копировать' }}
+        {{ copied ? `✓ ${t('GRADIENT.COPIED')}` : t('GRADIENT.COPY') }}
       </Button>
     </div>
   </div>
@@ -24,11 +24,17 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useGradientStore } from '@/features'
+import { useI18n } from 'vue-i18n'
 import { Button, Select, type SelectOption } from '@/shared/ui'
 import { copyToClipboard, type CSSFormat } from '@/shared/lib'
 
-const gradientStore = useGradientStore()
+interface Props {
+  getCode: (format: CSSFormat) => string
+}
+
+const props = defineProps<Props>()
+const { t } = useI18n()
+
 const selectedFormat = ref<CSSFormat>('css')
 const copied = ref(false)
 
@@ -41,7 +47,7 @@ const formatOptions: SelectOption[] = [
 ]
 
 const code = computed(() => {
-  return gradientStore.getCode(selectedFormat.value)
+  return props.getCode(selectedFormat.value)
 })
 
 async function handleCopy() {
@@ -55,46 +61,4 @@ async function handleCopy() {
 }
 </script>
 
-<style lang="scss" scoped>
-.code-export {
-  display: flex;
-  flex-direction: column;
-  gap: $space-md;
-}
-
-.code-export__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: $space-md;
-}
-
-.code-export__title {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-}
-
-.code-export__code {
-  position: relative;
-  background: $color-dark-bg-secondary;
-  border-radius: $border-radius-lg;
-  padding: $space-lg;
-  overflow-x: auto;
-}
-
-.code-export__content {
-  margin: 0;
-  font-family: $font-family-mono;
-  font-size: $font-size-sm;
-  color: $color-dark-text-primary;
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-
-.code-export__copy-button {
-  position: absolute;
-  top: $space-md;
-  right: $space-md;
-}
-</style>
+<style lang="scss" scoped src="./GradientCodeExport.scss"></style>

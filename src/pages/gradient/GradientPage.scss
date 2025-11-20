@@ -1,0 +1,47 @@
+.gradient-page {
+  padding: $space-2xl 0;
+  min-height: 100vh;
+}
+
+.gradient-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $space-2xl;
+  gap: $space-lg;
+  flex-wrap: wrap;
+}
+
+.gradient-page__title {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  margin-bottom: $space-xs;
+  color: $color-text-primary;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-4xl;
+  }
+}
+
+.gradient-page__subtitle {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-lg;
+  }
+}
+
+.gradient-page__back-link {
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.gradient-page__content {
+  // Content styled by GradientGenerationProcess
+}

@@ -1,0 +1,115 @@
+.language-switcher {
+  position: relative;
+  width: 100%;
+
+  @media (min-width: $breakpoint-md) {
+    width: auto;
+  }
+
+  &__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-xs;
+    padding: $space-xs $space-sm;
+    border: 1px solid $color-border;
+    background: transparent;
+    color: $color-text-primary;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all $transition-base;
+    width: 100%;
+    min-width: 60px;
+
+    @media (min-width: $breakpoint-md) {
+      width: auto;
+    }
+
+    &:hover {
+      background: $color-bg-tertiary;
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+
+  &__current {
+    flex: 1;
+  }
+
+  &__arrow {
+    transition: transform $transition-base;
+    flex-shrink: 0;
+
+    &--open {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + $space-xs);
+    left: 0;
+    right: 0;
+    min-width: 160px;
+    background: $color-bg-primary;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-lg;
+    box-shadow: $shadow-xl;
+    padding: $space-xs;
+    z-index: $z-dropdown;
+
+    @media (min-width: $breakpoint-md) {
+      left: auto;
+      right: 0;
+    }
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: $space-sm $space-md;
+    border: none;
+    background: transparent;
+    border-radius: $border-radius-md;
+    color: $color-text-primary;
+    font-size: $font-size-sm;
+    text-align: left;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:hover {
+      background: $color-bg-tertiary;
+    }
+
+    &--active {
+      background: rgba($color-primary, 0.1);
+      color: $color-primary;
+    }
+  }
+
+  &__option-code {
+    font-weight: $font-weight-semibold;
+    margin-right: $space-sm;
+  }
+
+  &__option-name {
+    font-weight: $font-weight-medium;
+    font-size: $font-size-xs;
+    color: $color-text-secondary;
+  }
+}
+
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: all $transition-fast;
+}
+
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}

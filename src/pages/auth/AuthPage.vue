@@ -11,28 +11,4 @@
 <script setup lang="ts">
 </script>
 
-<style lang="scss" scoped>
-.auth-page {
-  padding: $space-2xl 0;
-}
-
-.auth-page__title {
-  font-size: $font-size-3xl;
-  font-weight: $font-weight-bold;
-  margin-bottom: $space-md;
-}
-
-.auth-page__text {
-  color: $color-text-secondary;
-  margin-bottom: $space-lg;
-}
-
-.auth-page__back-link {
-  color: $color-primary;
-  font-weight: $font-weight-medium;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-</style>
+<style lang="scss" scoped src="./AuthPage.scss"></style>

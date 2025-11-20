@@ -1,0 +1,112 @@
+.gradient-controls {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  padding: $space-lg;
+  background: $color-bg-secondary;
+  border-radius: $border-radius-xl;
+}
+
+.gradient-controls__group {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.gradient-controls__label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.gradient-controls__range {
+  width: 100%;
+  height: 8px;
+  border-radius: $border-radius-full;
+  background: $color-bg-tertiary;
+  outline: none;
+  appearance: none;
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $color-primary;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
+
+  &::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $color-primary;
+    cursor: pointer;
+    border: none;
+    transition: all $transition-base;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
+}
+
+.gradient-controls__colors {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.gradient-controls__color-item {
+  display: grid;
+  grid-template-columns: 50px 1fr 80px 30px auto;
+  gap: $space-sm;
+  align-items: center;
+}
+
+.gradient-controls__color-picker {
+  width: 50px;
+  height: 40px;
+  border: 2px solid $color-border;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  background: none;
+
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  &::-webkit-color-swatch {
+    border: none;
+    border-radius: calc($border-radius-md - 2px);
+  }
+}
+
+.gradient-controls__color-input {
+  font-family: $font-family-mono;
+  font-size: $font-size-sm;
+}
+
+.gradient-controls__position-input {
+  width: 80px;
+  padding: $space-sm;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-md;
+  font-size: $font-size-sm;
+  text-align: center;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+}
+
+.gradient-controls__position-label {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}

@@ -1,0 +1,41 @@
+.code-export {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.code-export__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $space-md;
+}
+
+.code-export__title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.code-export__code {
+  position: relative;
+  background: $color-dark-bg-secondary;
+  border-radius: $border-radius-lg;
+  padding: $space-lg;
+  overflow-x: auto;
+}
+
+.code-export__content {
+  margin: 0;
+  font-family: $font-family-mono;
+  font-size: $font-size-sm;
+  color: $color-dark-text-primary;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.code-export__copy-button {
+  position: absolute;
+  top: $space-md;
+  right: $space-md;
+}
