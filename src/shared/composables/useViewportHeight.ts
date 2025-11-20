@@ -5,9 +5,19 @@ const listeners: Array<() => void> = []
 let initialized = false
 let teardown: (() => void) | null = null
 
+// Определяем iOS устройство
+const isIOS = () => {
+  if (typeof window === 'undefined') return false
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+}
+
 function setViewportVar() {
   if (typeof window === 'undefined' || typeof document === 'undefined') return
-  const vh = window.innerHeight * 0.01
+  // Всегда используем innerHeight вместо visualViewport.height
+  // это предотвращает дергание на iOS когда скрывается toolbar
+  const viewportHeight = window.innerHeight
+  const vh = viewportHeight * 0.01
   document.documentElement.style.setProperty(CSS_VAR, `${vh}px`)
 }
 
@@ -21,12 +31,22 @@ function setup() {
     listeners.forEach(fn => fn())
   }
 
-  window.addEventListener('resize', handler)
-  window.addEventListener('orientationchange', handler)
+  // На iOS слушаем только orientationchange чтобы избежать дергания при скролле
+  // На других устройствах слушаем и resize и orientationchange
+  if (isIOS()) {
+    window.addEventListener('orientationchange', handler)
 
-  teardown = () => {
-    window.removeEventListener('resize', handler)
-    window.removeEventListener('orientationchange', handler)
+    teardown = () => {
+      window.removeEventListener('orientationchange', handler)
+    }
+  } else {
+    window.addEventListener('resize', handler)
+    window.addEventListener('orientationchange', handler)
+
+    teardown = () => {
+      window.removeEventListener('resize', handler)
+      window.removeEventListener('orientationchange', handler)
+    }
   }
 }
 

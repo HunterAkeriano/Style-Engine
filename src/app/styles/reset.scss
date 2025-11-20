@@ -10,6 +10,16 @@
   padding: 0;
 }
 
+:root {
+  --app-vh: 1vh;
+}
+
+@supports (height: 100svh) {
+  :root {
+    --app-vh: 1svh;
+  }
+}
+
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -17,7 +27,7 @@ html {
 
 body {
   line-height: 1.5;
-  min-height: 100vh;
+  min-height: calc(var(--app-vh, 1vh) * 100);
 }
 
 img,

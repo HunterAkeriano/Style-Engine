@@ -1,6 +1,6 @@
 .gradient-page {
   padding: $space-3xl 0;
-  min-height: 100vh;
+  min-height: calc(var(--app-vh, 1vh) * 100);
   position: relative;
   overflow: hidden;
   background:
