@@ -6,18 +6,18 @@
 
         <nav class="header__nav">
           <router-link to="/gradient" class="header__nav-link">
-            {{ $t('nav.gradients') }}
+            {{ t('nav.gradients') }}
           </router-link>
           <router-link to="/shadow" class="header__nav-link">
-            {{ $t('nav.shadows') }}
+            {{ t('nav.shadows') }}
           </router-link>
           <router-link to="/animation" class="header__nav-link">
-            {{ $t('nav.animations') }}
+            {{ t('nav.animations') }}
           </router-link>
         </nav>
 
         <div class="header__actions">
-          <button class="header__lang-switcher" @click="toggleLanguage" :title="$t('common.language')">
+          <button class="header__lang-switcher" @click="toggleLanguage" :title="t('common.language')">
             {{ currentLocale.toUpperCase() }}
           </button>
 
@@ -26,7 +26,7 @@
           </template>
           <template v-else>
             <Button variant="outline" size="sm" @click="goToAuth">
-              {{ $t('nav.login') }}
+              {{ t('nav.login') }}
             </Button>
           </template>
         </div>
@@ -42,35 +42,35 @@
       </div>
 
       <transition name="mobile-menu">
-        <div v-if="isMobileMenuOpen" class="header__mobile-menu">
+        <div v-if="isMobileMenuOpen" ref="mobileMenuRef" class="header__mobile-menu">
           <nav class="header__mobile-nav">
             <router-link to="/gradient" class="header__mobile-link" @click="closeMobileMenu">
-              {{ $t('nav.gradients') }}
+              {{ t('nav.gradients') }}
             </router-link>
             <router-link to="/shadow" class="header__mobile-link" @click="closeMobileMenu">
-              {{ $t('nav.shadows') }}
+              {{ t('nav.shadows') }}
             </router-link>
             <router-link to="/animation" class="header__mobile-link" @click="closeMobileMenu">
-              {{ $t('nav.animations') }}
+              {{ t('nav.animations') }}
             </router-link>
           </nav>
 
           <div class="header__mobile-actions">
             <button class="header__mobile-link" @click="toggleLanguage">
-              {{ currentLocale === 'ru' ? 'EN' : 'RU' }}
+              {{ currentLocale === 'uk' ? 'EN' : 'UA' }}
             </button>
 
             <template v-if="authStore.isAuthenticated && authStore.user">
               <router-link to="/profile" class="header__mobile-link" @click="closeMobileMenu">
-                {{ $t('nav.profile') }}
+                {{ t('nav.profile') }}
               </router-link>
               <button class="header__mobile-link header__mobile-link--danger" @click="handleLogout">
-                {{ $t('nav.logout') }}
+                {{ t('nav.logout') }}
               </button>
             </template>
             <template v-else>
               <Button variant="primary" size="md" @click="goToAuth" style="width: 100%;">
-                {{ $t('nav.login') }}
+                {{ t('nav.login') }}
               </Button>
             </template>
           </div>
@@ -81,9 +81,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock-upgrade'
 import { useAuthStore } from '@/entities'
 import { setLocale } from '@/app/providers'
 import Logo from '@/shared/ui/Logo/Logo.vue'
@@ -92,13 +93,14 @@ import UserMenu from '@/widgets/user-menu/UserMenu.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 const isMobileMenuOpen = ref(false)
+const mobileMenuRef = ref<HTMLElement | null>(null)
 
 const currentLocale = computed(() => locale.value)
 
 function toggleLanguage() {
-  const newLocale = currentLocale.value === 'ru' ? 'en' : 'ru'
+  const newLocale = currentLocale.value === 'uk' ? 'en' : 'uk'
   setLocale(newLocale)
 }
 
@@ -120,6 +122,16 @@ function handleLogout() {
   closeMobileMenu()
   router.push('/')
 }
+
+watch(isMobileMenuOpen, (isOpen) => {
+  if (isOpen && mobileMenuRef.value) {
+    disableBodyScroll(mobileMenuRef.value, {
+      reserveScrollBarGap: true
+    })
+  } else {
+    clearAllBodyScrollLocks()
+  }
+})
 </script>
 
 <style lang="scss" scoped>
@@ -223,6 +235,8 @@ function handleLogout() {
     padding-bottom: $space-lg;
     border-top: 1px solid $color-border;
     margin-top: $space-md;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
 
     @media (min-width: $breakpoint-md) {
       display: none;

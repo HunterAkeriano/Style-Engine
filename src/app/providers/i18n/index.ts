@@ -1,17 +1,17 @@
 import { createI18n } from 'vue-i18n'
-import ru from './locales/ru'
+import uk from './locales/uk'
 import en from './locales/en'
 
 const savedLocale = localStorage.getItem('locale')
 const browserLocale = navigator.language.split('-')[0]
-const defaultLocale = savedLocale || (browserLocale === 'ru' ? 'ru' : 'en')
+const defaultLocale = savedLocale || (browserLocale === 'uk' ? 'uk' : 'en')
 
 export const i18n = createI18n({
   legacy: false,
   locale: defaultLocale,
   fallbackLocale: 'en',
   messages: {
-    ru,
+    uk,
     en
   }
 })

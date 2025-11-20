@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { useGradientStore } from '../model/gradient-store'
+import { useGradientStore } from '@/features'
 import { Button, Input, Select, type SelectOption } from '@/shared/ui'
 
 const gradientStore = useGradientStore()

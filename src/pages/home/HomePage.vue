@@ -2,19 +2,19 @@
   <div class="home-page">
     <div class="container">
       <header class="home-page__hero">
-        <h1 class="home-page__hero-title">{{ $t('home.title') }}</h1>
+        <h1 class="home-page__hero-title">{{ t('home.title') }}</h1>
         <p class="home-page__hero-subtitle">
-          {{ $t('home.subtitle') }}
+          {{ t('home.subtitle') }}
         </p>
         <div class="home-page__hero-actions">
           <router-link to="/gradient" class="button button--primary">
-            {{ $t('home.gradientButton') }}
+            {{ t('home.gradientButton') }}
           </router-link>
           <router-link to="/shadow" class="button button--secondary">
-            {{ $t('home.shadowButton') }}
+            {{ t('home.shadowButton') }}
           </router-link>
           <router-link to="/animation" class="button button--secondary">
-            {{ $t('home.animationButton') }}
+            {{ t('home.animationButton') }}
           </router-link>
         </div>
       </header>
@@ -23,6 +23,9 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 </script>
 
 <style lang="scss" scoped>

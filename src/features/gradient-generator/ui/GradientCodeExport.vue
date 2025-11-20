@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useGradientStore } from '../model/gradient-store'
+import { useGradientStore } from '@/features'
 import { Button, Select, type SelectOption } from '@/shared/ui'
 import { copyToClipboard, type CSSFormat } from '@/shared/lib'
 
