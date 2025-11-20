@@ -31,7 +31,7 @@
 
     &:focus-within {
       border-color: $color-primary;
-      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+      box-shadow: 0 0 0 3px $color-primary-alpha-10;
     }
   }
 
@@ -39,7 +39,7 @@
     border-color: $color-error;
 
     &:focus-within {
-      box-shadow: 0 0 0 3px rgba($color-error, 0.1);
+      box-shadow: 0 0 0 3px color-var-alpha('color-error', 0.1);
     }
   }
 

@@ -14,10 +14,11 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { MainLayout, AuthLayout, GeneratorLayout } from './layouts'
 import { Sprite } from '@/shared/ui'
-import { useTheme } from '@/shared/composables'
+import { useTheme, useViewportHeight } from '@/shared/composables'
 
 const route = useRoute()
 useTheme()
+useViewportHeight()
 
 const layouts = {
   MainLayout,

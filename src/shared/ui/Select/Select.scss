@@ -42,18 +42,18 @@
     &:focus-visible {
       outline: none;
       border-color: $color-primary;
-      box-shadow: 0 0 0 3px rgba($color-primary, 0.12);
+      box-shadow: 0 0 0 3px $color-primary-alpha-12;
     }
   }
 
   &--error &__control {
     border-color: $color-error;
-    box-shadow: 0 0 0 1px rgba($color-error, 0.2);
+    box-shadow: 0 0 0 1px color-var-alpha('color-error', 0.2);
   }
 
   &--open &__control {
     border-color: $color-primary;
-    box-shadow: 0 8px 24px rgba($color-text-primary, 0.08), 0 0 0 2px rgba($color-primary, 0.12);
+    box-shadow: 0 8px 24px color-var-alpha('color-text-primary', 0.08), 0 0 0 2px $color-primary-alpha-12;
   }
 
   &__value {
@@ -89,7 +89,7 @@
     border: 1px solid $color-border;
     border-radius: $border-radius-md;
     background: $color-bg-secondary;
-    box-shadow: 0 16px 40px rgba($color-text-primary, 0.12), 0 0 0 1px rgba($color-border, 0.4);
+    box-shadow: 0 16px 40px color-var-alpha('color-text-primary', 0.12), 0 0 0 1px $color-border-alpha-40;
     overflow: hidden;
     max-height: 240px;
     display: flex;
@@ -125,8 +125,8 @@
   }
 
   &__option--active {
-    background: rgba($color-primary, 0.1);
-    border-color: rgba($color-primary, 0.2);
+    background: $color-primary-alpha-10;
+    border-color: color-var-alpha('color-primary', 0.2);
     color: $color-primary;
     font-weight: $font-weight-medium;
   }

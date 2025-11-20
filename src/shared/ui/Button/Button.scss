@@ -47,11 +47,11 @@
   }
 
   &--secondary {
-    background: $color-secondary;
+    background: $button-secondary;
     color: white;
 
     &:hover:not(.button--disabled) {
-      background: darken($color-secondary, 10%);
+      background: $button-secondary-hover;
       box-shadow: $shadow-md;
     }
   }
@@ -64,7 +64,7 @@
     &:hover:not(.button--disabled) {
       border-color: $color-primary;
       color: $color-primary;
-      background: rgba($color-primary, 0.05);
+      background: $color-primary-alpha-05;
     }
   }
 
@@ -73,16 +73,16 @@
     color: $color-text-primary;
 
     &:hover:not(.button--disabled) {
-      background: $color-bg-tertiary;
+      background: $button-ghost-hover;
     }
   }
 
   &--danger {
-    background: $color-error;
+    background: $button-danger;
     color: white;
 
     &:hover:not(.button--disabled) {
-      background: darken($color-error, 10%);
+      background: $button-danger-hover;
       box-shadow: $shadow-md;
     }
   }

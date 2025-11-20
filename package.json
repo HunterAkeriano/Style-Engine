@@ -4,7 +4,7 @@
   "type": "module",
   "description": "Style Engine - Генератор CSS-градиентов, теней и анимаций",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "type-check": "vue-tsc --noEmit",
