@@ -1,0 +1,5 @@
+export { default as DocsHero } from './docs-hero/DocsHero.vue'
+export { default as DocsTopics } from './docs-topics/DocsTopics.vue'
+export { default as DocsPlaybook } from './docs-playbook/DocsPlaybook.vue'
+export { default as DocsPrimer } from './docs-primer/DocsPrimer.vue'
+export { default as DocsTopicLayout } from './docs-topic-layout/DocsTopicLayout.vue'

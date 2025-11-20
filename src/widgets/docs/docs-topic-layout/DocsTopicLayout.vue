@@ -12,7 +12,7 @@
     <section class="docs-topic__grid">
       <article class="docs-topic__panel">
         <div class="docs-topic__panel-head">
-          <p class="docs-topic__pill docs-topic__pill--ghost">{{ checklistLabel }}</p>
+          <p class="docs-topic__pill docs-topic__pill_ghost">{{ checklistLabel }}</p>
           <h2>{{ topic.checklist.title }}</h2>
           <p class="docs-topic__muted">{{ topic.checklist.subtitle }}</p>
         </div>
@@ -25,7 +25,7 @@
 
       <article class="docs-topic__panel">
         <div class="docs-topic__panel-head">
-          <p class="docs-topic__pill docs-topic__pill--ghost">{{ demoLabel }}</p>
+          <p class="docs-topic__pill docs-topic__pill_ghost">{{ demoLabel }}</p>
           <h2>{{ topic.preview.title }}</h2>
           <p class="docs-topic__muted">{{ topic.preview.subtitle }}</p>
         </div>
@@ -50,9 +50,9 @@
         </div>
       </article>
 
-      <article class="docs-topic__panel docs-topic__panel--wide">
+      <article class="docs-topic__panel docs-topic__panel_wide">
         <div class="docs-topic__panel-head">
-          <p class="docs-topic__pill docs-topic__pill--ghost">{{ patternsLabel }}</p>
+          <p class="docs-topic__pill docs-topic__pill_ghost">{{ patternsLabel }}</p>
           <h2>{{ topic.patterns.title }}</h2>
           <p class="docs-topic__muted">{{ topic.patterns.subtitle }}</p>
         </div>
@@ -78,9 +78,9 @@
         </div>
       </article>
 
-      <aside class="docs-topic__panel docs-topic__panel--aside">
+      <aside class="docs-topic__panel docs-topic__panel_aside">
         <div class="docs-topic__panel-head">
-          <p class="docs-topic__pill docs-topic__pill--ghost">{{ linksLabel }}</p>
+          <p class="docs-topic__pill docs-topic__pill_ghost">{{ linksLabel }}</p>
           <h2>{{ otherLabel }}</h2>
         </div>
         <div class="docs-topic__links">

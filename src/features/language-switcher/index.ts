@@ -1,1 +1,1 @@
-export { default as LanguageSwitcher } from './LanguageSwitcher.vue'
+export { default as LanguageSwitcher } from './ui/language-switcher/LanguageSwitcher.vue'

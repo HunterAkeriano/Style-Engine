@@ -11,43 +11,45 @@
   transition: border-color $transition-base, box-shadow $transition-base;
   position: relative;
   overflow: hidden;
-}
 
-.theme-switcher__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    min-height: 16px;
+  }
 
-.theme-switcher__label {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  white-space: nowrap;
-}
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    white-space: nowrap;
+  }
 
-.theme-switcher__thumb {
-  position: absolute;
-  inset: 2px;
-  width: 50%;
-  background: $color-primary-alpha-12;
-  border-radius: $border-radius-full;
-  transform: translate3d(0, 0, 0);
-  transition: transform $transition-base, background $transition-base;
-  z-index: 0;
-  will-change: transform;
-}
+  &__thumb {
+    position: absolute;
+    inset: 2px;
+    width: 50%;
+    background: $color-primary-alpha-12;
+    border-radius: $border-radius-full;
+    transform: translate3d(0, 0, 0);
+    transition: transform $transition-base, background $transition-base;
+    z-index: 0;
+    will-change: transform;
 
-.theme-switcher__thumb--dark {
-  transform: translate3d(100%, 0, 0);
-  background: $color-primary-alpha-18;
-}
+    &_dark {
+      transform: translate3d(100%, 0, 0);
+      background: $color-primary-alpha-18;
+    }
+  }
 
-.theme-switcher > * {
-  position: relative;
-  z-index: 1;
-}
+  > * {
+    position: relative;
+    z-index: 1;
+  }
 
-.theme-switcher:hover {
-  border-color: $color-primary;
-  box-shadow: 0 12px 26px $color-primary-alpha-18;
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: 0 12px 26px $color-primary-alpha-18;
+  }
 }

@@ -1,0 +1,38 @@
+.meteor {
+  position: relative;
+  width: 220px;
+  height: 140px;
+  border-radius: $border-radius-xl;
+  background: radial-gradient(circle at 20% 30%, color-var-alpha('color-secondary', 0.3), color-var-alpha('color-bg-primary', 0.94));
+  border: 1px solid color-var-alpha('panel-border', 0.22);
+  overflow: hidden;
+}
+
+.meteor__trail,
+.meteor__head {
+  position: absolute;
+  top: 40%;
+  left: -20%;
+  animation: meteorFly 2s ease-in-out infinite;
+}
+
+.meteor__trail {
+  width: 200px;
+  height: 4px;
+  background: linear-gradient(90deg, color-var-alpha('color-accent', 0.7), transparent 70%);
+}
+
+.meteor__head {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: $color-accent;
+  box-shadow: 0 0 18px color-var-alpha('color-accent', 0.8);
+}
+
+@keyframes meteorFly {
+  0% { transform: translateX(0) translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  60% { transform: translateX(240px) translateY(-20px); opacity: 1; }
+  100% { transform: translateX(320px) translateY(-40px); opacity: 0; }
+}

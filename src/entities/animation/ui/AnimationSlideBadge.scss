@@ -1,0 +1,32 @@
+.slide-badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slide-badge__pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  padding: $space-xs $space-md;
+  background: linear-gradient(145deg, color-var-alpha('color-secondary', 0.2), color-var-alpha('color-primary', 0.18));
+  border-radius: $border-radius-full;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  overflow: hidden;
+}
+
+.slide-badge__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: $color-accent;
+  animation: slidePulse 1.2s ease-in-out infinite;
+}
+
+@keyframes slidePulse {
+  0% { transform: translateX(-4px) scale(0.9); box-shadow: 0 0 0 0 color-var-alpha('color-accent', 0.4); }
+  50% { transform: translateX(6px) scale(1.05); box-shadow: 0 0 0 6px color-var-alpha('color-accent', 0.2); }
+  100% { transform: translateX(-4px) scale(0.92); box-shadow: 0 0 0 0 color-var-alpha('color-accent', 0.4); }
+}

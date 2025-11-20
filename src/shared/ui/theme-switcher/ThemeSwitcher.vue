@@ -7,7 +7,7 @@
     <span class="theme-switcher__label">
       {{ isDark ? lightLabel : darkLabel }}
     </span>
-    <span class="theme-switcher__thumb" :class="{ 'theme-switcher__thumb--dark': isDark }"></span>
+    <span class="theme-switcher__thumb" :class="{ 'theme-switcher__thumb_dark': isDark }"></span>
   </button>
 </template>
 

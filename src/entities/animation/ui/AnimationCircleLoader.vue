@@ -4,29 +4,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
-.circle-loader {
-  display: grid;
-  place-items: center;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: color-var-alpha('color-bg-secondary', 0.4);
-  border: 1px solid color-var-alpha('panel-border', 0.2);
-}
-
-.circle-loader__ring {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: 4px solid color-var-alpha('panel-border', 0.2);
-  border-top-color: $color-primary;
-  animation: ringRotate 1s linear infinite;
-}
-
-@keyframes ringRotate {
-  to {
-    transform: rotate(360deg);
-  }
-}
-</style>
+<style lang="scss" scoped src="./AnimationCircleLoader.scss"></style>

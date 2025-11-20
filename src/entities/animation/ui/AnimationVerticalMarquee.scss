@@ -1,0 +1,58 @@
+.vertical-marquee {
+  position: relative;
+  width: 180px;
+  height: 200px;
+  overflow: hidden;
+  border-radius: $border-radius-lg;
+  background: linear-gradient(180deg, color-var-alpha('color-bg-primary', 0.92), color-var-alpha('color-secondary', 0.12));
+  border: 1px solid color-var-alpha('panel-border', 0.24);
+}
+
+.vertical-marquee::before,
+.vertical-marquee::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 40px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.vertical-marquee::before {
+  top: 0;
+  background: linear-gradient(180deg, color-var-alpha('color-bg-primary', 0.92), transparent);
+}
+
+.vertical-marquee::after {
+  bottom: 0;
+  background: linear-gradient(0deg, color-var-alpha('color-bg-primary', 0.92), transparent);
+}
+
+.vertical-marquee__lane {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  padding: $space-lg;
+  animation: verticalScroll 10s linear infinite;
+}
+
+.vertical-marquee__lane span {
+  white-space: nowrap;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: color-var-alpha('color-text-secondary', 0.9);
+  padding: $space-sm;
+  border-radius: $border-radius-md;
+  background: color-var-alpha('color-bg-secondary', 0.5);
+  text-align: center;
+}
+
+@keyframes verticalScroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}

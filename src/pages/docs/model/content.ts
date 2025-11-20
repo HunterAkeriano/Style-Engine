@@ -105,7 +105,7 @@ const docsContent: Record<Locale, { page: DocsPageContent; topics: DocsTopicCont
           badge: 'color + depth',
           previewLabel: 'Layered blend',
           previewDots: 5,
-          previewClass: 'docs-card__preview--gradients',
+          previewClass: 'docs-card__preview_gradients',
           points: [
             'Palette through light/shadow balance',
             'Stop grids with transparency',
@@ -121,7 +121,7 @@ const docsContent: Record<Locale, { page: DocsPageContent; topics: DocsTopicCont
           badge: 'depth',
           previewLabel: 'Layered shadow',
           previewDots: 4,
-          previewClass: 'docs-card__preview--shadows',
+          previewClass: 'docs-card__preview_shadows',
           points: [
             'Soft shadow + border glow',
             'Hover/active separation',
@@ -137,7 +137,7 @@ const docsContent: Record<Locale, { page: DocsPageContent; topics: DocsTopicCont
           badge: 'motion',
           previewLabel: 'Micro-motion',
           previewDots: 6,
-          previewClass: 'docs-card__preview--animations',
+          previewClass: 'docs-card__preview_animations',
           points: [
             'Delay hooks and pauses',
             'Marquee and loaders styling',
@@ -244,7 +244,7 @@ box-shadow: 0 20px 60px rgba(124, 58, 237, 0.28),
         preview: {
           title: 'Layered gradient',
           subtitle: 'Conic + linear mix',
-          className: 'docs-topic__preview--gradients',
+          className: 'docs-topic__preview_gradients',
           code: `background:
   radial-gradient(circle at 20% 20%, #6ee7ff, transparent 38%),
   linear-gradient(135deg, rgba(124,58,237,.9) 0%, rgba(14,165,233,.6) 55%, rgba(16,185,129,.35) 100%),
@@ -259,7 +259,7 @@ box-shadow: 0 20px 60px rgba(124, 58, 237, 0.28),
             {
               title: 'Glass + gradient',
               description: 'soft-glass base with outline',
-              className: 'docs-topic__mini-preview--glass',
+              className: 'docs-topic__mini-preview_glass',
               code: `background: linear-gradient(140deg, rgba(255,255,255,.28), rgba(255,255,255,.04));
 box-shadow: 0 16px 40px rgba(0,0,0,.25),
             0 0 0 1px rgba(255,255,255,.08);`
@@ -267,7 +267,7 @@ box-shadow: 0 16px 40px rgba(0,0,0,.25),
             {
               title: 'Neon band',
               description: 'narrow bar with counter glow',
-              className: 'docs-topic__mini-preview--band',
+              className: 'docs-topic__mini-preview_band',
               code: `background: linear-gradient(90deg, #06b6d4, #a855f7 45%, #22d3ee);
 box-shadow: 0 0 32px rgba(168,85,247,.6),
             0 12px 30px rgba(10,10,10,.35);`
@@ -275,7 +275,7 @@ box-shadow: 0 0 32px rgba(168,85,247,.6),
             {
               title: 'Card sheen',
               description: 'conic highlight with transparency',
-              className: 'docs-topic__mini-preview--sheen',
+              className: 'docs-topic__mini-preview_sheen',
               code: `background: conic-gradient(from 120deg,
   rgba(255,255,255,.32),
   rgba(255,255,255,0) 35%);
@@ -303,7 +303,7 @@ mix-blend-mode: screen;`
         preview: {
           title: 'Multi-shadow',
           subtitle: '3 layers + outline',
-          className: 'docs-topic__preview--shadows',
+          className: 'docs-topic__preview_shadows',
           code: `box-shadow:
   0 20px 60px rgba(0, 0, 0, 0.28),
   0 8px 18px rgba(0, 0, 0, 0.25),
@@ -319,7 +319,7 @@ mix-blend-mode: screen;`
             {
               title: 'Glass card',
               description: 'transparent base + shadow corridor',
-              className: 'docs-topic__mini-preview--shadow-card',
+              className: 'docs-topic__mini-preview_shadow-card',
               code: `box-shadow:
   0 12px 45px rgba(0, 0, 0, 0.32),
   0 0 0 1px rgba(255, 255, 255, 0.06);`
@@ -327,7 +327,7 @@ mix-blend-mode: screen;`
             {
               title: 'Rim light',
               description: 'outline via inset + glow',
-              className: 'docs-topic__mini-preview--outline',
+              className: 'docs-topic__mini-preview_outline',
               code: `box-shadow:
   inset 0 1px 0 rgba(255,255,255,.16),
   0 0 0 8px rgba(34,211,238,.18),
@@ -336,7 +336,7 @@ mix-blend-mode: screen;`
             {
               title: 'Hover lift',
               description: 'shadow shift on hover',
-              className: 'docs-topic__mini-preview--hover',
+              className: 'docs-topic__mini-preview_hover',
               code: `.card:hover {
   transform: translateY(-4px);
   box-shadow: 0 16px 50px rgba(0,0,0,.3),
@@ -365,7 +365,7 @@ mix-blend-mode: screen;`
         preview: {
           title: 'Motion timeline',
           subtitle: '6-dot stagger',
-          className: 'docs-topic__preview--animations',
+          className: 'docs-topic__preview_animations',
           code: `@keyframes rise {
   from { transform: translateY(12px); opacity: 0; }
   60% { transform: translateY(-8px); opacity: 1; }
@@ -381,7 +381,7 @@ mix-blend-mode: screen;`
             {
               title: 'Shimmer',
               description: 'highlight sweep across a card',
-              className: 'docs-topic__mini-preview--shimmer',
+              className: 'docs-topic__mini-preview_shimmer',
               code: `@keyframes shimmer {
   0% { transform: translateX(-120%); }
   100% { transform: translateX(120%); }
@@ -390,7 +390,7 @@ mix-blend-mode: screen;`
             {
               title: 'Bounce',
               description: 'bounce with slight squish',
-              className: 'docs-topic__mini-preview--bounce',
+              className: 'docs-topic__mini-preview_bounce',
               code: `@keyframes bounce {
   0%, 100% { transform: translateY(0); }
   45% { transform: translateY(-16px) scale(1.02); }
@@ -400,7 +400,7 @@ mix-blend-mode: screen;`
             {
               title: 'Orbit marker',
               description: 'floating dot on a ring',
-              className: 'docs-topic__mini-preview--orbit',
+              className: 'docs-topic__mini-preview_orbit',
               code: `@keyframes orbit {
   to { transform: rotate(360deg) translateX(52px) rotate(-360deg); }
 }`
@@ -433,7 +433,7 @@ mix-blend-mode: screen;`
           badge: 'color + depth',
           previewLabel: 'Слої кольору',
           previewDots: 5,
-          previewClass: 'docs-card__preview--gradients',
+          previewClass: 'docs-card__preview_gradients',
           points: [
             'Палітра через баланс світла/тіні',
             'Сітки стопів і прозоростей',
@@ -449,7 +449,7 @@ mix-blend-mode: screen;`
           badge: 'depth',
           previewLabel: 'Багатошарова тінь',
           previewDots: 4,
-          previewClass: 'docs-card__preview--shadows',
+          previewClass: 'docs-card__preview_shadows',
           points: [
             'Soft-shadow + border-glow',
             'Відділення hover/active',
@@ -465,7 +465,7 @@ mix-blend-mode: screen;`
           badge: 'motion',
           previewLabel: 'Micro-motion',
           previewDots: 6,
-          previewClass: 'docs-card__preview--animations',
+          previewClass: 'docs-card__preview_animations',
           points: [
             'Гачки для затримки та пауз',
             'Стилізація marquee й loaders',
@@ -572,7 +572,7 @@ box-shadow: 0 20px 60px rgba(124, 58, 237, 0.28),
         preview: {
           title: 'Слоєний градієнт',
           subtitle: 'Конус + лінійний шар',
-          className: 'docs-topic__preview--gradients',
+          className: 'docs-topic__preview_gradients',
           code: `background:
   radial-gradient(circle at 20% 20%, #6ee7ff, transparent 38%),
   linear-gradient(135deg, rgba(124,58,237,.9) 0%, rgba(14,165,233,.6) 55%, rgba(16,185,129,.35) 100%),
@@ -587,7 +587,7 @@ box-shadow: 0 20px 60px rgba(124, 58, 237, 0.28),
             {
               title: 'Glass + градієнт',
               description: 'soft-glass база з контуром',
-              className: 'docs-topic__mini-preview--glass',
+              className: 'docs-topic__mini-preview_glass',
               code: `background: linear-gradient(140deg, rgba(255,255,255,.28), rgba(255,255,255,.04));
 box-shadow: 0 16px 40px rgba(0,0,0,.25),
             0 0 0 1px rgba(255,255,255,.08);`
@@ -595,7 +595,7 @@ box-shadow: 0 16px 40px rgba(0,0,0,.25),
             {
               title: 'Neon band',
               description: 'вузька смуга з контровим glow',
-              className: 'docs-topic__mini-preview--band',
+              className: 'docs-topic__mini-preview_band',
               code: `background: linear-gradient(90deg, #06b6d4, #a855f7 45%, #22d3ee);
 box-shadow: 0 0 32px rgba(168,85,247,.6),
             0 12px 30px rgba(10,10,10,.35);`
@@ -603,7 +603,7 @@ box-shadow: 0 0 32px rgba(168,85,247,.6),
             {
               title: 'Блік для карточки',
               description: 'конусний хайлайт + прозорість',
-              className: 'docs-topic__mini-preview--sheen',
+              className: 'docs-topic__mini-preview_sheen',
               code: `background: conic-gradient(from 120deg,
   rgba(255,255,255,.32),
   rgba(255,255,255,0) 35%);
@@ -631,7 +631,7 @@ mix-blend-mode: screen;`
         preview: {
           title: 'Мульти-тінь',
           subtitle: '3 шари + outline',
-          className: 'docs-topic__preview--shadows',
+          className: 'docs-topic__preview_shadows',
           code: `box-shadow:
   0 20px 60px rgba(0, 0, 0, 0.28),
   0 8px 18px rgba(0, 0, 0, 0.25),
@@ -647,7 +647,7 @@ mix-blend-mode: screen;`
             {
               title: 'Glass-карта',
               description: 'прозора база + тіньовий коридор',
-              className: 'docs-topic__mini-preview--shadow-card',
+              className: 'docs-topic__mini-preview_shadow-card',
               code: `box-shadow:
   0 12px 45px rgba(0, 0, 0, 0.32),
   0 0 0 1px rgba(255, 255, 255, 0.06);`
@@ -655,7 +655,7 @@ mix-blend-mode: screen;`
             {
               title: 'Контрове світло',
               description: 'outline через inset + glow',
-              className: 'docs-topic__mini-preview--outline',
+              className: 'docs-topic__mini-preview_outline',
               code: `box-shadow:
   inset 0 1px 0 rgba(255,255,255,.16),
   0 0 0 8px rgba(34,211,238,.18),
@@ -664,7 +664,7 @@ mix-blend-mode: screen;`
             {
               title: 'Hover-підйом',
               description: 'зміщення тіні при наведенні',
-              className: 'docs-topic__mini-preview--hover',
+              className: 'docs-topic__mini-preview_hover',
               code: `.card:hover {
   transform: translateY(-4px);
   box-shadow: 0 16px 50px rgba(0,0,0,.3),
@@ -693,7 +693,7 @@ mix-blend-mode: screen;`
         preview: {
           title: 'Таймлайн руху',
           subtitle: 'стегер з 6 точок',
-          className: 'docs-topic__preview--animations',
+          className: 'docs-topic__preview_animations',
           code: `@keyframes rise {
   from { transform: translateY(12px); opacity: 0; }
   60% { transform: translateY(-8px); opacity: 1; }
@@ -709,7 +709,7 @@ mix-blend-mode: screen;`
             {
               title: 'Шиммер',
               description: 'блик, що пробігає по карті',
-              className: 'docs-topic__mini-preview--shimmer',
+              className: 'docs-topic__mini-preview_shimmer',
               code: `@keyframes shimmer {
   0% { transform: translateX(-120%); }
   100% { transform: translateX(120%); }
@@ -718,7 +718,7 @@ mix-blend-mode: screen;`
             {
               title: 'Стрибок',
               description: 'bounce з легким стисненням',
-              className: 'docs-topic__mini-preview--bounce',
+              className: 'docs-topic__mini-preview_bounce',
               code: `@keyframes bounce {
   0%, 100% { transform: translateY(0); }
   45% { transform: translateY(-16px) scale(1.02); }
@@ -728,7 +728,7 @@ mix-blend-mode: screen;`
             {
               title: 'Орбітальний маркер',
               description: 'точка, що рухається по колу',
-              className: 'docs-topic__mini-preview--orbit',
+              className: 'docs-topic__mini-preview_orbit',
               code: `@keyframes orbit {
   to { transform: rotate(360deg) translateX(52px) rotate(-360deg); }
 }`

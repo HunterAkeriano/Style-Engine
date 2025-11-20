@@ -1,0 +1,28 @@
+.gradient-wipe {
+  position: relative;
+  width: 220px;
+  height: 120px;
+  border-radius: $border-radius-xl;
+  background: color-var-alpha('color-bg-primary', 0.96);
+  border: 1px solid color-var-alpha('panel-border', 0.2);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.gradient-wipe__bar {
+  position: absolute;
+  inset: -20% -60%;
+  background: linear-gradient(90deg, color-var-alpha('color-primary', 0.25), color-var-alpha('color-secondary', 0.25));
+  transform: rotate(12deg);
+  animation: wipe 2.8s ease-in-out infinite;
+}
+
+@keyframes wipe {
+  0% { transform: translateX(-40%) rotate(12deg); opacity: 0; }
+  20% { opacity: 0.9; }
+  60% { transform: translateX(40%) rotate(12deg); opacity: 0.8; }
+  100% { opacity: 0; transform: translateX(60%) rotate(12deg); }
+}

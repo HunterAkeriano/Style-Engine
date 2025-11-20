@@ -58,11 +58,4 @@
   </svg>
 </template>
 
-<style scoped>
-.svg-sprite {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-</style>
+<style lang="css" scoped src="./Sprite.scss"></style>

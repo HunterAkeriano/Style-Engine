@@ -67,9 +67,4 @@ useHead(() => {
 })
 </script>
 
-<style lang="scss">
-.app {
-  width: 100%;
-  min-height: calc(var(--app-vh, 1vh) * 100);
-}
-</style>
+<style lang="scss" src="./App.scss"></style>

@@ -20,10 +20,27 @@ export const animationExamples: AnimationExample[] = [
     category: 'marquee',
     component: () => import('../ui/AnimationTicker.vue'),
     html: `<div class="marquee">
-  <div class="marquee__lane">
-    <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
-    <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
-    <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+  <div class="marquee__track">
+    <div class="marquee__lane">
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+    </div>
+    <div class="marquee__lane" aria-hidden="true">
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+      <span>CSS Motion · Microcopy · Live preview · Copy-ready</span>
+    </div>
   </div>
 </div>`,
     css: `.marquee {
@@ -60,7 +77,8 @@ export const animationExamples: AnimationExample[] = [
   color: #e2e8f0;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  animation: marqueeSlide 12s linear infinite;
+  width: max-content;
+  flex-shrink: 0;
 }
 
 .marquee__lane span {
@@ -68,9 +86,16 @@ export const animationExamples: AnimationExample[] = [
   color: rgba(226, 232, 240, 0.86);
 }
 
-@keyframes marqueeSlide {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: scroll 28s linear infinite;
+  will-change: transform;
+}
+
+@keyframes scroll {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
 }`
   },
   {

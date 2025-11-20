@@ -7,41 +7,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
-.flip-card {
-  perspective: 800px;
-  width: 180px;
-  height: 120px;
-}
-
-.flip-card__inner {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-  animation: flipCard 2.4s ease-in-out infinite;
-}
-
-.flip-card__face {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  border-radius: $border-radius-lg;
-  background: linear-gradient(145deg, color-var-alpha('color-primary', 0.16), color-var-alpha('color-secondary', 0.16));
-  border: 1px solid color-var-alpha('panel-border', 0.2);
-  backface-visibility: hidden;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-}
-
-.flip-card__face_back {
-  transform: rotateY(180deg);
-  background: linear-gradient(145deg, color-var-alpha('color-secondary', 0.18), color-var-alpha('color-primary', 0.14));
-}
-
-@keyframes flipCard {
-  0%, 100% { transform: rotateY(0); }
-  50% { transform: rotateY(180deg); }
-}
-</style>
+<style lang="scss" scoped src="./AnimationFlipCard.scss"></style>

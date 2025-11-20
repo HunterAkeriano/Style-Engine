@@ -6,48 +6,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
-.glow-orbit {
-  position: relative;
-  width: 200px;
-  height: 200px;
-  margin: 0 auto;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, color-var-alpha('color-accent', 0.25), color-var-alpha('color-bg-primary', 0.96));
-  border: 1px solid color-var-alpha('panel-border', 0.22);
-}
-
-.glow-orbit__core {
-  position: absolute;
-  inset: 50%;
-  width: 26px;
-  height: 26px;
-  margin: -13px;
-  border-radius: 50%;
-  background: $color-accent;
-  box-shadow: 0 0 20px color-var-alpha('color-accent', 0.7);
-}
-
-.glow-orbit__ring {
-  position: absolute;
-  inset: 14%;
-  border-radius: 50%;
-  border: 2px solid color-var-alpha('panel-border', 0.4);
-  animation: orbSpin 12s linear infinite;
-}
-
-.glow-orbit__ring_primary {
-  border-color: color-var-alpha('color-primary', 0.7);
-}
-
-.glow-orbit__ring_secondary {
-  inset: 28%;
-  border-color: color-var-alpha('color-secondary', 0.65);
-  animation-direction: reverse;
-  animation-duration: 9s;
-}
-
-@keyframes orbSpin {
-  to { transform: rotate(360deg); }
-}
-</style>
+<style lang="scss" scoped src="./AnimationGlowOrbit.scss"></style>

@@ -10,8 +10,8 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Locale } from '@/app/providers/i18n'
-import { getDocsTopicContent, type DocsTopicKey } from './model/content'
-import DocsTopicLayout from '@/widgets/docs/DocsTopicLayout.vue'
+import { getDocsTopicContent, type DocsTopicKey } from '@/pages/docs/model/content'
+import { DocsTopicLayout } from '@/widgets/docs'
 
 const props = defineProps<{ topic: DocsTopicKey }>()
 const { locale } = useI18n()
@@ -21,10 +21,4 @@ const topic = computed(() => localized.value.topic)
 const otherTopics = computed(() => localized.value.otherTopics)
 </script>
 
-<style scoped>
-.docs-topic-page {
-  padding: 2.5rem 0 3.5rem;
-  background: linear-gradient(180deg, color-var-alpha('color-primary', 0.08), transparent 30%),
-              $hero-background;
-}
-</style>
+<style lang="scss" scoped src="./DocsTopicPage.scss"></style>

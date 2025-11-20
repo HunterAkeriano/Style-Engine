@@ -1,0 +1,23 @@
+.scale-fade {
+  display: grid;
+  place-items: center;
+  width: 160px;
+  height: 160px;
+  border-radius: $border-radius-lg;
+  background: linear-gradient(145deg, color-var-alpha('color-bg-primary', 0.94), color-var-alpha('color-primary', 0.08));
+  border: 1px solid color-var-alpha('panel-border', 0.2);
+}
+
+.scale-fade__item {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, $color-primary, $color-secondary);
+  animation: scaleFade 1.8s ease-in-out infinite;
+}
+
+@keyframes scaleFade {
+  0% { transform: scale(0.8); opacity: 0.6; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0.85); opacity: 0.7; }
+}

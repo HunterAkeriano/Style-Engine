@@ -1,0 +1,183 @@
+.docs-hero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem;
+  align-items: center;
+  padding: 2.5rem;
+  border-radius: $border-radius-2xl;
+  background: $surface-panel-1;
+  border: 1px solid $panel-border;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 60% 20%, color-var-alpha('color-primary', 0.12), transparent 45%),
+      radial-gradient(circle at 30% 80%, color-var-alpha('color-accent', 0.18), transparent 35%);
+    pointer-events: none;
+  }
+
+  &__text {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: $border-radius-full;
+    background: $color-primary-alpha-18;
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.02em;
+    font-size: $font-size-sm;
+  }
+
+  &__title {
+    font-size: clamp(1.8rem, 2.4vw, 2.6rem);
+    margin: 1rem 0 0.75rem;
+    line-height: 1.1;
+  }
+
+  &__subtitle {
+    color: $color-text-secondary;
+    font-size: $font-size-lg;
+    max-width: 38rem;
+    line-height: 1.6;
+  }
+
+  &__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 1.5rem 0 1rem;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    color: $color-text-secondary;
+    font-size: $font-size-sm;
+
+    span {
+      padding: 0.35rem 0.75rem;
+      border-radius: $border-radius-full;
+      border: 1px dashed $color-border;
+      background: $color-primary-alpha-05;
+    }
+  }
+
+  &__visual {
+    position: relative;
+    height: 100%;
+    min-height: 320px;
+    background: linear-gradient(145deg, color-var-alpha('color-primary', 0.28), color-var-alpha('color-accent', 0.32));
+    border-radius: $border-radius-2xl;
+    border: 1px solid $panel-border;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+  }
+
+  &__gradient {
+    position: absolute;
+    inset: -30%;
+    background: conic-gradient(from 120deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0));
+    animation: docs-hero-rotate 16s linear infinite;
+  }
+
+  &__rings {
+    position: absolute;
+    inset: 12%;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    mix-blend-mode: screen;
+  }
+
+  &__ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+
+    &_accent { inset: 10%; box-shadow: 0 0 40px rgba(255, 255, 255, 0.24); }
+    &_soft { inset: 22%; opacity: 0.65; }
+    &_glow {
+      inset: 32%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 65%);
+    }
+  }
+
+  &__orbit {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    animation: docs-hero-spin 12s linear infinite;
+  }
+
+  &__dot {
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 28px rgba(255, 255, 255, 0.8);
+
+    &_lag { width: 10px; height: 10px; transform: rotate(120deg) translate(140px); opacity: 0.7; }
+    &_tiny { width: 7px; height: 7px; transform: rotate(240deg) translate(120px); opacity: 0.55; }
+  }
+
+  &__panel {
+    position: absolute;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    width: min(380px, 70%);
+    padding: 1rem 1.25rem;
+    border-radius: $border-radius-xl;
+    background: rgba(18, 18, 18, 0.58);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #e8efff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  &__panel-title {
+    font-weight: $font-weight-semibold;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  &__code {
+    font-family: $font-family-mono;
+    font-size: $font-size-sm;
+    color: $code-text;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 0.75rem;
+    border-radius: $border-radius-lg;
+    overflow: auto;
+  }
+}
+
+@keyframes docs-hero-rotate {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes docs-hero-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: $breakpoint-md) {
+  .docs-hero {
+    padding: 1.75rem;
+
+    &__cta {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+}

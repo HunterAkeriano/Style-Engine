@@ -11,9 +11,9 @@
         <div
           class="docs-snippet__preview"
           :class="{
-            'docs-snippet__preview--card': snippet.preview === 'card',
-            'docs-snippet__preview--marquee': snippet.preview === 'marquee',
-            'docs-snippet__preview--pulse': snippet.preview === 'pulse'
+            'docs-snippet__preview_card': snippet.preview === 'card',
+            'docs-snippet__preview_marquee': snippet.preview === 'marquee',
+            'docs-snippet__preview_pulse': snippet.preview === 'pulse'
           }"
         >
           <template v-if="snippet.preview === 'card'">
@@ -34,7 +34,7 @@
 
           <template v-else>
             <div class="docs-snippet__pulse"></div>
-            <div class="docs-snippet__pulse docs-snippet__pulse--delayed"></div>
+            <div class="docs-snippet__pulse docs-snippet__pulse_delayed"></div>
           </template>
         </div>
         <div class="docs-snippet__body">

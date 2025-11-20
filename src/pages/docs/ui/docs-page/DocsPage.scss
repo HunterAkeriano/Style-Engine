@@ -1,0 +1,9 @@
+.docs-page {
+  padding: 3rem 0 4rem;
+  background: radial-gradient(circle at 20% 20%, color-var-alpha('color-accent', 0.24), transparent 40%),
+              radial-gradient(circle at 80% 10%, color-var-alpha('color-primary', 0.18), transparent 38%),
+              $hero-background;
+  color: $color-text-primary;
+  display: grid;
+  gap: 1.5rem;
+}

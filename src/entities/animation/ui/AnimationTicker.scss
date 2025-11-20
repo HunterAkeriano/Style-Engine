@@ -1,0 +1,54 @@
+.demo-marquee {
+  position: relative;
+  overflow: hidden;
+  border-radius: $border-radius-lg;
+  background: linear-gradient(120deg, rgba(var(--color-primary), 0.14), rgba(var(--color-secondary), 0.08));
+  border: 1px solid color-var-alpha('panel-border', 0.2);
+}
+
+.demo-marquee::before,
+.demo-marquee::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.demo-marquee::before {
+  background: linear-gradient(90deg, $color-bg-primary 0%, transparent 14%, transparent 86%, $color-bg-primary 100%);
+}
+
+.demo-marquee::after {
+  border: 1px solid color-var-alpha('panel-border', 0.24);
+  border-radius: inherit;
+  inset: 6px;
+}
+
+.demo-marquee__lane {
+  display: flex;
+  gap: 32px;
+  padding: $space-md $space-lg;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  width: max-content;
+  flex-shrink: 0;
+}
+
+.demo-marquee__lane span {
+  white-space: nowrap;
+  color: color-var-alpha('color-text-secondary', 0.86);
+}
+
+.demo-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: scroll 28s linear infinite;
+  will-change: transform;
+}
+
+@keyframes scroll {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}

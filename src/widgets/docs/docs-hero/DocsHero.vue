@@ -24,14 +24,14 @@
     <div class="docs-hero__visual" aria-hidden="true">
       <div class="docs-hero__gradient"></div>
       <div class="docs-hero__rings">
-        <span class="docs-hero__ring docs-hero__ring--accent"></span>
-        <span class="docs-hero__ring docs-hero__ring--soft"></span>
-        <span class="docs-hero__ring docs-hero__ring--glow"></span>
+        <span class="docs-hero__ring docs-hero__ring_accent"></span>
+        <span class="docs-hero__ring docs-hero__ring_soft"></span>
+        <span class="docs-hero__ring docs-hero__ring_glow"></span>
       </div>
       <div class="docs-hero__orbit">
         <span class="docs-hero__dot"></span>
-        <span class="docs-hero__dot docs-hero__dot--lag"></span>
-        <span class="docs-hero__dot docs-hero__dot--tiny"></span>
+        <span class="docs-hero__dot docs-hero__dot_lag"></span>
+        <span class="docs-hero__dot docs-hero__dot_tiny"></span>
       </div>
       <div class="docs-hero__panel">
         <p class="docs-hero__panel-title">motion.css</p>

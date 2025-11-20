@@ -3,7 +3,7 @@
     ref="selectRef"
     :class="[
       'select',
-      { 'select--error': error, 'select--disabled': disabled, 'select--open': isOpen, 'select--drop-up': isDropUp }
+      { 'select_error': error, 'select_disabled': disabled, 'select_open': isOpen, 'select_drop-up': isDropUp }
     ]"
   >
     <label v-if="label" class="select__label">
@@ -21,14 +21,14 @@
         @keydown.space.prevent="toggleDropdown"
         @keydown.esc.prevent="closeDropdown"
       >
-        <span :class="['select__value', { 'select__value--placeholder': !selectedOption }]">
+        <span :class="['select__value', { 'select__value_placeholder': !selectedOption }]">
           {{ selectedOption?.label ?? placeholder ?? 'Выберите значение' }}
         </span>
 
         <Icon
           name="icon-chevron-down"
           :size="14"
-          :class="['select__chevron', { 'select__chevron--open': isOpen, 'select__chevron--drop-up': isDropUp }]"
+          :class="['select__chevron', { 'select__chevron_open': isOpen, 'select__chevron_drop-up': isDropUp }]"
         />
       </button>
 
@@ -42,7 +42,7 @@
             v-for="option in options"
             :key="option.value"
             type="button"
-            :class="['select__option', { 'select__option--active': option.value === modelValue }]"
+            :class="['select__option', { 'select__option_active': option.value === modelValue }]"
             @click="handleSelect(option.value)"
           >
             {{ option.label }}

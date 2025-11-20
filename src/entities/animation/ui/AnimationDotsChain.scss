@@ -1,0 +1,33 @@
+.dots-chain {
+  display: inline-flex;
+  gap: $space-xs;
+  padding: $space-md $space-lg;
+  border-radius: $border-radius-xl;
+  background: linear-gradient(145deg, color-var-alpha('color-bg-primary', 0.92), color-var-alpha('color-secondary', 0.12));
+  border: 1px solid color-var-alpha('panel-border', 0.24);
+}
+
+.dots-chain span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, $color-secondary, $color-accent);
+  animation: chainPulse 1.4s ease-in-out infinite;
+
+  &:nth-child(1) { animation-delay: 0s; }
+  &:nth-child(2) { animation-delay: 0.1s; }
+  &:nth-child(3) { animation-delay: 0.2s; }
+  &:nth-child(4) { animation-delay: 0.3s; }
+  &:nth-child(5) { animation-delay: 0.4s; }
+}
+
+@keyframes chainPulse {
+  0%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}

@@ -16,7 +16,7 @@ const baseRoutes: RouteRecordRaw[] = [
   {
     path: 'docs',
     name: 'docs',
-    component: () => import('@/pages/docs/DocsPage.vue'),
+    component: () => import('@/pages/docs/ui/docs-page/DocsPage.vue'),
     meta: {
       titleKey: 'META.DOCS',
       descriptionKey: 'META_DESCRIPTION.DOCS',
@@ -26,7 +26,7 @@ const baseRoutes: RouteRecordRaw[] = [
   {
     path: 'docs/gradients',
     name: 'docs-gradients',
-    component: () => import('@/pages/docs/DocsTopicPage.vue'),
+    component: () => import('@/pages/docs/ui/docs-topic-page/DocsTopicPage.vue'),
     props: () => ({ topic: 'gradients' as const }),
     meta: {
       titleKey: 'META.DOCS_GRADIENTS',
@@ -37,7 +37,7 @@ const baseRoutes: RouteRecordRaw[] = [
   {
     path: 'docs/shadows',
     name: 'docs-shadows',
-    component: () => import('@/pages/docs/DocsTopicPage.vue'),
+    component: () => import('@/pages/docs/ui/docs-topic-page/DocsTopicPage.vue'),
     props: () => ({ topic: 'shadows' as const }),
     meta: {
       titleKey: 'META.DOCS_SHADOWS',
@@ -48,7 +48,7 @@ const baseRoutes: RouteRecordRaw[] = [
   {
     path: 'docs/animations',
     name: 'docs-animations',
-    component: () => import('@/pages/docs/DocsTopicPage.vue'),
+    component: () => import('@/pages/docs/ui/docs-topic-page/DocsTopicPage.vue'),
     props: () => ({ topic: 'animations' as const }),
     meta: {
       titleKey: 'META.DOCS_ANIMATIONS',
