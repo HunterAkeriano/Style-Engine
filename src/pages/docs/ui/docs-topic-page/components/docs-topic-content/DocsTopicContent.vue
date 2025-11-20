@@ -129,4 +129,4 @@ async function copy(code: string) {
 }
 </script>
 
-<style lang="scss" scoped src="./DocsTopicLayout.scss"></style>
+<style lang="scss" scoped src="./DocsTopicContent.scss"></style>

@@ -1,7 +1,7 @@
 <template>
   <div class="docs-topic-page">
     <div class="container">
-      <DocsTopicLayout :topic="topic" :other-topics="otherTopics" />
+      <DocsTopicContent :topic="topic" :other-topics="otherTopics" />
     </div>
   </div>
 </template>
@@ -11,7 +11,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Locale } from '@/app/providers/i18n'
 import { getDocsTopicContent, type DocsTopicKey } from '@/pages/docs/model/content'
-import { DocsTopicLayout } from '@/widgets/docs'
+import DocsTopicContent from './components/docs-topic-content/DocsTopicContent.vue'
 
 const props = defineProps<{ topic: DocsTopicKey }>()
 const { locale } = useI18n()

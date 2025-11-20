@@ -1,20 +1,14 @@
 <template>
   <div class="app">
-    <component :is="layout">
-      <RouterView />
-    </component>
-
-
+    <RouterView />
     <Sprite />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useHead } from '@unhead/vue'
-import { MainLayout, AuthLayout, GeneratorLayout } from './layouts'
 import { Sprite } from '@/shared/ui'
 import { useTheme, useViewportHeight } from '@/shared/composables'
 
@@ -22,17 +16,6 @@ const route = useRoute()
 const { t, locale } = useI18n()
 useTheme()
 useViewportHeight()
-
-const layouts = {
-  MainLayout,
-  AuthLayout,
-  GeneratorLayout
-}
-
-const layout = computed(() => {
-  const layoutName = route.meta.layout as keyof typeof layouts
-  return layouts[layoutName] || MainLayout
-})
 
 const DEFAULT_ROBOTS = 'index, follow'
 
