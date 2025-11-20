@@ -44,6 +44,16 @@ const baseRoutes: RouteRecordRaw[] = [
     }
   },
   {
+    path: 'animation/:id',
+    name: 'animation-detail',
+    component: () => import('@/pages/animation/detail/AnimationDetailPage.vue'),
+    meta: {
+      titleKey: 'META.ANIMATION',
+      descriptionKey: 'META_DESCRIPTION.ANIMATION',
+      layout: 'GeneratorLayout'
+    }
+  },
+  {
     path: 'profile',
     name: 'profile',
     component: () => import('@/pages/profile/ProfilePage.vue'),

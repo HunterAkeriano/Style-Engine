@@ -5,12 +5,12 @@
   gap: $space-sm;
   font-weight: $font-weight-semibold;
   border-radius: $border-radius-lg;
-  transition: all $transition-base;
+  transition: background $transition-base, border-color $transition-base, color $transition-base, transform $transition-base, box-shadow $transition-base;
   cursor: pointer;
   border: 1px solid transparent;
 
   &:active {
-    transform: translateY(1px);
+    transform: translate3d(0, 1px, 0);
   }
 
   &_disabled {

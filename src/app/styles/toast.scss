@@ -1,0 +1,25 @@
+.se-toast {
+  background: linear-gradient(135deg, $color-primary-alpha-18, $color-secondary-alpha-16);
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  border-radius: $border-radius-lg;
+  padding: $space-md $space-lg;
+  letter-spacing: 0.01em;
+
+  &__body {
+    font-weight: $font-weight-medium;
+  }
+
+  .Vue-Toastification__icon {
+    margin-right: $space-sm;
+  }
+}
+
+.Vue-Toastification__toast-container {
+  --toastify-color-success: #27e47c;
+  --toastify-color-error: #ff5c8d;
+  --toastify-color-info: $color-accent-alpha-90;
+  --toastify-text-color-light: $color-text-primary;
+  font-family: $font-family-base;
+}

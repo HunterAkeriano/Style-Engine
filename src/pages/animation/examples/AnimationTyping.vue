@@ -1,0 +1,46 @@
+<template>
+  <div class="typing">
+    <div class="typing__text">
+      <span>typing...</span>
+    </div>
+    <div class="typing__cursor"></div>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.typing {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  padding: $space-sm $space-md;
+  border-radius: $border-radius-lg;
+  background: color-var-alpha('color-bg-primary', 0.92);
+  border: 1px solid color-var-alpha('panel-border', 0.2);
+}
+
+.typing__text span {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid transparent;
+  animation: typing 2.4s steps(12) infinite alternate;
+}
+
+.typing__cursor {
+  width: 10px;
+  height: 18px;
+  background: $color-primary;
+  border-radius: 2px;
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes typing {
+  0% { width: 0; }
+  100% { width: 78px; }
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+</style>

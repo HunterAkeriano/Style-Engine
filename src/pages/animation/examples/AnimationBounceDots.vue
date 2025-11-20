@@ -1,0 +1,33 @@
+<template>
+  <div class="bounce-dots">
+    <span></span><span></span><span></span><span></span>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.bounce-dots {
+  display: inline-flex;
+  gap: $space-sm;
+  padding: $space-md $space-lg;
+  border-radius: $border-radius-xl;
+  background: linear-gradient(145deg, color-var-alpha('color-bg-primary', 0.92), color-var-alpha('color-primary', 0.12));
+  border: 1px solid color-var-alpha('panel-border', 0.24);
+}
+
+.bounce-dots span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: $color-primary;
+  animation: dotBounce 1s ease-in-out infinite;
+
+  &:nth-child(2) { animation-delay: 0.1s; }
+  &:nth-child(3) { animation-delay: 0.2s; }
+  &:nth-child(4) { animation-delay: 0.3s; }
+}
+
+@keyframes dotBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50% { transform: translateY(-10px); opacity: 1; }
+}
+</style>

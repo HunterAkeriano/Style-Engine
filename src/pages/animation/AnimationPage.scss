@@ -1,23 +1,128 @@
 .animation-page {
-  padding: $space-2xl 0;
+  position: relative;
+  min-height: calc(var(--app-vh, 1vh) * 100);
+  padding: $space-4xl 0;
+  color: $color-text-primary;
+  background:
+    radial-gradient(ellipse 100% 80% at 50% 0%, color-var-alpha('color-primary', 0.15), transparent 60%),
+    radial-gradient(circle 120% at 10% 20%, color-var-alpha('color-accent', 0.08), transparent 50%),
+    radial-gradient(circle 130% at 90% 80%, color-var-alpha('color-secondary', 0.12), transparent 50%),
+    $color-bg-primary;
+  overflow: hidden;
+  isolation: isolate;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $space-3xl 0;
+  }
 }
 
-.animation-page__title {
-  font-size: $font-size-3xl;
-  font-weight: $font-weight-bold;
-  margin-bottom: $space-md;
+.animation-page__background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-.animation-page__text {
-  color: $color-text-secondary;
-  margin-bottom: $space-lg;
+.animation-page__beam {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  mix-blend-mode: soft-light;
+
+  &_left {
+    top: -200px;
+    left: -200px;
+    background: radial-gradient(circle, color-var-alpha('color-primary', 0.6), transparent 70%);
+    animation: float-left 20s ease-in-out infinite;
+  }
+
+  &_right {
+    bottom: -250px;
+    right: -250px;
+    background: radial-gradient(circle, color-var-alpha('color-accent', 0.5), transparent 70%);
+    animation: float-right 25s ease-in-out infinite;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    width: 400px;
+    height: 400px;
+  }
 }
 
-.animation-page__back-link {
-  color: $color-primary;
-  font-weight: $font-weight-medium;
+.animation-page__grid-lines {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(1400px, 95vw);
+  height: 80%;
+  border-radius: $border-radius-3xl;
+  background-image:
+    linear-gradient(90deg, color-var-alpha('panel-border', 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, color-var-alpha('panel-border', 0.08) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 30%, transparent 80%);
+  pointer-events: none;
+  z-index: 0;
+}
 
-  &:hover {
-    text-decoration: underline;
+.animation-page__builder-section {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto $space-4xl;
+  max-width: 1280px;
+  width: 100%;
+  padding: 0 $space-xl;
+
+  @media (max-width: $breakpoint-md) {
+    padding: 0 $space-md;
+    margin-bottom: $space-3xl;
+  }
+}
+
+.animation-page__examples {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 $space-xl;
+
+  @media (max-width: $breakpoint-md) {
+    padding: 0 $space-md;
+  }
+}
+
+@keyframes float-left {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -40px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 30px) scale(0.95);
+  }
+}
+
+@keyframes float-right {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-40px, 30px) scale(0.9);
+  }
+  66% {
+    transform: translate(20px, -25px) scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animation-page__beam {
+    animation: none !important;
   }
 }

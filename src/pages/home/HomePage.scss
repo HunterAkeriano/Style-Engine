@@ -94,7 +94,6 @@
   width: 64px;
   height: 64px;
   margin: 0;
-  filter: drop-shadow(0 10px 20px $color-primary-alpha-24);
   animation: heroLogoFloat 4s ease-in-out infinite;
   will-change: transform;
 
@@ -384,7 +383,6 @@
     &::after {
       background: linear-gradient(135deg, $color-primary, $color-secondary, $color-accent);
       opacity: 0.2;
-      filter: blur(10px);
     }
 
     &:hover {

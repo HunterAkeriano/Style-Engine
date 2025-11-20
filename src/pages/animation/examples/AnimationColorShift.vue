@@ -1,0 +1,31 @@
+<template>
+  <div class="color-shift">
+    <div class="color-shift__blob"></div>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.color-shift {
+  position: relative;
+  width: 200px;
+  height: 140px;
+  border-radius: $border-radius-xl;
+  background: color-var-alpha('color-bg-primary', 0.96);
+  border: 1px solid color-var-alpha('panel-border', 0.2);
+  overflow: hidden;
+}
+
+.color-shift__blob {
+  position: absolute;
+  inset: -20% auto auto -20%;
+  width: 80%;
+  height: 140%;
+  background: conic-gradient(from 90deg, $color-primary, $color-secondary, $color-accent, $color-primary);
+  animation: hueSpin 6s linear infinite;
+  opacity: 0.7;
+}
+
+@keyframes hueSpin {
+  to { transform: rotate(360deg); }
+}
+</style>

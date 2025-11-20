@@ -3,19 +3,17 @@
   align-items: center;
   gap: $space-sm;
   text-decoration: none;
-  transition: all $transition-base;
+  transition: transform $transition-base;
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translate3d(0, -2px, 0);
   }
 
   &__icon {
     width: 40px;
     height: 40px;
-    transition: all $transition-base;
 
     &:hover {
-      filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.3));
     }
   }
 
