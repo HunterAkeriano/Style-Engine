@@ -12,15 +12,15 @@
         </p>
 
         <div class="home-page__hero-actions">
-          <NavLink to="/gradient" className="button button--primary">
+          <NavLink to="/gradient" className="button button_primary">
             {{ t('HOME.GRADIENT_BUTTON') }}
           </NavLink>
 
-          <NavLink to="/shadow" className="button button--secondary">
+          <NavLink to="/shadow" className="button button_secondary">
             {{ t('HOME.SHADOW_BUTTON') }}
           </NavLink>
 
-          <NavLink to="/animation" className="button button--secondary">
+          <NavLink to="/animation" className="button button_secondary">
             {{ t('HOME.ANIMATION_BUTTON') }}
           </NavLink>
         </div>

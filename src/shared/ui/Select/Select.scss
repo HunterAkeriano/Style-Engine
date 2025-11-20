@@ -4,7 +4,7 @@
   gap: $space-xs;
   position: relative;
 
-  &--disabled {
+  &_disabled {
     opacity: 0.6;
     pointer-events: none;
   }
@@ -37,7 +37,7 @@
     color: $color-text-primary;
     font-size: $font-size-base;
     cursor: pointer;
-    transition: all $transition-base;
+    transition: border-color $transition-base, box-shadow $transition-base;
 
     &:focus-visible {
       outline: none;
@@ -46,12 +46,12 @@
     }
   }
 
-  &--error &__control {
+  &_error &__control {
     border-color: $color-error;
     box-shadow: 0 0 0 1px color-var-alpha('color-error', 0.2);
   }
 
-  &--open &__control {
+  &_open &__control {
     border-color: $color-primary;
     box-shadow: 0 8px 24px color-var-alpha('color-text-primary', 0.08), 0 0 0 2px $color-primary-alpha-12;
   }
@@ -65,7 +65,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    &--placeholder {
+    &_placeholder {
       color: $color-text-secondary;
       font-weight: $font-weight-normal;
     }
@@ -74,11 +74,11 @@
   &__chevron {
     transition: transform $transition-base, color $transition-base;
     color: $color-text-tertiary;
-  }
 
-  &__chevron--open {
-    transform: rotate(180deg);
-    color: $color-text-primary;
+    &_open {
+      transform: rotate(180deg);
+      color: $color-text-primary;
+    }
   }
 
   &__dropdown {
@@ -99,7 +99,7 @@
     z-index: $z-popover;
   }
 
-  &--drop-up &__dropdown {
+  &_drop-up &__dropdown {
     top: auto;
     bottom: calc(100% + $space-xs);
   }
@@ -116,19 +116,19 @@
     text-align: left;
     font-size: $font-size-base;
     cursor: pointer;
-    transition: all $transition-fast;
+    transition: background $transition-fast, border-color $transition-fast, color $transition-fast;
 
     &:hover {
       background: $color-bg-tertiary;
       border-color: $color-border;
     }
-  }
 
-  &__option--active {
-    background: $color-primary-alpha-10;
-    border-color: color-var-alpha('color-primary', 0.2);
-    color: $color-primary;
-    font-weight: $font-weight-medium;
+    &_active {
+      background: $color-primary-alpha-10;
+      border-color: color-var-alpha('color-primary', 0.2);
+      color: $color-primary;
+      font-weight: $font-weight-medium;
+    }
   }
 
   &__error {
@@ -150,5 +150,5 @@
 .select-dropdown-enter-from,
 .select-dropdown-leave-to {
   opacity: 0;
-  transform: translateY(-4px);
+  transform: translate3d(0, -4px, 0);
 }

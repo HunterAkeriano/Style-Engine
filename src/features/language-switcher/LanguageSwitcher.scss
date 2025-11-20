@@ -19,7 +19,7 @@
     font-weight: $font-weight-semibold;
     border-radius: $border-radius-md;
     cursor: pointer;
-    transition: all $transition-base;
+    transition: background $transition-base, border-color $transition-base, color $transition-base;
     width: 100%;
     min-width: 60px;
 
@@ -79,7 +79,7 @@
     font-size: $font-size-sm;
     text-align: left;
     cursor: pointer;
-    transition: all $transition-base;
+    transition: background $transition-base, color $transition-base;
 
     &:hover {
       background: $color-bg-tertiary;
@@ -105,11 +105,11 @@
 
 .dropdown-enter-active,
 .dropdown-leave-active {
-  transition: all $transition-fast;
+  transition: opacity $transition-fast, transform $transition-fast;
 }
 
 .dropdown-enter-from,
 .dropdown-leave-to {
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translate3d(0, -10px, 0);
 }

@@ -32,6 +32,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useToast } from 'vue-toastification'
 import { Button, Select, type SelectOption } from '@/shared/ui'
 import { copyToClipboard, type CSSFormat } from '@/shared/lib'
 
@@ -41,6 +42,7 @@ interface Props {
 
 const props = defineProps<Props>()
 const { t } = useI18n()
+const toast = useToast()
 
 const selectedFormat = ref<CSSFormat>('css')
 const copied = ref(false)
@@ -61,9 +63,12 @@ async function handleCopy() {
   const success = await copyToClipboard(code.value)
   if (success) {
     copied.value = true
+    toast.success(t('COMMON.COPIED_TO_CLIPBOARD'))
     setTimeout(() => {
       copied.value = false
     }, 2000)
+  } else {
+    toast.error(t('COMMON.COPY_FAILED'))
   }
 }
 </script>

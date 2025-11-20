@@ -31,7 +31,7 @@
     font-weight: $font-weight-medium;
     text-decoration: none;
     border-radius: $border-radius-md;
-    transition: all $transition-base;
+    transition: color $transition-base, background $transition-base;
 
     &:hover {
       color: $color-primary;
@@ -65,7 +65,7 @@
     color: $color-text-primary;
     cursor: pointer;
     border-radius: $border-radius-md;
-    transition: all $transition-base;
+    transition: background $transition-base;
     position: relative;
     z-index: calc($z-modal + 1);
 
@@ -113,7 +113,7 @@
     font-weight: $font-weight-medium;
     text-decoration: none;
     border-radius: $border-radius-md;
-    transition: all $transition-base;
+    transition: color $transition-base, background $transition-base;
 
     &:hover {
       background: $color-bg-tertiary;
@@ -137,11 +137,11 @@
 
 .mobile-menu-enter-active,
 .mobile-menu-leave-active {
-  transition: all $transition-base;
+  transition: opacity $transition-base, transform $transition-base;
 }
 
 .mobile-menu-enter-from,
 .mobile-menu-leave-to {
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translate3d(0, -10px, 0);
 }

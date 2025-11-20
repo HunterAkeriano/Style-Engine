@@ -27,12 +27,6 @@ export function setupRouterGuards(router: Router) {
       setLocale(locale)
     }
 
-    if (to.meta.titleKey) {
-      document.title = i18n.global.t(to.meta.titleKey as string)
-    } else if (to.meta.title) {
-      document.title = to.meta.title as string
-    }
-
     if (to.meta.requiresAuth && !authStore.isAuthenticated) {
       const currentLocale = i18n.global.locale.value
       next({ name: `${currentLocale}-auth`, query: { redirect: to.fullPath } })

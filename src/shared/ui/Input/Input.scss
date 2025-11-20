@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: $space-xs;
 
-  &--disabled {
+  &_disabled {
     opacity: 0.6;
     pointer-events: none;
   }
@@ -27,7 +27,7 @@
     border-radius: $border-radius-md;
     padding: $space-sm $space-md;
     background: $color-bg-primary;
-    transition: all $transition-base;
+    transition: border-color $transition-base, box-shadow $transition-base;
 
     &:focus-within {
       border-color: $color-primary;
@@ -35,7 +35,7 @@
     }
   }
 
-  &--error &__wrapper {
+  &_error &__wrapper {
     border-color: $color-error;
 
     &:focus-within {

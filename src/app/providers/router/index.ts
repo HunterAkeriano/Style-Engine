@@ -9,6 +9,7 @@ const baseRoutes: RouteRecordRaw[] = [
     component: () => import('@/pages/home/HomePage.vue'),
     meta: {
       titleKey: 'META.HOME',
+      descriptionKey: 'META_DESCRIPTION.HOME',
       layout: 'MainLayout'
     }
   },
@@ -18,6 +19,7 @@ const baseRoutes: RouteRecordRaw[] = [
     component: () => import('@/pages/gradient/GradientPage.vue'),
     meta: {
       titleKey: 'META.GRADIENT',
+      descriptionKey: 'META_DESCRIPTION.GRADIENT',
       layout: 'GeneratorLayout'
     }
   },
@@ -27,6 +29,7 @@ const baseRoutes: RouteRecordRaw[] = [
     component: () => import('@/pages/shadow/ShadowPage.vue'),
     meta: {
       titleKey: 'META.SHADOW',
+      descriptionKey: 'META_DESCRIPTION.SHADOW',
       layout: 'GeneratorLayout'
     }
   },
@@ -36,6 +39,7 @@ const baseRoutes: RouteRecordRaw[] = [
     component: () => import('@/pages/animation/AnimationPage.vue'),
     meta: {
       titleKey: 'META.ANIMATION',
+      descriptionKey: 'META_DESCRIPTION.ANIMATION',
       layout: 'GeneratorLayout'
     }
   },
@@ -45,6 +49,7 @@ const baseRoutes: RouteRecordRaw[] = [
     component: () => import('@/pages/profile/ProfilePage.vue'),
     meta: {
       titleKey: 'META.PROFILE',
+      descriptionKey: 'META_DESCRIPTION.PROFILE',
       requiresAuth: true,
       layout: 'MainLayout'
     }
@@ -55,6 +60,7 @@ const baseRoutes: RouteRecordRaw[] = [
     component: () => import('@/pages/auth/AuthPage.vue'),
     meta: {
       titleKey: 'META.AUTH',
+      descriptionKey: 'META_DESCRIPTION.AUTH',
       guestOnly: true,
       layout: 'AuthLayout'
     }
@@ -81,6 +87,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/not-found/NotFoundPage.vue'),
     meta: {
       titleKey: 'META.NOT_FOUND',
+      descriptionKey: 'META_DESCRIPTION.NOT_FOUND',
+      robots: 'noindex, nofollow',
       layout: 'MainLayout'
     }
   }
@@ -88,7 +96,13 @@ const routes: RouteRecordRaw[] = [
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes
+  routes,
+  scrollBehavior(_to, _from, savedPosition) {
+    if (savedPosition) {
+      return { ...savedPosition, behavior: 'smooth' }
+    }
+    return { left: 0, top: 0, behavior: 'smooth' }
+  }
 })
 
 setupRouterGuards(router)

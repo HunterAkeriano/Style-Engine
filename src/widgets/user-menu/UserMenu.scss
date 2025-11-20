@@ -10,7 +10,7 @@
     background: transparent;
     border-radius: $border-radius-lg;
     cursor: pointer;
-    transition: all $transition-base;
+    transition: background $transition-base;
 
     &:hover {
       background: $color-bg-tertiary;
@@ -86,7 +86,7 @@
     font-weight: $font-weight-medium;
     text-decoration: none;
     cursor: pointer;
-    transition: all $transition-base;
+    transition: background $transition-base;
 
     &:hover {
       background: $color-bg-tertiary;
@@ -114,11 +114,11 @@
 
 .dropdown-enter-active,
 .dropdown-leave-active {
-  transition: all $transition-fast;
+  transition: opacity $transition-fast, transform $transition-fast;
 }
 
 .dropdown-enter-from,
 .dropdown-leave-to {
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translate3d(0, -10px, 0);
 }

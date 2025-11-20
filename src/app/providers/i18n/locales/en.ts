@@ -35,10 +35,18 @@ export default {
     ADD_COLOR: 'Add Color',
     EXPORT_TITLE: 'Code Export',
     COPY: 'Copy',
-    COPIED: 'Copied'
+    COPIED: 'Copied',
+    SHARE: 'Share',
+    PRESETS_TAG: 'Signature set',
+    PRESETS_TITLE: 'Ready-to-use gradients',
+    PRESETS_SUBTITLE: 'Steal these cinematic mixes and drop them straight into the generator'
   },
   COMMON: {
-    LANGUAGE: 'Language'
+    LANGUAGE: 'Language',
+    COPIED_TO_CLIPBOARD: 'Copied to clipboard',
+    COPY_FAILED: 'Failed to copy',
+    SHARED_SUCCESS: 'Shared successfully',
+    SHARE_UNAVAILABLE: 'Sharing is not available on this device'
   },
   META: {
     HOME: 'Style Engine - Home',
@@ -48,5 +56,14 @@ export default {
     PROFILE: 'Profile',
     AUTH: 'Sign In',
     NOT_FOUND: 'Page Not Found'
+  },
+  META_DESCRIPTION: {
+    HOME: 'Style Engine is a CSS lab with generators for gradients, shadows, and animations plus live preview and clean code export.',
+    GRADIENT: 'Design linear, radial, and conic CSS gradients, preview them instantly, and copy production-ready code.',
+    SHADOW: 'Compose layered CSS drop shadows with full control over blur, spread, and colors, then export the styles.',
+    ANIMATION: 'Prototype CSS animations with instant preview and prepare keyframes for your UI.',
+    PROFILE: 'Manage your Style Engine profile and saved presets.',
+    AUTH: 'Sign in to sync your Style Engine presets and get a personalized experience.',
+    NOT_FOUND: 'The page was not found. Jump back to the generators and keep experimenting.'
   }
 }

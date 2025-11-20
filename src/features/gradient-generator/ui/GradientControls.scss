@@ -36,7 +36,7 @@
     border-radius: 50%;
     background: $color-primary;
     cursor: pointer;
-    transition: all $transition-base;
+    transition: transform $transition-base;
 
     &:hover {
       transform: scale(1.2);
@@ -50,7 +50,7 @@
     background: $color-primary;
     cursor: pointer;
     border: none;
-    transition: all $transition-base;
+    transition: transform $transition-base;
 
     &:hover {
       transform: scale(1.2);
