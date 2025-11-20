@@ -14,6 +14,49 @@ const baseRoutes: RouteRecordRaw[] = [
     }
   },
   {
+    path: 'docs',
+    name: 'docs',
+    component: () => import('@/pages/docs/DocsPage.vue'),
+    meta: {
+      titleKey: 'META.DOCS',
+      descriptionKey: 'META_DESCRIPTION.DOCS',
+      layout: 'MainLayout'
+    }
+  },
+  {
+    path: 'docs/gradients',
+    name: 'docs-gradients',
+    component: () => import('@/pages/docs/DocsTopicPage.vue'),
+    props: () => ({ topic: 'gradients' as const }),
+    meta: {
+      titleKey: 'META.DOCS_GRADIENTS',
+      descriptionKey: 'META_DESCRIPTION.DOCS_GRADIENTS',
+      layout: 'MainLayout'
+    }
+  },
+  {
+    path: 'docs/shadows',
+    name: 'docs-shadows',
+    component: () => import('@/pages/docs/DocsTopicPage.vue'),
+    props: () => ({ topic: 'shadows' as const }),
+    meta: {
+      titleKey: 'META.DOCS_SHADOWS',
+      descriptionKey: 'META_DESCRIPTION.DOCS_SHADOWS',
+      layout: 'MainLayout'
+    }
+  },
+  {
+    path: 'docs/animations',
+    name: 'docs-animations',
+    component: () => import('@/pages/docs/DocsTopicPage.vue'),
+    props: () => ({ topic: 'animations' as const }),
+    meta: {
+      titleKey: 'META.DOCS_ANIMATIONS',
+      descriptionKey: 'META_DESCRIPTION.DOCS_ANIMATIONS',
+      layout: 'MainLayout'
+    }
+  },
+  {
     path: 'gradient',
     name: 'gradient',
     component: () => import('@/pages/gradient/GradientPage.vue'),

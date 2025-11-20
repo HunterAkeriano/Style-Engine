@@ -8,6 +8,9 @@
           <NavLink to="/gradient" className="header__nav-link">
             {{ t('NAV.GRADIENTS') }}
           </NavLink>
+          <NavLink to="/docs" className="header__nav-link">
+            {{ t('NAV.DOCS') }}
+          </NavLink>
           <NavLink to="/shadow" className="header__nav-link">
             {{ t('NAV.SHADOWS') }}
           </NavLink>
@@ -43,6 +46,10 @@
         <nav class="header__mobile-nav">
           <NavLink to="/gradient" className="header__mobile-link" @click="closeMobileMenu">
             {{ t('NAV.GRADIENTS') }}
+          </NavLink>
+
+          <NavLink to="/docs" className="header__mobile-link" @click="closeMobileMenu">
+            {{ t('NAV.DOCS') }}
           </NavLink>
 
           <NavLink to="/shadow" className="header__mobile-link" @click="closeMobileMenu">

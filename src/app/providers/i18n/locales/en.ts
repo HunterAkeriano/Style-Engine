@@ -3,6 +3,7 @@ export default {
     GRADIENTS: 'Gradients',
     SHADOWS: 'Shadows',
     ANIMATIONS: 'Animations',
+    DOCS: 'CSS Docs',
     LOGIN: 'Sign In',
     LOGOUT: 'Sign Out',
     PROFILE: 'Profile',
@@ -156,11 +157,33 @@ export default {
     SHARED_SUCCESS: 'Shared successfully',
     SHARE_UNAVAILABLE: 'Sharing is not available on this device'
   },
+  DOCS: {
+    TOPICS_LABEL: 'Subpages',
+    TOPICS_TITLE: 'Topics with live demos',
+    TOPICS_SUBTITLE:
+      'Each subpage is a concise how-to: a checklist, visual examples, and minimal code you can copy into Style Engine.',
+    OPEN_TOPIC: 'Open subpage',
+    PLAYBOOK_LABEL: 'Practice',
+    PLAYBOOK_TITLE: 'Mini playbook',
+    PLAYBOOK_SUBTITLE: 'Ready patterns — use as-is or tweak nearby in the generator.',
+    CHECKLIST: 'Checklist',
+    DEMO: 'Demo',
+    PATTERNS: 'Patterns',
+    LINKS: 'Quick links',
+    OTHER_TOPICS: 'Other sections',
+    BACK: 'Back to overview',
+    COPY: 'Copy code',
+    PRIMER_LABEL: 'Basics'
+  },
   META: {
     HOME: 'Style Engine - Home',
     GRADIENT: 'Gradient Generator',
     SHADOW: 'Shadow Generator',
     ANIMATION: 'Animation Generator',
+    DOCS: 'CSS Guide',
+    DOCS_GRADIENTS: 'Gradient Guide',
+    DOCS_SHADOWS: 'Shadow Guide',
+    DOCS_ANIMATIONS: 'Animation Guide',
     PROFILE: 'Profile',
     AUTH: 'Sign In',
     NOT_FOUND: 'Page Not Found'
@@ -170,6 +193,10 @@ export default {
     GRADIENT: 'Design linear, radial, and conic CSS gradients, preview them instantly, and copy production-ready code.',
     SHADOW: 'Compose layered CSS drop shadows with full control over blur, spread, and colors, then export the styles.',
     ANIMATION: 'Prototype CSS animations with instant preview and prepare keyframes for your UI.',
+    DOCS: 'Clear CSS guide with subpages for gradients, shadows, and animations plus animated examples.',
+    DOCS_GRADIENTS: 'Gradient recipes with angles, stops, and layered backgrounds you can paste into Style Engine.',
+    DOCS_SHADOWS: 'Layered shadow presets with glow, outline, and hover micro-interactions.',
+    DOCS_ANIMATIONS: 'Reusable keyframes with easing suggestions and stagger timings for production UI.',
     PROFILE: 'Manage your Style Engine profile and saved presets.',
     AUTH: 'Sign in to sync your Style Engine presets and get a personalized experience.',
     NOT_FOUND: 'The page was not found. Jump back to the generators and keep experimenting.'

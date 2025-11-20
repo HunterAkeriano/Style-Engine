@@ -1,0 +1,67 @@
+.docs-primer {
+  margin-top: 2.5rem;
+}
+
+.docs-primer__head h2 {
+  margin: 0.35rem 0;
+  font-size: clamp(1.6rem, 2vw, 2.1rem);
+}
+
+.docs-primer__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: $border-radius-full;
+  background: $color-primary-alpha-08;
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-sm;
+}
+
+.docs-primer__title {
+  margin: 0.35rem 0 0.25rem;
+}
+
+.docs-primer__subtitle {
+  color: $color-text-secondary;
+  max-width: 46rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.docs-primer__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+.docs-primer__card {
+  background: $surface-panel-2;
+  border: 1px solid $panel-border;
+  border-radius: $border-radius-xl;
+  padding: 1rem 1.1rem;
+  display: grid;
+  gap: 0.45rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+}
+
+.docs-primer__header h3 {
+  margin: 0;
+  font-size: $font-size-lg;
+}
+
+.docs-primer__description {
+  margin: 0.15rem 0 0;
+  color: $color-text-secondary;
+}
+
+.docs-primer__list {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: $color-text-secondary;
+  display: grid;
+  gap: 0.35rem;
+  line-height: 1.5;
+}
