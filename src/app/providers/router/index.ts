@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { setupRouterGuards } from './guards'
+import { AVAILABLE_LOCALES } from '../i18n'
 
-const routes: RouteRecordRaw[] = [
+const baseRoutes: RouteRecordRaw[] = [
   {
-    path: '/',
+    path: '',
     name: 'home',
     component: () => import('@/pages/home/HomePage.vue'),
     meta: {
@@ -12,7 +13,7 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
-    path: '/gradient',
+    path: 'gradient',
     name: 'gradient',
     component: () => import('@/pages/gradient/GradientPage.vue'),
     meta: {
@@ -21,7 +22,7 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
-    path: '/shadow',
+    path: 'shadow',
     name: 'shadow',
     component: () => import('@/pages/shadow/ShadowPage.vue'),
     meta: {
@@ -30,7 +31,7 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
-    path: '/animation',
+    path: 'animation',
     name: 'animation',
     component: () => import('@/pages/animation/AnimationPage.vue'),
     meta: {
@@ -39,7 +40,7 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
-    path: '/profile',
+    path: 'profile',
     name: 'profile',
     component: () => import('@/pages/profile/ProfilePage.vue'),
     meta: {
@@ -49,7 +50,7 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
-    path: '/auth',
+    path: 'auth',
     name: 'auth',
     component: () => import('@/pages/auth/AuthPage.vue'),
     meta: {
@@ -57,7 +58,23 @@ const routes: RouteRecordRaw[] = [
       guestOnly: true,
       layout: 'AuthLayout'
     }
-  },
+  }
+]
+
+const localizedRoutes: RouteRecordRaw[] = AVAILABLE_LOCALES.flatMap(locale =>
+  baseRoutes.map(route => ({
+    ...route,
+    path: `/${locale}/${route.path}`.replace(/\/$/, '') || `/${locale}`,
+    name: `${locale}-${String(route.name)}`,
+    meta: {
+      ...route.meta,
+      locale
+    }
+  }))
+)
+
+const routes: RouteRecordRaw[] = [
+  ...localizedRoutes,
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',

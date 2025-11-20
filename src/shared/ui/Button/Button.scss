@@ -13,75 +13,73 @@
     transform: translateY(1px);
   }
 
-  &--disabled {
+  &_disabled {
     opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;
   }
 
-  // Sizes
-  &--sm {
+  &_sm {
     padding: $space-sm $space-md;
     font-size: $font-size-sm;
   }
 
-  &--md {
+  &_md {
     padding: $space-md $space-lg;
     font-size: $font-size-base;
   }
 
-  &--lg {
+  &_lg {
     padding: $space-lg $space-xl;
     font-size: $font-size-lg;
   }
 
-  // Variants
-  &--primary {
+  &_primary {
     background: $color-primary;
     color: white;
 
-    &:hover:not(.button--disabled) {
+    &:hover:not(.button_disabled) {
       background: $color-primary-hover;
       box-shadow: $shadow-md;
     }
   }
 
-  &--secondary {
+  &_secondary {
     background: $button-secondary;
     color: white;
 
-    &:hover:not(.button--disabled) {
+    &:hover:not(.button_disabled) {
       background: $button-secondary-hover;
       box-shadow: $shadow-md;
     }
   }
 
-  &--outline {
+  &_outline {
     background: transparent;
     border-color: $color-border;
     color: $color-text-primary;
 
-    &:hover:not(.button--disabled) {
+    &:hover:not(.button_disabled) {
       border-color: $color-primary;
       color: $color-primary;
       background: $color-primary-alpha-05;
     }
   }
 
-  &--ghost {
+  &_ghost {
     background: transparent;
     color: $color-text-primary;
 
-    &:hover:not(.button--disabled) {
+    &:hover:not(.button_disabled) {
       background: $button-ghost-hover;
     }
   }
 
-  &--danger {
+  &_danger {
     background: $button-danger;
     color: white;
 
-    &:hover:not(.button--disabled) {
+    &:hover:not(.button_disabled) {
       background: $button-danger-hover;
       box-shadow: $shadow-md;
     }

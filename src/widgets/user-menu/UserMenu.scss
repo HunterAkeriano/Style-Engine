@@ -54,7 +54,7 @@
     transition: transform $transition-base;
     color: $color-text-secondary;
 
-    &--open {
+    &_open {
       transform: rotate(180deg);
     }
   }
@@ -92,7 +92,7 @@
       background: $color-bg-tertiary;
     }
 
-    &--danger {
+    &_danger {
       color: $color-error;
 
       &:hover {

@@ -42,7 +42,7 @@
     transition: transform $transition-base;
     flex-shrink: 0;
 
-    &--open {
+    &_open {
       transform: rotate(180deg);
     }
   }
@@ -85,7 +85,7 @@
       background: $color-bg-tertiary;
     }
 
-    &--active {
+    &_active {
       background: $color-primary-alpha-10;
       color: $color-primary;
     }

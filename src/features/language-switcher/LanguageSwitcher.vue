@@ -10,7 +10,7 @@
       <Icon
         name="icon-chevron-down"
         :size="12"
-        :class="['language-switcher__arrow', { 'language-switcher__arrow--open': isOpen }]"
+        :class="['language-switcher__arrow', { 'language-switcher__arrow_open': isOpen }]"
       />
     </button>
 
@@ -20,7 +20,7 @@
           v-for="lang in languages"
           :key="lang.code"
           class="language-switcher__option"
-          :class="{ 'language-switcher__option--active': currentLocale === lang.code }"
+          :class="{ 'language-switcher__option_active': currentLocale === lang.code }"
           @click="changeLanguage(lang.code)"
         >
           <span class="language-switcher__option-code">{{ lang.code.toUpperCase() }}</span>
@@ -34,10 +34,12 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { setLocale } from '@/app/providers'
+import { useRouter, useRoute } from 'vue-router'
 import { Icon } from '@/shared/ui'
 
 const { locale, t } = useI18n()
+const router = useRouter()
+const route = useRoute()
 const isOpen = ref(false)
 
 const currentLocale = computed(() => locale.value)
@@ -75,8 +77,16 @@ function closeDropdown() {
   isOpen.value = false
 }
 
-function changeLanguage(code: string) {
-  setLocale(code)
+function changeLanguage(newLocale: string) {
+  const pathParts = route.path.split('/').filter(Boolean)
+  pathParts[0] = newLocale
+  const newPath = '/' + pathParts.join('/')
+
+  router.push({
+    path: newPath,
+    query: route.query,
+    hash: route.hash
+  })
   closeDropdown()
 }
 </script>

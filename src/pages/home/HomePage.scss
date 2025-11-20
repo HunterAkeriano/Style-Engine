@@ -335,7 +335,7 @@
     font-size: $font-size-base;
   }
 
-  &--primary {
+  &_primary {
     background: $color-primary;
     color: white;
 
@@ -346,7 +346,7 @@
     }
   }
 
-  &--secondary {
+  &_secondary {
     background: color-var-alpha('color-text-primary', 0.08);
     color: $color-text-primary;
     border: 1px solid color-var-alpha('panel-border', 0.14);

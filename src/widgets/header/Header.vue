@@ -91,7 +91,7 @@ import UserMenu from '@/widgets/user-menu/UserMenu.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const isMobileMenuOpen = ref(false)
 const mobileMenuRef = ref<HTMLElement | null>(null)
 
@@ -105,13 +105,13 @@ function closeMobileMenu() {
 
 function goToAuth() {
   closeMobileMenu()
-  router.push('/auth')
+  router.push(`/${locale.value}/auth`)
 }
 
 function handleLogout() {
   authStore.logout()
   closeMobileMenu()
-  router.push('/')
+  router.push(`/${locale.value}`)
 }
 
 watch(isMobileMenuOpen, async (isOpen) => {

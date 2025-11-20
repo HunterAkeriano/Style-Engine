@@ -18,23 +18,21 @@
     border-top: 1px solid $color-border;
   }
 
-  // Variants
-  &--default {
+  &_default {
     background: $color-bg-secondary;
   }
 
-  &--bordered {
+  &_bordered {
     background: $color-bg-primary;
     border: 1px solid $color-border;
   }
 
-  &--elevated {
+  &_elevated {
     background: $color-bg-primary;
     box-shadow: $shadow-md;
   }
 
-  // Hoverable
-  &--hoverable {
+  &_hoverable {
     cursor: pointer;
 
     &:hover {

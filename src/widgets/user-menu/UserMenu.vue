@@ -9,7 +9,7 @@
       <Icon
         name="icon-arrow-down"
         :size="16"
-        :class="['user-menu__arrow', { 'user-menu__arrow--open': isOpen }]"
+        :class="['user-menu__arrow', { 'user-menu__arrow_open': isOpen }]"
       />
     </button>
 
@@ -22,7 +22,7 @@
 
         <div class="user-menu__divider"></div>
 
-        <button class="user-menu__item user-menu__item--danger" @click="handleLogout">
+        <button class="user-menu__item user-menu__item_danger" @click="handleLogout">
           <Icon name="icon-logout" :size="20" className="user-menu__item-icon" />
           <span>Вийти</span>
         </button>
@@ -34,6 +34,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/entities'
 import type { User } from '@/entities'
 import { Icon, NavLink } from '@/shared/ui'
@@ -45,6 +46,7 @@ interface Props {
 const props = defineProps<Props>()
 const router = useRouter()
 const authStore = useAuthStore()
+const { locale } = useI18n()
 
 const isOpen = ref(false)
 
@@ -64,7 +66,7 @@ function closeMenu() {
 function handleLogout() {
   authStore.logout()
   closeMenu()
-  router.push('/')
+  router.push(`/${locale.value}`)
 }
 </script>
 
