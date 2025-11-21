@@ -1,10 +1,8 @@
 <template>
   <section class="animation-hero">
     <div class="animation-hero__orbits" aria-hidden="true">
-      <!-- Sun in the center -->
       <span class="animation-hero__sun"></span>
 
-      <!-- Orbital rings -->
       <span class="animation-hero__ring animation-hero__ring_mercury"></span>
       <span class="animation-hero__ring animation-hero__ring_venus"></span>
       <span class="animation-hero__ring animation-hero__ring_earth"></span>
@@ -14,7 +12,6 @@
       <span class="animation-hero__ring animation-hero__ring_uranus"></span>
       <span class="animation-hero__ring animation-hero__ring_neptune"></span>
 
-      <!-- Planets -->
       <span class="animation-hero__planet animation-hero__planet_mercury"></span>
       <span class="animation-hero__planet animation-hero__planet_venus"></span>
       <span class="animation-hero__planet animation-hero__planet_earth"></span>

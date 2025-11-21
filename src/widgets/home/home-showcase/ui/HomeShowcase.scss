@@ -104,9 +104,6 @@
   }
 }
 
-// ========================================
-// HOLOGRAPHIC DREAM ANIMATION
-// ========================================
 
 .holographic-dream {
   position: absolute;
@@ -320,7 +317,6 @@
   pointer-events: none;
 }
 
-// Holographic Dream Keyframes
 @keyframes holoDreamPulse {
   0%, 100% { transform: scale(1); opacity: 0.15; }
   50% { transform: scale(1.1); opacity: 0.25; }
@@ -381,9 +377,6 @@
   to { transform: translateX(100%) translateY(100%) rotate(45deg); }
 }
 
-// ========================================
-// AURORA SUNSET GRADIENT
-// ========================================
 
 .aurora-sunset {
   position: absolute;
@@ -462,7 +455,6 @@
   mix-blend-mode: overlay;
 }
 
-// Aurora Sunset Keyframes
 @keyframes auroraBaseShift {
   0%, 100% {
     transform: scale(1);
@@ -531,9 +523,6 @@
   }
 }
 
-// ========================================
-// ACCESSIBILITY
-// ========================================
 
 @media (prefers-reduced-motion: reduce) {
   .holographic-dream *,

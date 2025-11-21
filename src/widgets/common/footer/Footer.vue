@@ -2,7 +2,6 @@
   <footer class="footer">
     <div class="container">
       <div class="footer__content">
-        <!-- Logo and Description -->
         <div class="footer__brand">
           <Logo class="footer__logo" />
           <h3 class="footer__brand-title">Style Engine</h3>
@@ -11,7 +10,6 @@
           </p>
         </div>
 
-        <!-- Navigation Links -->
         <div class="footer__section">
           <h4 class="footer__section-title">{{ t('FOOTER.NAVIGATION') }}</h4>
           <nav class="footer__nav">
@@ -30,7 +28,6 @@
           </nav>
         </div>
 
-        <!-- Settings -->
         <div class="footer__section">
           <h4 class="footer__section-title">{{ t('FOOTER.SETTINGS') }}</h4>
           <div class="footer__settings">
@@ -46,7 +43,6 @@
         </div>
       </div>
 
-      <!-- Bottom Bar -->
       <div class="footer__bottom">
         <div class="footer__divider"></div>
         <div class="footer__bottom-content">

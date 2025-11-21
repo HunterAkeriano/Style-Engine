@@ -160,7 +160,6 @@
     border-radius: 50%;
     z-index: 1;
 
-    // Mercury - small, gray
     &_mercury {
       width: 6px;
       height: 6px;
@@ -169,7 +168,6 @@
       animation: orbit-mercury 8s linear infinite;
     }
 
-    // Venus - yellowish-beige
     &_venus {
       width: 9px;
       height: 9px;
@@ -178,7 +176,6 @@
       animation: orbit-venus 12s linear infinite;
     }
 
-    // Earth - blue with atmosphere
     &_earth {
       width: 10px;
       height: 10px;
@@ -189,7 +186,6 @@
       animation: orbit-earth 16s linear infinite;
     }
 
-    // Mars - red
     &_mars {
       width: 7px;
       height: 7px;
@@ -198,7 +194,6 @@
       animation: orbit-mars 20s linear infinite;
     }
 
-    // Jupiter - large, orange-brown
     &_jupiter {
       width: 18px;
       height: 18px;
@@ -207,7 +202,6 @@
       animation: orbit-jupiter 28s linear infinite;
     }
 
-    // Saturn - yellowish-brown with ring hint
     &_saturn {
       width: 16px;
       height: 16px;
@@ -218,7 +212,6 @@
       animation: orbit-saturn 36s linear infinite;
     }
 
-    // Uranus - light blue
     &_uranus {
       width: 12px;
       height: 12px;
@@ -227,7 +220,6 @@
       animation: orbit-uranus 44s linear infinite;
     }
 
-    // Neptune - dark blue
     &_neptune {
       width: 12px;
       height: 12px;
@@ -334,7 +326,6 @@
   }
 }
 
-// Orbital animations - planets move along their respective orbits
 @keyframes orbit-mercury {
   0% {
     transform: translate(-50%, -50%) rotate(0deg) translateX(40px) rotate(0deg);
@@ -407,7 +398,6 @@
   }
 }
 
-// Disable animations for users who prefer reduced motion
 @media (prefers-reduced-motion: reduce) {
   .animation-hero__planet {
     animation: none !important;

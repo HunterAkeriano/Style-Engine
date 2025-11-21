@@ -123,7 +123,6 @@ async function handleShare() {
       })
       return
     } catch {
-      /* fallback to copy */
     }
   }
   await handleCopy()

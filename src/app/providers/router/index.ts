@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
 import { setupRouterGuards } from './guards'
 import { AVAILABLE_LOCALES } from '../i18n'
 import MainLayout from '@/app/layouts/main-layout/MainLayout.vue'
@@ -143,7 +143,7 @@ const notFoundRoute: RouteRecordRaw = {
 }
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [...localizedRoutes, notFoundRoute],
   scrollBehavior(_to, _from, savedPosition) {
     if (savedPosition) {

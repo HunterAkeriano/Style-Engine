@@ -122,7 +122,6 @@
   font-weight: $font-weight-medium;
 }
 
-// Override language switcher dropdown position for footer
 .footer__setting {
   :deep(.language-switcher__dropdown) {
     left: 0;
@@ -205,7 +204,6 @@
   }
 }
 
-// Dark theme adjustments
 @media (prefers-color-scheme: dark) {
   .footer {
     background: color-var-alpha('color-bg-primary', 0.6);

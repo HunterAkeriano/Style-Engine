@@ -177,12 +177,10 @@ const totalCount = computed(() => normalizedExamples.value.length)
 const filteredExamples = computed(() => {
   let filtered = normalizedExamples.value
 
-  // Filter by category
   if (selectedCategory.value !== 'all') {
     filtered = filtered.filter(example => example.category === selectedCategory.value)
   }
 
-  // Filter by search query
   if (debouncedSearchQuery.value.trim()) {
     const query = debouncedSearchQuery.value.toLowerCase().trim()
     filtered = filtered.filter(example => {
@@ -227,7 +225,6 @@ function goToPage(page: number) {
   }
 }
 
-// Debounce search query
 watch(searchQuery, (newQuery) => {
   if (debounceTimeout) {
     clearTimeout(debounceTimeout)
@@ -244,7 +241,6 @@ watch(searchQuery, (newQuery) => {
   }, 500)
 })
 
-// Reset to page 1 when category changes
 watch(selectedCategory, () => {
   currentPage.value = 1
 })

@@ -159,9 +159,6 @@
   }
 }
 
-// ========================================
-// BUTTON STYLES
-// ========================================
 
 .home-hero__button {
   display: inline-block;
@@ -288,9 +285,6 @@
   }
 }
 
-// ========================================
-// KEYFRAME ANIMATIONS
-// ========================================
 
 @keyframes snowfall {
   0% {
@@ -331,9 +325,6 @@
   100% { background-position: 0% 40%; transform: translate3d(0, 0, 0); }
 }
 
-// ========================================
-// ACCESSIBILITY
-// ========================================
 
 @media (prefers-reduced-motion: reduce) {
   .home-hero,

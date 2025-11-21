@@ -5,7 +5,6 @@
       <h2 class="home-showcase__title">{{ t('HOME.SHOWCASE_TITLE') }}</h2>
 
       <div class="home-showcase__grid">
-        <!-- Holographic Animation Example -->
         <div class="home-showcase__card">
           <div class="home-showcase__preview home-showcase__preview_animation">
             <div class="holographic-dream">
@@ -35,7 +34,6 @@
           </div>
         </div>
 
-        <!-- Aurora Gradient Example -->
         <div class="home-showcase__card">
           <div class="home-showcase__preview home-showcase__preview_gradient">
             <div class="aurora-sunset">

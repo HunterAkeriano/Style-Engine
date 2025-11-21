@@ -158,9 +158,6 @@
   will-change: transform;
 }
 
-// ========================================
-// KEYFRAME ANIMATIONS
-// ========================================
 
 @keyframes floatSoft {
   0% { transform: translateY(0) scale(1); }
@@ -174,9 +171,6 @@
   100% { transform: rotate(-6deg) scale(1); box-shadow: 0 12px 26px $color-accent-alpha-20; }
 }
 
-// ========================================
-// ACCESSIBILITY
-// ========================================
 
 @media (prefers-reduced-motion: reduce) {
   .home-about__visual-planet,
