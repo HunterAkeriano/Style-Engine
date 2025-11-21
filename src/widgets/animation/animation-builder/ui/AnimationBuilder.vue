@@ -6,27 +6,6 @@
       <p class="animation-builder__subtitle">{{ t('ANIMATION.BUILDER_SUBTITLE') }}</p>
     </div>
 
-    <div class="animation-builder__community">
-      <p class="animation-builder__section-label">{{ t('ANIMATION.COMMUNITY_TITLE') }}</p>
-      <div v-if="communityLoading" class="animation-builder__community-empty">
-        {{ t('ANIMATION.COMMUNITY_LOADING') }}
-      </div>
-      <div v-else-if="!communityAnimations.length" class="animation-builder__community-empty">
-        {{ t('ANIMATION.COMMUNITY_EMPTY') }}
-      </div>
-      <div v-else class="animation-builder__community-list">
-        <button
-          v-for="animation in communityAnimations"
-          :key="animation.id"
-          class="animation-builder__community-chip"
-          type="button"
-          @click="applyCommunity(animation.payload)"
-        >
-          {{ animation.name }}
-        </button>
-      </div>
-    </div>
-
     <div class="animation-builder__container">
       <div class="animation-builder__content">
         <div class="animation-builder__controls-section">
@@ -56,6 +35,12 @@
               min="0"
               max="1"
             />
+            <Input v-model="rotateFrom" type="number" :label="t('ANIMATION.ROTATION_FROM')" suffix="°" />
+            <Input v-model="rotateTo" type="number" :label="t('ANIMATION.ROTATION_TO')" suffix="°" />
+            <Input v-model="skewXFrom" type="number" :label="t('ANIMATION.SKEW_X_FROM')" suffix="°" />
+            <Input v-model="skewXTo" type="number" :label="t('ANIMATION.SKEW_X_TO')" suffix="°" />
+            <Input v-model="skewYFrom" type="number" :label="t('ANIMATION.SKEW_Y_FROM')" suffix="°" />
+            <Input v-model="skewYTo" type="number" :label="t('ANIMATION.SKEW_Y_TO')" suffix="°" />
           </div>
         </div>
 
@@ -65,6 +50,17 @@
             <div class="motion-preview" :style="previewStyle">
               <div class="motion-preview__dot"></div>
               <div class="motion-preview__card">CSS Motion</div>
+            </div>
+            <div class="animation-builder__preview-actions">
+              <Button
+                class="animation-builder__play-button"
+                variant="primary"
+                size="sm"
+                type="button"
+                @click="togglePlaying"
+              >
+                {{ isPlaying ? t('ANIMATION.STOP_ANIMATION') : t('ANIMATION.START_ANIMATION') }}
+              </Button>
             </div>
           </div>
 
@@ -131,7 +127,14 @@ const scaleFrom = ref(0.96)
 const scaleTo = ref(1.06)
 const opacityFrom = ref(0.72)
 const opacityTo = ref(1)
+const rotateFrom = ref(0)
+const rotateTo = ref(6)
+const skewXFrom = ref(0)
+const skewXTo = ref(4)
+const skewYFrom = ref(0)
+const skewYTo = ref(2)
 const useVariables = ref(true)
+const isPlaying = ref(false)
 
 const timingOptions: SelectOption[] = [
   { label: 'Ease', value: 'ease' },
@@ -147,6 +150,8 @@ const iterationOptions: SelectOption[] = [
   { label: '3', value: '3' }
 ]
 
+const previewPlayState = computed(() => (isPlaying.value ? 'running' : 'paused'))
+
 const communityAnimations = ref<SavedItem[]>([])
 const communityLoading = ref(false)
 
@@ -159,6 +164,12 @@ const motionValues = computed(() => ({
   endScale: scaleTo.value,
   startOpacity: opacityFrom.value,
   endOpacity: opacityTo.value,
+  startRotate: rotateFrom.value,
+  endRotate: rotateTo.value,
+  startSkewX: skewXFrom.value,
+  endSkewX: skewXTo.value,
+  startSkewY: skewYFrom.value,
+  endSkewY: skewYTo.value,
   duration: duration.value,
   delay: delay.value,
   easing: easing.value,
@@ -176,28 +187,19 @@ const previewStyle = computed<CSSProperties>(() => {
     '--motion-end-scale': `${motion.endScale}`,
     '--motion-start-opacity': `${motion.startOpacity}`,
     '--motion-end-opacity': `${motion.endOpacity}`,
+    '--motion-start-rotate': `${motion.startRotate}deg`,
+    '--motion-end-rotate': `${motion.endRotate}deg`,
+    '--motion-start-skew-x': `${motion.startSkewX}deg`,
+    '--motion-end-skew-x': `${motion.endSkewX}deg`,
+    '--motion-start-skew-y': `${motion.startSkewY}deg`,
+    '--motion-end-skew-y': `${motion.endSkewY}deg`,
     '--motion-duration': `${motion.duration}ms`,
     '--motion-delay': `${motion.delay}ms`,
     '--motion-easing': motion.easing,
-    '--motion-iterations': motion.iterations
+    '--motion-iterations': motion.iterations,
+    '--motion-play-state': previewPlayState.value
   }
 })
-
-function applyCommunity(payload: unknown) {
-  if (!payload || typeof payload !== 'object') return
-  const data = payload as Record<string, any>
-
-  if (Number.isFinite(Number(data.duration))) duration.value = Number(data.duration)
-  if (Number.isFinite(Number(data.delay))) delay.value = Number(data.delay)
-  if (Number.isFinite(Number(data.distanceX))) distanceX.value = Number(data.distanceX)
-  if (Number.isFinite(Number(data.distanceY))) distanceY.value = Number(data.distanceY)
-  if (Number.isFinite(Number(data.scaleFrom))) scaleFrom.value = Number(data.scaleFrom)
-  if (Number.isFinite(Number(data.scaleTo))) scaleTo.value = Number(data.scaleTo)
-  if (Number.isFinite(Number(data.opacityFrom))) opacityFrom.value = Number(data.opacityFrom)
-  if (Number.isFinite(Number(data.opacityTo))) opacityTo.value = Number(data.opacityTo)
-  if (typeof data.easing === 'string') easing.value = data.easing
-  if (data.iterations !== undefined) iterations.value = String(data.iterations)
-}
 
 async function loadCommunityAnimations() {
   communityLoading.value = true
@@ -226,6 +228,12 @@ const codeSnippetWithVariables = computed(() => {
   --motion-end-scale: ${motion.endScale};
   --motion-start-opacity: ${motion.startOpacity};
   --motion-end-opacity: ${motion.endOpacity};
+  --motion-start-rotate: ${motion.startRotate}deg;
+  --motion-end-rotate: ${motion.endRotate}deg;
+  --motion-start-skew-x: ${motion.startSkewX}deg;
+  --motion-end-skew-x: ${motion.endSkewX}deg;
+  --motion-start-skew-y: ${motion.startSkewY}deg;
+  --motion-end-skew-y: ${motion.endSkewY}deg;
   --motion-duration: ${motion.duration}ms;
   --motion-delay: ${motion.delay}ms;
   --motion-easing: ${motion.easing};
@@ -262,11 +270,11 @@ const codeSnippetWithVariables = computed(() => {
 
 @keyframes ${animationName} {
   0% {
-    transform: translate(var(--motion-start-x), var(--motion-start-y)) scale(var(--motion-start-scale));
+    transform: translate(var(--motion-start-x), var(--motion-start-y)) rotate(var(--motion-start-rotate)) skew(var(--motion-start-skew-x), var(--motion-start-skew-y)) scale(var(--motion-start-scale));
     opacity: var(--motion-start-opacity);
   }
   100% {
-    transform: translate(var(--motion-end-x), var(--motion-end-y)) scale(var(--motion-end-scale));
+    transform: translate(var(--motion-end-x), var(--motion-end-y)) rotate(var(--motion-end-rotate)) skew(var(--motion-end-skew-x), var(--motion-end-skew-y)) scale(var(--motion-end-scale));
     opacity: var(--motion-end-opacity);
   }
 }`
@@ -312,11 +320,11 @@ const codeSnippetWithValues = computed(() => {
 
 @keyframes ${animationName} {
   0% {
-    transform: translate(${motion.startX}px, ${motion.startY}px) scale(${motion.startScale});
+    transform: translate(${motion.startX}px, ${motion.startY}px) rotate(${motion.startRotate}deg) skew(${motion.startSkewX}deg, ${motion.startSkewY}deg) scale(${motion.startScale});
     opacity: ${motion.startOpacity};
   }
   100% {
-    transform: translate(${motion.endX}px, ${motion.endY}px) scale(${motion.endScale});
+    transform: translate(${motion.endX}px, ${motion.endY}px) rotate(${motion.endRotate}deg) skew(${motion.endSkewX}deg, ${motion.endSkewY}deg) scale(${motion.endScale});
     opacity: ${motion.endOpacity};
   }
 }`
@@ -329,6 +337,10 @@ async function handleCopy() {
   if (ok) {
     toast.success(t('COMMON.COPIED_TO_CLIPBOARD'))
   }
+}
+
+function togglePlaying() {
+  isPlaying.value = !isPlaying.value
 }
 
 onMounted(() => {
