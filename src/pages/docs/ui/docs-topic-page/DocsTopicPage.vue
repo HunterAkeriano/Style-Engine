@@ -42,4 +42,4 @@ useHead(() => {
 })
 </script>
 
-<style lang="scss" scoped src="./DocsTopicPage.scss"></style>
+<style lang="scss" scoped src="./docs-topic-page.scss"></style>

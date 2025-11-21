@@ -4,4 +4,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationDotsChain.scss"></style>
+<style lang="scss" scoped src="./animation-dots-chain.scss"></style>

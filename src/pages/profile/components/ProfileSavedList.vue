@@ -25,7 +25,9 @@
         <div class="profile-saved-list__preview" :class="`profile-saved-list__preview_${category}`">
           <div v-if="category === 'gradient'" class="profile-saved-list__preview-swatch" :style="getPreviewStyle(item)" />
           <div v-else-if="category === 'shadow'" class="profile-saved-list__preview-shadow" :style="getPreviewStyle(item)" />
-          <pre v-else class="profile-saved-list__preview-animation">{{ animationPreview(item) }}</pre>
+          <div v-else class="profile-saved-list__preview-animation">
+            <div v-html="getAnimationHTML(item)" class="profile-saved-list__preview-animation-content" />
+          </div>
         </div>
         <div class="profile-saved-list__body">
           <header class="profile-saved-list__body-head">
@@ -42,10 +44,19 @@
           </p>
           <div class="profile-saved-list__actions">
             <Button
+              variant="ghost"
+              size="sm"
+              @click="copyCSS(item)"
+              :title="t('PROFILE.COPY_CSS')"
+            >
+              {{ t('PROFILE.COPY') }}
+            </Button>
+            <Button
               v-if="item.status === 'private'"
               variant="ghost"
               size="sm"
-              :disabled="publishingId === item.id"
+              :disabled="publishingId === item.id || !canPublish(item)"
+              :title="getPublishTooltip(item)"
               @click="publish(item)"
             >
               {{ publishingId === item.id ? t('PROFILE.PUBLISHING') : t('PROFILE.PUBLISH') }}
@@ -64,11 +75,18 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toastification'
 import { Button } from '@/shared/ui'
-import { listSaves, requestPublish, type SavedItem, type SaveCategory } from '@/shared/api/saves'
+import {
+  listPublicSaves,
+  listSaves,
+  requestPublish,
+  type SavedItem,
+  type SaveCategory
+} from '@/shared/api/saves'
+import { normalizePayload, stableStringify, formatGradient, formatBoxShadow, copyToClipboard } from '@/shared/lib'
 
 const props = defineProps<{
   category: SaveCategory
@@ -83,6 +101,68 @@ const publishingId = ref<string | null>(null)
 const toast = useToast()
 const { t } = useI18n()
 
+const serverPayloadHashes = ref<Set<string>>(new Set())
+
+const itemHashMap = computed(() => {
+  const map = new Map<string, string>()
+  items.value.forEach(item => {
+    map.set(item.id, stableStringify(normalizePayload(props.category, item.payload ?? {})))
+  })
+  return map
+})
+
+const localHashCounts = computed(() => {
+  const counts = new Map<string, number>()
+  itemHashMap.value.forEach(hash => {
+    counts.set(hash, (counts.get(hash) ?? 0) + 1)
+  })
+  return counts
+})
+
+type DuplicateReason = 'local' | 'public' | null
+
+function getItemHash(item: SavedItem) {
+  return (
+    itemHashMap.value.get(item.id) ??
+    stableStringify(normalizePayload(props.category, item.payload ?? {}))
+  )
+}
+
+function getDuplicateReason(item: SavedItem): DuplicateReason {
+  if (item.status !== 'private') {
+    return null
+  }
+  const hash = getItemHash(item)
+  if ((localHashCounts.value.get(hash) ?? 0) > 1) {
+    return 'local'
+  }
+  if (serverPayloadHashes.value.has(hash)) {
+    return 'public'
+  }
+  return null
+}
+
+function canPublish(item: SavedItem) {
+  return getDuplicateReason(item) === null
+}
+
+function getPublishTooltip(item: SavedItem) {
+  const reason = getDuplicateReason(item)
+  if (!reason) return ''
+  return reason === 'local' ? t('PROFILE.DUPLICATE_LOCAL') : t('PROFILE.DUPLICATE_PUBLIC')
+}
+
+async function loadPublicHashes() {
+  try {
+    const publicItems = await listPublicSaves(props.category)
+    serverPayloadHashes.value = new Set(
+      publicItems.map(item => stableStringify(normalizePayload(props.category, item.payload ?? {})))
+    )
+  } catch (error) {
+    console.warn('Failed to load public saves', error)
+  }
+}
+
 async function loadItems() {
   loading.value = true
   error.value = ''
@@ -96,13 +176,17 @@ async function loadItems() {
 }
 
 async function publish(item: SavedItem) {
+  if (!canPublish(item)) return
   publishingId.value = item.id
   try {
     await requestPublish(props.category, item.id)
     toast.success(t('PROFILE.PUBLISH_SUCCESS'))
-    await loadItems()
+    await Promise.all([loadItems(), loadPublicHashes()])
   } catch (err: any) {
-    toast.error(err?.message || t('PROFILE.PUBLISH_ERROR'))
+    const errorMessage = err?.status === 409
+      ? t('PROFILE.DUPLICATE_EXISTS')
+      : (err?.message || t('PROFILE.PUBLISH_ERROR'))
+    toast.error(errorMessage)
   } finally {
     publishingId.value = null
   }
@@ -146,12 +230,55 @@ function getPreviewStyle(item: SavedItem) {
   return {}
 }
 
-function animationPreview(item: SavedItem) {
+function getAnimationHTML(item: SavedItem): string {
   const payload = item.payload as { css?: string; html?: string }
-  return payload.css ? payload.css : payload.html ?? ''
+  const html = payload.html || '<div class="animated-element"></div>'
+  const css = payload.css || ''
+
+  return `
+    <style scoped>
+      ${css}
+    </style>
+    ${html}
+  `
 }
 
-onMounted(loadItems)
+function generateCSS(item: SavedItem): string {
+  const payload = item.payload as Record<string, any>
+
+  if (props.category === 'gradient') {
+    const colors = Array.isArray(payload.colors) ? payload.colors : []
+    const angle = typeof payload.angle === 'number' ? payload.angle : 90
+    const type = payload.type || 'linear'
+    return formatGradient(type, angle, colors, 'css')
+  }
+
+  if (props.category === 'shadow') {
+    const layers = Array.isArray(payload.layers) ? payload.layers : []
+    return formatBoxShadow(layers, 'css')
+  }
+
+  if (props.category === 'animation') {
+    return payload.css || payload.html || ''
+  }
+
+  return ''
+}
+
+async function copyCSS(item: SavedItem) {
+  try {
+    const css = generateCSS(item)
+    await copyToClipboard(css)
+    toast.success(t('PROFILE.COPIED'))
+  } catch (error) {
+    toast.error(t('PROFILE.COPY_ERROR'))
+  }
+}
+
+onMounted(() => {
+  loadItems()
+  loadPublicHashes()
+})
 </script>
 
 <style scoped lang="scss">
@@ -197,15 +324,35 @@ onMounted(loadItems)
     gap: $space-lg;
     padding: $space-lg;
     border-radius: $border-radius-lg;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: color-var-alpha('surface-panel-2', 0.45);
+    border: 1px solid color-var-alpha('color-border', 0.35);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+      transform: translateY(-4px);
+      border-color: color-var-alpha('color-primary', 0.5);
+      box-shadow:
+        0 8px 24px color-var-alpha('color-primary', 0.15),
+        0 2px 8px color-var-alpha('color-border', 0.25);
+
+      &::before {
+        opacity: 1;
+      }
+    }
   }
 
   &__preview {
     width: 120px;
     height: 120px;
     border-radius: $border-radius-lg;
-    background: rgba(255, 255, 255, 0.05);
+    background: color-var-alpha('surface-panel-1', 0.12);
+    border: 2px solid color-var-alpha('color-border', 0.25);
+    box-shadow: 0 4px 12px color-var-alpha('color-border', 0.15);
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
   }
 
   &__preview-swatch {
@@ -224,14 +371,21 @@ onMounted(loadItems)
   &__preview-animation {
     width: 100%;
     height: 100%;
-    margin: 0;
-    padding: $space-sm;
-    font-size: $font-size-xs;
-    color: $color-text-secondary;
-    overflow: auto;
-    white-space: pre-wrap;
-    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: color-var-alpha('color-border', 0.15);
     border-radius: inherit;
+  }
+
+  &__preview-animation-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(0.7);
   }
 
   &__body {
@@ -246,6 +400,19 @@ onMounted(loadItems)
     justify-content: space-between;
     align-items: center;
     gap: $space-sm;
+    position: relative;
+    z-index: 1;
+
+    h3 {
+      margin: 0;
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
+      background: linear-gradient(135deg, $color-text-primary 0%, color-var-alpha('color-primary', 0.9) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
   }
 
   &__status {

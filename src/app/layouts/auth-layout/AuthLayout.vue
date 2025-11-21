@@ -8,4 +8,4 @@
 import { RouterView } from 'vue-router'
 </script>
 
-<style lang="scss" scoped src="./AuthLayout.scss"></style>
+<style lang="scss" scoped src="./auth-layout.scss"></style>

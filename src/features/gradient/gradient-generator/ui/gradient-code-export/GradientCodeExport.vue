@@ -16,6 +16,13 @@
           >
             {{ copied ? `✓ ${t('GRADIENT.COPIED')}` : t('GRADIENT.COPY') }}
           </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            @click="emit('save')"
+          >
+            {{ t('GRADIENT.SAVE') }}
+          </Button>
         </div>
       </div>
 
@@ -41,6 +48,9 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits<{
+  save: []
+}>()
 const { t } = useI18n()
 const toast = useToast()
 
@@ -73,4 +83,4 @@ async function handleCopy() {
 }
 </script>
 
-<style lang="scss" scoped src="./GradientCodeExport.scss"></style>
+<style lang="scss" scoped src="./gradient-code-export.scss"></style>

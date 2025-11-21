@@ -77,4 +77,4 @@ async function copy(code: string) {
 }
 </script>
 
-<style lang="scss" scoped src="./DocsPlaybook.scss"></style>
+<style lang="scss" scoped src="./docs-playbook.scss"></style>

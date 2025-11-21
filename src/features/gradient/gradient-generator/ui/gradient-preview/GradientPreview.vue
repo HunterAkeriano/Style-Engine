@@ -12,4 +12,4 @@ interface Props {
 defineProps<Props>()
 </script>
 
-<style lang="scss" scoped src="./GradientPreview.scss"></style>
+<style lang="scss" scoped src="./gradient-preview.scss"></style>

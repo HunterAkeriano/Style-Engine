@@ -48,26 +48,34 @@
           <pre class="code-block" v-html="highlightedCode"></pre>
     </div>
   </div>
-    <AuthPromptModal
+    <Modal
       :visible="showAuthModal"
       :title="t('COMMON.AUTH_REQUIRED_TITLE')"
-      :description="t('COMMON.AUTH_REQUIRED_DESCRIPTION')"
-      :confirmLabel="t('COMMON.AUTH_REQUIRED_CONFIRM')"
-      :cancelLabel="t('COMMON.AUTH_REQUIRED_CLOSE')"
+      :subtitle="t('COMMON.AUTH_REQUIRED_DESCRIPTION')"
+      show-actions
+      :confirm-text="t('COMMON.AUTH_REQUIRED_CONFIRM')"
+      :cancel-text="t('COMMON.AUTH_REQUIRED_CLOSE')"
       @confirm="handleAuthConfirm"
       @close="showAuthModal = false"
     />
-    <SavePresetModal
+    <Modal
       :visible="showSaveModal"
       :title="t('PROFILE.SAVES_TITLE')"
       :subtitle="t('PROFILE.SAVES_SUBTITLE')"
-      :confirmLabel="t('COMMON.SAVE')"
-      :cancelLabel="t('COMMON.CANCEL')"
-      :defaultName="saveContext?.defaultName ?? ''"
-      :entityLabel="entityLabel"
-      @confirm="confirmSaveExample"
       @close="closeSaveModal"
-    />
+    >
+      <Input v-model="saveName" :label="t('COMMON.NAME')" />
+      <template #footer>
+        <div class="modal__actions">
+          <Button variant="ghost" size="md" @click="closeSaveModal">
+            {{ t('COMMON.CANCEL') }}
+          </Button>
+          <Button variant="primary" size="md" @click="confirmSaveExample(saveName)">
+            {{ t('COMMON.SAVE') }}
+          </Button>
+        </div>
+      </template>
+    </Modal>
   </div>
 </div>
 </template>
@@ -76,7 +84,7 @@
 import { computed, defineAsyncComponent, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { AuthPromptModal, Button, NavLink } from '@/shared/ui'
+import { Modal, Button, NavLink, Input } from '@/shared/ui'
 import { copyToClipboard } from '@/shared/lib'
 import { useToast } from 'vue-toastification'
 import { animationExamples } from '@/entities/animation'
@@ -91,6 +99,7 @@ const toast = useToast()
 const authStore = useAuthStore()
 const showAuthModal = ref(false)
 const showSaveModal = ref(false)
+const saveName = ref('')
 const saveContext = ref<{ defaultName: string; payload: Record<string, unknown> } | null>(null)
 const entityLabel = computed(() => t('PROFILE.SAVED_ANIMATIONS'))
 const savedAnimationHashes = ref<Set<string>>(new Set())
@@ -167,11 +176,11 @@ async function handleSaveExample() {
   saveContext.value = {
     defaultName: t(selectedExample.value.titleKey),
     payload: {
-      id: selectedExample.value.id,
       html: selectedExample.value.html,
       css: selectedExample.value.css
     }
   }
+  saveName.value = t(selectedExample.value.titleKey)
   showSaveModal.value = true
 }
 
@@ -207,6 +216,11 @@ function closeSaveModal() {
 }
 
 async function loadSavedAnimations() {
+  if (!authStore.isAuthenticated) {
+    savedAnimationHashes.value = new Set()
+    return
+  }
+
   try {
     const saved = await listSaves('animation')
     savedAnimationHashes.value = new Set(saved.map((item: SavedItem) => JSON.stringify(item.payload)))
@@ -228,4 +242,4 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" scoped src="./AnimationDetailPage.scss"></style>
+<style lang="scss" scoped src="./animation-detail-page.scss"></style>

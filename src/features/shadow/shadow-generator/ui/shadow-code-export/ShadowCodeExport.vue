@@ -16,6 +16,13 @@
           >
             {{ copied ? `✓ ${t('SHADOW.COPIED')}` : t('SHADOW.COPY') }}
           </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            @click="emit('save')"
+          >
+            {{ t('SHADOW.SAVE') }}
+          </Button>
         </div>
       </div>
 
@@ -41,6 +48,9 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits<{
+  save: []
+}>()
 const { t } = useI18n()
 const toast = useToast()
 
@@ -71,4 +81,4 @@ async function handleCopy() {
 }
 </script>
 
-<style lang="scss" scoped src="./ShadowCodeExport.scss"></style>
+<style lang="scss" scoped src="./shadow-code-export.scss"></style>

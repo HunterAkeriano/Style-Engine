@@ -5,4 +5,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationMeteor.scss"></style>
+<style lang="scss" scoped src="./animation-meteor.scss"></style>

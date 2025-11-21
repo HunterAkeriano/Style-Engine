@@ -52,4 +52,4 @@
   </svg>
 </template>
 
-<style lang="css" scoped src="./Sprite.scss"></style>
+<style lang="css" scoped src="./sprite.scss"></style>

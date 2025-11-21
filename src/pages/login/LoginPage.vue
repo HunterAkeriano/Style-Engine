@@ -148,4 +148,4 @@ async function handleSubmit() {
 }
 </script>
 
-<style lang="scss" scoped src="./LoginPage.scss"></style>
+<style lang="scss" scoped src="./login-page.scss"></style>

@@ -7,4 +7,4 @@
 <script setup lang="ts">
 </script>
 
-<style scoped lang="scss" src="./AnimationBeamLoader.scss"></style>
+<style scoped lang="scss" src="./animation-beam-loader.scss"></style>

@@ -5,4 +5,4 @@
 <script setup lang="ts">
 </script>
 
-<style scoped lang="scss" src="./AnimationRingDash.scss"></style>
+<style scoped lang="scss" src="./animation-ring-dash.scss"></style>

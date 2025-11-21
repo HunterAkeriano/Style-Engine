@@ -10,4 +10,4 @@
 <script setup lang="ts">
 </script>
 
-<style scoped lang="scss" src="./AnimationCubePulse.scss"></style>
+<style scoped lang="scss" src="./animation-cube-pulse.scss"></style>

@@ -40,4 +40,4 @@ import { NavLink } from '@/shared/ui'
 const { t } = useI18n()
 </script>
 
-<style lang="scss" scoped src="./HomeFeatures.scss"></style>
+<style lang="scss" scoped src="./home-features.scss"></style>

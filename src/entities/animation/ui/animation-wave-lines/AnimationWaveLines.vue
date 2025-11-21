@@ -4,4 +4,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationWaveLines.scss"></style>
+<style lang="scss" scoped src="./animation-wave-lines.scss"></style>

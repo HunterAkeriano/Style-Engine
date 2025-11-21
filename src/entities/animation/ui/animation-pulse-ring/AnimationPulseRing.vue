@@ -5,4 +5,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationPulseRing.scss"></style>
+<style lang="scss" scoped src="./animation-pulse-ring.scss"></style>

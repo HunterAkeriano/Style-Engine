@@ -32,4 +32,4 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 </script>
 
-<style lang="scss" scoped src="./HomeAbout.scss"></style>
+<style lang="scss" scoped src="./home-about.scss"></style>

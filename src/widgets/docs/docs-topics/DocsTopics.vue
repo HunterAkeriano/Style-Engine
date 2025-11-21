@@ -53,4 +53,4 @@ defineProps<{
 }>()
 </script>
 
-<style lang="scss" scoped src="./DocsTopics.scss"></style>
+<style lang="scss" scoped src="./docs-topics.scss"></style>

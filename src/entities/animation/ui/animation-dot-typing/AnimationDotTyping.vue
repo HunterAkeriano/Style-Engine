@@ -9,4 +9,4 @@
 <script setup lang="ts">
 </script>
 
-<style scoped lang="scss" src="./AnimationDotTyping.scss"></style>
+<style scoped lang="scss" src="./animation-dot-typing.scss"></style>

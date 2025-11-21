@@ -25,4 +25,4 @@ import { GradientGenerationProcess } from '@/processes'
 const { t } = useI18n()
 </script>
 
-<style lang="scss" scoped src="./GradientPage.scss"></style>
+<style lang="scss" scoped src="./gradient-page.scss"></style>

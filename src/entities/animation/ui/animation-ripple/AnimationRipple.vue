@@ -5,4 +5,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationRipple.scss"></style>
+<style lang="scss" scoped src="./animation-ripple.scss"></style>

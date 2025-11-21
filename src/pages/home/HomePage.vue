@@ -11,4 +11,4 @@
 import { HomeHero, HomeAbout, HomeFeatures, HomeShowcase } from '@/widgets/home'
 </script>
 
-<style lang="scss" scoped src="./HomePage.scss"></style>
+<style lang="scss" scoped src="./home-page.scss"></style>

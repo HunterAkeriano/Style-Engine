@@ -5,4 +5,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationShimmerCard.scss"></style>
+<style lang="scss" scoped src="./animation-shimmer-card.scss"></style>

@@ -35,4 +35,4 @@ import { NavLink } from '@/shared/ui'
 const { t } = useI18n()
 </script>
 
-<style lang="scss" scoped src="./HomeHero.scss"></style>
+<style lang="scss" scoped src="./home-hero.scss"></style>

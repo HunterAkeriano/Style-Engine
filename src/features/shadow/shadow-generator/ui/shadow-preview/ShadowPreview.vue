@@ -39,4 +39,4 @@ const previewStyle = computed(() => ({
 }))
 </script>
 
-<style lang="scss" scoped src="./ShadowPreview.scss"></style>
+<style lang="scss" scoped src="./shadow-preview.scss"></style>

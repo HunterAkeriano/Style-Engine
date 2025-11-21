@@ -8,4 +8,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationNewsScroll.scss"></style>
+<style lang="scss" scoped src="./animation-news-scroll.scss"></style>

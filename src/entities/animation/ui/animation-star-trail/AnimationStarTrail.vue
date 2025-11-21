@@ -6,4 +6,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationStarTrail.scss"></style>
+<style lang="scss" scoped src="./animation-star-trail.scss"></style>

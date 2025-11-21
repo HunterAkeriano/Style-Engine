@@ -4,4 +4,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationScaleFade.scss"></style>
+<style lang="scss" scoped src="./animation-scale-fade.scss"></style>

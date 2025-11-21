@@ -136,4 +136,4 @@ function normalizeHex(input: string): string | null {
 }
 </script>
 
-<style lang="scss" scoped src="./GradientControls.scss"></style>
+<style lang="scss" scoped src="./gradient-controls.scss"></style>

@@ -95,4 +95,4 @@ async function handleSubmit() {
 }
 </script>
 
-<style lang="scss" scoped src="./AuthPage.scss"></style>
+<style lang="scss" scoped src="./auth-page.scss"></style>

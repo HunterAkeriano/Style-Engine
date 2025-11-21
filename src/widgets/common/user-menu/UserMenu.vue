@@ -76,4 +76,4 @@ function handleLogout() {
 }
 </script>
 
-<style lang="scss" scoped src="./UserMenu.scss"></style>
+<style lang="scss" scoped src="./user-menu.scss"></style>

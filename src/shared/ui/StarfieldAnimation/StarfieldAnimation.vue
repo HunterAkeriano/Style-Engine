@@ -11,4 +11,4 @@
 
 <script setup lang="ts"></script>
 
-<style lang="scss" scoped src="./StarfieldAnimation.scss"></style>
+<style lang="scss" scoped src="./starfield-animation.scss"></style>

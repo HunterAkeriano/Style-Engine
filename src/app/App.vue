@@ -50,4 +50,4 @@ useHead(() => {
 })
 </script>
 
-<style lang="scss" src="./App.scss"></style>
+<style lang="scss" src="./app.scss"></style>

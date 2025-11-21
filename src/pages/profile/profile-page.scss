@@ -3,12 +3,179 @@
 .profile-page {
   min-height: 100vh;
   padding: $space-2xl 0;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: var(--page-background);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  &__sky {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  &__stars {
+    position: absolute;
+    inset: -20%;
+    display: block;
+    background-repeat: repeat;
+    opacity: 0.8;
+    mix-blend-mode: screen;
+    animation: star-swipe 48s linear infinite;
+    animation-fill-mode: both;
+  }
+
+  &__stars-1 {
+    background-image:
+      radial-gradient(circle, rgba(var(--color-text-primary), 0.95) 1px, transparent 1px),
+      radial-gradient(circle, rgba(var(--color-secondary), 0.55) 1.5px, transparent 1.5px);
+    background-size: 140px 140px;
+    animation-duration: 38s;
+    animation-timing-function: ease-in-out;
+  }
+
+  &__stars-2 {
+    background-image:
+      radial-gradient(circle, rgba(var(--color-text-secondary), 0.65) 0.8px, transparent 0.8px),
+      radial-gradient(circle, rgba(var(--color-primary), 0.5) 1.2px, transparent 1.2px);
+    background-size: 80px 80px;
+    animation-duration: 52s;
+    animation-direction: reverse;
+    opacity: 0.55;
+  }
+
+  &__celestial {
+    position: absolute;
+    width: clamp(110px, 13vw, 170px);
+    height: clamp(110px, 13vw, 170px);
+    top: 12%;
+    right: 14%;
+    z-index: 1;
+    border-radius: 50%;
+    transition: transform 0.15s ease-out;
+    will-change: transform;
+  }
+
+  &__celestial_moon {
+    background:
+      radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.95) 0%, rgba(250, 250, 250, 0.9) 45%, rgba(230, 230, 230, 0.8) 70%, rgba(190, 190, 190, 0.05) 95%),
+      radial-gradient(circle at 60% 55%, rgba(0, 0, 0, 0.22) 0%, transparent 25%),
+      radial-gradient(circle at 40% 65%, rgba(0, 0, 0, 0.18) 0%, transparent 30%),
+      radial-gradient(circle at 70% 30%, rgba(0, 0, 0, 0.15) 0%, transparent 28%);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), 0 0 80px rgba(var(--color-primary), 0.25);
+  }
+
+  &__celestial_sun {
+    background:
+      radial-gradient(circle at 40% 40%, rgba(255, 248, 220, 1) 0%, rgba(255, 230, 100, 0.95) 30%, rgba(255, 200, 50, 0.8) 60%, rgba(255, 150, 20, 0.2) 95%);
+    box-shadow:
+      0 0 40px rgba(255, 220, 100, 0.7),
+      0 0 80px rgba(255, 200, 50, 0.5),
+      0 0 120px rgba(255, 180, 40, 0.3);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -20%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 220, 100, 0.3) 0%, transparent 70%);
+      animation: sun-rays 4s ease-in-out infinite;
+    }
+  }
+
+  &__cloud {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 100px;
+    opacity: 0.8;
+    z-index: 0;
+    animation: cloud-float 20s ease-in-out infinite;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 100px;
+    }
+  }
+
+  &__cloud-1 {
+    width: 100px;
+    height: 40px;
+    top: 20%;
+    left: 10%;
+    animation-duration: 25s;
+
+    &::before {
+      width: 50px;
+      height: 50px;
+      top: -25px;
+      left: 15px;
+    }
+
+    &::after {
+      width: 60px;
+      height: 45px;
+      top: -20px;
+      right: 10px;
+    }
+  }
+
+  &__cloud-2 {
+    width: 120px;
+    height: 45px;
+    top: 40%;
+    right: 15%;
+    animation-duration: 30s;
+    animation-delay: -5s;
+
+    &::before {
+      width: 60px;
+      height: 55px;
+      top: -30px;
+      left: 20px;
+    }
+
+    &::after {
+      width: 70px;
+      height: 50px;
+      top: -25px;
+      right: 15px;
+    }
+  }
+
+  &__cloud-3 {
+    width: 80px;
+    height: 35px;
+    top: 65%;
+    left: 20%;
+    animation-duration: 20s;
+    animation-delay: -10s;
+
+    &::before {
+      width: 45px;
+      height: 45px;
+      top: -20px;
+      left: 10px;
+    }
+
+    &::after {
+      width: 50px;
+      height: 40px;
+      top: -18px;
+      right: 8px;
+    }
+  }
 
   &__container {
     max-width: 800px;
     margin: 0 auto;
     padding: 0 $space-lg;
+    position: relative;
+    z-index: 1;
   }
 
   &__header {
@@ -40,8 +207,37 @@
     align-items: center;
     gap: $space-lg;
     padding: $space-xl;
-    background: rgba(255, 255, 255, 0.05);
+    background: color-var-alpha('surface-panel-2', 0.4);
     border-radius: $border-radius-lg;
+  }
+}
+
+@keyframes star-swipe {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  100% {
+    transform: translate3d(-8%, -6%, 0) rotate(5deg) scale(1.05);
+  }
+}
+
+@keyframes cloud-float {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(20px, -10px, 0);
+  }
+}
+
+@keyframes sun-rays {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
   }
 }
 
@@ -143,7 +339,7 @@
 
 .profile-form {
   padding: $space-xl;
-  background: rgba(255, 255, 255, 0.05);
+  background: color-var-alpha('surface-panel-2', 0.45);
   border-radius: $border-radius-lg;
 
   &__field {
@@ -164,8 +360,8 @@
 
   &__input {
     padding: $space-md;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid transparent;
+    background: color-var-alpha('surface-panel-1', 0.1);
+    border: 2px solid color-var-alpha('color-text-secondary', 0.45);
     border-radius: $border-radius-md;
     color: $color-text-primary;
     font-size: $font-size-base;
@@ -174,7 +370,7 @@
     &:focus {
       outline: none;
       border-color: $color-primary;
-      background: rgba(255, 255, 255, 0.15);
+      background: color-var-alpha('surface-panel-1', 0.18);
     }
 
     &:disabled {
@@ -239,7 +435,7 @@
   &__nav-link {
     padding: $space-xs $space-sm;
     border-radius: $border-radius-full;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid color-var-alpha('color-border', 0.35);
     color: $color-text-primary;
     font-size: $font-size-sm;
     text-transform: uppercase;
@@ -247,10 +443,10 @@
     transition: all 0.2s ease;
   }
 
-    &__nav-link_active {
-      border-color: $color-primary;
-      background: color-var-alpha('color-primary', 0.12);
-    }
+  &__nav-link_active {
+    border-color: $color-primary;
+    background: color-var-alpha('color-primary', 0.12);
+  }
 
   &__nav-link_admin {
     border-color: $color-success;

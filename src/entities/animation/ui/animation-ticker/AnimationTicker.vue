@@ -25,4 +25,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationTicker.scss"></style>
+<style lang="scss" scoped src="./animation-ticker.scss"></style>

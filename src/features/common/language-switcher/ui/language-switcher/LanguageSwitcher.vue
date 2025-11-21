@@ -50,26 +50,6 @@ const languages = [
   { code: 'en', name: 'English' }
 ]
 
-interface HTMLElementWithEvent extends HTMLElement {
-  clickOutsideEvent?: (event: Event) => void
-}
-
-const vClickOutside = {
-  mounted(el: HTMLElementWithEvent, binding: { value: () => void }) {
-    el.clickOutsideEvent = (event: Event) => {
-      if (!(el === event.target || el.contains(event.target as Node))) {
-        binding.value()
-      }
-    }
-    document.addEventListener('click', el.clickOutsideEvent)
-  },
-  unmounted(el: HTMLElementWithEvent) {
-    if (el.clickOutsideEvent) {
-      document.removeEventListener('click', el.clickOutsideEvent)
-    }
-  }
-}
-
 function toggleDropdown() {
   isOpen.value = !isOpen.value
 }
@@ -106,4 +86,4 @@ function changeLanguage(newLocale: string) {
 }
 </script>
 
-<style lang="scss" scoped src="./LanguageSwitcher.scss"></style>
+<style lang="scss" scoped src="./language-switcher.scss"></style>

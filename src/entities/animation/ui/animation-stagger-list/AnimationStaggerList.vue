@@ -8,4 +8,4 @@
 const items = Array.from({ length: 5 }).map((_, i) => i)
 </script>
 
-<style lang="scss" scoped src="./AnimationStaggerList.scss"></style>
+<style lang="scss" scoped src="./animation-stagger-list.scss"></style>

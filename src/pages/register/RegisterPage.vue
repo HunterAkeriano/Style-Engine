@@ -164,4 +164,4 @@ async function handleSubmit() {
 }
 </script>
 
-<style lang="scss" scoped src="./RegisterPage.scss"></style>
+<style lang="scss" scoped src="./register-page.scss"></style>

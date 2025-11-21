@@ -11,4 +11,4 @@
 <script setup lang="ts">
 </script>
 
-<style scoped lang="scss" src="./AnimationLineDance.scss"></style>
+<style scoped lang="scss" src="./animation-line-dance.scss"></style>

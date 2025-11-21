@@ -336,4 +336,4 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" scoped src="./AnimationBuilder.scss"></style>
+<style lang="scss" scoped src="./animation-builder.scss"></style>

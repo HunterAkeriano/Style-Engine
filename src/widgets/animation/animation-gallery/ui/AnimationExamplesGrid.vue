@@ -302,4 +302,4 @@ watch(filteredExamples, () => {
 })
 </script>
 
-<style lang="scss" scoped src="./AnimationExamplesGrid.scss"></style>
+<style lang="scss" scoped src="./animation-examples-grid.scss"></style>

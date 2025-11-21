@@ -8,4 +8,4 @@
 <script setup lang="ts">
 </script>
 
-<style scoped lang="scss" src="./AnimationClockLoader.scss"></style>
+<style scoped lang="scss" src="./animation-clock-loader.scss"></style>

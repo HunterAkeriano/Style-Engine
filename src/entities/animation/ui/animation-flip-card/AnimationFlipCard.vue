@@ -7,4 +7,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationFlipCard.scss"></style>
+<style lang="scss" scoped src="./animation-flip-card.scss"></style>

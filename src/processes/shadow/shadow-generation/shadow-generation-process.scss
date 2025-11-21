@@ -1,4 +1,4 @@
-.gradient-generation-process {
+.shadow-generation {
   display: grid;
   grid-template-columns: 1fr;
   gap: $space-lg;
@@ -12,19 +12,22 @@
   &__preview {
     order: 1;
     min-width: 0;
-  }
 
-  &__controls {
-    display: flex;
-    flex-direction: column;
-    gap: $space-lg;
-    order: 2;
-    min-width: 0;
+    @media (min-width: $breakpoint-lg) {
+      position: sticky;
+      top: $space-lg + 2;
+      align-self: start;
+    }
   }
 
   &__code {
-    order: 3;
+    order: 0;
     grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  &__controls {
+    order: 3;
     min-width: 0;
   }
 
@@ -35,8 +38,8 @@
   }
 }
 
-.gradient-generation-process__save-preview {
+.shadow-generation__save-preview {
   width: 100%;
   height: 100%;
-  border-radius: $border-radius-md;
+  border-radius: $border-radius-lg;
 }

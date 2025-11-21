@@ -4,6 +4,7 @@ import { createHead } from '@unhead/vue/client'
 import Toast, { POSITION } from 'vue-toastification'
 import { router, i18n } from '@/app/providers'
 import { App } from '@/app'
+import { clickOutside } from '@/shared/directives'
 
 import '@/app/styles/index.scss'
 import 'vue-toastification/dist/index.css'
@@ -27,4 +28,5 @@ app.use(Toast, {
   bodyClassName: 'se-toast__body'
 })
 
+app.directive('click-outside', clickOutside)
 app.mount('#app')

@@ -6,4 +6,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationRadar.scss"></style>
+<style lang="scss" scoped src="./animation-radar.scss"></style>

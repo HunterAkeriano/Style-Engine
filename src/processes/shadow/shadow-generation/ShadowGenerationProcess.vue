@@ -8,7 +8,7 @@
     </div>
 
     <div class="shadow-generation__code">
-      <ShadowCodeExport :get-code="getCode" />
+      <ShadowCodeExport :get-code="getCode" @save="handleSaveCurrentShadow" />
     </div>
 
     <div class="shadow-generation__controls">
@@ -31,30 +31,35 @@
         @save="handleSavePreset"
       />
     </div>
-    <AuthPromptModal
+    <Modal
       :visible="showAuthModal"
       :title="t('COMMON.AUTH_REQUIRED_TITLE')"
-      :description="t('COMMON.AUTH_REQUIRED_DESCRIPTION')"
-      :confirmLabel="t('COMMON.AUTH_REQUIRED_CONFIRM')"
-      :cancelLabel="t('COMMON.AUTH_REQUIRED_CLOSE')"
+      :subtitle="t('COMMON.AUTH_REQUIRED_DESCRIPTION')"
+      show-actions
+      :confirm-text="t('COMMON.AUTH_REQUIRED_CONFIRM')"
+      :cancel-text="t('COMMON.AUTH_REQUIRED_CLOSE')"
       @confirm="handleAuthConfirm"
       @close="showAuthModal = false"
     />
-    <SavePresetModal
+    <Modal
       :visible="showSaveModal"
       :title="t('PROFILE.SAVES_TITLE')"
       :subtitle="t('PROFILE.SAVES_SUBTITLE')"
-      :confirmLabel="t('COMMON.SAVE')"
-      :cancelLabel="t('COMMON.CANCEL')"
-      :defaultName="saveContext?.defaultName ?? ''"
-      :entityLabel="entityLabel"
-      @confirm="confirmSavePreset"
       @close="closeSaveModal"
     >
-      <template #preview>
-        <div class="shadow-generation__save-preview" :style="currentSavePreviewStyle" />
+      <div class="shadow-generation__save-preview" :style="currentSavePreviewStyle" />
+      <Input v-model="saveName" :label="t('COMMON.NAME')" />
+      <template #footer>
+        <div class="modal__actions">
+          <Button variant="ghost" size="md" @click="closeSaveModal">
+            {{ t('COMMON.CANCEL') }}
+          </Button>
+          <Button variant="primary" size="md" @click="confirmSavePreset(saveName)">
+            {{ t('COMMON.SAVE') }}
+          </Button>
+        </div>
       </template>
-    </SavePresetModal>
+    </Modal>
   </div>
 </template>
 
@@ -67,10 +72,10 @@ import type { ShadowLayer, ShadowPreset } from '@/shared/types'
 import { randomHexColor, hexToRgb } from '@/shared/lib/color'
 import { copyToClipboard, formatBoxShadow, type CSSFormat, smoothScrollToTop } from '@/shared/lib'
 import { ShadowControls, ShadowPreview, ShadowCodeExport, ShadowPresets } from '@/features/shadow'
-import { SHADOW_PRESETS } from './shadowPresets'
+import { SHADOW_PRESETS } from './shadow-presets'
 import { listPublicSaves, listSaves, type SavedItem, createSave } from '@/shared/api/saves'
 import { useAuthStore } from '@/entities'
-import { AuthPromptModal, SavePresetModal } from '@/shared/ui'
+import { Modal, Button, Input } from '@/shared/ui'
 
 const shadowPresets = SHADOW_PRESETS
 const communityPresets = ref<ShadowPreset[]>([])
@@ -90,6 +95,7 @@ const toast = useToast()
 const authStore = useAuthStore()
 const showAuthModal = ref(false)
 const showSaveModal = ref(false)
+const saveName = ref('')
 const savingPresetId = ref<string | null>(null)
 const saveContext = ref<{
   preset: ShadowPreset
@@ -230,6 +236,38 @@ async function copyPreset(preset: ShadowPreset) {
   toast[ok ? 'success' : 'error'](ok ? t('COMMON.COPIED_TO_CLIPBOARD') : t('COMMON.COPY_FAILED'))
 }
 
+async function handleSaveCurrentShadow() {
+  if (!authStore.isAuthenticated) {
+    showAuthModal.value = true
+    return
+  }
+
+  const currentLayers = layers.value.map(layer => ({
+    id: layer.id,
+    x: layer.x,
+    y: layer.y,
+    spread: layer.spread,
+    color: layer.color,
+    opacity: layer.opacity,
+    inset: layer.inset
+  }))
+
+  saveContext.value = {
+    preset: {
+      id: 'custom',
+      name: t('SHADOW.CUSTOM_SHADOW'),
+      description: t('SHADOW.CUSTOM_SHADOW'),
+      layers: currentLayers
+    },
+    payload: {
+      layers: currentLayers
+    },
+    defaultName: t('SHADOW.CUSTOM_SHADOW')
+  }
+  saveName.value = t('SHADOW.CUSTOM_SHADOW')
+  showSaveModal.value = true
+}
+
 async function handleSavePreset(preset: ShadowPreset) {
   if (!authStore.isAuthenticated) {
     showAuthModal.value = true
@@ -243,6 +281,7 @@ async function handleSavePreset(preset: ShadowPreset) {
     },
     defaultName: preset.name
   }
+  saveName.value = preset.name
   showSaveModal.value = true
 }
 
@@ -382,6 +421,11 @@ function mapCommunityPreset(item: SavedItem): ShadowPreset | null {
 }
 
 async function loadSavedShadows() {
+  if (!authStore.isAuthenticated) {
+    savedShadowHashes.value = new Set()
+    return
+  }
+
   try {
     const saved = await listSaves('shadow')
     savedShadowHashes.value = new Set(saved.map((item: SavedItem) => JSON.stringify(item.payload)))
@@ -413,4 +457,4 @@ watch(
 )
 </script>
 
-<style lang="scss" scoped src="./ShadowGenerationProcess.scss"></style>
+<style lang="scss" scoped src="./shadow-generation-process.scss"></style>

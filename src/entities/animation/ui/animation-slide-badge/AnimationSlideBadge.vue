@@ -7,4 +7,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationSlideBadge.scss"></style>
+<style lang="scss" scoped src="./animation-slide-badge.scss"></style>

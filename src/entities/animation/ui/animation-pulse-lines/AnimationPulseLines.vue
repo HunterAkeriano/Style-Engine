@@ -7,4 +7,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationPulseLines.scss"></style>
+<style lang="scss" scoped src="./animation-pulse-lines.scss"></style>

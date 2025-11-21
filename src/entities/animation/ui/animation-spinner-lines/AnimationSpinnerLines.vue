@@ -4,4 +4,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationSpinnerLines.scss"></style>
+<style lang="scss" scoped src="./animation-spinner-lines.scss"></style>

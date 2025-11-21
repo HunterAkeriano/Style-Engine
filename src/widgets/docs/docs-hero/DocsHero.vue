@@ -54,4 +54,4 @@ defineProps<{
 }>()
 </script>
 
-<style lang="scss" scoped src="./DocsHero.scss"></style>
+<style lang="scss" scoped src="./docs-hero.scss"></style>

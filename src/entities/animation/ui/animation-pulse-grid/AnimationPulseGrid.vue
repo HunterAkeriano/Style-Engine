@@ -7,4 +7,4 @@
 <script setup lang="ts">
 </script>
 
-<style scoped lang="scss" src="./AnimationPulseGrid.scss"></style>
+<style scoped lang="scss" src="./animation-pulse-grid.scss"></style>

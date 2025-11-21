@@ -96,4 +96,4 @@ function buildGradient(type: GradientType, angle: number, colors: Array<{ color:
 }
 </script>
 
-<style lang="scss" scoped src="./GradientPresets.scss"></style>
+<style lang="scss" scoped src="./gradient-presets.scss"></style>

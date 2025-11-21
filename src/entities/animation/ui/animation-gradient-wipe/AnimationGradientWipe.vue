@@ -5,4 +5,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationGradientWipe.scss"></style>
+<style lang="scss" scoped src="./animation-gradient-wipe.scss"></style>

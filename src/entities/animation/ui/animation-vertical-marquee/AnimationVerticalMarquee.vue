@@ -11,4 +11,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationVerticalMarquee.scss"></style>
+<style lang="scss" scoped src="./animation-vertical-marquee.scss"></style>

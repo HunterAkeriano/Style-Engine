@@ -4,4 +4,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationRotateSquare.scss"></style>
+<style lang="scss" scoped src="./animation-rotate-square.scss"></style>

@@ -4,4 +4,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationLoaderBars.scss"></style>
+<style lang="scss" scoped src="./animation-loader-bars.scss"></style>

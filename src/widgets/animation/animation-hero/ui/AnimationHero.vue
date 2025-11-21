@@ -65,4 +65,4 @@ defineProps<Props>()
 const { t } = useI18n()
 </script>
 
-<style lang="scss" scoped src="./AnimationHero.scss"></style>
+<style lang="scss" scoped src="./animation-hero.scss"></style>

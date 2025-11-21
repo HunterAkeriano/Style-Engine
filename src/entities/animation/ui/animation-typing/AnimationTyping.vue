@@ -7,4 +7,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationTyping.scss"></style>
+<style lang="scss" scoped src="./animation-typing.scss"></style>

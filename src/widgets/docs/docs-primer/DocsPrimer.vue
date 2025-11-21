@@ -31,4 +31,4 @@ defineProps<{
 }>()
 </script>
 
-<style lang="scss" scoped src="./DocsPrimer.scss"></style>
+<style lang="scss" scoped src="./docs-primer.scss"></style>

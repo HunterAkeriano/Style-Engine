@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getDb } from '../config/db'
 import type { Env } from '../config/env'
 import { createAuthMiddleware, type AuthRequest } from '../middleware/auth'
+import { normalizePayload, stableStringify } from '../utils/payloadNormalization'
 
 const saveSchema = z.object({
   name: z.string().min(1).max(120),
@@ -97,10 +98,41 @@ export function createSavesRouter(env: Env) {
   async function requestPublish(category: Category, req: AuthRequest, res: any) {
     const table = tableForCategory(category)
     const id = req.params.id
+
+    // Get the item to publish
+    const itemResult = await db.query(
+      `SELECT id, payload FROM ${table} WHERE id = $1 AND user_id = $2 AND status = 'private'`,
+      [id, req.userId]
+    )
+
+    if (!itemResult.rowCount) {
+      return res.status(404).json({ message: 'Item not found or already published' })
+    }
+
+    const item = itemResult.rows[0]
+    const normalizedPayload = normalizePayload(category, item.payload)
+    const payloadHash = stableStringify(normalizedPayload)
+
+    // Check for duplicates in approved or pending items
+    const allPublicItems = await db.query(
+      `SELECT payload FROM ${table} WHERE status IN ('approved', 'pending')`,
+      []
+    )
+
+    for (const publicItem of allPublicItems.rows) {
+      const publicNormalized = normalizePayload(category, publicItem.payload)
+      const publicHash = stableStringify(publicNormalized)
+
+      if (payloadHash === publicHash) {
+        return res.status(409).json({ message: 'This item already exists in public collection' })
+      }
+    }
+
+    // Update status to pending
     const result = await db.query(
       `UPDATE ${table}
        SET status = 'pending'
-       WHERE id = $1 AND user_id = $2 AND status != 'approved'
+       WHERE id = $1 AND user_id = $2 AND status = 'private'
        RETURNING id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", created_at as "createdAt"`,
       [id, req.userId]
     )

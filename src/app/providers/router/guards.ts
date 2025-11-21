@@ -50,10 +50,4 @@ export function setupRouterGuards(router: Router) {
 
     next()
   })
-
-  router.afterEach((to, from) => {
-    if (import.meta.env.DEV && typeof console !== 'undefined') {
-      console.info(`Navigation: ${from.path} -> ${to.path}`)
-    }
-  })
 }

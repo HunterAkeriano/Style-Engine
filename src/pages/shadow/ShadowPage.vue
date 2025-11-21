@@ -31,4 +31,4 @@ import { ShadowGenerationProcess } from '@/processes'
 const { t } = useI18n()
 </script>
 
-<style lang="scss" scoped src="./ShadowPage.scss"></style>
+<style lang="scss" scoped src="./shadow-page.scss"></style>

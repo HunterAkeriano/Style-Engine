@@ -9,4 +9,4 @@
 <script setup lang="ts">
 </script>
 
-<style scoped lang="scss" src="./AnimationTripleSpinner.scss"></style>
+<style scoped lang="scss" src="./animation-triple-spinner.scss"></style>

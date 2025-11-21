@@ -1,5 +1,17 @@
 <template>
-  <div class="profile-page">
+  <div class="profile-page" @mousemove="handleMouseMove">
+    <div class="profile-page__sky">
+      <span v-if="isDark" class="profile-page__stars profile-page__stars-1"></span>
+      <span v-if="isDark" class="profile-page__stars profile-page__stars-2"></span>
+      <span
+        class="profile-page__celestial"
+        :class="`profile-page__celestial_${isDark ? 'moon' : 'sun'}`"
+        :style="celestialStyle"
+      ></span>
+      <span v-if="!isDark" class="profile-page__cloud profile-page__cloud-1"></span>
+      <span v-if="!isDark" class="profile-page__cloud profile-page__cloud-2"></span>
+      <span v-if="!isDark" class="profile-page__cloud profile-page__cloud-3"></span>
+    </div>
     <div class="profile-page__container">
       <div class="profile-page__header">
         <h1 class="profile-page__title">{{ t('PROFILE.TITLE') }}</h1>
@@ -140,9 +152,24 @@ import { reactive, ref, computed, onMounted } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { authAPI, type User } from '@/shared/api/auth'
-import './ProfilePage.scss'
+import { useTheme } from '@/shared/composables/useTheme'
+import './profile-page.scss'
 
 const { t, locale } = useI18n()
+const { isDark } = useTheme()
+
+const mouseX = ref(0)
+const mouseY = ref(0)
+
+const celestialStyle = computed(() => ({
+  transform: `translate(${mouseX.value * 0.03}px, ${mouseY.value * 0.03}px)`
+}))
+
+function handleMouseMove(event: MouseEvent) {
+  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
+  mouseX.value = event.clientX - rect.left - rect.width / 2
+  mouseY.value = event.clientY - rect.top - rect.height / 2
+}
 
 const fileInputRef = ref<HTMLInputElement | null>(null)
 const selectedFile = ref<File | null>(null)

@@ -24,4 +24,4 @@ const lightLabel = computed(() => t('NAV.THEME_LIGHT'))
 const darkLabel = computed(() => t('NAV.THEME_DARK'))
 </script>
 
-<style lang="scss" scoped src="./ThemeSwitcher.scss"></style>
+<style lang="scss" scoped src="./theme-switcher.scss"></style>

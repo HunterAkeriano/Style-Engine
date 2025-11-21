@@ -139,4 +139,4 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style lang="scss" scoped src="./Header.scss"></style>
+<style lang="scss" scoped src="./header.scss"></style>

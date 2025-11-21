@@ -4,4 +4,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationColorShift.scss"></style>
+<style lang="scss" scoped src="./animation-color-shift.scss"></style>

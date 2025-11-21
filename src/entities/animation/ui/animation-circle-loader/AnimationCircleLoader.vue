@@ -4,4 +4,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationCircleLoader.scss"></style>
+<style lang="scss" scoped src="./animation-circle-loader.scss"></style>

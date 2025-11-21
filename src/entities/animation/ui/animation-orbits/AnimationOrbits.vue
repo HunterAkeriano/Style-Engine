@@ -6,4 +6,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationOrbits.scss"></style>
+<style lang="scss" scoped src="./animation-orbits.scss"></style>

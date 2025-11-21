@@ -14,4 +14,4 @@ import Footer from '@/widgets/common/footer/Footer.vue'
 import { RouterView } from 'vue-router'
 </script>
 
-<style lang="scss" scoped src="./DocsLayout.scss"></style>
+<style lang="scss" scoped src="./docs-layout.scss"></style>

@@ -174,4 +174,4 @@ const emit = defineEmits<Emits>()
 const { t } = useI18n()
 </script>
 
-<style lang="scss" scoped src="./ShadowControls.scss"></style>
+<style lang="scss" scoped src="./shadow-controls.scss"></style>

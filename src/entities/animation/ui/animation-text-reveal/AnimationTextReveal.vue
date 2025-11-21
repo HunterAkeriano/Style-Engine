@@ -6,4 +6,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationTextReveal.scss"></style>
+<style lang="scss" scoped src="./animation-text-reveal.scss"></style>

@@ -6,7 +6,6 @@ export { default as Icon } from './icon/Icon.vue'
 export { default as NavLink } from './nav-link/NavLink.vue'
 export { default as Sprite } from './sprite/Sprite.vue'
 export { default as ThemeSwitcher } from './theme-switcher/ThemeSwitcher.vue'
-export { default as AuthPromptModal } from './AuthPromptModal.vue'
-export { default as SavePresetModal } from './SavePresetModal.vue'
+export { default as Modal } from './modal/Modal.vue'
 
 export type { SelectOption } from './select/Select.vue'

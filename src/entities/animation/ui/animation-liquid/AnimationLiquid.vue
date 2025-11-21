@@ -6,4 +6,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationLiquid.scss"></style>
+<style lang="scss" scoped src="./animation-liquid.scss"></style>

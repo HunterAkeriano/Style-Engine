@@ -78,4 +78,4 @@ const { t } = useI18n()
 const currentYear = computed(() => new Date().getFullYear())
 </script>
 
-<style lang="scss" scoped src="./Footer.scss"></style>
+<style lang="scss" scoped src="./footer.scss"></style>

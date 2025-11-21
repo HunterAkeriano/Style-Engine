@@ -9,4 +9,4 @@
 <script setup lang="ts">
 </script>
 
-<style scoped lang="scss" src="./AnimationStackBounce.scss"></style>
+<style scoped lang="scss" src="./animation-stack-bounce.scss"></style>

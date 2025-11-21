@@ -38,4 +38,4 @@ const localizedPath = computed(() => {
 })
 </script>
 
-<style lang="scss" scoped src="./NavLink.scss"></style>
+<style lang="scss" scoped src="./nav-link.scss"></style>

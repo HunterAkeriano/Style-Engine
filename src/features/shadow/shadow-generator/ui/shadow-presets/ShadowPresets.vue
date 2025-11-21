@@ -99,4 +99,4 @@ function getStyle(preset: ShadowPreset) {
 }
 </script>
 
-<style lang="scss" scoped src="./ShadowPresets.scss"></style>
+<style lang="scss" scoped src="./shadow-presets.scss"></style>

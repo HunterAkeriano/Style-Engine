@@ -4,4 +4,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped src="./AnimationProgressBar.scss"></style>
+<style lang="scss" scoped src="./animation-progress-bar.scss"></style>

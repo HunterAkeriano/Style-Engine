@@ -19,7 +19,7 @@
     </div>
 
     <div class="gradient-generation-process__code">
-      <GradientCodeExport :get-code="getCode" />
+      <GradientCodeExport :get-code="getCode" @save="handleSaveCurrentGradient" />
     </div>
 
     <div class="gradient-generation-process__presets">
@@ -32,30 +32,35 @@
         @save="handleSavePreset"
       />
     </div>
-    <AuthPromptModal
+    <Modal
       :visible="showAuthModal"
       :title="t('COMMON.AUTH_REQUIRED_TITLE')"
-      :description="t('COMMON.AUTH_REQUIRED_DESCRIPTION')"
-      :confirmLabel="t('COMMON.AUTH_REQUIRED_CONFIRM')"
-      :cancelLabel="t('COMMON.AUTH_REQUIRED_CLOSE')"
+      :subtitle="t('COMMON.AUTH_REQUIRED_DESCRIPTION')"
+      show-actions
+      :confirm-text="t('COMMON.AUTH_REQUIRED_CONFIRM')"
+      :cancel-text="t('COMMON.AUTH_REQUIRED_CLOSE')"
       @confirm="handleAuthConfirm"
       @close="showAuthModal = false"
     />
-    <SavePresetModal
+    <Modal
       :visible="showSaveModal"
       :title="t('PROFILE.SAVES_TITLE')"
       :subtitle="t('PROFILE.SAVES_SUBTITLE')"
-      :confirmLabel="t('COMMON.SAVE')"
-      :cancelLabel="t('COMMON.CANCEL')"
-      :defaultName="saveContext?.defaultName ?? ''"
-      :entityLabel="entityLabel"
-      @confirm="confirmSavePreset"
       @close="closeSaveModal"
     >
-      <template #preview>
-        <div class="gradient-generation-process__save-preview" :style="currentSavePreviewStyle" />
+      <div class="gradient-generation-process__save-preview" :style="currentSavePreviewStyle" />
+      <Input v-model="saveName" :label="t('COMMON.NAME')" />
+      <template #footer>
+        <div class="modal__actions">
+          <Button variant="ghost" size="md" @click="closeSaveModal">
+            {{ t('COMMON.CANCEL') }}
+          </Button>
+          <Button variant="primary" size="md" @click="confirmSavePreset(saveName)">
+            {{ t('COMMON.SAVE') }}
+          </Button>
+        </div>
       </template>
-    </SavePresetModal>
+    </Modal>
   </div>
 </template>
 
@@ -68,10 +73,10 @@ import type { GradientPreset } from './gradientPresets'
 import type { GradientType, GradientColor } from '@/shared/types'
 import { formatGradient, type CSSFormat, copyToClipboard, smoothScrollToTop } from '@/shared/lib'
 import { GradientPreview, GradientControls, GradientCodeExport, GradientPresets } from '@/features/gradient'
-import { GRADIENT_PRESETS } from './gradientPresets'
+import { GRADIENT_PRESETS } from './gradient-presets'
 import { listPublicSaves, type SavedItem, createSave, listSaves } from '@/shared/api/saves'
 import { useAuthStore } from '@/entities'
-import { AuthPromptModal, SavePresetModal } from '@/shared/ui'
+import { Modal, Button, Input } from '@/shared/ui'
 
 const type = ref<GradientType>('linear')
 const angle = ref(90)
@@ -91,6 +96,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 const showAuthModal = ref(false)
 const showSaveModal = ref(false)
+const saveName = ref('')
 const savingPresetId = ref<string | null>(null)
 const saveContext = ref<{
   preset: GradientPreset
@@ -228,6 +234,36 @@ async function copyPreset(preset: GradientPreset) {
   toast[ok ? 'success' : 'error'](ok ? t('COMMON.COPIED_TO_CLIPBOARD') : t('COMMON.COPY_FAILED'))
 }
 
+async function handleSaveCurrentGradient() {
+  if (!authStore.isAuthenticated) {
+    showAuthModal.value = true
+    return
+  }
+
+  const currentColors = colors.value.map(c => ({
+    color: c.color,
+    position: c.position
+  }))
+
+  saveContext.value = {
+    preset: {
+      id: 'custom',
+      name: t('GRADIENT.CUSTOM_GRADIENT'),
+      type: type.value,
+      angle: angle.value,
+      colors: currentColors
+    } as GradientPreset,
+    payload: {
+      type: type.value,
+      angle: angle.value,
+      colors: currentColors
+    },
+    defaultName: t('GRADIENT.CUSTOM_GRADIENT')
+  }
+  saveName.value = t('GRADIENT.CUSTOM_GRADIENT')
+  showSaveModal.value = true
+}
+
 async function handleSavePreset(preset: GradientPreset) {
   if (!authStore.isAuthenticated) {
     showAuthModal.value = true
@@ -243,6 +279,7 @@ async function handleSavePreset(preset: GradientPreset) {
     },
     defaultName: preset.name
   }
+  saveName.value = preset.name
   showSaveModal.value = true
 }
 
@@ -363,6 +400,11 @@ async function loadCommunityPresets() {
 }
 
 async function loadSavedGradients() {
+  if (!authStore.isAuthenticated) {
+    savedGradientHashes.value = new Set()
+    return
+  }
+
   try {
     const saved = await listSaves('gradient')
     savedGradientHashes.value = new Set(saved.map(item => JSON.stringify(item.payload)))
@@ -385,4 +427,4 @@ watch(
 )
 </script>
 
-<style lang="scss" scoped src="./GradientGenerationProcess.scss"></style>
+<style lang="scss" scoped src="./gradient-generation-process.scss"></style>

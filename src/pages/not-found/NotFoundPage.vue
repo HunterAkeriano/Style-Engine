@@ -12,4 +12,4 @@
 import { NavLink } from '@/shared/ui'
 </script>
 
-<style lang="scss" scoped src="./NotFoundPage.scss"></style>
+<style lang="scss" scoped src="./not-found-page.scss"></style>

@@ -43,4 +43,4 @@ const examples = computed(() =>
 )
 </script>
 
-<style lang="scss" src="./AnimationPage.scss"></style>
+<style lang="scss" src="./animation-page.scss"></style>
