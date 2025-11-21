@@ -1,3 +1,5 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+const storybook = require('eslint-plugin-storybook')
 const tsParser = require('@typescript-eslint/parser')
 const tsPlugin = require('@typescript-eslint/eslint-plugin')
 const vueParser = require('vue-eslint-parser')
@@ -47,6 +49,15 @@ module.exports = [
       'no-console': isProd ? 'warn' : 'off',
       'vue/multi-word-component-names': 'off',
       '@typescript-eslint/no-explicit-any': 'off'
+    }
+  },
+  {
+    files: ['**/*.stories.@(ts|tsx)', '**/*.mdx'],
+    plugins: {
+      storybook
+    },
+    rules: {
+      ...(storybook.configs['flat/recommended']?.rules || {})
     }
   }
 ]
