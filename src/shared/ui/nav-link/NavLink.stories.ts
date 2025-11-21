@@ -8,7 +8,7 @@ const meta = {
   argTypes: {
     to: { control: 'text' },
     className: { control: 'text' },
-    click: { action: 'clicked' }
+    onClick: { action: 'clicked' }
   },
   args: {
     to: '/gradient',

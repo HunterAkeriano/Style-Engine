@@ -1,0 +1,142 @@
+.shadow-presets {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  padding: $space-xl;
+  border-radius: $border-radius-xl;
+  background: linear-gradient(145deg, color-var-alpha('color-bg-primary', 0.92), color-var-alpha('color-bg-secondary', 0.94));
+  border: 1px solid color-var-alpha('panel-border', 0.6);
+  box-shadow: $shadow-lg;
+}
+
+.shadow-presets__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $space-lg;
+  flex-wrap: wrap;
+}
+
+.shadow-presets__tag {
+  font-size: $font-size-xs;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-var-alpha('color-text-secondary', 0.9);
+  margin-bottom: $space-xs;
+}
+
+.shadow-presets__title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $space-xs;
+}
+
+.shadow-presets__subtitle {
+  color: color-var-alpha('color-text-secondary', 0.95);
+  max-width: 720px;
+}
+
+.shadow-presets__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: $space-md;
+}
+
+.shadow-presets__card {
+  border-radius: $border-radius-lg;
+  padding: $space-md;
+  background: linear-gradient(140deg, color-var-alpha('color-bg-primary', 0.88), color-var-alpha('color-bg-secondary', 0.92));
+  border: 1px solid color-var-alpha('panel-border', 0.6);
+  box-shadow:
+    inset 0 1px 0 color-var-alpha('color-border', 0.2),
+    0 16px 36px color-var-alpha('color-text-primary', 0.14);
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  cursor: pointer;
+  position: relative;
+  transition: transform $transition-base, border-color $transition-base, box-shadow $transition-base;
+  overflow: hidden;
+
+  &:hover {
+    transform: translate3d(0, -4px, 0);
+    border-color: color-var-alpha('color-text-primary', 0.24);
+    box-shadow:
+      inset 0 1px 0 color-var-alpha('color-border', 0.22),
+      0 20px 42px color-var-alpha('color-primary', 0.18);
+
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  &_active {
+    border-color: $color-primary;
+    box-shadow:
+      inset 0 0 0 1px color-var-alpha('color-primary', 0.3),
+      0 18px 40px color-var-alpha('color-primary', 0.22);
+  }
+}
+
+.shadow-presets__swatch {
+  position: relative;
+  height: 140px;
+  border-radius: $border-radius-lg;
+  background: radial-gradient(circle at 20% 20%, color-var-alpha('color-primary', 0.12), transparent 60%),
+    radial-gradient(circle at 80% 20%, color-var-alpha('color-secondary', 0.12), transparent 62%),
+    linear-gradient(135deg, color-var-alpha('color-bg-primary', 0.95), color-var-alpha('color-bg-secondary', 0.92));
+  border: 1px solid color-var-alpha('panel-border', 0.65);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.shadow-presets__inner {
+  width: 130px;
+  height: 88px;
+  border-radius: $border-radius-lg;
+  background: linear-gradient(145deg, color-var-alpha('color-bg-secondary', 0.9), color-var-alpha('color-bg-primary', 0.94));
+  border: 1px solid color-var-alpha('panel-border', 0.5);
+  display: grid;
+  place-items: center;
+  transition: transform $transition-fast;
+  box-shadow: var(--shadow-value, none);
+}
+
+.shadow-presets__card:hover .shadow-presets__inner {
+  transform: translate3d(0, -2px, 0) rotate(-0.5deg);
+}
+
+.shadow-presets__badge {
+  padding: $space-xs $space-sm;
+  border-radius: $border-radius-full;
+  font-size: $font-size-xs;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: linear-gradient(120deg, color-var-alpha('color-primary', 0.2), color-var-alpha('color-secondary', 0.18));
+  border: 1px solid color-var-alpha('panel-border', 0.6);
+  color: $color-text-primary;
+  box-shadow: inset 0 1px 0 color-var-alpha('color-border', 0.2);
+}
+
+.shadow-presets__content {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.shadow-presets__card-title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+}
+
+.shadow-presets__description {
+  color: color-var-alpha('color-text-secondary', 0.95);
+  line-height: 1.5;
+}
+
+.shadow-presets__actions {
+  display: inline-flex;
+  gap: $space-sm;
+  flex-wrap: wrap;
+}

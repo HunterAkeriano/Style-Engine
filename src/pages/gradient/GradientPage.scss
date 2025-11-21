@@ -137,7 +137,6 @@
     height: 400px;
     background: radial-gradient(circle, color-var-alpha('color-primary', 0.5), transparent 70%);
     border-radius: 50%;
-    filter: blur(80px);
     animation: floatingOrb1 25s ease-in-out infinite alternate;
     will-change: transform;
   }
@@ -151,7 +150,6 @@
     height: 350px;
     background: radial-gradient(circle, color-var-alpha('color-accent', 0.45), transparent 70%);
     border-radius: 50%;
-    filter: blur(75px);
     animation: floatingOrb2 28s ease-in-out infinite alternate-reverse;
     will-change: transform;
   }

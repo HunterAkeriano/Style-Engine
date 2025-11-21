@@ -31,7 +31,7 @@ export function formatBoxShadow(
   shadows: Array<{
     x: number
     y: number
-    blur: number
+    blur?: number
     spread: number
     color: string
     inset?: boolean
@@ -41,7 +41,8 @@ export function formatBoxShadow(
   const shadowValues = shadows
     .map(s => {
       const inset = s.inset ? 'inset ' : ''
-      return `${inset}${s.x}px ${s.y}px ${s.blur}px ${s.spread}px ${s.color}`
+      const blur = typeof s.blur === 'number' ? s.blur : 0
+      return `${inset}${s.x}px ${s.y}px ${blur}px ${s.spread}px ${s.color}`
     })
     .join(', ')
 

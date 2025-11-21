@@ -1,0 +1,33 @@
+.shadow-generation {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-lg;
+  align-items: start;
+
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: $space-xl;
+  }
+
+  &__preview {
+    order: 1;
+    min-width: 0;
+  }
+
+  &__code {
+    order: 0;
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  &__controls {
+    order: 3;
+    min-width: 0;
+  }
+
+  &__presets {
+    order: 4;
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+}

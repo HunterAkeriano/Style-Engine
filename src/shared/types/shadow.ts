@@ -1,37 +1,16 @@
-export type ShadowType = 'box' | 'text'
-
-export interface BoxShadow {
+export interface ShadowLayer {
   id: string
   x: number
   y: number
-  blur: number
   spread: number
   color: string
-  inset: boolean
+  opacity: number
+  inset?: boolean
 }
 
-export interface TextShadow {
-  id: string
-  x: number
-  y: number
-  blur: number
-  color: string
-}
-
-export interface SavedBoxShadow {
+export interface ShadowPreset {
   id: string
   name: string
-  shadows: BoxShadow[]
-  createdAt: string
-  updatedAt: string
+  description: string
+  layers: ShadowLayer[]
 }
-
-export interface SavedTextShadow {
-  id: string
-  name: string
-  shadows: TextShadow[]
-  createdAt: string
-  updatedAt: string
-}
-
-export type SavedShadow = SavedBoxShadow | SavedTextShadow

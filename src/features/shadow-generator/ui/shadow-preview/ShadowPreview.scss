@@ -1,0 +1,197 @@
+.shadow-preview {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: $border-radius-xl;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, color-var-alpha('color-bg-primary', 0.92), color-var-alpha('color-bg-secondary', 0.9));
+  border: 1px solid color-var-alpha('panel-border', 0.28);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.42), 0 18px 32px $color-primary-alpha-18;
+  isolation: isolate;
+}
+
+.shadow-preview__scene {
+  position: absolute;
+  inset: 0;
+  padding: $space-xl;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(120% 120% at 20% 20%, color-var-alpha('color-primary', 0.12), transparent 60%),
+    radial-gradient(110% 120% at 80% 15%, color-var-alpha('color-secondary', 0.12), transparent 60%),
+    radial-gradient(140% 120% at 60% 80%, color-var-alpha('color-accent', 0.12), transparent 70%);
+}
+
+.shadow-preview__grid {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, color-var-alpha('color-text-primary', 0.06) 1px, transparent 1px),
+    linear-gradient(0deg, color-var-alpha('color-text-primary', 0.06) 1px, transparent 1px);
+  background-size: 160px 160px, 160px 160px;
+  mask-image: radial-gradient(120% 90% at 50% 50%, rgba(0, 0, 0, 0.82), transparent 70%);
+  opacity: 0.6;
+  animation: gridDrift 26s ease-in-out infinite alternate;
+}
+
+.shadow-preview__orb {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  opacity: 0.55;
+  mix-blend-mode: screen;
+  z-index: -1;
+  animation: orbFloat 18s ease-in-out infinite alternate;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 16%;
+    border-radius: inherit;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.12), transparent 65%);
+  }
+
+  &_primary {
+    top: -80px;
+    left: -60px;
+    background: radial-gradient(60% 60% at 50% 50%, var(--accent-primary), transparent 70%);
+  }
+
+  &_secondary {
+    bottom: -90px;
+    right: -40px;
+    background: radial-gradient(55% 55% at 50% 50%, var(--accent-secondary), transparent 70%);
+    animation-delay: 6s;
+  }
+}
+
+.shadow-preview__card {
+  width: 100%;
+  max-width: 520px;
+  min-height: 280px;
+  border-radius: $border-radius-xl;
+  background:
+    linear-gradient(135deg, color-var-alpha('color-bg-primary', 0.85), color-var-alpha('color-bg-secondary', 0.94)),
+    linear-gradient(120deg, color-var-alpha('color-primary', 0.18), color-var-alpha('color-secondary', 0.12));
+  border: 1px solid color-var-alpha('panel-border', 0.6);
+  box-shadow: var(--shadow-value), inset 0 1px 0 color-var-alpha('color-border', 0.2);
+  padding: $space-xl;
+  position: relative;
+  overflow: hidden;
+  color: $color-text-primary;
+  transition: transform $transition-base, box-shadow $transition-base, border-color $transition-base;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -30%;
+    border-radius: 30%;
+    background: conic-gradient(from 120deg, color-var-alpha('color-primary', 0.08), rgba(255, 255, 255, 0));
+    opacity: 0.7;
+    animation: rotateSheet 22s linear infinite;
+    mix-blend-mode: soft-light;
+  }
+
+  &::after {
+    inset: -12%;
+    background: linear-gradient(115deg, color-var-alpha('color-text-primary', 0.08), transparent 60%);
+    animation: glance 14s ease-in-out infinite alternate;
+  }
+
+  &:hover {
+    transform: translate3d(0, -4px, 0) rotate(-0.4deg);
+    border-color: color-var-alpha('color-text-primary', 0.22);
+    box-shadow: var(--shadow-value), 0 14px 38px color-var-alpha('color-primary', 0.15);
+  }
+}
+
+.shadow-preview__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  padding: $space-xs $space-sm;
+  border-radius: $border-radius-full;
+  font-size: $font-size-xs;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $color-text-primary;
+  background: linear-gradient(120deg, color-var-alpha('color-primary', 0.26), color-var-alpha('color-secondary', 0.18));
+  border: 1px solid color-var-alpha('panel-border', 0.6);
+}
+
+.shadow-preview__title {
+  margin: $space-md 0 $space-xs;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+}
+
+.shadow-preview__subtitle {
+  max-width: 420px;
+  color: color-var-alpha('color-text-secondary', 0.92);
+  line-height: 1.6;
+  margin-bottom: $space-lg;
+}
+
+.shadow-preview__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-sm $space-md;
+  border-radius: $border-radius-full;
+  background: color-var-alpha('color-bg-primary', 0.4);
+  border: 1px solid color-var-alpha('panel-border', 0.6);
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  box-shadow: inset 0 1px 0 color-var-alpha('color-border', 0.18);
+}
+
+.shadow-preview__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(145deg, var(--accent-primary), var(--accent-secondary));
+  box-shadow: 0 0 0 6px color-var-alpha('color-primary', 0.16);
+  animation: pulseDot 2.8s ease-in-out infinite;
+}
+
+@keyframes gridDrift {
+  0% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(4%, -3%, 0); }
+  100% { transform: translate3d(-3%, 2%, 0); }
+}
+
+@keyframes orbFloat {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(6%, -4%, 0) scale(1.05); }
+  100% { transform: translate3d(-4%, 3%, 0) scale(1); }
+}
+
+@keyframes rotateSheet {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes glance {
+  0% { transform: translate3d(-4%, 2%, 0) rotate(-2deg); opacity: 0.5; }
+  50% { transform: translate3d(2%, -4%, 0) rotate(2deg); opacity: 0.85; }
+  100% { transform: translate3d(4%, 3%, 0) rotate(-2deg); opacity: 0.6; }
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 6px color-var-alpha('color-primary', 0.2); }
+  50% { transform: scale(1.15); box-shadow: 0 0 0 12px color-var-alpha('color-secondary', 0.22); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shadow-preview__grid,
+  .shadow-preview__orb,
+  .shadow-preview__orb::after,
+  .shadow-preview__card,
+  .shadow-preview__card::before,
+  .shadow-preview__card::after,
+  .shadow-preview__dot {
+    animation: none !important;
+  }
+}
