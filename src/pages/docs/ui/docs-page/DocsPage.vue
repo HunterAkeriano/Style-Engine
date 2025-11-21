@@ -37,6 +37,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useHead } from '@unhead/vue'
 import type { Locale } from '@/app/providers/i18n'
 import { getDocsPageContent } from '@/pages/docs/model/content'
 import { DocsHero, DocsTopics, DocsPlaybook, DocsPrimer } from '@/widgets/docs'
@@ -55,6 +56,26 @@ const playbookTitle = computed(() => t('DOCS.PLAYBOOK_TITLE'))
 const playbookSubtitle = computed(() => t('DOCS.PLAYBOOK_SUBTITLE'))
 
 const primerLabel = computed(() => t('DOCS.PRIMER_LABEL'))
+
+useHead(() => {
+  const title = t('META.DOCS')
+  const description = t('META_DESCRIPTION.DOCS')
+  const url = typeof window !== 'undefined' ? window.location.href : ''
+
+  const metaEntries = [
+    description ? { name: 'description', content: description } : null,
+    { property: 'og:title', content: title },
+    description ? { property: 'og:description', content: description } : null,
+    { property: 'og:type', content: 'website' },
+    url ? { property: 'og:url', content: url } : null
+  ].filter(Boolean) as { name?: string; property?: string; content: string }[]
+
+  return {
+    title,
+    meta: metaEntries,
+    link: url ? [{ rel: 'canonical', href: url }] : []
+  }
+})
 </script>
 
 <style lang="scss" scoped src="./DocsPage.scss"></style>

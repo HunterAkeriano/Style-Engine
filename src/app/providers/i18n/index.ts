@@ -6,6 +6,10 @@ export const AVAILABLE_LOCALES = ['uk', 'en'] as const
 export type Locale = typeof AVAILABLE_LOCALES[number]
 
 export function getLocaleFromPath(): Locale {
+  if (typeof window === 'undefined') {
+    return 'en'
+  }
+
   const pathParts = window.location.pathname.split('/').filter(Boolean)
   const firstPart = pathParts[0]
 

@@ -10,14 +10,6 @@
     linear-gradient(180deg, $color-bg-secondary, $color-bg-primary);
   color: $color-text-primary;
 
-  @media (prefers-color-scheme: light) {
-    background:
-      radial-gradient(140% 140% at 12% 18%, color-var-alpha('color-primary', 0.15), transparent 60%),
-      radial-gradient(120% 140% at 82% 22%, color-var-alpha('color-secondary', 0.12), transparent 62%),
-      radial-gradient(120% 120% at 45% 92%, color-var-alpha('color-accent', 0.1), transparent 72%),
-      linear-gradient(180deg, rgba(248, 250, 252, 1), rgba(255, 255, 255, 1));
-  }
-
   [data-theme='light'] & {
     background:
       radial-gradient(140% 140% at 12% 18%, color-var-alpha('color-primary', 0.15), transparent 60%),
@@ -37,14 +29,6 @@
     opacity: 0.8;
     animation: shadowNebula 48s ease-in-out infinite alternate;
     z-index: -2;
-
-    @media (prefers-color-scheme: light) {
-      background:
-        radial-gradient(40% 42% at 22% 38%, color-var-alpha('color-primary', 0.2), transparent 64%),
-        radial-gradient(38% 44% at 78% 26%, color-var-alpha('color-secondary', 0.16), transparent 64%),
-        radial-gradient(44% 48% at 76% 78%, color-var-alpha('color-accent', 0.14), transparent 68%);
-      opacity: 0.6;
-    }
 
     [data-theme='light'] & {
       background:
@@ -69,13 +53,6 @@
     z-index: -1;
     pointer-events: none;
 
-    @media (prefers-color-scheme: light) {
-      background-image:
-        repeating-linear-gradient(90deg, color-var-alpha('color-text-primary', 0.08) 0 1px, transparent 1px 120px),
-        repeating-linear-gradient(0deg, color-var-alpha('color-text-primary', 0.08) 0 1px, transparent 1px 120px);
-      opacity: 0.3;
-    }
-
     [data-theme='light'] & {
       background-image:
         repeating-linear-gradient(90deg, color-var-alpha('color-text-primary', 0.08) 0 1px, transparent 1px 120px),
@@ -94,11 +71,6 @@
   animation: shadowOrbit 64s linear infinite;
   z-index: -2;
   pointer-events: none;
-
-  @media (prefers-color-scheme: light) {
-    background: conic-gradient(from 160deg at 42% 34%, color-var-alpha('color-primary', 0.2), color-var-alpha('color-secondary', 0.12), color-var-alpha('color-accent', 0.14), color-var-alpha('color-primary', 0.2));
-    opacity: 0.4;
-  }
 
   [data-theme='light'] & {
     background: conic-gradient(from 160deg at 42% 34%, color-var-alpha('color-primary', 0.2), color-var-alpha('color-secondary', 0.12), color-var-alpha('color-accent', 0.14), color-var-alpha('color-primary', 0.2));
@@ -131,15 +103,6 @@
     );
     animation: shadowWave1 32s ease-in-out infinite alternate;
 
-    @media (prefers-color-scheme: light) {
-      background: radial-gradient(
-        ellipse at 30% 40%,
-        color-var-alpha('color-primary', 0.14),
-        color-var-alpha('color-primary', 0.08) 30%,
-        transparent 60%
-      );
-    }
-
     [data-theme='light'] & {
       background: radial-gradient(
         ellipse at 30% 40%,
@@ -162,15 +125,6 @@
     animation: shadowWave2 40s ease-in-out infinite alternate;
     animation-delay: -8s;
 
-    @media (prefers-color-scheme: light) {
-      background: radial-gradient(
-        ellipse at 70% 60%,
-        color-var-alpha('color-secondary', 0.12),
-        color-var-alpha('color-secondary', 0.06) 35%,
-        transparent 65%
-      );
-    }
-
     [data-theme='light'] & {
       background: radial-gradient(
         ellipse at 70% 60%,
@@ -192,15 +146,6 @@
     );
     animation: shadowWave3 36s ease-in-out infinite alternate;
     animation-delay: -16s;
-
-    @media (prefers-color-scheme: light) {
-      background: radial-gradient(
-        ellipse at 50% 50%,
-        color-var-alpha('color-accent', 0.1),
-        color-var-alpha('color-accent', 0.05) 40%,
-        transparent 70%
-      );
-    }
 
     [data-theme='light'] & {
       background: radial-gradient(

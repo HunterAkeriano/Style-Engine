@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw, type RouterScrollBehavior } from 'vue-router'
 import { setupRouterGuards } from './guards'
 import { AVAILABLE_LOCALES } from '../i18n'
 import MainLayout from '@/app/layouts/main-layout/MainLayout.vue'
@@ -116,6 +116,16 @@ function applyLocalePrefix(locale: string, routes: RouteRecordRaw[]): RouteRecor
   }))
 }
 
+export const scrollBehavior: RouterScrollBehavior = (_to, _from, savedPosition) => {
+  if (savedPosition) {
+    return { ...savedPosition, behavior: 'smooth' }
+  }
+  if (_to.path !== _from.path) {
+    return { left: 0, top: 0, behavior: 'smooth' }
+  }
+  return false
+}
+
 const localizedRoutes: RouteRecordRaw[] = AVAILABLE_LOCALES.flatMap(locale => applyLocalePrefix(locale, baseRoutes))
 
 const notFoundRoute: RouteRecordRaw = {
@@ -136,19 +146,13 @@ const notFoundRoute: RouteRecordRaw = {
 }
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [...localizedRoutes, notFoundRoute],
-  scrollBehavior(_to, _from, savedPosition) {
-    if (savedPosition) {
-      return { ...savedPosition, behavior: 'smooth' }
-    }
-    if (_to.path !== _from.path) {
-      return { left: 0, top: 0, behavior: 'smooth' }
-    }
-    return false
-  }
+  scrollBehavior
 })
 
 setupRouterGuards(router)
+
+export const routes = [...localizedRoutes, notFoundRoute]
 
 export default router
