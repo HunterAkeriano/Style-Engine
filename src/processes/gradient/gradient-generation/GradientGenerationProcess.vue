@@ -1,10 +1,6 @@
 <template>
-  <div class="gradient-generation-process">
-    <div class="gradient-generation-process__preview">
-      <GradientPreview :gradient-style="gradientStyle" />
-    </div>
-
-    <div class="gradient-generation-process__controls">
+  <div class="gradient-generation-process" ref="processRef">
+    <div class="gradient-generation-process__controls" ref="controlsRef">
       <GradientControls
         :type="type"
         :angle="angle"
@@ -16,6 +12,21 @@
         @update-color="updateColor"
         @update-color-position="updateColorPosition"
       />
+    </div>
+
+    <div
+      class="gradient-generation-process__preview"
+      ref="gradientPreviewWrapperRef"
+      :style="gradientPreviewWrapperStyle"
+    >
+      <div
+        class="gradient-generation-process__preview-inner"
+        :class="{ 'gradient-generation-process__preview-inner--floating': isGradientPreviewFloating }"
+        ref="gradientPreviewRef"
+        :style="gradientFloatingStyle"
+      >
+        <GradientPreview :gradient-style="gradientStyle" />
+      </div>
     </div>
 
     <div class="gradient-generation-process__code">
@@ -76,6 +87,7 @@ import { GradientPreview, GradientControls, GradientCodeExport, GradientPresets 
 import { GRADIENT_PRESETS } from './gradient-presets'
 import { listPublicSaves, type SavedItem, createSave, listSaves } from '@/shared/api/saves'
 import { useAuthStore } from '@/entities'
+import { useFloatingPreview } from '@/shared/composables'
 import { Modal, Button, Input } from '@/shared/ui'
 
 const type = ref<GradientType>('linear')
@@ -94,6 +106,20 @@ const toast = useToast()
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const processRef = ref<HTMLElement | null>(null)
+const controlsRef = ref<HTMLElement | null>(null)
+const {
+  previewRef: gradientPreviewRef,
+  wrapperRef: gradientPreviewWrapperRef,
+  floatingStyle: gradientFloatingStyle,
+  wrapperStyle: gradientPreviewWrapperStyle,
+  isFloating: isGradientPreviewFloating
+} = useFloatingPreview({
+  containerRef: controlsRef,
+  boundingRef: processRef,
+  topOffset: 88,
+  breakpoint: 1024
+})
 const showAuthModal = ref(false)
 const showSaveModal = ref(false)
 const saveName = ref('')

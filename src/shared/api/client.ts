@@ -1,3 +1,12 @@
+import axios, {
+  type AxiosError,
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+  type Method
+} from 'axios'
+import { AUTH_TOKEN_KEY } from './constants'
+
 export interface ApiClientConfig {
   baseURL: string
   timeout?: number
@@ -18,99 +27,96 @@ export interface ApiError {
 }
 
 export class ApiClient {
-  private baseURL: string
-  private timeout: number
-  private headers: Record<string, string>
+  private instance: AxiosInstance
 
   constructor(config: ApiClientConfig) {
-    this.baseURL = config.baseURL
-    this.timeout = config.timeout || 30000
-    this.headers = {
-      'Content-Type': 'application/json',
-      ...config.headers
+    this.instance = axios.create({
+      baseURL: config.baseURL,
+      timeout: config.timeout || 30000,
+      headers: {
+        'Content-Type': 'application/json',
+        ...config.headers
+      }
+    })
+
+    const stored = localStorage.getItem(AUTH_TOKEN_KEY)
+    if (stored) {
+      this.setAuthToken(stored)
+    }
+
+    this.instance.interceptors.response.use(
+      (response) => response,
+      (error: AxiosError) => {
+        const apiError: ApiError = {
+          message: (error.response?.data as any)?.message || error.message,
+          status: error.response?.status,
+          data: error.response?.data
+        }
+        return Promise.reject(apiError)
+      }
+    )
+  }
+
+  setAuthToken(token: string | null) {
+    if (token) {
+      this.instance.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    } else {
+      delete this.instance.defaults.headers.common['Authorization']
     }
   }
 
-  setAuthToken(token: string) {
-    this.headers['Authorization'] = `Bearer ${token}`
-  }
-
   removeAuthToken() {
-    delete this.headers['Authorization']
+    this.setAuthToken(null)
   }
 
-  async get<T>(url: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> {
-    const queryString = params ? '?' + new URLSearchParams(params as Record<string, string>).toString() : ''
-    return this.request<T>('GET', url + queryString)
+  async get<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    return this.request<T>('GET', url, undefined, config)
   }
 
-  async post<T>(url: string, data?: unknown): Promise<ApiResponse<T>> {
-    return this.request<T>('POST', url, data)
+  async post<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    return this.request<T>('POST', url, data, config)
   }
 
-  async put<T>(url: string, data?: unknown): Promise<ApiResponse<T>> {
-    return this.request<T>('PUT', url, data)
+  async put<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    return this.request<T>('PUT', url, data, config)
   }
 
-  async patch<T>(url: string, data?: unknown): Promise<ApiResponse<T>> {
-    return this.request<T>('PATCH', url, data)
+  async patch<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    return this.request<T>('PATCH', url, data, config)
   }
 
-  async delete<T>(url: string): Promise<ApiResponse<T>> {
-    return this.request<T>('DELETE', url)
+  async delete<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    return this.request<T>('DELETE', url, undefined, config)
   }
 
   private async request<T>(
-    method: string,
+    method: Method,
     url: string,
-    data?: unknown
+    data?: unknown,
+    config: AxiosRequestConfig = {}
   ): Promise<ApiResponse<T>> {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), this.timeout)
+    const response: AxiosResponse<T> = await this.instance.request<T>({
+      method,
+      url,
+      data,
+      ...config
+    })
 
-    try {
-      const response = await fetch(this.baseURL + url, {
-        method,
-        headers: this.headers,
-        body: data ? JSON.stringify(data) : undefined,
-        signal: controller.signal
-      })
-
-      clearTimeout(timeoutId)
-
-      const responseData = await response.json()
-
-      if (!response.ok) {
-        throw {
-          message: responseData.message || 'Request failed',
-          status: response.status,
-          data: responseData
-        } as ApiError
-      }
-
-      return {
-        data: responseData,
-        status: response.status,
-        statusText: response.statusText,
-        headers: Object.fromEntries(response.headers.entries())
-      }
-    } catch (error) {
-      clearTimeout(timeoutId)
-
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw {
-          message: 'Request timeout',
-          status: 408
-        } as ApiError
-      }
-
-      throw error
+    return {
+      data: response.data,
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers as Record<string, string>
     }
   }
 }
 
 const apiClient = new ApiClient({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4000/api'
+  baseURL:
+    import.meta.env.VITE_API_URL ||
+    `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'}/api`
 })
+
+export const useApi = () => apiClient
 
 export default apiClient

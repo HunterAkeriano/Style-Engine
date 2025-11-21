@@ -1,7 +1,8 @@
 import type { LoginFormData, RegisterFormData } from '@/shared/lib/validation/auth'
 import { AUTH_TOKEN_KEY } from './constants'
+import { useApi } from './client'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'
+const api = useApi()
 
 export interface User {
   id: string
@@ -24,104 +25,44 @@ export interface ApiError {
 }
 
 class AuthAPI {
-  private getHeaders(includeAuth = false): HeadersInit {
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json'
-    }
-
-    if (includeAuth) {
-      const token = localStorage.getItem(AUTH_TOKEN_KEY)
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-    }
-
-    return headers
-  }
-
   async login(data: LoginFormData): Promise<AuthResponse> {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: this.getHeaders(),
-      body: JSON.stringify(data)
-    })
-
-    if (!response.ok) {
-      const error: ApiError = await response.json()
-      throw error
-    }
-
-    const result: AuthResponse = await response.json()
-    localStorage.setItem(AUTH_TOKEN_KEY, result.token)
-    return result
+    const response = await api.post<AuthResponse>('/auth/login', data)
+    localStorage.setItem(AUTH_TOKEN_KEY, response.data.token)
+    api.setAuthToken(response.data.token)
+    return response.data
   }
 
   async register(data: RegisterFormData): Promise<AuthResponse> {
-    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: this.getHeaders(),
-      body: JSON.stringify(data)
-    })
-
-    if (!response.ok) {
-      const error: ApiError = await response.json()
-      throw error
-    }
-
-    const result: AuthResponse = await response.json()
-    localStorage.setItem(AUTH_TOKEN_KEY, result.token)
-    return result
+    const response = await api.post<AuthResponse>('/auth/register', data)
+    localStorage.setItem(AUTH_TOKEN_KEY, response.data.token)
+    api.setAuthToken(response.data.token)
+    return response.data
   }
 
   async getProfile(): Promise<{ user: User }> {
-    const response = await fetch(`${API_BASE_URL}/api/profile`, {
-      headers: this.getHeaders(true)
-    })
-
-    if (!response.ok) {
-      throw await response.json()
-    }
-
-    return response.json()
+    const response = await api.get<{ user: User }>('/profile')
+    return response.data
   }
 
   async updateProfile(data: { name?: string; avatarUrl?: string }): Promise<{ user: User }> {
-    const response = await fetch(`${API_BASE_URL}/api/profile`, {
-      method: 'PUT',
-      headers: this.getHeaders(true),
-      body: JSON.stringify(data)
-    })
-
-    if (!response.ok) {
-      throw await response.json()
-    }
-
-    return response.json()
+    const response = await api.put<{ user: User }>('/profile', data)
+    return response.data
   }
 
   async uploadAvatar(file: File): Promise<{ user: User; avatarUrl: string }> {
     const formData = new FormData()
     formData.append('avatar', file)
 
-    const token = localStorage.getItem(AUTH_TOKEN_KEY)
-    const response = await fetch(`${API_BASE_URL}/api/profile/avatar`, {
-      method: 'POST',
-      headers: {
-        Authorization: token ? `Bearer ${token}` : ''
-      },
-      body: formData
+    const response = await api.post<{ user: User; avatarUrl: string }>('/profile/avatar', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
     })
 
-    if (!response.ok) {
-      const error: ApiError = await response.json()
-      throw error
-    }
-
-    return response.json()
+    return response.data
   }
 
   logout() {
     localStorage.removeItem(AUTH_TOKEN_KEY)
+    api.removeAuthToken()
   }
 
   isAuthenticated(): boolean {

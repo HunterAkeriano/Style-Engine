@@ -1,4 +1,5 @@
 .gradient-generation-process {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr;
   gap: $space-lg;
@@ -12,12 +13,11 @@
   &__preview {
     order: 1;
     min-width: 0;
+    position: relative;
+  }
 
-    @media (min-width: $breakpoint-lg) {
-      position: sticky;
-      top: $space-lg;
-      align-self: start;
-    }
+  &__preview-inner {
+    width: 100%;
   }
 
   &__controls {

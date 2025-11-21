@@ -1,23 +1,34 @@
 <template>
-  <div class="shadow-generation">
-    <div class="shadow-generation__preview">
-      <ShadowPreview
-        :box-shadow="boxShadowValue"
-        :accent="{ primary: '#22d3ee', secondary: '#a855f7' }"
-      />
-    </div>
-
+  <div class="shadow-generation" ref="processRef">
     <div class="shadow-generation__code">
       <ShadowCodeExport :get-code="getCode" @save="handleSaveCurrentShadow" />
     </div>
 
-    <div class="shadow-generation__controls">
+    <div class="shadow-generation__controls" ref="controlsRef">
       <ShadowControls
         :layers="layers"
         @update-layer="updateLayer"
         @remove-layer="removeLayer"
         @add-layer="addLayer"
       />
+    </div>
+
+    <div
+      class="shadow-generation__preview"
+      ref="shadowPreviewWrapperRef"
+      :style="shadowPreviewWrapperStyle"
+    >
+      <div
+        class="shadow-generation__preview-inner"
+        :class="{ 'shadow-generation__preview-inner--floating': isShadowPreviewFloating }"
+        ref="shadowPreviewRef"
+        :style="shadowFloatingStyle"
+      >
+        <ShadowPreview
+          :box-shadow="boxShadowValue"
+          :accent="{ primary: '#22d3ee', secondary: '#a855f7' }"
+        />
+      </div>
     </div>
 
     <div class="shadow-generation__presets">
@@ -75,6 +86,7 @@ import { ShadowControls, ShadowPreview, ShadowCodeExport, ShadowPresets } from '
 import { SHADOW_PRESETS } from './shadow-presets'
 import { listPublicSaves, listSaves, type SavedItem, createSave } from '@/shared/api/saves'
 import { useAuthStore } from '@/entities'
+import { useFloatingPreview } from '@/shared/composables'
 import { Modal, Button, Input } from '@/shared/ui'
 
 const shadowPresets = SHADOW_PRESETS
@@ -93,6 +105,20 @@ const router = useRouter()
 const { t, locale } = useI18n()
 const toast = useToast()
 const authStore = useAuthStore()
+const processRef = ref<HTMLElement | null>(null)
+const controlsRef = ref<HTMLElement | null>(null)
+const {
+  previewRef: shadowPreviewRef,
+  wrapperRef: shadowPreviewWrapperRef,
+  floatingStyle: shadowFloatingStyle,
+  wrapperStyle: shadowPreviewWrapperStyle,
+  isFloating: isShadowPreviewFloating
+} = useFloatingPreview({
+  containerRef: controlsRef,
+  boundingRef: processRef,
+  topOffset: 88,
+  breakpoint: 1024
+})
 const showAuthModal = ref(false)
 const showSaveModal = ref(false)
 const saveName = ref('')
