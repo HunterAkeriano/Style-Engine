@@ -242,6 +242,7 @@ export default {
   COMMON: {
     LANGUAGE: 'Language',
     COPIED_TO_CLIPBOARD: 'Copied to clipboard',
+    COPY: 'Copy',
     COPY_FAILED: 'Failed to copy',
     SHARED_SUCCESS: 'Shared successfully',
     SHARE_UNAVAILABLE: 'Sharing is not available on this device',
@@ -253,7 +254,12 @@ export default {
     AUTH_REQUIRED_CLOSE: 'Close',
     ALREADY_SAVED: '{entity} already exists in your profile',
     SAVE: 'Save',
-    CANCEL: 'Cancel'
+    CANCEL: 'Cancel',
+    EXPORT: 'Export',
+    DOWNLOAD: 'Download',
+    PRO_EXPORT_TITLE: 'Exporting is Pro-only',
+    PRO_EXPORT_MESSAGE: 'Exporting code is reserved for Pro and Premium users. Upgrade to access HTML and format downloads.',
+    PRO_EXPORT_ACTION: 'View plans'
   },
   FOOTER: {
     NAVIGATION: 'Navigation',
@@ -395,6 +401,7 @@ export default {
     NAV_SHADOWS: 'Saved shadows',
     NAV_ANIMATIONS: 'Saved animations',
     MODERATION_LINK: 'Moderation queue',
+    USER_MANAGEMENT_LINK: 'User management',
     DELETE: 'Delete',
     DELETING: 'Deleting...',
     DELETE_CONFIRM: 'Are you sure you want to delete "{name}"? This action cannot be undone.',
@@ -404,6 +411,9 @@ export default {
   MODERATION: {
     TITLE: 'Moderation queue',
     SUBTITLE: 'Approve community gradients, shadows, and animations',
+    USERS_TAG: 'Community accounts',
+    USERS_INTRO: 'Filter and sort every plan tier before editing credentials or revoking access.',
+    USERS_COUNT: '{count} accounts loaded',
     REFRESH: 'Refresh',
     LOADING: 'Loading...',
     EMPTY: 'No items waiting for review.',
@@ -414,7 +424,35 @@ export default {
     SUBMITTED: 'Submitted',
     CATEGORY_GRADIENT: 'Gradient',
     CATEGORY_SHADOW: 'Shadow',
-    CATEGORY_ANIMATION: 'Animation'
+    CATEGORY_ANIMATION: 'Animation',
+    USERS_TITLE: 'User management',
+    USERS_SUBTITLE: 'Update accounts, rename emails, and adjust subscription tiers.',
+    USERS_FILTER_LABEL: 'Plan',
+    USERS_FILTER_ALL: 'All plans',
+    USERS_TABLE: {
+      EMAIL: 'Email',
+      NAME: 'Name',
+      PLAN: 'Plan',
+      CREATED: 'Created',
+      ACTIONS: 'Actions'
+    },
+    EDIT: 'Edit',
+    DELETE: 'Remove',
+    UNIT: {
+      FREE: 'Free',
+      PRO: 'Pro',
+      PREMIUM: 'Premium'
+    },
+    USER_MODAL_TITLE: 'Edit user',
+    USER_MODAL_SUBTITLE: 'Update email, name, password, or plan for this account.',
+    USER_MODAL_PASSWORD: 'New password',
+    USER_MODAL_PASSWORD_HINT: 'Leave blank to keep the current password.',
+    USER_MODAL_SAVE: 'Save changes',
+    USER_UPDATE_SUCCESS: 'User updated successfully',
+    USER_UPDATE_ERROR: 'Failed to update user',
+    USER_DELETE_SUCCESS: 'User removed',
+    USER_DELETE_ERROR: 'Failed to remove user',
+    DELETE_CONFIRM: 'Delete the account for {name}? This cannot be undone.'
   },
   ABOUT: {
     PAGE_TAG: 'About us',
@@ -483,6 +521,9 @@ export default {
     LIMIT_REACHED_TITLE: 'Template Limit Reached',
     LIMIT_REACHED_MESSAGE: 'You have reached the maximum of {limit} saved {type} templates on the Free plan.',
     LIMIT_UPGRADE_MESSAGE: 'Upgrade to Pro to save up to 50 templates, or Premium for unlimited storage.',
+    PRO_LIMIT_TITLE: 'Pro storage limit reached',
+    PRO_LIMIT_MESSAGE: 'Pro users can save up to {limit} items within {entity}. Upgrade to Premium for unlimited storage.',
+    PRO_LIMIT_ACTION: 'Upgrade to Premium',
     DELETE_TEMPLATE: 'Delete a Template',
     OR: 'or',
     VIEW_PLANS: 'View Plans',

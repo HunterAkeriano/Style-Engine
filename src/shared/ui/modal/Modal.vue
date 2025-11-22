@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Button } from '@/shared/ui'
+import Button from '@/shared/ui/button/Button.vue'
 
 interface Props {
   visible: boolean

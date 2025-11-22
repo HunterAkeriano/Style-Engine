@@ -27,3 +27,8 @@ export async function ensureSuperAdmin(env: Env) {
     [email, passwordHash]
   )
 }
+
+export function isSuperAdminEmail(env: Env, email?: string | null) {
+  if (!email) return false
+  return email.toLowerCase() === env.SUPER_ADMIN_EMAIL.toLowerCase()
+}

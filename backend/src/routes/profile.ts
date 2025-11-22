@@ -4,6 +4,7 @@ import { getDb } from '../config/db'
 import type { Env } from '../config/env'
 import { createAuthMiddleware, type AuthRequest } from '../middleware/auth'
 import { uploadAvatar } from '../middleware/upload'
+import { isSuperAdminEmail } from '../config/super-admin'
 
 const updateProfileSchema = z.object({
   name: z.string().min(1).max(120).optional(),
@@ -14,6 +15,10 @@ export function createProfileRouter(env: Env) {
   const router = Router()
   const db = getDb()
   const auth = createAuthMiddleware(env)
+  function attachSuperFlag(user: any) {
+    if (!user) return user
+    return { ...user, isSuperAdmin: isSuperAdminEmail(env, user.email) }
+  }
 
   /**
    * @swagger
@@ -54,7 +59,7 @@ export function createProfileRouter(env: Env) {
        FROM users WHERE id = $1`,
       [req.userId]
     )
-    const user = result.rows[0]
+    const user = attachSuperFlag(result.rows[0])
     if (!user) return res.status(404).json({ message: 'User not found' })
     res.json({ user })
   })
@@ -120,7 +125,7 @@ export function createProfileRouter(env: Env) {
                  is_payment as "isPayment", subscription_tier as "subscriptionTier", is_admin as "isAdmin"`,
       [req.userId, name ?? null, avatarUrl ?? null]
     )
-    const user = result.rows[0]
+    const user = attachSuperFlag(result.rows[0])
     res.json({ user })
   })
 
@@ -188,7 +193,7 @@ export function createProfileRouter(env: Env) {
       [req.userId, avatarUrl]
     )
 
-    const user = result.rows[0]
+    const user = attachSuperFlag(result.rows[0])
     res.json({ user, avatarUrl })
   })
 

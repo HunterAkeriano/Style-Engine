@@ -7,6 +7,7 @@ export interface User {
   plan?: 'free' | 'pro' | 'premium'
   isPayment?: boolean
   isAdmin?: boolean
+  isSuperAdmin?: boolean
   createdAt: string
   updatedAt?: string
 }

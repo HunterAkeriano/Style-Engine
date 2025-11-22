@@ -242,6 +242,7 @@ export default {
   COMMON: {
     LANGUAGE: 'Мова',
     COPIED_TO_CLIPBOARD: 'Скопійовано в буфер',
+    COPY: 'Копіювати',
     COPY_FAILED: 'Не вдалося скопіювати',
     SHARED_SUCCESS: 'Посилання поділено',
     SHARE_UNAVAILABLE: 'Ой, шерінг недоступний на цьому пристрої',
@@ -253,7 +254,12 @@ export default {
     AUTH_REQUIRED_CLOSE: 'Закрити',
     ALREADY_SAVED: '{entity} вже збережено',
     SAVE: 'Зберегти',
-    CANCEL: 'Скасувати'
+    CANCEL: 'Скасувати',
+    EXPORT: 'Експортувати',
+    DOWNLOAD: 'Завантажити',
+    PRO_EXPORT_TITLE: 'Експорт доступний для Pro',
+    PRO_EXPORT_MESSAGE: 'Експорт коду доступний лише Pro та Premium. Оновіть тариф, щоб завантажувати HTML та інші формати.',
+    PRO_EXPORT_ACTION: 'Переглянути тарифи'
   },
   FOOTER: {
     NAVIGATION: 'Навігація',
@@ -395,6 +401,7 @@ export default {
     COPIED: 'CSS скопійовано в буфер обміну',
     COPY_ERROR: 'Не вдалося скопіювати CSS',
     MODERATION_LINK: 'Черга модерації',
+    USER_MANAGEMENT_LINK: 'Керування користувачами',
     DELETE: 'Видалити',
     DELETING: 'Видалення...',
     DELETE_CONFIRM: 'Ви впевнені, що хочете видалити "{name}"? Цю дію неможливо скасувати.',
@@ -404,6 +411,9 @@ export default {
   MODERATION: {
     TITLE: 'Черга модерації',
     SUBTITLE: 'Схвалюйте роботи спільноти: градієнти, тіні та анімації',
+    USERS_TAG: 'Акаунти спільноти',
+    USERS_INTRO: 'Сортуйте, фільтруйте та редагуйте тарифи перед змінами.',
+    USERS_COUNT: 'Завантажено {count} акаунтів',
     REFRESH: 'Оновити',
     LOADING: 'Завантаження...',
     EMPTY: 'Немає елементів, що очікують на перевірку.',
@@ -414,7 +424,35 @@ export default {
     SUBMITTED: 'Надіслано',
     CATEGORY_GRADIENT: 'Градієнт',
     CATEGORY_SHADOW: 'Тінь',
-    CATEGORY_ANIMATION: 'Анімація'
+    CATEGORY_ANIMATION: 'Анімація',
+    USERS_TITLE: 'Керування користувачами',
+    USERS_SUBTITLE: 'Оновлюйте акаунти, змінюйте email та тариф.',
+    USERS_FILTER_LABEL: 'Тариф',
+    USERS_FILTER_ALL: 'Всі тарифи',
+    USERS_TABLE: {
+      EMAIL: 'Email',
+      NAME: 'Ім’я',
+      PLAN: 'Тариф',
+      CREATED: 'Створено',
+      ACTIONS: 'Дії'
+    },
+    EDIT: 'Редагувати',
+    DELETE: 'Видалити',
+    UNIT: {
+      FREE: 'Free',
+      PRO: 'Pro',
+      PREMIUM: 'Преміум'
+    },
+    USER_MODAL_TITLE: 'Редагувати користувача',
+    USER_MODAL_SUBTITLE: 'Оновіть email, ім’я, пароль або тариф.',
+    USER_MODAL_PASSWORD: 'Новий пароль',
+    USER_MODAL_PASSWORD_HINT: 'Залиште пустим, щоб не змінювати.',
+    USER_MODAL_SAVE: 'Зберегти зміни',
+    USER_UPDATE_SUCCESS: 'Користувача оновлено',
+    USER_UPDATE_ERROR: 'Не вдалося оновити користувача',
+    USER_DELETE_SUCCESS: 'Користувача видалено',
+    USER_DELETE_ERROR: 'Не вдалося видалити користувача',
+    DELETE_CONFIRM: 'Видалити акаунт {name}? Дії незворотні.'
   },
   ABOUT: {
     PAGE_TAG: 'Про нас',
@@ -483,6 +521,9 @@ export default {
     LIMIT_REACHED_TITLE: 'Досягнуто ліміт шаблонів',
     LIMIT_REACHED_MESSAGE: 'Ви досягли максимуму в {limit} збережених {type} шаблонів на безкоштовному плані.',
     LIMIT_UPGRADE_MESSAGE: 'Перейдіть на Pro для збереження до 50 шаблонів, або на Premium для необмеженого сховища.',
+    PRO_LIMIT_TITLE: 'Ліміт Pro досягнуто',
+    PRO_LIMIT_MESSAGE: 'Користувачі Pro можуть зберігати до {limit} елементів у {entity}. Оновіть до Premium для необмеженої кількості.',
+    PRO_LIMIT_ACTION: 'Оновити до Premium',
     DELETE_TEMPLATE: 'Видалити шаблон',
     OR: 'або',
     VIEW_PLANS: 'Переглянути тарифи',

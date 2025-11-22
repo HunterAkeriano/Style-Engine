@@ -17,8 +17,17 @@
             {{ copied ? `✓ ${t('SHADOW.COPIED')}` : t('SHADOW.COPY') }}
           </Button>
           <Button
+            variant="outline"
+            size="sm"
+            class="code-export__download-button"
+            @click="downloadCode"
+          >
+            {{ t('COMMON.DOWNLOAD') }}
+          </Button>
+          <Button
             variant="primary"
             size="sm"
+            v-if="props.showSaveButton !== false"
             @click="emit('save')"
           >
             {{ t('SHADOW.SAVE') }}
@@ -45,17 +54,31 @@ import { copyToClipboard, type CSSFormat } from '@/shared/lib'
 
 interface Props {
   getCode: (format: CSSFormat) => string
+  filename?: string
+  showSaveButton?: boolean
+  allowExport?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  allowExport: true
+})
 const emit = defineEmits<{
   save: []
+  'blocked-export': []
 }>()
 const { t } = useI18n()
 const toast = useToast()
 
 const selectedFormat = ref<CSSFormat>('css')
 const copied = ref(false)
+const extensionMap: Record<CSSFormat, string> = {
+  css: 'css',
+  scss: 'scss',
+  sass: 'sass',
+  stylus: 'styl',
+  inline: 'txt',
+  tailwind: 'css'
+}
 
 const formatOptions: SelectOption[] = [
   { label: 'CSS', value: 'css' },
@@ -78,6 +101,23 @@ async function handleCopy() {
   } else {
     toast.error(t('COMMON.COPY_FAILED'))
   }
+}
+
+function downloadCode() {
+  const ext = extensionMap[selectedFormat.value] ?? 'txt'
+  const filename = `${props.filename ?? 'shadow'}.${ext}`
+  const blob = new Blob([code.value], { type: 'text/plain' })
+  if (!props.allowExport) {
+    emit('blocked-export')
+    return
+  }
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(blob)
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(link.href)
 }
 </script>
 

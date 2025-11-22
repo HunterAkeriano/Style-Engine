@@ -1,7 +1,12 @@
 <template>
   <div class="shadow-generation" ref="processRef">
     <div class="shadow-generation__code">
-      <ShadowCodeExport :get-code="getCode" @save="handleSaveCurrentShadow" />
+      <ShadowCodeExport
+        :get-code="getCode"
+        @save="handleSaveCurrentShadow"
+        :allow-export="isExportAllowed"
+        @blocked-export="showExportProModal = true"
+      />
     </div>
 
     <div class="shadow-generation__controls" ref="controlsRef">
@@ -71,6 +76,39 @@
         </div>
       </template>
     </Modal>
+    <Modal
+      :visible="showProLimitModal"
+      :title="t('PROFILE.PRO_LIMIT_TITLE')"
+      :subtitle="proLimitSubtitle"
+      show-actions
+      :confirm-text="t('PROFILE.PRO_LIMIT_ACTION')"
+      :cancel-text="t('COMMON.CANCEL')"
+      @confirm="handleProLimitConfirm"
+      @close="showProLimitModal = false"
+    />
+    <Modal
+      :visible="showExportModal"
+      :title="t('COMMON.EXPORT')"
+      @close="showExportModal = false"
+    >
+      <ShadowCodeExport
+        :get-code="getCode"
+        :filename="exportFilename"
+        :show-save-button="false"
+        :allow-export="isExportAllowed"
+        @blocked-export="showExportProModal = true"
+      />
+    </Modal>
+    <Modal
+      :visible="showExportProModal"
+      :title="t('COMMON.PRO_EXPORT_TITLE')"
+      :subtitle="t('COMMON.PRO_EXPORT_MESSAGE')"
+      show-actions
+      :confirm-text="t('COMMON.PRO_EXPORT_ACTION')"
+      :cancel-text="t('COMMON.CANCEL')"
+      @confirm="handleExportUpgrade"
+      @close="showExportProModal = false"
+    />
   </div>
 </template>
 
@@ -84,10 +122,18 @@ import { randomHexColor, hexToRgb } from '@/shared/lib/color'
 import { copyToClipboard, formatBoxShadow, type CSSFormat, smoothScrollToTop } from '@/shared/lib'
 import { ShadowControls, ShadowPreview, ShadowCodeExport, ShadowPresets } from '@/features/shadow'
 import { SHADOW_PRESETS } from './shadow-presets'
-import { listPublicSaves, listSaves, type SavedItem, createSave } from '@/shared/api/saves'
+import {
+  listPublicSaves,
+  listSaves,
+  type SavedItem,
+  createSave,
+  type SaveCategory
+} from '@/shared/api/saves'
 import { useAuthStore } from '@/entities'
 import { useFloatingPreview } from '@/shared/composables'
 import { Modal, Button, Input } from '@/shared/ui'
+import { getUserLimit, SubscriptionTier } from '@/shared/config/pricing'
+import { evaluateSaveQuota, type SaveQuotaResult, resolveSubscriptionTier } from '@/shared/lib/save-quota'
 
 const shadowPresets = SHADOW_PRESETS
 const communityPresets = ref<ShadowPreset[]>([])
@@ -121,6 +167,9 @@ const {
 })
 const showAuthModal = ref(false)
 const showSaveModal = ref(false)
+const showProLimitModal = ref(false)
+const showExportModal = ref(false)
+const showExportProModal = ref(false)
 const saveName = ref('')
 const savingPresetId = ref<string | null>(null)
 const saveContext = ref<{
@@ -128,8 +177,27 @@ const saveContext = ref<{
   payload: Record<string, unknown>
   defaultName: string
 } | null>(null)
+const proQuota = ref<SaveQuotaResult | null>(null)
 const savedShadowHashes = ref<Set<string>>(new Set())
 const entityLabel = computed(() => t('PROFILE.SAVED_SHADOWS'))
+const proSaveLimit = getUserLimit(SubscriptionTier.PRO, 'savedTemplates')
+const proLimitSubtitle = computed(() =>
+  t('PROFILE.PRO_LIMIT_MESSAGE', {
+    limit: proQuota.value?.limit ?? proSaveLimit,
+    entity: entityLabel.value
+  })
+)
+const exportFilename = computed(() => selectedPresetId.value ?? 'custom-shadow')
+
+function getUserTier(): SubscriptionTier | undefined {
+  return resolveSubscriptionTier(
+    authStore.user?.subscriptionTier ?? (authStore.userPlan as string | undefined)
+  )
+}
+const isExportAllowed = computed(() => {
+  const tier = getUserTier()
+  return Boolean(tier && tier !== SubscriptionTier.FREE)
+})
 const currentSavePreviewStyle = computed(() => {
   const context = saveContext.value
   if (!context) return {}
@@ -311,12 +379,24 @@ async function handleSavePreset(preset: ShadowPreset) {
   showSaveModal.value = true
 }
 
+function handleExportUpgrade() {
+  showExportProModal.value = false
+  router.push({
+    path: `/${locale.value}/about`,
+    query: { plan: 'premium' }
+  })
+}
+
 async function confirmSavePreset(name: string) {
   const context = saveContext.value
   if (!context) return
 
   const finalName = name || context.defaultName
   showSaveModal.value = false
+  const allowed = await ensureProQuota('shadow')
+  if (!allowed) {
+    return
+  }
   savingPresetId.value = context.preset.id
   try {
     await createSave('shadow', finalName, context.payload)
@@ -339,6 +419,24 @@ async function confirmSavePreset(name: string) {
 function closeSaveModal() {
   showSaveModal.value = false
   saveContext.value = null
+}
+
+async function ensureProQuota(category: SaveCategory) {
+  const quota = await evaluateSaveQuota(category)
+  proQuota.value = quota
+  if (!quota.allowed) {
+    showProLimitModal.value = true
+    return false
+  }
+  return true
+}
+
+function handleProLimitConfirm() {
+  showProLimitModal.value = false
+  router.push({
+    path: `/${locale.value}/about`,
+    query: { plan: 'premium' }
+  })
 }
 
 function isPresetSaved(preset: ShadowPreset) {

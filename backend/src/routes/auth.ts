@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import { z } from 'zod'
 import { getDb } from '../config/db'
 import type { Env } from '../config/env'
+import { isSuperAdminEmail } from '../config/super-admin'
 
 const credentialsSchema = z.object({
   email: z.string().email(),
@@ -14,6 +15,10 @@ const credentialsSchema = z.object({
 export function createAuthRouter(env: Env) {
   const router = Router()
   const db = getDb()
+  function attachSuperFlag(user: any) {
+    if (!user) return user
+    return { ...user, isSuperAdmin: isSuperAdminEmail(env, user.email) }
+  }
 
   /**
    * @swagger
@@ -88,7 +93,7 @@ export function createAuthRouter(env: Env) {
        VALUES ($1, $2, $3) RETURNING id, email, name, avatar_url, created_at, is_payment as "isPayment", is_admin as "isAdmin"`,
       [email.toLowerCase(), passwordHash, name ?? null]
     )
-    const user = insert.rows[0]
+    const user = attachSuperFlag(insert.rows[0])
     const token = jwt.sign({ sub: user.id }, env.JWT_SECRET, { expiresIn: '7d' })
     res.status(201).json({ token, user })
   })
@@ -156,7 +161,7 @@ export function createAuthRouter(env: Env) {
        FROM users WHERE email = $1`,
       [email.toLowerCase()]
     )
-    const user = result.rows[0]
+    const user = attachSuperFlag(result.rows[0])
     if (!user) return res.status(401).json({ message: 'Invalid credentials' })
 
     const valid = await bcrypt.compare(password, user.passwordHash)

@@ -122,6 +122,17 @@ const baseRoutes: RouteRecordRaw[] = [
     }
   },
   {
+    path: 'moderation/users',
+    name: 'moderation-users',
+    component: () => import('@/pages/moderation/UserManagementPage.vue'),
+    meta: {
+      titleKey: 'MODERATION.USERS_TITLE',
+      descriptionKey: 'MODERATION.USERS_SUBTITLE',
+      requiresAuth: true,
+      requiresAdmin: true
+    }
+  },
+  {
     path: 'docs',
     component: DocsLayout,
     children: [

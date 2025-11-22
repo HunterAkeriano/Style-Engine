@@ -30,7 +30,12 @@
     </div>
 
     <div class="gradient-generation-process__code">
-      <GradientCodeExport :get-code="getCode" @save="handleSaveCurrentGradient" />
+      <GradientCodeExport
+        :get-code="getCode"
+        @save="handleSaveCurrentGradient"
+        :allow-export="isExportAllowed"
+        @blocked-export="showExportProModal = true"
+      />
     </div>
 
     <div class="gradient-generation-process__presets">
@@ -72,6 +77,39 @@
         </div>
       </template>
     </Modal>
+    <Modal
+      :visible="showProLimitModal"
+      :title="t('PROFILE.PRO_LIMIT_TITLE')"
+      :subtitle="proLimitSubtitle"
+      show-actions
+      :confirm-text="t('PROFILE.PRO_LIMIT_ACTION')"
+      :cancel-text="t('COMMON.CANCEL')"
+      @confirm="handleProLimitConfirm"
+      @close="showProLimitModal = false"
+    />
+    <Modal
+      :visible="showExportModal"
+      :title="t('COMMON.EXPORT')"
+      @close="showExportModal = false"
+    >
+      <GradientCodeExport
+        :get-code="getCode"
+        :filename="exportFilename"
+        :show-save-button="false"
+        :allow-export="isExportAllowed"
+        @blocked-export="showExportProModal = true"
+      />
+    </Modal>
+    <Modal
+      :visible="showExportProModal"
+      :title="t('COMMON.PRO_EXPORT_TITLE')"
+      :subtitle="t('COMMON.PRO_EXPORT_MESSAGE')"
+      show-actions
+      :confirm-text="t('COMMON.PRO_EXPORT_ACTION')"
+      :cancel-text="t('COMMON.CANCEL')"
+      @confirm="handleExportUpgrade"
+      @close="showExportProModal = false"
+    />
   </div>
 </template>
 
@@ -85,10 +123,18 @@ import type { GradientType, GradientColor } from '@/shared/types'
 import { formatGradient, type CSSFormat, copyToClipboard, smoothScrollToTop } from '@/shared/lib'
 import { GradientPreview, GradientControls, GradientCodeExport, GradientPresets } from '@/features/gradient'
 import { GRADIENT_PRESETS } from './gradient-presets'
-import { listPublicSaves, type SavedItem, createSave, listSaves } from '@/shared/api/saves'
+import {
+  listPublicSaves,
+  type SavedItem,
+  createSave,
+  listSaves,
+  type SaveCategory
+} from '@/shared/api/saves'
 import { useAuthStore } from '@/entities'
 import { useFloatingPreview } from '@/shared/composables'
 import { Modal, Button, Input } from '@/shared/ui'
+import { getUserLimit, SubscriptionTier } from '@/shared/config/pricing'
+import { evaluateSaveQuota, type SaveQuotaResult, resolveSubscriptionTier } from '@/shared/lib/save-quota'
 
 const type = ref<GradientType>('linear')
 const angle = ref(90)
@@ -122,6 +168,9 @@ const {
 })
 const showAuthModal = ref(false)
 const showSaveModal = ref(false)
+const showProLimitModal = ref(false)
+const showExportModal = ref(false)
+const showExportProModal = ref(false)
 const saveName = ref('')
 const savingPresetId = ref<string | null>(null)
 const saveContext = ref<{
@@ -129,9 +178,29 @@ const saveContext = ref<{
   payload: Record<string, unknown>
   defaultName: string
 } | null>(null)
+const proQuota = ref<SaveQuotaResult | null>(null)
 const savedGradientHashes = ref<Set<string>>(new Set())
+const proSaveLimit = getUserLimit(SubscriptionTier.PRO, 'savedTemplates')
+
+function getUserTier(): SubscriptionTier | undefined {
+  return resolveSubscriptionTier(
+    authStore.user?.subscriptionTier ?? (authStore.userPlan as string | undefined)
+  )
+}
 
 const entityLabel = computed(() => t('PROFILE.SAVED_GRADIENTS'))
+const proLimitSubtitle = computed(() =>
+  t('PROFILE.PRO_LIMIT_MESSAGE', {
+    limit: proQuota.value?.limit ?? proSaveLimit,
+    entity: entityLabel.value
+  })
+)
+const exportFilename = computed(() => selectedPresetId.value ?? 'custom-gradient')
+const isExportAllowed = computed(() => {
+  const tier = getUserTier()
+  return Boolean(tier && tier !== SubscriptionTier.FREE)
+})
+
 const currentSavePreviewStyle = computed(() => {
   const context = saveContext.value
   if (!context) return {}
@@ -309,12 +378,24 @@ async function handleSavePreset(preset: GradientPreset) {
   showSaveModal.value = true
 }
 
+function handleExportUpgrade() {
+  showExportProModal.value = false
+  router.push({
+    path: `/${locale.value}/about`,
+    query: { plan: 'premium' }
+  })
+}
+
 async function confirmSavePreset(name: string) {
   const context = saveContext.value
   if (!context) return
 
   const finalName = name || context.defaultName
   showSaveModal.value = false
+  const allowed = await ensureProQuota('gradient')
+  if (!allowed) {
+    return
+  }
   savingPresetId.value = context.preset.id
   try {
     await createSave('gradient', finalName, context.payload)
@@ -337,6 +418,24 @@ async function confirmSavePreset(name: string) {
 function closeSaveModal() {
   showSaveModal.value = false
   saveContext.value = null
+}
+
+async function ensureProQuota(category: SaveCategory) {
+  const quota = await evaluateSaveQuota(category)
+  proQuota.value = quota
+  if (!quota.allowed) {
+    showProLimitModal.value = true
+    return false
+  }
+  return true
+}
+
+function handleProLimitConfirm() {
+  showProLimitModal.value = false
+  router.push({
+    path: `/${locale.value}/about`,
+    query: { plan: 'premium' }
+  })
 }
 
 function isPresetSaved(preset: GradientPreset) {

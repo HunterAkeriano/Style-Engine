@@ -9,6 +9,8 @@ export interface PublicUser {
   avatarUrl: string | null
   subscriptionTier: 'free' | 'pro' | 'premium'
   createdAt: string
+  isPayment?: boolean
+  isAdmin?: boolean
 }
 
 export interface UsersResponse {
@@ -30,7 +32,7 @@ export interface UsersParams {
   sortOrder?: 'asc' | 'desc'
 }
 
-export async function getUsers(params: UsersParams = {}): Promise<UsersResponse> {
+function buildQuery(params: UsersParams) {
   const queryParams = new URLSearchParams()
 
   if (params.page) queryParams.set('page', params.page.toString())
@@ -39,7 +41,35 @@ export async function getUsers(params: UsersParams = {}): Promise<UsersResponse>
   if (params.sortBy) queryParams.set('sortBy', params.sortBy)
   if (params.sortOrder) queryParams.set('sortOrder', params.sortOrder)
 
-  const queryString = queryParams.toString()
-  const response = await api.get<UsersResponse>(queryString ? `/users?${queryString}` : '/users')
+  return queryParams.toString()
+}
+
+async function requestUsers(url: string, params: UsersParams = {}) {
+  const queryString = buildQuery(params)
+  const response = await api.get<UsersResponse>(queryString ? `${url}?${queryString}` : url)
   return response.data
+}
+
+export async function getPublicUsers(params: UsersParams = {}): Promise<UsersResponse> {
+  return requestUsers('/users/public', params)
+}
+
+export async function getModerationUsers(params: UsersParams = {}): Promise<UsersResponse> {
+  return requestUsers('/users', params)
+}
+
+interface UpdateUserPayload {
+  email?: string
+  name?: string
+  password?: string
+  subscriptionTier?: 'free' | 'pro' | 'premium'
+}
+
+export async function updateUser(id: string, payload: UpdateUserPayload) {
+  const response = await api.put<{ user: PublicUser }>(`/users/${id}`, payload)
+  return response.data.user
+}
+
+export async function deleteUser(id: string): Promise<void> {
+  await api.delete(`/users/${id}`)
 }

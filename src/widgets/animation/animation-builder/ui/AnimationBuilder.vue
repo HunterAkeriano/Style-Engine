@@ -96,6 +96,9 @@
                 <Button variant="primary" size="sm" @click="handleCopy">
                   {{ t('ANIMATION.COPY_SNIPPET') }}
                 </Button>
+                <Button variant="secondary" size="sm" @click="handleExportRequest">
+                  {{ t('COMMON.EXPORT') }}
+                </Button>
               </div>
             </div>
           </div>
@@ -103,18 +106,68 @@
       </div>
     </div>
   </div>
+  <Modal
+    :visible="showExportModal"
+    :title="t('COMMON.EXPORT')"
+    @close="showExportModal = false"
+  >
+    <div class="animation-export">
+      <div class="animation-export__toolbar">
+        <Select v-model="exportFormat" :options="animationExportFormats" />
+        <div class="animation-export__actions">
+          <Button variant="outline" size="sm" @click="copyExportCode">
+            {{ t('COMMON.COPY') }}
+          </Button>
+          <Button variant="ghost" size="sm" @click="downloadExportCode">
+            {{ t('COMMON.DOWNLOAD') }}
+          </Button>
+        </div>
+      </div>
+      <div class="animation-export__code">
+        <pre class="code-block"><code>{{ exportCode }}</code></pre>
+      </div>
+    </div>
+  </Modal>
+  <Modal
+    :visible="showExportProModal"
+    :title="t('COMMON.PRO_EXPORT_TITLE')"
+    :subtitle="t('COMMON.PRO_EXPORT_MESSAGE')"
+    show-actions
+    :confirm-text="t('COMMON.PRO_EXPORT_ACTION')"
+    :cancel-text="t('COMMON.CANCEL')"
+    @confirm="handleExportUpgrade"
+    @close="showExportProModal = false"
+  />
+  <Modal
+    :visible="showAuthModal"
+    :title="t('COMMON.AUTH_REQUIRED_TITLE')"
+    :subtitle="t('COMMON.AUTH_REQUIRED_DESCRIPTION')"
+    show-actions
+    :confirm-text="t('COMMON.AUTH_REQUIRED_CONFIRM')"
+    :cancel-text="t('COMMON.AUTH_REQUIRED_CLOSE')"
+    @confirm="handleAuthConfirm"
+    @close="showAuthModal = false"
+  />
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref, type CSSProperties } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Button, Input, Select, type SelectOption } from '@/shared/ui'
+import { useRoute, useRouter } from 'vue-router'
+import { Button, Input, Select, Modal, type SelectOption } from '@/shared/ui'
 import { copyToClipboard } from '@/shared/lib'
 import { useToast } from 'vue-toastification'
 import { listPublicSaves, type SavedItem } from '@/shared/api/saves'
+import { useAuthStore } from '@/entities'
+import { resolveSubscriptionTier } from '@/shared/lib/save-quota'
+import { SubscriptionTier } from '@/shared/config/pricing'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const route = useRoute()
+const router = useRouter()
 const toast = useToast()
+const authStore = useAuthStore()
+const showAuthModal = ref(false)
 const animationName = 'style-engine-motion'
 
 const duration = ref(1200)
@@ -154,6 +207,25 @@ const previewPlayState = computed(() => (isPlaying.value ? 'running' : 'paused')
 
 const communityAnimations = ref<SavedItem[]>([])
 const communityLoading = ref(false)
+const showExportModal = ref(false)
+const showExportProModal = ref(false)
+const exportFormat = ref<'html' | 'css' | 'json'>('html')
+const animationExportFormats = [
+  { label: 'HTML', value: 'html' },
+  { label: 'CSS', value: 'css' },
+  { label: 'JSON', value: 'json' }
+]
+const exportCode = computed(() => {
+  if (!codeSnippet.value) return ''
+  if (exportFormat.value === 'css') {
+    return codeSnippetWithValues.value
+  }
+  if (exportFormat.value === 'json') {
+    return JSON.stringify(motionValues.value, null, 2)
+  }
+  return codeSnippet.value
+})
+const exportFileName = computed(() => `animation-builder-export.${exportFormat.value}`)
 
 const motionValues = computed(() => ({
   startX: distanceX.value * -1,
@@ -200,6 +272,12 @@ const previewStyle = computed<CSSProperties>(() => {
     '--motion-play-state': previewPlayState.value
   }
 })
+
+function getUserTier(): SubscriptionTier | undefined {
+  return resolveSubscriptionTier(
+    authStore.user?.subscriptionTier ?? (authStore.userPlan as string | undefined)
+  )
+}
 
 async function loadCommunityAnimations() {
   communityLoading.value = true
@@ -337,6 +415,54 @@ async function handleCopy() {
   if (ok) {
     toast.success(t('COMMON.COPIED_TO_CLIPBOARD'))
   }
+}
+
+function handleExportRequest() {
+  if (!authStore.isAuthenticated) {
+    showAuthModal.value = true
+    return
+  }
+
+  const tier = getUserTier()
+  if (!tier || tier === SubscriptionTier.FREE) {
+    showExportProModal.value = true
+    return
+  }
+
+  showExportModal.value = true
+}
+
+function handleExportUpgrade() {
+  showExportProModal.value = false
+  router.push({
+    path: `/${locale.value}/about`,
+    query: { plan: 'premium' }
+  })
+}
+
+async function copyExportCode() {
+  if (!exportCode.value) return
+  const ok = await copyToClipboard(exportCode.value)
+  toast[ok ? 'success' : 'error'](ok ? t('COMMON.COPIED_TO_CLIPBOARD') : t('COMMON.COPY_FAILED'))
+}
+
+function downloadExportCode() {
+  const blob = new Blob([exportCode.value], { type: 'text/plain' })
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(blob)
+  link.download = exportFileName.value
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(link.href)
+}
+
+function handleAuthConfirm() {
+  showAuthModal.value = false
+  router.push({
+    name: `${locale.value}-login`,
+    query: { redirect: route.fullPath }
+  })
 }
 
 function togglePlaying() {

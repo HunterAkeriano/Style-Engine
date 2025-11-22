@@ -7,6 +7,8 @@
     radial-gradient(ellipse 100% 70% at 50% 0%, color-var-alpha('color-primary', 0.12), transparent 60%),
     radial-gradient(circle 120% at 20% 80%, color-var-alpha('color-accent', 0.08), transparent 50%),
     $color-bg-primary;
+  position: relative;
+  overflow: hidden;
 
   @media (max-width: 768px) {
     padding: $space-3xl 0;
@@ -23,6 +25,8 @@
     display: flex;
     flex-direction: column;
     gap: $space-3xl;
+    position: relative;
+    z-index: 1;
 
     @media (max-width: 768px) {
       padding: 0 $space-md;
@@ -32,6 +36,59 @@
     @media (max-width: 480px) {
       padding: 0 $space-sm;
       gap: $space-xl;
+    }
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 10% 30%, color-var-alpha('color-accent', 0.1), transparent 40%),
+      radial-gradient(circle at 80% 20%, color-var-alpha('color-primary', 0.08), transparent 45%);
+    animation: about-page-glow 30s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 5%;
+    border-radius: $border-radius-3xl;
+    border: 1px solid color-var-alpha('color-accent', 0.15);
+    box-shadow: 0 0 60px color-var-alpha('color-accent', 0.15);
+    animation: about-page-ring 40s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes about-page-glow {
+    0% {
+      transform: scale(1) translate3d(0, 0, 0);
+      opacity: 0.6;
+    }
+    50% {
+      transform: scale(1.08) translate3d(20px, -10px, 0);
+      opacity: 0.9;
+    }
+    100% {
+      transform: scale(1) translate3d(-10px, 5px, 0);
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes about-page-ring {
+    0% {
+      transform: rotate(0deg);
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 0.6;
+    }
+    100% {
+      transform: rotate(360deg);
+      opacity: 0.3;
     }
   }
 }

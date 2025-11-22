@@ -110,7 +110,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { Button, Select, Icon, Table, type TableColumn, type RowData } from '@/shared/ui'
 import type { SelectOption } from '@/shared/ui'
-import { getUsers, type PublicUser } from '@/shared/api/users'
+import { getPublicUsers, type PublicUser } from '@/shared/api/users'
 import {
   ABOUT_TIER_FILTER_OPTIONS,
   ABOUT_USERS_TABLE_COLUMNS,
@@ -251,7 +251,7 @@ async function loadUsers(options: { reset?: boolean; page?: number } = {}) {
   error.value = ''
 
   try {
-    const response = await getUsers({
+    const response = await getPublicUsers({
       page,
       limit: pageSize,
       tier: filters.value.tier,

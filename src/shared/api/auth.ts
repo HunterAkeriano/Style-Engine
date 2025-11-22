@@ -13,6 +13,7 @@ export interface User {
   subscriptionTier?: 'free' | 'pro' | 'premium'
   isPayment?: boolean
   isAdmin?: boolean
+  isSuperAdmin?: boolean
 }
 
 export interface AuthResponse {

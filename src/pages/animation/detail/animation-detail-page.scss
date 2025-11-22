@@ -118,6 +118,34 @@
   margin-top: $space-md;
 }
 
+.animation-export {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    flex-wrap: wrap;
+  }
+
+  &__actions {
+    margin-left: auto;
+    display: flex;
+    gap: $space-sm;
+  }
+
+  &__code {
+    max-height: 320px;
+    overflow: auto;
+    background: $color-bg-secondary;
+    border-radius: $border-radius-lg;
+    padding: $space-md;
+    border: 1px solid color-var-alpha('panel-border', 0.25);
+  }
+}
+
 .animation-detail__code {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: $border-radius-2xl;

@@ -127,6 +127,7 @@
           >
             {{ t('PROFILE.NAV_GRADIENTS') }}
           </RouterLink>
+
           <RouterLink
             :to="{ name: `${locale}-profile-shadows` }"
             active-class="profile-page__nav-link_active"
@@ -134,6 +135,7 @@
           >
             {{ t('PROFILE.NAV_SHADOWS') }}
           </RouterLink>
+
           <RouterLink
             :to="{ name: `${locale}-profile-animations` }"
             active-class="profile-page__nav-link_active"
@@ -141,13 +143,21 @@
           >
             {{ t('PROFILE.NAV_ANIMATIONS') }}
           </RouterLink>
-          <RouterLink
-            v-if="isAdmin"
-            :to="{ name: `${locale}-moderation` }"
-            class="profile-page__nav-link profile-page__nav-link_admin"
-          >
-            {{ t('PROFILE.MODERATION_LINK') }}
-          </RouterLink>
+
+        <RouterLink
+          v-if="isAdmin"
+          :to="{ name: `${locale}-moderation` }"
+          class="profile-page__nav-link profile-page__nav-link_admin"
+        >
+          {{ t('PROFILE.MODERATION_LINK') }}
+        </RouterLink>
+        <RouterLink
+          v-if="isSuperAdmin"
+          :to="{ name: `${locale}-moderation-users` }"
+          class="profile-page__nav-link profile-page__nav-link_admin"
+        >
+          {{ t('PROFILE.USER_MANAGEMENT_LINK') }}
+        </RouterLink>
         </nav>
 
         <div class="profile-page__router">
@@ -230,6 +240,7 @@ const hasChanges = computed(() => {
 })
 
 const isAdmin = computed(() => Boolean(user.value?.isAdmin))
+const isSuperAdmin = computed(() => Boolean(user.value?.isSuperAdmin))
 
 const isPaidUser = computed(() => {
   return user.value?.subscriptionTier === 'pro' || user.value?.subscriptionTier === 'premium'

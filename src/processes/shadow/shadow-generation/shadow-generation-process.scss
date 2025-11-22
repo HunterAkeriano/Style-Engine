@@ -25,6 +25,10 @@
     grid-column: 1 / -1;
     min-width: 0;
   }
+  &__export {
+    margin-top: $space-md;
+    text-align: right;
+  }
 
   &__controls {
     order: 3;
