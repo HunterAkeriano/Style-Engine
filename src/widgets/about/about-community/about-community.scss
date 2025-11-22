@@ -1,0 +1,65 @@
+@import '@/app/styles/variables';
+
+.about-community {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+  position: relative;
+  padding: $space-xl 0;
+  opacity: 0;
+  animation: fade-in-up 0.9s ease forwards;
+  animation-delay: 0.4s;
+
+  &:before {
+    content: '';
+    position: absolute;
+    inset: -24px;
+    background: linear-gradient(135deg, color-var-alpha('color-primary', 0.08), transparent 60%);
+    z-index: 0;
+    pointer-events: none;
+    border-radius: $border-radius-2xl;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__head {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+  }
+
+  &__tag {
+    margin: 0;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: $font-size-sm;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: $font-size-3xl;
+    color: $color-text-primary;
+  }
+
+  &__subtitle {
+    margin: $space-xs 0 0;
+    color: $color-text-secondary;
+    max-width: 760px;
+    line-height: 1.6;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

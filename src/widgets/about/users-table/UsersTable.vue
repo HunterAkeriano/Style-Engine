@@ -1,8 +1,10 @@
 <template>
   <div class="users-table">
     <header class="users-table__header">
-      <h2 class="users-table__title">{{ t('ABOUT.OUR_COMMUNITY') }}</h2>
-      <p class="users-table__subtitle">{{ t('ABOUT.COMMUNITY_DESCRIPTION') }}</p>
+      <div class="users-table__headline">
+        <h2 class="users-table__title">{{ t('ABOUT.OUR_COMMUNITY') }}</h2>
+        <p class="users-table__subtitle">{{ t('ABOUT.COMMUNITY_DESCRIPTION') }}</p>
+      </div>
 
       <div class="users-table__filters">
         <Select
@@ -15,106 +17,74 @@
       </div>
     </header>
 
-    <div v-if="loading && !users.length" class="users-table__loading">
+    <div v-if="loading && !users.length" class="users-table__status">
       {{ t('ABOUT.LOADING_USERS') }}
     </div>
 
-    <div v-else-if="error" class="users-table__error">
+    <div v-else-if="error" class="users-table__status users-table__status_error">
       {{ error }}
     </div>
 
-    <div v-else-if="!users.length" class="users-table__empty">
-      {{ t('ABOUT.NO_USERS') }}
-    </div>
+    <Table
+      v-else
+      class="users-table__table"
+      :columns="columns"
+      :rows="users"
+      row-key="id"
+      :sort-by="sortBy"
+      :sort-order="sortOrder"
+      sticky-header
+      striped
+      hoverable
+      size="sm"
+      @sort-change="handleSortChange"
+    >
+      <template #cell-avatar="{ row }">
+        <div class="user-avatar">
+          <img
+            v-if="toUser(row).avatarUrl"
+            :src="toUser(row).avatarUrl!"
+            :alt="toUser(row).name || toUser(row).email"
+            class="user-avatar__img"
+          />
+          <span v-else class="user-avatar__initials">{{ getUserInitials(toUser(row)) }}</span>
+        </div>
+      </template>
 
-    <div v-else class="users-table__wrapper">
-      <table class="users-table__table">
-        <thead class="users-table__thead">
-          <tr>
-            <th class="users-table__th users-table__th_avatar">{{ t('ABOUT.TABLE.AVATAR') }}</th>
-            <th
-              class="users-table__th users-table__th_sortable"
-              @click="handleSort('name')"
-            >
-              {{ t('ABOUT.TABLE.NAME') }}
-              <span v-if="sortBy === 'name'" class="users-table__sort-icon">
-                {{ sortOrder === 'asc' ? '↑' : '↓' }}
-              </span>
-            </th>
-            <th
-              class="users-table__th users-table__th_sortable users-table__th_hide-mobile"
-              @click="handleSort('email')"
-            >
-              {{ t('ABOUT.TABLE.EMAIL') }}
-              <span v-if="sortBy === 'email'" class="users-table__sort-icon">
-                {{ sortOrder === 'asc' ? '↑' : '↓' }}
-              </span>
-            </th>
-            <th
-              class="users-table__th users-table__th_sortable users-table__th_hide-mobile"
-              @click="handleSort('createdAt')"
-            >
-              {{ t('ABOUT.TABLE.JOINED') }}
-              <span v-if="sortBy === 'createdAt'" class="users-table__sort-icon">
-                {{ sortOrder === 'asc' ? '↑' : '↓' }}
-              </span>
-            </th>
-            <th
-              class="users-table__th users-table__th_sortable"
-              @click="handleSort('subscriptionTier')"
-            >
-              {{ t('ABOUT.TABLE.STATUS') }}
-              <span v-if="sortBy === 'subscriptionTier'" class="users-table__sort-icon">
-                {{ sortOrder === 'asc' ? '↑' : '↓' }}
-              </span>
-            </th>
-          </tr>
-        </thead>
-        <tbody class="users-table__tbody">
-          <tr
-            v-for="user in users"
-            :key="user.id"
-            class="users-table__tr"
+      <template #cell-name="{ row }">
+        {{ toUser(row).name || toUser(row).email.split('@')[0] }}
+      </template>
+
+      <template #cell-email="{ value }">
+        {{ value as string }}
+      </template>
+
+      <template #cell-createdAt="{ value }">
+        {{ formatDate(value as string) }}
+      </template>
+
+      <template #cell-subscriptionTier="{ value }">
+        <div class="user-status">
+          <Icon
+            v-if="(value as string) !== 'free'"
+            :size="14"
+            :class="['user-status__crown', { 'user-status__crown_premium': (value as string) === 'premium' }]"
+            name="icon-crown"
+          />
+          <span
+            :class="['user-status__badge', `user-status__badge_${value as string}`]"
           >
-            <td class="users-table__td users-table__td_avatar">
-              <div class="user-avatar">
-                <img
-                  v-if="user.avatarUrl"
-                  :src="user.avatarUrl"
-                  :alt="user.name || user.email"
-                  class="user-avatar__img"
-                />
-                <span v-else class="user-avatar__initials">{{ getUserInitials(user) }}</span>
-              </div>
-            </td>
-            <td class="users-table__td users-table__td_name">
-              {{ user.name || user.email.split('@')[0] }}
-            </td>
-            <td class="users-table__td users-table__td_hide-mobile">
-              {{ user.email }}
-            </td>
-            <td class="users-table__td users-table__td_hide-mobile">
-              {{ formatDate(user.createdAt) }}
-            </td>
-            <td class="users-table__td users-table__td_status">
-              <div class="user-status">
-                <Icon
-                  v-if="user.subscriptionTier !== 'free'"
-                  :size="14"
-                  :class="['user-status__crown', { 'user-status__crown_premium': user.subscriptionTier === 'premium' }]"
-                  name="icon-crown"
-                />
-                <span
-                  :class="['user-status__badge', `user-status__badge_${user.subscriptionTier}`]"
-                >
-                  {{ t(`ABOUT.TIER.${user.subscriptionTier.toUpperCase()}`) }}
-                </span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+            {{ t(`ABOUT.TIER.${(value as string).toUpperCase()}`) }}
+          </span>
+        </div>
+      </template>
+
+      <template #empty>
+        <div class="users-table__status">
+          {{ t('ABOUT.NO_USERS') }}
+        </div>
+      </template>
+    </Table>
 
     <div ref="loadMoreTrigger" class="users-table__sentinel" aria-hidden="true"></div>
 
@@ -138,11 +108,15 @@
 import { computed, ref, onBeforeUnmount, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { Button, Select, Icon } from '@/shared/ui'
+import { Button, Select, Icon, Table, type TableColumn, type RowData } from '@/shared/ui'
 import type { SelectOption } from '@/shared/ui'
 import { getUsers, type PublicUser } from '@/shared/api/users'
+import {
+  ABOUT_TIER_FILTER_OPTIONS,
+  ABOUT_USERS_TABLE_COLUMNS,
+  type TierFilter
+} from '@/entities/about'
 
-type TierFilter = 'all' | 'free' | 'pro' | 'premium'
 type SortField = 'name' | 'email' | 'createdAt' | 'subscriptionTier'
 
 const allowedSorts: Record<string, SortField> = {
@@ -171,12 +145,6 @@ const normalizeSortOrder = (value?: string): 'asc' | 'desc' => {
   return value.toLowerCase() === 'asc' ? 'asc' : 'desc'
 }
 
-type QueryState = {
-  tier: TierFilter
-  sortBy: SortField
-  sortOrder: 'asc' | 'desc'
-}
-
 const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
@@ -191,56 +159,65 @@ const loadMoreTrigger = ref<HTMLElement | null>(null)
 const pageSize = 20
 let observer: IntersectionObserver | null = null
 
-const buildQueryStateFromRoute = (): QueryState => ({
-  tier: normalizeTier(route.query.tier as string | undefined),
-  sortBy: normalizeSortBy(route.query.sortBy as string | undefined),
-  sortOrder: normalizeSortOrder(route.query.sortOrder as string | undefined)
-})
-
+const initialTier = normalizeTier(route.query.tier as string | undefined)
 const filters = ref({
-  tier: 'all' as TierFilter
+  tier: initialTier
 })
+const lastSyncedTier = ref(initialTier)
 
 const sortBy = ref<SortField>('createdAt')
 const sortOrder = ref<'asc' | 'desc'>('desc')
 
-const lastSyncedQuery = ref<QueryState>(buildQueryStateFromRoute())
+const tierOptions = computed<SelectOption[]>(() =>
+  ABOUT_TIER_FILTER_OPTIONS.map((option) => ({
+    value: option.value,
+    label: t(option.labelKey)
+  }))
+)
 
-filters.value.tier = lastSyncedQuery.value.tier
-sortBy.value = lastSyncedQuery.value.sortBy
-sortOrder.value = lastSyncedQuery.value.sortOrder
+const columns = computed<TableColumn[]>(() =>
+  ABOUT_USERS_TABLE_COLUMNS.map((column) => {
+    let accessor: ((row: RowData) => unknown) | undefined
+    if (column.key === 'name') {
+      accessor = (row) => {
+        const user = toUser(row)
+        return user.name || user.email.split('@')[0]
+      }
+    } else if (column.key === 'email') {
+      accessor = (row) => toUser(row).email
+    } else if (column.key === 'createdAt') {
+      accessor = (row) => toUser(row).createdAt
+    } else if (column.key === 'subscriptionTier') {
+      accessor = (row) => toUser(row).subscriptionTier
+    }
 
-const tierOptions = computed<SelectOption[]>(() => [
-  { value: 'all', label: t('ABOUT.FILTER.ALL') },
-  { value: 'free', label: t('ABOUT.FILTER.FREE') },
-  { value: 'pro', label: t('ABOUT.FILTER.PRO') },
-  { value: 'premium', label: t('ABOUT.FILTER.PREMIUM') }
-])
+    return {
+      key: column.key,
+      label: t(column.labelKey),
+      sortable: column.sortable,
+      width: column.width,
+      align: column.align,
+      hideOnMobile: column.hideOnMobile,
+      ...(accessor ? { accessor } : {})
+    }
+  })
+)
 
-function updateRouteQueryState() {
-  const nextState: QueryState = {
-    tier: filters.value.tier,
-    sortBy: sortBy.value,
-    sortOrder: sortOrder.value
-  }
+function toUser(row: RowData): PublicUser {
+  return row as unknown as PublicUser
+}
 
-  const sameState =
-    lastSyncedQuery.value.tier === nextState.tier &&
-    lastSyncedQuery.value.sortBy === nextState.sortBy &&
-    lastSyncedQuery.value.sortOrder === nextState.sortOrder
-
-  if (sameState) {
+function syncTierQuery() {
+  if (lastSyncedTier.value === filters.value.tier) {
     return
   }
 
-  lastSyncedQuery.value = nextState
+  lastSyncedTier.value = filters.value.tier
 
-  const nextQuery = {
-    ...route.query,
-    tier: nextState.tier,
-    sortBy: nextState.sortBy,
-    sortOrder: nextState.sortOrder
-  }
+  const nextQuery = { ...route.query }
+  nextQuery.tier = filters.value.tier
+  delete nextQuery.sortBy
+  delete nextQuery.sortOrder
 
   router.replace({ query: nextQuery }).catch(() => {})
 }
@@ -301,18 +278,15 @@ async function loadUsers(options: { reset?: boolean; page?: number } = {}) {
 }
 
 function handleFilterChange() {
-  updateRouteQueryState()
+  syncTierQuery()
   loadUsers({ reset: true, page: 1 })
 }
 
-function handleSort(field: SortField) {
-  if (sortBy.value === field) {
-    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
-  } else {
-    sortBy.value = field
-    sortOrder.value = 'desc'
-  }
-  updateRouteQueryState()
+function handleSortChange(payload: { sortBy: string; sortOrder: 'asc' | 'desc' }) {
+  const nextSortBy = normalizeSortBy(payload.sortBy)
+  const nextSortOrder = normalizeSortOrder(payload.sortOrder)
+  sortBy.value = nextSortBy
+  sortOrder.value = nextSortOrder
   loadUsers({ reset: true, page: 1 })
 }
 
@@ -320,12 +294,6 @@ function loadMore() {
   if (!hasMore.value || loading.value) return
   const nextPage = currentPage.value + 1
   loadUsers({ page: nextPage })
-}
-
-function isTriggerVisible() {
-  if (!loadMoreTrigger.value) return false
-  const rect = loadMoreTrigger.value.getBoundingClientRect()
-  return rect.top <= window.innerHeight
 }
 
 function setupObserver() {
@@ -350,27 +318,15 @@ function setupObserver() {
 }
 
 watch(
-  () => [route.query.tier, route.query.sortBy, route.query.sortOrder],
-  ([tier, sortField, order]) => {
-    const queryState: QueryState = {
-      tier: normalizeTier(tier as string | undefined),
-      sortBy: normalizeSortBy(sortField as string | undefined),
-      sortOrder: normalizeSortOrder(order as string | undefined)
-    }
-
-    const matchesCurrent =
-      queryState.tier === lastSyncedQuery.value.tier &&
-      queryState.sortBy === lastSyncedQuery.value.sortBy &&
-      queryState.sortOrder === lastSyncedQuery.value.sortOrder
-
-    if (matchesCurrent) {
+  () => route.query.tier,
+  (tier) => {
+    const normalizedTier = normalizeTier(tier as string | undefined)
+    if (normalizedTier === filters.value.tier) {
       return
     }
 
-    filters.value.tier = queryState.tier
-    sortBy.value = queryState.sortBy
-    sortOrder.value = queryState.sortOrder
-    lastSyncedQuery.value = queryState
+    filters.value.tier = normalizedTier
+    lastSyncedTier.value = normalizedTier
     loadUsers({ reset: true, page: 1 })
   }
 )
@@ -386,18 +342,6 @@ watch(loadMoreTrigger, (newNode, oldNode) => {
   }
   if (newNode && observer) {
     observer.observe(newNode)
-  }
-})
-
-watch(hasMore, () => {
-  if (hasMore.value && isTriggerVisible()) {
-    loadMore()
-  }
-})
-
-watch(loading, (isLoading, wasLoading) => {
-  if (wasLoading && !isLoading && hasMore.value && isTriggerVisible()) {
-    loadMore()
   }
 })
 

@@ -1,0 +1,126 @@
+@import '@/app/styles/variables';
+
+.about-hero {
+  position: relative;
+  padding: $space-3xl $space-2xl;
+  border-radius: $border-radius-2xl;
+  background:
+    radial-gradient(circle at 10% 20%, color-var-alpha('color-primary', 0.2), transparent 50%),
+    radial-gradient(circle at 90% 10%, color-var-alpha('color-accent', 0.18), transparent 50%),
+    linear-gradient(135deg, color-var-alpha('surface-panel-2', 0.85), color-var-alpha('surface-panel-3', 0.9));
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  box-shadow: 0 24px 80px color-var-alpha('color-text-primary', 0.18);
+
+  @media (max-width: 768px) {
+    padding: $space-2xl $space-xl;
+  }
+
+  @media (max-width: 480px) {
+    padding: $space-xl;
+  }
+
+  &__eyebrow {
+    margin: 0;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: $font-size-sm;
+    opacity: 0;
+    animation: fade-in-up 0.75s ease forwards;
+    animation-delay: 0.2s;
+  }
+
+  &__headline {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    gap: $space-xs;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: clamp($font-size-3xl, 5vw, $font-size-4xl);
+    font-weight: $font-weight-bold;
+    line-height: 1.1;
+    background: linear-gradient(135deg, $color-primary, $color-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+    animation: fade-in-up 0.85s ease forwards;
+    animation-delay: 0.35s;
+  }
+
+  &__title-highlight {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-size: $font-size-lg;
+    color: $color-text-secondary;
+    max-width: 760px;
+
+    @media (max-width: 480px) {
+      font-size: $font-size-base;
+    }
+    opacity: 0;
+    animation: fade-in-up 0.9s ease forwards;
+    animation-delay: 0.55s;
+  }
+
+  &__glow {
+    position: absolute;
+    inset: -30%;
+    background: radial-gradient(circle at 60% 40%, color-var-alpha('color-primary', 0.14), transparent 45%);
+    z-index: 0;
+  }
+
+  &__orb {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    opacity: 0.7;
+    z-index: 0;
+
+    &_left {
+      background: color-var-alpha('color-primary', 0.2);
+      left: -32px;
+      top: -24px;
+    }
+
+    &_right {
+      background: color-var-alpha('color-accent', 0.2);
+      right: -16px;
+      bottom: -32px;
+    }
+  }
+
+  &__grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(color-var-alpha('panel-border', 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, color-var-alpha('panel-border', 0.1) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.9));
+    pointer-events: none;
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

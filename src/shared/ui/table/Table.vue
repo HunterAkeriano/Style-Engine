@@ -1,64 +1,178 @@
 <template>
-  <div class="table-wrapper">
-    <table class="table">
-      <thead class="table__thead">
-        <tr class="table__tr">
-          <th
-            v-for="column in columns"
-            :key="column.key"
-            :class="['table__th', { 'table__th_sortable': column.sortable }]"
-            @click="column.sortable && $emit('sort', column.key)"
+  <div
+    :class="[
+      'table',
+      `table_size-${size}`,
+      { 'table_sticky': stickyHeader, 'table_striped': striped, 'table_hoverable': hoverable }
+    ]"
+  >
+    <div class="table__wrapper">
+      <table class="table__element">
+        <thead class="table__thead">
+          <tr>
+            <th
+              v-for="column in columns"
+              :key="column.key"
+              :style="column.width ? { width: column.width } : undefined"
+              :class="[
+                'table__th',
+                `table__th_align-${column.align ?? 'left'}`,
+                { 'table__th_sortable': column.sortable, 'table__th_active': column.sortable && sortBy === column.key },
+                column.headerClass,
+                column.hideOnMobile ? 'table__th_hide-mobile' : ''
+              ]"
+              @click="handleSort(column)"
+            >
+              <span class="table__th-content">
+                <slot :name="`header-${column.key}`" :column="column">
+                  <span class="table__label">{{ column.label }}</span>
+                </slot>
+                <span
+                  v-if="column.sortable"
+                  :class="[
+                    'table__sort',
+                    {
+                      'table__sort_active': sortBy === column.key,
+                      'table__sort_desc': sortBy === column.key && sortOrder === 'desc'
+                    }
+                  ]"
+                >
+                  <Icon name="icon-chevron-down" :size="12" />
+                </span>
+              </span>
+            </th>
+          </tr>
+        </thead>
+
+        <tbody class="table__tbody">
+          <tr
+            v-for="(row, rowIndex) in rows"
+            :key="resolveRowKey(row, rowIndex)"
+            class="table__tr"
+            @click="emitRowClick(row, rowIndex)"
           >
-            <slot :name="`header-${column.key}`" :column="column">
-              {{ column.label }}
-            </slot>
-            <span v-if="sortBy === column.key" class="table__sort-icon">
-              {{ sortOrder === 'asc' ? '↑' : '↓' }}
-            </span>
-          </th>
-        </tr>
-      </thead>
-      <tbody class="table__tbody">
-        <tr
-          v-for="(item, index) in data"
-          :key="index"
-          class="table__tr"
-          @click="$emit('row-click', item)"
-        >
-          <td
-            v-for="column in columns"
-            :key="column.key"
-            class="table__td"
-          >
-            <slot :name="`cell-${column.key}`" :item="item">
-              {{ item[column.key] }}
-            </slot>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <td
+              v-for="column in columns"
+              :key="column.key"
+              :class="[
+                'table__td',
+                `table__td_align-${column.align ?? 'left'}`,
+                column.cellClass,
+                column.hideOnMobile ? 'table__td_hide-mobile' : ''
+              ]"
+            >
+              <slot
+                :name="`cell-${column.key}`"
+                :row="row"
+                :value="getCellValue(row, column)"
+                :column="column"
+              >
+                {{ formatValue(getCellValue(row, column)) }}
+              </slot>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-if="!rows.length" class="table__empty">
+        <slot name="empty">
+          {{ emptyText }}
+        </slot>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
+import Icon from '@/shared/ui/icon/Icon.vue'
 
-interface Column {
+type SortOrder = 'asc' | 'desc'
+type Align = 'left' | 'center' | 'right'
+
+export type RowData = Record<string, unknown>
+
+export interface TableColumn {
   key: string
   label: string
   sortable?: boolean
+  width?: string
+  align?: Align
+  headerClass?: string
+  cellClass?: string
+  hideOnMobile?: boolean
+  accessor?: (row: RowData) => unknown
 }
 
 interface Props {
-  columns: Column[]
-  data: any[]
+  columns: TableColumn[]
+  rows: RowData[]
+  rowKey?: keyof RowData | ((row: RowData, index: number) => string | number)
   sortBy?: string
-  sortOrder?: 'asc' | 'desc'
+  sortOrder?: SortOrder
+  stickyHeader?: boolean
+  striped?: boolean
+  hoverable?: boolean
+  size?: 'md' | 'sm'
+  emptyText?: string
 }
 
-defineProps<Props>()
+interface Emits {
+  (e: 'update:sortBy', value: string): void
+  (e: 'update:sortOrder', value: SortOrder): void
+  (e: 'sort-change', value: { sortBy: string; sortOrder: SortOrder }): void
+  (e: 'row-click', value: { row: RowData; index: number }): void
+}
 
-defineEmits(['sort', 'row-click'])
+const props = withDefaults(defineProps<Props>(), {
+  rows: () => [],
+  sortBy: '',
+  sortOrder: 'asc',
+  stickyHeader: false,
+  striped: false,
+  hoverable: false,
+  size: 'md',
+  emptyText: 'No data'
+})
+
+const emit = defineEmits<Emits>()
+
+function handleSort(column: TableColumn) {
+  if (!column.sortable) return
+  const nextOrder: SortOrder =
+    props.sortBy === column.key ? (props.sortOrder === 'asc' ? 'desc' : 'asc') : 'desc'
+  emit('update:sortBy', column.key)
+  emit('update:sortOrder', nextOrder)
+  emit('sort-change', { sortBy: column.key, sortOrder: nextOrder })
+}
+
+function getCellValue(row: RowData, column: TableColumn) {
+  if (typeof column.accessor === 'function') {
+    return column.accessor(row)
+  }
+  return row[column.key]
+}
+
+function resolveRowKey(row: RowData, index: number) {
+  if (typeof props.rowKey === 'function') {
+    return props.rowKey(row, index)
+  }
+  if (props.rowKey) {
+    const value = row[props.rowKey]
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'symbol') {
+      return value
+    }
+  }
+  return index
+}
+
+function emitRowClick(row: RowData, index: number) {
+  emit('row-click', { row, index })
+}
+
+function formatValue(value: unknown) {
+  if (value === null || value === undefined) return ''
+  if (typeof value === 'string' || typeof value === 'number') return value
+  return JSON.stringify(value)
+}
 </script>
 
-<style lang="scss" scoped src="./table.scss"></style>
+<style lang="scss" scoped src="./Table.scss"></style>

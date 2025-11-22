@@ -10,6 +10,7 @@
   display: flex;
   flex-direction: column;
   gap: $space-xl;
+  overflow: hidden;
 
   &::before {
     content: '';
@@ -27,9 +28,19 @@
 
   &__header {
     display: flex;
-    flex-direction: column;
-    gap: $space-sm;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-lg;
+    flex-wrap: wrap;
     position: relative;
+    z-index: 1;
+  }
+
+  &__headline {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+    max-width: 620px;
   }
 
   &__title {
@@ -48,7 +59,7 @@
     display: flex;
     align-items: center;
     gap: $space-md;
-    margin-top: $space-md;
+    margin-top: $space-sm;
     flex-wrap: wrap;
     position: relative;
     z-index: 1;
@@ -63,80 +74,49 @@
     font-weight: $font-weight-medium;
   }
 
-  &__loading,
-  &__error,
-  &__empty,
-  &__loading-more {
+  &__status {
     color: $color-text-secondary;
     text-align: center;
     padding: $space-lg;
+    position: relative;
+    z-index: 1;
+
+    &_error {
+      color: $color-error;
+    }
   }
 
-  &__wrapper {
-    border-radius: $border-radius-xl;
-    overflow: hidden;
-    background: $color-bg-secondary;
-    box-shadow: inset 0 1px 0 color-var-alpha('panel-border', 0.4);
-    border: 1px solid color-var-alpha('panel-border', 0.25);
+  &__loading-more {
+    text-align: center;
+    color: $color-text-secondary;
     position: relative;
+    z-index: 1;
   }
 
   &__table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    min-width: 640px;
-    background: transparent;
-  }
+    position: relative;
 
-  &__thead {
-    background: color-var-alpha('surface-panel-3', 0.9);
-    position: sticky;
-    top: 0;
-  }
-
-  &__th {
-    text-align: left;
-    padding: $space-md $space-lg;
-    font-size: $font-size-sm;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: $color-text-secondary;
-    border-bottom: 1px solid color-var-alpha('panel-border', 0.45);
-
-    &_avatar {
-      width: 72px;
+    :deep(.table__wrapper) {
+      background: color-var-alpha('surface-panel-2', 0.6);
+      border-color: color-var-alpha('panel-border', 0.3);
     }
-  }
 
-  &__th_sortable {
-    cursor: pointer;
-    user-select: none;
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: $color-text-primary;
+    :deep(.table__tr) {
+      animation: row-appear 0.5s ease forwards;
+      opacity: 0;
+      transform: translateX(20px);
     }
-  }
 
-  &__sort-icon {
-    margin-left: $space-xs;
-    color: $color-text-primary;
-  }
+    :deep(.table__tr:nth-child(odd)) {
+      background: color-var-alpha('surface-panel-3', 0.18);
+    }
 
-  &__tbody {
-    background: transparent;
-  }
-
-  &__tr {
-    transition: background-color 0.2s ease, transform 0.2s ease;
-    cursor: pointer;
-    animation: row-appear 0.5s ease forwards;
-    opacity: 0;
-    transform: translateX(20px);
+    :deep(.table__tr:nth-child(even)) {
+      background: color-var-alpha('surface-panel-2', 0.12);
+    }
 
     @for $i from 1 through 20 {
-      &:nth-child(#{$i}) {
+      :deep(.table__tr:nth-child(#{$i})) {
         animation-delay: #{$i * 0.05}s;
       }
     }
@@ -147,31 +127,6 @@
         transform: translateX(0);
       }
     }
-
-    &:nth-child(even) {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    &:hover {
-      background: color-var-alpha('color-primary', 0.1);
-      transform: scale(1.02);
-    }
-  }
-
-  &__td {
-    padding: $space-md $space-lg;
-    border-bottom: 1px solid color-var-alpha('panel-border', 0.25);
-    color: $color-text-primary;
-    font-size: $font-size-base;
-    vertical-align: middle;
-
-    &_avatar {
-      width: 72px;
-    }
-  }
-
-  &__td_name {
-    font-weight: $font-weight-medium;
   }
 
   &__load-more {
@@ -184,13 +139,6 @@
   &__sentinel {
     height: 1px;
   }
-
-  &__td_hide-mobile,
-  &__th_hide-mobile {
-    @media (max-width: 720px) {
-      display: none;
-    }
-  }
 }
 
 .user-avatar {
@@ -202,8 +150,8 @@
   place-items: center;
   overflow: hidden;
   border: 2px solid color-var-alpha('panel-border', 0.25);
-  animation: avatar-appear 0.5s ease forwards;
   opacity: 0;
+  animation: avatar-appear 0.5s ease forwards;
 
   @keyframes avatar-appear {
     to {
@@ -269,21 +217,13 @@
 
 @media (max-width: 720px) {
   .users-table {
-    &__table {
+    &__title {
+      font-size: $font-size-xl;
+    }
+
+    &__filter {
       min-width: 0;
-    }
-
-    &__wrapper {
-      overflow-x: auto;
-    }
-
-    &__th {
-      padding: $space-sm $space-md;
-    }
-
-    &__td {
-      padding: $space-sm $space-md;
-      font-size: $font-size-sm;
+      flex: 1;
     }
   }
 }

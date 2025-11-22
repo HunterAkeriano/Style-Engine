@@ -84,7 +84,9 @@ export const PRICING_PLANS: Record<SubscriptionTier, PricingPlan> = {
   }
 }
 
-export function getUserLimit(tier: SubscriptionTier, limitType: keyof PricingPlan['limits']): number {
+export type NumericLimitKey = Exclude<keyof PricingPlan['limits'], 'exportFormats'>
+
+export function getUserLimit(tier: SubscriptionTier, limitType: NumericLimitKey): number {
   return PRICING_PLANS[tier].limits[limitType]
 }
 

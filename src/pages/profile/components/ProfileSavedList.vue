@@ -281,7 +281,7 @@ async function copyCSS(item: SavedItem) {
     const css = generateCSS(item)
     await copyToClipboard(css)
     toast.success(t('PROFILE.COPIED'))
-  } catch (error) {
+  } catch {
     toast.error(t('PROFILE.COPY_ERROR'))
   }
 }

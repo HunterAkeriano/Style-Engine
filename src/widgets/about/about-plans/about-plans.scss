@@ -1,0 +1,195 @@
+@import '@/app/styles/variables';
+
+.about-plans {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+  padding: $space-xl 0;
+  opacity: 0;
+  animation: fade-in-up 0.9s ease forwards;
+  animation-delay: 0.25s;
+
+  &__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: $space-lg;
+    flex-wrap: wrap;
+  }
+
+  &__tag {
+    margin: 0 0 $space-xs 0;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: $font-size-sm;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: $font-size-3xl;
+    color: $color-text-primary;
+  }
+
+  &__subtitle {
+    margin: $space-xs 0 0;
+    color: $color-text-secondary;
+    max-width: 760px;
+    line-height: 1.6;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: $space-xl;
+    align-items: stretch;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      max-width: 540px;
+      margin: 0 auto;
+      gap: $space-lg;
+    }
+    animation: fade-in-up 0.9s ease forwards;
+    animation-delay: 0.55s;
+  }
+}
+
+.pricing-card {
+  position: relative;
+  background: color-var-alpha('surface-panel-2', 0.6);
+  border: 2px solid color-var-alpha('panel-border', 0.3);
+  border-radius: $border-radius-2xl;
+  padding: $space-2xl;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+
+  @media (max-width: 480px) {
+    padding: $space-xl;
+  }
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px color-var-alpha('color-primary', 0.2);
+    border-color: color-var-alpha('color-primary', 0.5);
+  }
+
+  &_popular {
+    border: 2px solid transparent;
+    background-image:
+      linear-gradient(color-var-alpha('surface-panel-2', 0.6), color-var-alpha('surface-panel-2', 0.6)),
+      linear-gradient(135deg, $color-primary, $color-accent);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 12px 40px color-var-alpha('color-primary', 0.2);
+
+    &:hover {
+      box-shadow: 0 20px 60px color-var-alpha('color-primary', 0.3);
+    }
+  }
+
+  &__badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, $color-primary, $color-accent);
+    color: white;
+    padding: $space-xs $space-md;
+    border-radius: $border-radius-full;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  opacity: 0;
+  animation: fade-in-up 1s ease forwards;
+
+  &__header {
+    margin-bottom: $space-2xl;
+    padding-bottom: $space-lg;
+    border-bottom: 1px solid color-var-alpha('panel-border', 0.2);
+  }
+
+  &__name {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin: 0 0 $space-md 0;
+
+    @media (max-width: 480px) {
+      font-size: $font-size-xl;
+    }
+  }
+
+  &__price {
+    display: flex;
+    align-items: baseline;
+    gap: $space-xs;
+  }
+
+  &__amount {
+    font-size: $font-size-4xl;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+
+    @media (max-width: 480px) {
+      font-size: $font-size-3xl;
+    }
+  }
+
+  &__interval {
+    font-size: $font-size-base;
+    color: $color-text-secondary;
+
+    @media (max-width: 480px) {
+      font-size: $font-size-sm;
+    }
+  }
+
+  &__features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 $space-2xl 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+  }
+
+  &__feature {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-sm;
+    font-size: $font-size-base;
+    color: $color-text-primary;
+    line-height: 1.6;
+
+    @media (max-width: 480px) {
+      font-size: $font-size-sm;
+    }
+
+    svg {
+      flex-shrink: 0;
+      margin-top: 4px;
+      color: $color-primary;
+    }
+  }
+
+  &__button {
+    width: 100%;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

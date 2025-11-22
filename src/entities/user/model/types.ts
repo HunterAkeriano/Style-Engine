@@ -4,6 +4,7 @@ export interface User {
   name: string | null
   avatarUrl?: string | null
   subscriptionTier?: 'free' | 'pro' | 'premium'
+  plan?: 'free' | 'pro' | 'premium'
   isPayment?: boolean
   isAdmin?: boolean
   createdAt: string
