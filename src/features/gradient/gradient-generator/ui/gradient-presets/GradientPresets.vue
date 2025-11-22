@@ -21,6 +21,20 @@
           <span class="gradient-presets__badge">{{ preset.type }}</span>
         </div>
 
+        <div v-if="preset.owner" class="gradient-presets__author">
+          <div class="gradient-presets__avatar" :style="computeCreatorAvatarStyle(preset.owner)">
+            <span v-if="!preset.owner.avatarUrl">{{ computeCreatorInitials(preset.owner) }}</span>
+          </div>
+          <div>
+            <span class="gradient-presets__author-name" :title="computeCreatorLabel(preset.owner)">
+              {{ computeCreatorLabel(preset.owner) }}
+            </span>
+            <span v-if="preset.owner.email" class="gradient-presets__author-email">
+              {{ preset.owner.email }}
+            </span>
+          </div>
+        </div>
+
         <div class="gradient-presets__colors">
           <span
             v-for="color in preset.colors"
@@ -55,6 +69,11 @@ import { useI18n } from 'vue-i18n'
 import type { GradientPreset } from '@/processes/gradient/gradient-generation/gradient-presets'
 import type { GradientType } from '@/shared/types'
 import { Button } from '@/shared/ui'
+import {
+  getCreatorAvatarStyle as computeCreatorAvatarStyle,
+  getCreatorInitials as computeCreatorInitials,
+  getCreatorLabel as computeCreatorLabel
+} from '@/shared/lib/creator'
 
 interface Props {
   presets: GradientPreset[]
@@ -94,6 +113,7 @@ function buildGradient(type: GradientType, angle: number, colors: Array<{ color:
       return `linear-gradient(90deg, ${colorStops})`
   }
 }
+
 </script>
 
 <style lang="scss" scoped src="./gradient-presets.scss"></style>

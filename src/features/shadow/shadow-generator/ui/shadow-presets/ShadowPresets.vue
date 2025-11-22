@@ -27,10 +27,23 @@
             <h3 class="shadow-presets__card-title">{{ preset.name }}</h3>
             <p class="shadow-presets__description">{{ preset.description }}</p>
           </div>
+          <div v-if="preset.owner" class="shadow-presets__author">
+            <div class="shadow-presets__avatar" :style="computeCreatorAvatarStyle(preset.owner)">
+              <span v-if="!preset.owner.avatarUrl">{{ computeCreatorInitials(preset.owner) }}</span>
+            </div>
+            <div>
+              <span class="shadow-presets__author-name" :title="computeCreatorLabel(preset.owner)">
+                {{ computeCreatorLabel(preset.owner) }}
+              </span>
+              <span v-if="preset.owner.email" class="shadow-presets__author-email">
+                {{ preset.owner.email }}
+              </span>
+            </div>
+          </div>
           <div class="shadow-presets__actions" @click.stop>
-          <Button size="sm" variant="ghost" @click="emit('copy', preset)">
-            {{ t('SHADOW.COPY') }}
-          </Button>
+            <Button size="sm" variant="ghost" @click="emit('copy', preset)">
+              {{ t('SHADOW.COPY') }}
+            </Button>
             <Button
               size="sm"
               variant="primary"
@@ -52,6 +65,11 @@ import { useI18n } from 'vue-i18n'
 import type { ShadowPreset } from '@/shared/types'
 import { Button } from '@/shared/ui'
 import { hexToRgb } from '@/shared/lib/color'
+import {
+  getCreatorAvatarStyle as computeCreatorAvatarStyle,
+  getCreatorInitials as computeCreatorInitials,
+  getCreatorLabel as computeCreatorLabel
+} from '@/shared/lib/creator'
 
 interface Props {
   presets: ShadowPreset[]

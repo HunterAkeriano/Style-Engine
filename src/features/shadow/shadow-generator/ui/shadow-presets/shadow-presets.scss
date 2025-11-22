@@ -135,6 +135,45 @@
   line-height: 1.5;
 }
 
+.shadow-presets__author {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.shadow-presets__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: $border-radius-full;
+  display: grid;
+  place-items: center;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  color: #fff;
+  background-size: cover;
+  background-position: center;
+}
+
+.shadow-presets__author-name {
+  display: block;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.shadow-presets__author-email {
+  display: block;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .shadow-presets__actions {
   display: inline-flex;
   gap: $space-sm;

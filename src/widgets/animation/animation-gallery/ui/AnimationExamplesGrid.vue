@@ -4,9 +4,7 @@
       <div>
         <p class="animation-page__gallery-tag">{{ t('ANIMATION.SNIPPETS_TAG') }}</p>
         <h2 class="animation-page__gallery-title">{{ t('ANIMATION.SNIPPETS_TITLE') }}</h2>
-        <p class="animation-page__gallery-subtitle">
-          {{ t('ANIMATION.SNIPPETS_SUBTITLE') }}
-        </p>
+        <p class="animation-page__gallery-subtitle">{{ t('ANIMATION.SNIPPETS_SUBTITLE') }}</p>
       </div>
       <div class="animation-page__legend">
         <span class="animation-page__dot animation-page__dot_primary"></span>
@@ -66,16 +64,34 @@
         <div class="animation-card__head">
           <div>
             <p class="animation-card__tag">{{ t('ANIMATION.PREVIEW') }}</p>
-            <h3 class="animation-card__title">{{ t(example.titleKey) }}</h3>
-            <p class="animation-card__description">{{ t(example.descriptionKey) }}</p>
+            <h3 class="animation-card__title">{{ displayTitle(example) }}</h3>
+            <p class="animation-card__description">{{ displayDescription(example) }}</p>
           </div>
         </div>
 
-        <div class="animation-card__preview">
+        <div v-if="example.owner" class="animation-card__author">
+          <div class="animation-card__avatar" :style="computeCreatorAvatarStyle(example.owner)">
+            <span v-if="!example.owner.avatarUrl">{{ computeCreatorInitials(example.owner) }}</span>
+          </div>
+          <div>
+            <span class="animation-card__author-name" :title="computeCreatorLabel(example.owner)">
+              {{ computeCreatorLabel(example.owner) }}
+            </span>
+            <span class="animation-card__author-badge" v-if="example.isCommunity">
+              {{ t('ANIMATION.COMMUNITY_BADGE') }}
+            </span>
+          </div>
+        </div>
+
+        <div v-if="example.component" class="animation-card__preview">
           <component :is="example.component" />
+        </div>
+        <div v-else class="animation-card__preview animation-card__preview_placeholder">
+          <pre class="animation-card__preview-text">{{ example.previewText || t('ANIMATION.COMMUNITY_PREVIEW_PLACEHOLDER') }}</pre>
         </div>
 
         <NavLink
+          v-if="!example.isCommunity"
           :to="`/animation/${example.id}`"
           className="animation-card__link"
         >
@@ -117,19 +133,32 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, type ComputedRef } from 'vue'
+import { computed, ref, watch, onBeforeUnmount, type ComputedRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { NavLink, Select, Input, Icon } from '@/shared/ui'
 import type { SelectOption } from '@/shared/ui'
 import type { AnimationCategory } from '@/entities/animation/model/examples-data'
+import type { CreatorProfile } from '@/shared/types'
+import {
+  getCreatorAvatarStyle as computeCreatorAvatarStyle,
+  getCreatorInitials as computeCreatorInitials,
+  getCreatorLabel as computeCreatorLabel
+} from '@/shared/lib/creator'
 
 interface ExampleItem {
   id: string
   titleKey: string
   descriptionKey: string
   category: AnimationCategory
-  component: any
+  component?: any
+  titleText?: string
+  descriptionText?: string
+  html?: string
+  css?: string
+  owner?: CreatorProfile
+  previewText?: string
+  isCommunity?: boolean
 }
 
 const props = defineProps<{
@@ -148,16 +177,6 @@ const currentPage = ref(Number(route.query.page) > 0 ? Number(route.query.page) 
 const itemsPerPage = 12
 let debounceTimeout: ReturnType<typeof setTimeout> | null = null
 
-const allowedCategories = computed(() => [
-  'all',
-  'loaders',
-  'marquee',
-  'effects',
-  'transitions',
-  'orbital',
-  'interactive'
-])
-
 const categoryOptions = computed<SelectOption[]>(() => [
   { label: t('ANIMATION.ALL_TYPES'), value: 'all' },
   { label: t('ANIMATION.CATEGORY.LOADERS'), value: 'loaders' },
@@ -165,7 +184,8 @@ const categoryOptions = computed<SelectOption[]>(() => [
   { label: t('ANIMATION.CATEGORY.EFFECTS'), value: 'effects' },
   { label: t('ANIMATION.CATEGORY.TRANSITIONS'), value: 'transitions' },
   { label: t('ANIMATION.CATEGORY.ORBITAL'), value: 'orbital' },
-  { label: t('ANIMATION.CATEGORY.INTERACTIVE'), value: 'interactive' }
+  { label: t('ANIMATION.CATEGORY.INTERACTIVE'), value: 'interactive' },
+  { label: t('ANIMATION.CATEGORY.COMMUNITY'), value: 'community' }
 ])
 
 const normalizedExamples = computed<ExampleItem[]>(() =>
@@ -184,8 +204,8 @@ const filteredExamples = computed(() => {
   if (debouncedSearchQuery.value.trim()) {
     const query = debouncedSearchQuery.value.toLowerCase().trim()
     filtered = filtered.filter(example => {
-      const title = t(example.titleKey).toLowerCase()
-      const description = t(example.descriptionKey).toLowerCase()
+      const title = displayTitle(example).toLowerCase()
+      const description = displayDescription(example).toLowerCase()
       return title.includes(query) || description.includes(query)
     })
   }
@@ -193,7 +213,7 @@ const filteredExamples = computed(() => {
   return filtered
 })
 
-const totalPages = computed(() => Math.ceil(filteredExamples.value.length / itemsPerPage))
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredExamples.value.length / itemsPerPage)))
 
 const paginatedExamples = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
@@ -219,86 +239,69 @@ const visiblePages = computed(() => {
   return pages
 })
 
-function goToPage(page: number) {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page
-  }
+function displayTitle(example: ExampleItem) {
+  return example.titleText || t(example.titleKey)
 }
 
-watch(searchQuery, (newQuery) => {
+function displayDescription(example: ExampleItem) {
+  return example.descriptionText || t(example.descriptionKey)
+}
+
+function goToPage(page: number) {
+  currentPage.value = page
+  updateRoute()
+}
+
+function updateRoute() {
+  const nextQuery = {
+    ...route.query,
+    page: currentPage.value,
+    category: selectedCategory.value !== 'all' ? selectedCategory.value : undefined,
+    search: debouncedSearchQuery.value || undefined
+  }
+  router.replace({ query: nextQuery })
+}
+
+watch(searchQuery, (next) => {
   if (debounceTimeout) {
     clearTimeout(debounceTimeout)
   }
-
-  if (newQuery.trim()) {
-    isSearching.value = true
-  }
-
+  isSearching.value = true
   debounceTimeout = setTimeout(() => {
-    debouncedSearchQuery.value = newQuery
-    isSearching.value = false
+    debouncedSearchQuery.value = next
     currentPage.value = 1
-  }, 500)
+    updateRoute()
+    isSearching.value = false
+  }, 250)
 })
 
-watch(selectedCategory, () => {
-  currentPage.value = 1
+watch([selectedCategory, () => currentPage.value], () => {
+  updateRoute()
 })
-
-function updateQueryParams() {
-  const query = { ...route.query }
-
-  if (searchQuery.value.trim()) {
-    query.search = searchQuery.value.trim()
-  } else {
-    delete query.search
-  }
-
-  if (selectedCategory.value !== 'all') {
-    query.category = selectedCategory.value
-  } else {
-    delete query.category
-  }
-
-  if (currentPage.value > 1) {
-    query.page = String(currentPage.value)
-  } else {
-    delete query.page
-  }
-
-  router.replace({ query })
-}
-
-watch([searchQuery, selectedCategory, currentPage], updateQueryParams)
 
 watch(
-  () => route.query,
-  (query) => {
-    const incomingSearch = (query.search as string) ?? ''
-    const incomingCategory = (query.category as string) ?? 'all'
-    const incomingPage = Number(query.page) > 0 ? Number(query.page) : 1
-
-    if (incomingSearch !== searchQuery.value) {
-      searchQuery.value = incomingSearch
-      debouncedSearchQuery.value = incomingSearch
-    }
-
-    if (allowedCategories.value.includes(incomingCategory) && incomingCategory !== selectedCategory.value) {
-      selectedCategory.value = incomingCategory
-    } else if (!allowedCategories.value.includes(incomingCategory) && selectedCategory.value !== 'all') {
-      selectedCategory.value = 'all'
-    }
-
-    if (incomingPage !== currentPage.value) {
-      currentPage.value = incomingPage
-    }
+  () => route.query.category,
+  (category) => {
+    selectedCategory.value = (category as string) ?? 'all'
   }
 )
 
-watch(filteredExamples, () => {
-  if (currentPage.value > totalPages.value) {
-    currentPage.value = Math.max(1, totalPages.value)
+watch(
+  () => route.query.page,
+  (page) => {
+    currentPage.value = Number(page) > 0 ? Number(page) : 1
   }
+)
+
+watch(
+  () => route.query.search,
+  (value) => {
+    searchQuery.value = (value as string) ?? ''
+  }
+)
+
+onBeforeUnmount(() => {
+  if (debounceTimeout) clearTimeout(debounceTimeout)
 })
 </script>
 

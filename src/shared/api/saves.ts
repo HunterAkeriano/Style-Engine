@@ -14,6 +14,10 @@ export interface SavedItem {
   approvedAt?: string | null
   createdAt: string
   category?: SaveCategory
+  userId?: string
+  ownerName?: string | null
+  ownerEmail?: string | null
+  ownerAvatar?: string | null
 }
 
 function authHeaders(): Record<string, string> {

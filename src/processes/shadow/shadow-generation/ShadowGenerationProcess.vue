@@ -134,6 +134,7 @@ import { useFloatingPreview } from '@/shared/composables'
 import { Modal, Button, Input } from '@/shared/ui'
 import { getUserLimit, SubscriptionTier } from '@/shared/config/pricing'
 import { evaluateSaveQuota, type SaveQuotaResult, resolveSubscriptionTier } from '@/shared/lib/save-quota'
+import { buildCreatorProfile } from '@/shared/lib/creator'
 
 const shadowPresets = SHADOW_PRESETS
 const communityPresets = ref<ShadowPreset[]>([])
@@ -541,6 +542,8 @@ function mapCommunityPreset(item: SavedItem): ShadowPreset | null {
     name: item.name,
     description: payload.description || 'Community shadow',
     layers
+    ,
+    owner: buildCreatorProfile(item)
   }
 }
 

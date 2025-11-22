@@ -202,7 +202,7 @@ const exportFileName = computed(() => `${selectedExample.value?.id ?? 'animation
 
 const examplesWithComponents = animationExamples.map(example => ({
   ...example,
-  component: defineAsyncComponent(example.component)
+  component: defineAsyncComponent(example.component!)
 }))
 
 const selectedExample = computed(() =>

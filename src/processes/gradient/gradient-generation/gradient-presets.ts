@@ -1,4 +1,4 @@
-import type { GradientColor, GradientType } from '@/shared/types'
+import type { GradientColor, GradientType, CreatorProfile } from '@/shared/types'
 
 export interface GradientPreset {
   id: string
@@ -6,6 +6,7 @@ export interface GradientPreset {
   type: GradientType
   angle: number
   colors: GradientColor[]
+  owner?: CreatorProfile
 }
 
 export const GRADIENT_PRESETS: GradientPreset[] = [

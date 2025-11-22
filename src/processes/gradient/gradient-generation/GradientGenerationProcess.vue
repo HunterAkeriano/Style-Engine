@@ -40,7 +40,7 @@
 
     <div class="gradient-generation-process__presets">
       <GradientPresets
-        :presets="gradientPresets"
+        :presets="allPresets"
         :saving-id="savingPresetId"
         :is-saved="isPresetSaved"
         @apply="applyPreset"
@@ -135,6 +135,7 @@ import { useFloatingPreview } from '@/shared/composables'
 import { Modal, Button, Input } from '@/shared/ui'
 import { getUserLimit, SubscriptionTier } from '@/shared/config/pricing'
 import { evaluateSaveQuota, type SaveQuotaResult, resolveSubscriptionTier } from '@/shared/lib/save-quota'
+import { buildCreatorProfile } from '@/shared/lib/creator'
 
 const type = ref<GradientType>('linear')
 const angle = ref(90)
@@ -510,6 +511,8 @@ function mapCommunityPreset(item: SavedItem): GradientPreset | null {
     type: payload.type as GradientType,
     angle: Number.isFinite(payload.angle) ? Number(payload.angle) : 90,
     colors
+    ,
+    owner: buildCreatorProfile(item)
   }
 }
 

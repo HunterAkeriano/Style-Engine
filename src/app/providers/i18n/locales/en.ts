@@ -115,6 +115,10 @@ export default {
     COMMUNITY_TITLE: 'Published animations from the community',
     COMMUNITY_LOADING: 'Loading published animations...',
     COMMUNITY_EMPTY: 'No published animations yet.',
+    COMMUNITY_BADGE: 'Community',
+    COMMUNITY_ANIMATION: 'Community animation',
+    COMMUNITY_CREATED_BY: 'Created by {user}',
+    COMMUNITY_PREVIEW_PLACEHOLDER: 'Shared by the community — open the builder for a full, interactive preview.',
     CODE_VIEW: 'Code view',
     CODE_VIEW_VARIABLES: 'CSS variables',
     CODE_VIEW_VALUES: 'Static values',
@@ -236,7 +240,8 @@ export default {
       EFFECTS: 'Effects',
       TRANSITIONS: 'Transitions',
       ORBITAL: 'Orbital',
-      INTERACTIVE: 'Interactive'
+      INTERACTIVE: 'Interactive',
+      COMMUNITY: 'Community'
     }
   },
   COMMON: {

@@ -28,19 +28,65 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { AnimationHero, AnimationBuilder, AnimationExamplesGrid } from '@/widgets/animation'
 import { animationExamples } from '@/entities/animation'
+import { listPublicSaves, type SavedItem } from '@/shared/api/saves'
+import { buildCreatorProfile, getCreatorLabel } from '@/shared/lib/creator'
+import type { AnimationExample } from '@/entities/animation/model/examples-data'
 
 const { t } = useI18n()
 
-const examples = computed(() =>
+const communityExamples = ref<AnimationExample[]>([])
+
+const builtInExamples = computed(() =>
   animationExamples.map(example => ({
     ...example,
-    component: defineAsyncComponent(example.component)
+    component: defineAsyncComponent(example.component!)
   }))
 )
+
+const examples = computed(() => [...communityExamples.value, ...builtInExamples.value])
+
+function mapCommunityAnimation(item: SavedItem): AnimationExample | null {
+  const payload = item.payload || {}
+  const html = typeof payload.html === 'string' ? payload.html : ''
+  const css = typeof payload.css === 'string' ? payload.css : ''
+  if (!html && !css) {
+    return null
+  }
+  const owner = buildCreatorProfile(item)
+  const ownerLabel = getCreatorLabel(owner)
+  return {
+    id: `community-${item.id}`,
+    titleKey: 'ANIMATION.COMMUNITY_ANIMATION',
+    descriptionKey: 'ANIMATION.COMMUNITY_CREATED_BY',
+    titleText: item.name || t('ANIMATION.COMMUNITY_ANIMATION'),
+    descriptionText: t('ANIMATION.COMMUNITY_CREATED_BY', { user: ownerLabel }),
+    category: 'community',
+    html,
+    css,
+    owner,
+    previewText: css ? `${css.substring(0, 120)}...` : html.substring(0, 120),
+    isCommunity: true
+  }
+}
+
+async function loadCommunityAnimations() {
+  try {
+    const items = await listPublicSaves('animation')
+    communityExamples.value = items
+      .map(mapCommunityAnimation)
+      .filter(Boolean) as AnimationExample[]
+  } catch (error) {
+    console.warn('Failed to load community animations', error)
+  }
+}
+
+onMounted(() => {
+  loadCommunityAnimations()
+})
 </script>
 
 <style lang="scss" src="./animation-page.scss"></style>

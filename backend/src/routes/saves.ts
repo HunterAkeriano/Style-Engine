@@ -56,11 +56,25 @@ export function createSavesRouter(env: Env) {
   async function listPublic(category: Category, _req: any, res: any) {
     const table = tableForCategory(category)
     const result = await db.query(
-      `SELECT id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", created_at as "createdAt"
-       FROM ${table}
-       WHERE status = 'approved'
-       ORDER BY is_featured DESC, approved_at DESC NULLS LAST, created_at DESC
-       LIMIT 50`
+      `SELECT
+         s.id,
+         s.name,
+         s.payload,
+         s.status,
+         s.is_featured as "isFeatured",
+         s.approved_at as "approvedAt",
+         s.created_at as "createdAt",
+         s.user_id as "userId",
+         u.name as "ownerName",
+         u.email as "ownerEmail",
+         u.avatar_url as "ownerAvatar"
+       FROM ${table} s
+       LEFT JOIN users u ON u.id = s.user_id
+       WHERE s.status = 'approved'
+         AND (u.email IS NULL OR LOWER(u.email) != LOWER($1))
+       ORDER BY s.is_featured DESC, s.approved_at DESC NULLS LAST, s.created_at DESC
+       LIMIT 50`,
+      [env.SUPER_ADMIN_EMAIL]
     )
     res.json({ items: result.rows })
   }

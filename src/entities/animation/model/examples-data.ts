@@ -1,6 +1,7 @@
 import type { DefineComponent } from 'vue'
+import type { CreatorProfile } from '@/shared/types'
 
-export type AnimationCategory = 'loaders' | 'marquee' | 'transitions' | 'effects' | 'interactive' | 'orbital'
+export type AnimationCategory = 'loaders' | 'marquee' | 'transitions' | 'effects' | 'interactive' | 'orbital' | 'community'
 
 export type AnimationExample = {
   id: string
@@ -9,7 +10,12 @@ export type AnimationExample = {
   category: AnimationCategory
   html: string
   css: string
-  component: () => Promise<{ default: DefineComponent<any, any, any> }>
+  component?: () => Promise<{ default: DefineComponent<any, any, any> }>
+  titleText?: string
+  descriptionText?: string
+  owner?: CreatorProfile
+  previewText?: string
+  isCommunity?: boolean
 }
 
 export const animationExamples: AnimationExample[] = [

@@ -199,6 +199,49 @@
   font-size: $font-size-sm;
 }
 
+.animation-card__author {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.animation-card__avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: $border-radius-full;
+  display: grid;
+  place-items: center;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  color: #fff;
+  background-size: cover;
+  background-position: center;
+}
+
+.animation-card__author-name {
+  display: block;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.animation-card__author-badge {
+  display: inline-flex;
+  margin-top: 2px;
+  padding: 2px 8px;
+  border-radius: $border-radius-full;
+  background: color-var-alpha('color-accent', 0.15);
+  color: $color-accent;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-left: $space-xs;
+}
+
 .animation-card__preview {
   border: 1px solid color-var-alpha('panel-border', 0.15);
   border-radius: $border-radius-lg;
@@ -218,6 +261,23 @@
     padding: $space-lg;
     min-height: 160px;
   }
+}
+
+.animation-card__preview_placeholder {
+  text-align: center;
+  display: grid;
+  place-items: center;
+  background: color-var-alpha('color-bg-secondary', 0.6);
+}
+
+.animation-card__preview-text {
+  margin: 0;
+  font-size: $font-size-sm;
+  color: color-var-alpha('color-text-secondary', 0.8);
+  max-height: 100%;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .animation-card__link {

@@ -115,6 +115,10 @@ export default {
     COMMUNITY_TITLE: 'Опубліковані анімації спільноти',
     COMMUNITY_LOADING: 'Завантажуємо опубліковані анімації...',
     COMMUNITY_EMPTY: 'Поки немає опублікованих анімацій.',
+    COMMUNITY_BADGE: 'Спільнота',
+    COMMUNITY_ANIMATION: 'Анімація спільноти',
+    COMMUNITY_CREATED_BY: 'Створив {user}',
+    COMMUNITY_PREVIEW_PLACEHOLDER: 'Поділилися спільнотою — відкрийте конструктор для повного перегляду.',
     CODE_VIEW: 'Відображення коду',
     CODE_VIEW_VARIABLES: 'З CSS-змінними',
     CODE_VIEW_VALUES: 'Без змінних',
@@ -236,7 +240,8 @@ export default {
       EFFECTS: 'Ефекти',
       TRANSITIONS: 'Переходи',
       ORBITAL: 'Орбітальні',
-      INTERACTIVE: 'Інтерактивні'
+      INTERACTIVE: 'Інтерактивні',
+      COMMUNITY: 'Спільнота'
     }
   },
   COMMON: {

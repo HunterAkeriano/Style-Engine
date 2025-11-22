@@ -1,3 +1,5 @@
+import type { CreatorProfile } from './creator'
+
 export interface ShadowLayer {
   id: string
   x: number
@@ -13,4 +15,5 @@ export interface ShadowPreset {
   name: string
   description: string
   layers: ShadowLayer[]
+  owner?: CreatorProfile
 }

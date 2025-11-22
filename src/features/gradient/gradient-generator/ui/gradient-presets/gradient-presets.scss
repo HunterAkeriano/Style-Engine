@@ -99,6 +99,47 @@
     box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
   }
 
+  &__author {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+    margin-top: $space-sm;
+    font-size: $font-size-xs;
+    color: $color-text-secondary;
+  }
+
+  &__avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: $border-radius-full;
+    display: grid;
+    place-items: center;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    color: white;
+    background-size: cover;
+    background-position: center;
+  }
+
+  &__author-name {
+    display: block;
+    max-width: 140px;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__author-email {
+    display: block;
+    font-size: $font-size-xs;
+    color: $color-text-secondary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   &__actions {
     position: absolute;
     left: $space-md;
