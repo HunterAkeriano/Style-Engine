@@ -1,6 +1,7 @@
 <template>
   <div class="docs-page">
     <div class="container">
+      <Breadcrumbs />
       <DocsHero :content="content.hero" />
     </div>
 
@@ -42,6 +43,7 @@ import { getLocaleFromPath, setLocale, type Locale } from '@/app/providers'
 import { getDocsPageContent } from '@/pages/docs/model/content'
 import { DocsHero, DocsTopics, DocsPlaybook, DocsPrimer } from '@/widgets/docs'
 import { useRoute } from 'vue-router'
+import { Breadcrumbs } from '@/widgets/common'
 
 const route = useRoute()
 const routeLocale = computed(() => getLocaleFromPath(route.fullPath) as Locale)

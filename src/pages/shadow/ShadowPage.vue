@@ -7,6 +7,7 @@
       <div class="shadow-page__wave shadow-page__wave_3"></div>
     </div>
     <div class="container">
+      <Breadcrumbs />
       <header class="shadow-page__header">
         <div>
           <p class="shadow-page__eyebrow">{{ t('SHADOW.EYEBROW') }}</p>
@@ -26,6 +27,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { NavLink } from '@/shared/ui'
+import { Breadcrumbs } from '@/widgets/common'
 import { ShadowGenerationProcess } from '@/processes'
 
 const { t } = useI18n()

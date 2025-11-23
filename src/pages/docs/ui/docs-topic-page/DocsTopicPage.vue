@@ -1,6 +1,7 @@
 <template>
   <div class="docs-topic-page">
     <div class="container">
+      <Breadcrumbs :current-label="topic.title" />
       <DocsTopicContent :topic="topic" :other-topics="otherTopics" />
     </div>
   </div>
@@ -13,6 +14,7 @@ import { useRoute } from 'vue-router'
 import { getLocaleFromPath, setLocale, type Locale } from '@/app/providers'
 import { getDocsTopicContent, type DocsTopicKey } from '@/pages/docs/model/content'
 import DocsTopicContent from './components/docs-topic-content/DocsTopicContent.vue'
+import { Breadcrumbs } from '@/widgets/common'
 
 const props = defineProps<{ topic: DocsTopicKey }>()
 const route = useRoute()

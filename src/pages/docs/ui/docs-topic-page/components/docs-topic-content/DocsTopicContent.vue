@@ -1,10 +1,7 @@
 <template>
   <div class="docs-topic">
     <header class="docs-topic__header">
-      <div class="docs-topic__breadcrumb">
-        <NavLink to="/docs" class-name="docs-topic__back">{{ backLabel }}</NavLink>
-        <span class="docs-topic__pill">{{ topic.eyebrow }}</span>
-      </div>
+      <span class="docs-topic__pill">{{ topic.eyebrow }}</span>
       <h1 class="docs-topic__title">{{ topic.title }}</h1>
       <p class="docs-topic__subtitle">{{ topic.subtitle }}</p>
     </header>
@@ -120,7 +117,6 @@ const demoLabel = computed(() => t('DOCS.DEMO'))
 const patternsLabel = computed(() => t('DOCS.PATTERNS'))
 const linksLabel = computed(() => t('DOCS.LINKS'))
 const otherLabel = computed(() => t('DOCS.OTHER_TOPICS'))
-const backLabel = computed(() => t('DOCS.BACK'))
 const copyLabel = computed(() => t('DOCS.COPY'))
 
 async function copy(code: string) {

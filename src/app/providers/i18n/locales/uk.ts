@@ -11,6 +11,20 @@ export default {
     THEME_LIGHT: 'Світла',
     THEME_DARK: 'Темна'
   },
+  BREADCRUMBS: {
+    HOME: 'Головна',
+    ABOUT: 'Про нас',
+    PRIVACY_POLICY: 'Політика конфіденційності',
+    COOKIE_POLICY: 'Політика cookie',
+    GRADIENT: 'Генератор градієнтів',
+    SHADOW: 'Генератор тіней',
+    ANIMATION: 'Бібліотека анімацій',
+    ANIMATION_DETAIL: 'Анімація',
+    DOCS: 'Документація',
+    DOCS_TOPIC: 'Тема',
+    MODERATION: 'Модерація',
+    MODERATION_USERS: 'Керування користувачами'
+  },
   HOME: {
     TITLE: 'Style Engine',
     SUBTITLE: 'Генератор CSS-градієнтів, тіней та анімацій з живим превью та експортом коду',

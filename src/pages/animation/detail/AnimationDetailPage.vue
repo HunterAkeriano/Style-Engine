@@ -6,6 +6,7 @@
     </div>
 
     <div class="container animation-detail__container">
+      <Breadcrumbs :current-label="title" />
       <div class="animation-detail__header">
         <div>
           <p class="animation-detail__eyebrow">{{ t('ANIMATION.EYEBROW') }}</p>
@@ -133,6 +134,7 @@ import { Modal, Button, NavLink, Input, Select } from '@/shared/ui'
 import { copyToClipboard } from '@/shared/lib'
 import { useToast } from '@/shared/lib/toast'
 import { animationExamples } from '@/entities/animation'
+import { Breadcrumbs } from '@/widgets/common'
 import {
   createSave,
   listSaves,

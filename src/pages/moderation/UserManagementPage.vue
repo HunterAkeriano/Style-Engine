@@ -1,5 +1,6 @@
 <template>
   <div class="user-management-page">
+    <Breadcrumbs />
     <header class="user-management-page__header">
       <div class="user-management-page__hero">
         <span class="user-management-page__tag">{{ t('MODERATION.USERS_TAG') }}</span>
@@ -118,6 +119,7 @@ import { Button, Input, Modal, Select, Table, type TableColumn } from '@/shared/
 import { useToast } from '@/shared/lib/toast'
 import { getModerationUsers, updateUser, deleteUser, type PublicUser } from '@/shared/api/users'
 import type { UsersParams } from '@/shared/api/users'
+import { Breadcrumbs } from '@/widgets/common'
 
 type TierFilter = 'all' | 'free' | 'pro' | 'premium'
 

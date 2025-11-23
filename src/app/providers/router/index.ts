@@ -9,31 +9,44 @@ const mainLayoutChildren: RouteRecordRaw[] = [
     path: '',
     name: 'home',
     component: () => import('@/pages/home/HomePage.vue'),
-    meta: { titleKey: 'META.HOME', descriptionKey: 'META_DESCRIPTION.HOME' }
+    meta: { titleKey: 'META.HOME', descriptionKey: 'META_DESCRIPTION.HOME', hideBreadcrumbs: true }
   },
   {
     path: 'about',
     name: 'about',
     component: () => import('@/pages/about/AboutPage.vue'),
-    meta: { titleKey: 'META.ABOUT', descriptionKey: 'META_DESCRIPTION.ABOUT' }
+    meta: { titleKey: 'META.ABOUT', descriptionKey: 'META_DESCRIPTION.ABOUT', breadcrumbKey: 'BREADCRUMBS.ABOUT' }
   },
   {
     path: 'privacy-policy',
     name: 'privacy-policy',
     component: () => import('@/pages/policy/PrivacyPolicyPage.vue'),
-    meta: { titleKey: 'META.PRIVACY', descriptionKey: 'META_DESCRIPTION.PRIVACY' }
+    meta: {
+      titleKey: 'META.PRIVACY',
+      descriptionKey: 'META_DESCRIPTION.PRIVACY',
+      breadcrumbKey: 'BREADCRUMBS.PRIVACY_POLICY'
+    }
   },
   {
     path: 'cookie-policy',
     name: 'cookie-policy',
     component: () => import('@/pages/policy/CookiePolicyPage.vue'),
-    meta: { titleKey: 'META.COOKIE', descriptionKey: 'META_DESCRIPTION.COOKIE' }
+    meta: {
+      titleKey: 'META.COOKIE',
+      descriptionKey: 'META_DESCRIPTION.COOKIE',
+      breadcrumbKey: 'BREADCRUMBS.COOKIE_POLICY'
+    }
   },
   {
     path: 'profile',
     name: 'profile',
     component: () => import('@/pages/profile/ProfilePage.vue'),
-    meta: { titleKey: 'META.PROFILE', descriptionKey: 'META_DESCRIPTION.PROFILE', requiresAuth: true },
+    meta: {
+      titleKey: 'META.PROFILE',
+      descriptionKey: 'META_DESCRIPTION.PROFILE',
+      requiresAuth: true,
+      hideBreadcrumbs: true
+    },
     children: [
       {
         path: 'gradients',
@@ -61,6 +74,7 @@ const generatorLayoutRoutes: RouteRecordRaw[] = [
   {
     path: 'gradient',
     component: GeneratorLayout,
+    meta: { breadcrumbKey: 'BREADCRUMBS.GRADIENT' },
     children: [
       {
         path: '',
@@ -73,6 +87,7 @@ const generatorLayoutRoutes: RouteRecordRaw[] = [
   {
     path: 'shadow',
     component: GeneratorLayout,
+    meta: { breadcrumbKey: 'BREADCRUMBS.SHADOW' },
     children: [
       {
         path: '',
@@ -85,6 +100,7 @@ const generatorLayoutRoutes: RouteRecordRaw[] = [
   {
     path: 'animation',
     component: GeneratorLayout,
+    meta: { breadcrumbKey: 'BREADCRUMBS.ANIMATION' },
     children: [
       {
         path: '',
@@ -96,7 +112,11 @@ const generatorLayoutRoutes: RouteRecordRaw[] = [
         path: ':id',
         name: 'animation-detail',
         component: () => import('@/pages/animation/detail/AnimationDetailPage.vue'),
-        meta: { titleKey: 'META.ANIMATION', descriptionKey: 'META_DESCRIPTION.ANIMATION' }
+        meta: {
+          titleKey: 'META.ANIMATION',
+          descriptionKey: 'META_DESCRIPTION.ANIMATION',
+          breadcrumbKey: 'BREADCRUMBS.ANIMATION_DETAIL'
+        }
       }
     ]
   }
@@ -107,25 +127,45 @@ const authLayoutRoutes: RouteRecordRaw[] = [
     path: 'login',
     name: 'login',
     component: () => import('@/pages/login/LoginPage.vue'),
-    meta: { titleKey: 'META.AUTH', descriptionKey: 'META_DESCRIPTION.AUTH', guestOnly: true }
+    meta: {
+      titleKey: 'META.AUTH',
+      descriptionKey: 'META_DESCRIPTION.AUTH',
+      guestOnly: true,
+      hideBreadcrumbs: true
+    }
   },
   {
     path: 'register',
     name: 'register',
     component: () => import('@/pages/register/RegisterPage.vue'),
-    meta: { titleKey: 'META.AUTH', descriptionKey: 'META_DESCRIPTION.AUTH', guestOnly: true }
+    meta: {
+      titleKey: 'META.AUTH',
+      descriptionKey: 'META_DESCRIPTION.AUTH',
+      guestOnly: true,
+      hideBreadcrumbs: true
+    }
   },
   {
     path: 'forgot-password',
     name: 'forgot-password',
     component: () => import('@/pages/forgot-password/ForgotPasswordPage.vue'),
-    meta: { titleKey: 'META.AUTH', descriptionKey: 'META_DESCRIPTION.AUTH', guestOnly: true }
+    meta: {
+      titleKey: 'META.AUTH',
+      descriptionKey: 'META_DESCRIPTION.AUTH',
+      guestOnly: true,
+      hideBreadcrumbs: true
+    }
   },
   {
     path: 'reset-password',
     name: 'reset-password',
     component: () => import('@/pages/reset-password/ResetPasswordPage.vue'),
-    meta: { titleKey: 'META.AUTH', descriptionKey: 'META_DESCRIPTION.AUTH', guestOnly: true }
+    meta: {
+      titleKey: 'META.AUTH',
+      descriptionKey: 'META_DESCRIPTION.AUTH',
+      guestOnly: true,
+      hideBreadcrumbs: true
+    }
   }
 ]
 
@@ -141,7 +181,8 @@ const baseRoutes: RouteRecordRaw[] = [
       titleKey: 'META.MODERATION',
       descriptionKey: 'META_DESCRIPTION.MODERATION',
       requiresAuth: true,
-      requiresAdmin: true
+      requiresAdmin: true,
+      breadcrumbKey: 'BREADCRUMBS.MODERATION'
     }
   },
   {
@@ -152,12 +193,14 @@ const baseRoutes: RouteRecordRaw[] = [
       titleKey: 'MODERATION.USERS_TITLE',
       descriptionKey: 'MODERATION.USERS_SUBTITLE',
       requiresAuth: true,
-      requiresAdmin: true
+      requiresAdmin: true,
+      breadcrumbKey: 'BREADCRUMBS.MODERATION_USERS'
     }
   },
   {
     path: 'docs',
     component: DocsLayout,
+    meta: { breadcrumbKey: 'BREADCRUMBS.DOCS' },
     children: [
       {
         path: '',
@@ -170,7 +213,11 @@ const baseRoutes: RouteRecordRaw[] = [
         name: 'docs-topic',
         component: () => import('@/pages/docs/ui/docs-topic-page/DocsTopicPage.vue'),
         props: route => ({ topic: route.params.topic as any }),
-        meta: { titleKey: 'META.DOCS', descriptionKey: 'META_DESCRIPTION.DOCS' }
+        meta: {
+          titleKey: 'META.DOCS',
+          descriptionKey: 'META_DESCRIPTION.DOCS',
+          breadcrumbKey: 'BREADCRUMBS.DOCS_TOPIC'
+        }
       }
     ]
   }
@@ -225,7 +272,8 @@ const notFoundRoute: RouteRecordRaw = {
       meta: {
         titleKey: 'META.NOT_FOUND',
         descriptionKey: 'META_DESCRIPTION.NOT_FOUND',
-        robots: 'noindex, nofollow'
+        robots: 'noindex, nofollow',
+        hideBreadcrumbs: true
       }
     }
   ]
