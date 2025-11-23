@@ -3,22 +3,21 @@ import uk from './locales/uk'
 import en from './locales/en'
 
 export const AVAILABLE_LOCALES = ['uk', 'en'] as const
-export type Locale = typeof AVAILABLE_LOCALES[number]
+export type Locale = (typeof AVAILABLE_LOCALES)[number]
 
-export function getLocaleFromPath(): Locale {
-  if (typeof window === 'undefined') {
-    return 'en'
-  }
+const hasWindow = typeof window !== 'undefined'
 
-  const pathParts = window.location.pathname.split('/').filter(Boolean)
+export function getLocaleFromPath(path?: string): Locale {
+  const targetPath = path ?? (hasWindow ? window.location.pathname : '')
+  const pathParts = targetPath.split('/').filter(Boolean)
   const localeFromPath = pathParts.find((part) => AVAILABLE_LOCALES.includes(part as Locale))
 
   return (localeFromPath as Locale) || 'en'
 }
 
 const pathLocale = getLocaleFromPath()
-const savedLocale = (localStorage.getItem('locale') as Locale | null) ?? undefined
-const browserLocale = navigator.language.split('-')[0]
+const savedLocale = hasWindow ? ((localStorage.getItem('locale') as Locale | null) ?? undefined) : undefined
+const browserLocale = hasWindow ? navigator.language.split('-')[0] : 'en'
 const defaultLocale = pathLocale || savedLocale || (browserLocale === 'uk' ? 'uk' : 'en')
 
 export const i18n = createI18n({
@@ -33,8 +32,12 @@ export const i18n = createI18n({
 
 export function setLocale(locale: Locale) {
   i18n.global.locale.value = locale
-  localStorage.setItem('locale', locale)
-  document.documentElement.setAttribute('lang', locale)
+  if (hasWindow) {
+    localStorage.setItem('locale', locale)
+    document.documentElement.setAttribute('lang', locale)
+  }
 }
 
-document.documentElement.setAttribute('lang', defaultLocale)
+if (hasWindow) {
+  document.documentElement.setAttribute('lang', defaultLocale)
+}

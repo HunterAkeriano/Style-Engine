@@ -1,7 +1,6 @@
 <template>
   <transition name="cookie-consent-fade">
     <div v-if="visible" class="cookie-consent" role="dialog" aria-live="polite">
-      <div class="cookie-consent__bg" aria-hidden="true"></div>
       <div class="cookie-consent__content">
         <div class="cookie-consent__meta">
           <span class="cookie-consent__eyebrow">{{ t('COOKIE_MODAL.TAG') }}</span>

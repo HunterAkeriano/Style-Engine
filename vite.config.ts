@@ -9,8 +9,25 @@ const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(file
 
 process.env.SASS_SILENCE_DEPRECATIONS = process.env.SASS_SILENCE_DEPRECATIONS || 'all';
 process.env.SASS_QUIET_DEPS = process.env.SASS_QUIET_DEPS || 'true';
+const locales = ['en', 'uk'];
+const ssgPublicRoutes = [
+  '/',
+  '/about',
+  '/docs',
+  '/docs/gradients',
+  '/docs/shadows',
+  '/docs/animations',
+  '/gradient',
+  '/shadow',
+  '/animation',
+  '/privacy-policy',
+  '/cookie-policy'
+];
+const ssgIncludedRoutes = locales.flatMap(locale => ssgPublicRoutes.map(route => `/${locale}${route === '/' ? '' : route}`));
+const base = process.env.VITE_BASE ?? '/css-lab/'
+
 export default defineConfig({
-  base: '/css-lab/',
+  base,
   plugins: [vue()],
   resolve: {
     alias: {
@@ -34,6 +51,9 @@ export default defineConfig({
         }
       }
     }
+  },
+  ssgOptions: {
+    includedRoutes: () => ssgIncludedRoutes
   },
   test: {
     projects: [{

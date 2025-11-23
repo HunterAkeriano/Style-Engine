@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory, type RouteRecordRaw, type RouterScrollBehavior } from 'vue-router'
 import { setupRouterGuards } from './guards'
 import { AVAILABLE_LOCALES } from '../i18n'
-import MainLayout from '@/app/layouts/main-layout/MainLayout.vue'
 import GeneratorLayout from '@/app/layouts/generator-layout/GeneratorLayout.vue'
 import DocsLayout from '@/app/layouts/docs-layout/DocsLayout.vue'
 
@@ -131,7 +130,7 @@ const authLayoutRoutes: RouteRecordRaw[] = [
 ]
 
 const baseRoutes: RouteRecordRaw[] = [
-  { path: '', component: MainLayout, children: mainLayoutChildren },
+  { path: '', component: () => import('@/app/layouts/main-layout/MainLayout.vue'), children: mainLayoutChildren },
   ...generatorLayoutRoutes,
   ...authLayoutRoutes,
   {
@@ -217,7 +216,7 @@ const localizedRoutes: RouteRecordRaw[] = AVAILABLE_LOCALES.flatMap(locale => ap
 
 const notFoundRoute: RouteRecordRaw = {
   path: '/:pathMatch(.*)*',
-  component: MainLayout,
+  component: () => import('@/app/layouts/main-layout/MainLayout.vue'),
   children: [
     {
       path: '',
@@ -232,14 +231,17 @@ const notFoundRoute: RouteRecordRaw = {
   ]
 }
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [...localizedRoutes, notFoundRoute],
-  scrollBehavior
-})
+const appRoutes: RouteRecordRaw[] = [...localizedRoutes, notFoundRoute]
 
-setupRouterGuards(router)
+export function createRouterInstance(base?: string) {
+  const router = createRouter({
+    history: createWebHistory(base ?? import.meta.env.BASE_URL),
+    routes: appRoutes,
+    scrollBehavior
+  })
 
-export const routes = [...localizedRoutes, notFoundRoute]
+  setupRouterGuards(router)
+  return router
+}
 
-export default router
+export const routes = appRoutes
