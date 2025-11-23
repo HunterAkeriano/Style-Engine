@@ -59,11 +59,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import Icon from '@/shared/ui/icon/Icon.vue'
-
-export interface SelectOption {
-  label: string
-  value: string | number
-}
+import type { SelectOption } from './types'
 
 interface Props {
   modelValue: string | number

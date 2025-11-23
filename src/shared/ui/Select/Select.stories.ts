@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import type { Meta, StoryObj } from '@storybook/vue3'
-import Select, { type SelectOption } from './Select.vue'
+import Select from './Select.vue'
+import type { SelectOption } from './types'
 
 const options: SelectOption[] = [
   { label: 'Gradient', value: 'gradient' },
