@@ -268,6 +268,7 @@ export default {
   },
   FOOTER: {
     NAVIGATION: 'Navigation',
+    DOCUMENTATION: 'Documentation',
     SETTINGS: 'Settings',
     THEME: 'Theme',
     LANGUAGE: 'Language',
@@ -298,6 +299,8 @@ export default {
     SHADOW: 'Shadow Generator',
     ANIMATION: 'Animation Generator',
     ABOUT: 'About Style Engine',
+    PRIVACY: 'Privacy Policy',
+    COOKIE: 'Cookie Policy',
     DOCS: 'CSS Guide',
     DOCS_GRADIENTS: 'Gradient Guide',
     DOCS_SHADOWS: 'Shadow Guide',
@@ -320,7 +323,111 @@ export default {
     PROFILE: 'Manage your Style Engine profile and saved presets.',
     AUTH: 'Sign in to sync your Style Engine presets and get a personalized experience.',
     MODERATION: 'Review and approve community submissions for gradients, shadows, and animations.',
-    NOT_FOUND: 'The page was not found. Jump back to the generators and keep experimenting.'
+    NOT_FOUND: 'The page was not found. Jump back to the generators and keep experimenting.',
+    PRIVACY: 'Style Engine privacy policy: what data we collect, how we use it, and how to contact us.',
+    COOKIE: 'Cookie policy: how Style Engine uses cookies, how to control them, and what it means for you.'
+  },
+  NOT_FOUND: {
+    TAG: 'Lost in the CSS nebula',
+    TITLE: 'This route vanished',
+    HIGHLIGHT: 'Let’s get you back to the lab',
+    DESCRIPTION: 'We couldn’t find this page. Jump to the generators, docs, or home to keep building gradients, shadows, and motion.',
+    BADGE: 'Missing route',
+    CTA_HOME: 'Back to home',
+    CTA_DOCS: 'Open docs',
+    SHORTCUTS: 'Jump to',
+    CTA_GRADIENT: 'Gradient lab',
+    CTA_SHADOW: 'Shadow lab',
+    CTA_ANIMATION: 'Animation library'
+  },
+  PRIVACY: {
+    NAV: 'Privacy Policy',
+    TAG: 'Policies',
+    TITLE: 'Privacy policy',
+    HIGHLIGHT: 'How we protect your data',
+    SUBTITLE:
+      'We only collect what’s needed to run the generators, save your work, and improve Style Engine. Here’s what that means in practice.',
+    PILL_CORE: 'Data we collect',
+    PILL_USE: 'How we use it',
+    PILL_RIGHTS: 'Your choices',
+    PILL_SECURITY: 'Security',
+    PILL_CONTACT: 'Contact',
+    SECTIONS: {
+      DATA_TITLE: 'What we collect',
+      DATA_BODY: 'We gather minimal data to deliver your account experience and improve our tools.',
+      DATA_POINTS: [
+        'Account details you provide: email, display name, password (hashed).',
+        'Usage signals: saves, presets, language, theme, and non-identifying analytics.',
+        'Support context if you contact us: messages and metadata you share.'
+      ],
+      USE_TITLE: 'How we use your data',
+      USE_BODY: 'We only process data to operate and evolve Style Engine—never to sell or share with advertisers.',
+      USE_POINTS: [
+        'Sync your saves across devices and keep your presets safe.',
+        'Improve generators by understanding feature usage in aggregate.',
+        'Send essential updates about changes, security, or your account.'
+      ],
+      RIGHTS_TITLE: 'Your rights & controls',
+      RIGHTS_BODY: 'You stay in control of your information. Tell us what you need and we’ll help.',
+      RIGHTS_POINTS: [
+        'Request a copy or deletion of your data at any time.',
+        'Update email, name, and saved work from your profile.',
+        'Opt out of non-essential emails via unsubscribe links.'
+      ],
+      SECURITY_TITLE: 'How we protect it',
+      SECURITY_BODY: 'We secure data with modern tooling and limit access to what’s necessary.',
+      SECURITY_POINTS: [
+        'Passwords are hashed; sensitive actions go over HTTPS.',
+        'Access to infrastructure is restricted to authorized maintainers.'
+      ],
+      CONTACT_TITLE: 'Questions or requests?',
+      CONTACT_BODY:
+        'Email us at privacy (at) styleengine.dev and we’ll respond with the details you need or act on your request.'
+    }
+  },
+  COOKIE: {
+    NAV: 'Cookie Policy',
+    TAG: 'Policies',
+    TITLE: 'Cookie policy',
+    HIGHLIGHT: 'Keeping sessions smooth',
+    SUBTITLE:
+      'We use a light set of cookies to remember your preferences, keep you signed in, and measure what helps you most.',
+    PILL_TYPES: 'Types',
+    PILL_CONTROL: 'Control',
+    PILL_USAGE: 'Why we use cookies',
+    PILL_CONTACT: 'Contact',
+    SECTIONS: {
+      TYPES_TITLE: 'What cookies we set',
+      TYPES_BODY: 'We keep it focused on reliability and personalization.',
+      TYPES_POINTS: [
+        'Essential: session, authentication, and security tokens.',
+        'Preferences: language, theme, and UI layout choices.',
+        'Analytics: aggregated usage to understand what to improve.'
+      ],
+      CONTROL_TITLE: 'How to control cookies',
+      CONTROL_BODY: 'You decide how cookies behave on your device.',
+      CONTROL_POINTS: [
+        'Use your browser settings to block or clear cookies at any time.',
+        'Disable non-essential analytics via your browser or extensions.',
+        'Declining cookies may sign you out or limit personalization.'
+      ],
+      USE_TITLE: 'What we do with them',
+      USE_BODY: 'Cookies keep sessions stable and help us improve the product.',
+      USE_POINTS: [
+        'Maintain your login so saves and presets stay in sync.',
+        'Remember preferences so the UI matches your workflow.'
+      ],
+      CONTACT_TITLE: 'Need more details?',
+      CONTACT_BODY: 'Reach us at privacy (at) styleengine.dev for any cookie questions or changes.'
+    }
+  },
+  COOKIE_MODAL: {
+    TAG: 'Cookies',
+    TITLE: 'We use cookies to keep things smooth',
+    DESCRIPTION:
+      'They help keep you signed in, remember your preferences, and measure what features land. You control what happens next.',
+    ACCEPT: 'Accept cookies',
+    DECLINE: 'Not now'
   },
   AUTH: {
     LOGIN_TITLE: 'Welcome Back',
@@ -411,7 +518,10 @@ export default {
     DELETING: 'Deleting...',
     DELETE_CONFIRM: 'Are you sure you want to delete "{name}"? This action cannot be undone.',
     DELETE_SUCCESS: 'Item deleted successfully',
-    DELETE_ERROR: 'Failed to delete item'
+    DELETE_ERROR: 'Failed to delete item',
+    PRO_LIMIT_TITLE: 'Pro storage limit reached',
+    PRO_LIMIT_MESSAGE: 'Pro users can save up to {limit} items within {entity}. Upgrade to Premium for unlimited storage.',
+    PRO_LIMIT_ACTION: 'Upgrade to Premium'
   },
   MODERATION: {
     TITLE: 'Moderation queue',
@@ -464,6 +574,15 @@ export default {
     PAGE_TITLE: 'Style Engine is built with our community',
     PAGE_TITLE_HIGHLIGHT: 'Celebrating premium creators and motion designers on every screen.',
     PAGE_SUBTITLE: 'Choose a plan that fits and meet the people building with us.',
+    MISSION_TAG: 'Why this exists',
+    MISSION_TITLE: 'We ship Style Engine so teams can design motion without friction',
+    MISSION_TEXT: 'This site is our lab for gradients, shadows, and motion recipes with live previews and copy-paste code. We keep experiments fast so designers and developers can stay in flow together.',
+    MISSION_POINT_1_TITLE: 'Our goal',
+    MISSION_POINT_1_TEXT: 'Evolve the generators into a shared canvas for teaching motion systems, documenting styling decisions, and publishing reusable effects.',
+    MISSION_POINT_2_TITLE: 'What we are building next',
+    MISSION_POINT_2_TEXT: 'More live presets, collaboration spaces, and export formats so teams can move from exploration to production in minutes.',
+    MISSION_POINT_3_TITLE: 'Why your support matters',
+    MISSION_POINT_3_TEXT: 'Every subscription keeps the playground online, funds new animation packs, and lets us reward community creators for their recipes.',
     PLANS_TAG: 'Plans',
     PLANS_TITLE: 'Plans that scale with you',
     PLANS_SUBTITLE: 'Start free and upgrade when you need more saves, exports, and support.',

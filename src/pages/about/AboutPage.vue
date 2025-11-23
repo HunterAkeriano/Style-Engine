@@ -2,6 +2,7 @@
   <div class="about-page">
     <div class="about-page__container">
       <AboutHero />
+      <AboutMission />
       <AboutPlans :plans="plans" @select="handlePlanSelect" />
       <AboutCommunity />
     </div>
@@ -13,7 +14,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { PRICING_PLANS, SubscriptionTier } from '@/shared/config/pricing'
-import { AboutHero, AboutPlans, AboutCommunity } from '@/widgets/about'
+import { AboutHero, AboutMission, AboutPlans, AboutCommunity } from '@/widgets/about'
 
 const { locale } = useI18n()
 const router = useRouter()

@@ -6,6 +6,7 @@ import axios, {
   type Method
 } from 'axios'
 import { AUTH_TOKEN_KEY } from './constants'
+import { getCookie } from '@/shared/lib/cookies'
 
 export interface ApiClientConfig {
   baseURL: string
@@ -39,7 +40,7 @@ export class ApiClient {
       }
     })
 
-    const stored = localStorage.getItem(AUTH_TOKEN_KEY)
+    const stored = getCookie(AUTH_TOKEN_KEY)
     if (stored) {
       this.setAuthToken(stored)
     }

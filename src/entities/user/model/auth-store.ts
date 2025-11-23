@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { apiClient } from '@/shared/api'
 import { AUTH_TOKEN_KEY } from '@/shared/api/constants'
+import { getCookie, removeCookie, setCookie } from '@/shared/lib/cookies'
 import type { User } from './types'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -19,10 +20,10 @@ export const useAuthStore = defineStore('auth', () => {
   function setToken(next: string | null) {
     token.value = next
     if (next) {
-      localStorage.setItem(AUTH_TOKEN_KEY, next)
+      setCookie(AUTH_TOKEN_KEY, next, { days: 30, path: '/' })
       apiClient.setAuthToken(next)
     } else {
-      localStorage.removeItem(AUTH_TOKEN_KEY)
+      removeCookie(AUTH_TOKEN_KEY)
       apiClient.removeAuthToken()
     }
   }
@@ -48,7 +49,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function ensureSession() {
     if (hydrated.value) return
     hydrated.value = true
-    const stored = localStorage.getItem(AUTH_TOKEN_KEY)
+    const stored = getCookie(AUTH_TOKEN_KEY)
     if (!stored) return
     setToken(stored)
     try {

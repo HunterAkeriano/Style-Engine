@@ -22,11 +22,23 @@
             <NavLink to="/animation" className="footer__link">
               {{ t('NAV.ANIMATIONS') }}
             </NavLink>
+            <NavLink to="/about" className="footer__link">
+              {{ t('NAV.ABOUT') }}
+            </NavLink>
+          </nav>
+        </div>
+
+        <div class="footer__section">
+          <h4 class="footer__section-title">{{ t('FOOTER.DOCUMENTATION') }}</h4>
+          <nav class="footer__nav">
             <NavLink to="/docs" className="footer__link">
               {{ t('NAV.DOCS') }}
             </NavLink>
-            <NavLink to="/about" className="footer__link">
-              {{ t('NAV.ABOUT') }}
+            <NavLink to="/privacy-policy" className="footer__link">
+              {{ t('PRIVACY.NAV') }}
+            </NavLink>
+            <NavLink to="/cookie-policy" className="footer__link">
+              {{ t('COOKIE.NAV') }}
             </NavLink>
           </nav>
         </div>

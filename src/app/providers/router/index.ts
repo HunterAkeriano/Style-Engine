@@ -19,6 +19,18 @@ const mainLayoutChildren: RouteRecordRaw[] = [
     meta: { titleKey: 'META.ABOUT', descriptionKey: 'META_DESCRIPTION.ABOUT' }
   },
   {
+    path: 'privacy-policy',
+    name: 'privacy-policy',
+    component: () => import('@/pages/policy/PrivacyPolicyPage.vue'),
+    meta: { titleKey: 'META.PRIVACY', descriptionKey: 'META_DESCRIPTION.PRIVACY' }
+  },
+  {
+    path: 'cookie-policy',
+    name: 'cookie-policy',
+    component: () => import('@/pages/policy/CookiePolicyPage.vue'),
+    meta: { titleKey: 'META.COOKIE', descriptionKey: 'META_DESCRIPTION.COOKIE' }
+  },
+  {
     path: 'profile',
     name: 'profile',
     component: () => import('@/pages/profile/ProfilePage.vue'),

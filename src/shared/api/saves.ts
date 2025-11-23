@@ -1,5 +1,6 @@
 import { AUTH_TOKEN_KEY } from './constants'
 import { useApi } from './client'
+import { getCookie } from '@/shared/lib/cookies'
 
 const api = useApi()
 
@@ -21,7 +22,7 @@ export interface SavedItem {
 }
 
 function authHeaders(): Record<string, string> {
-  const token = localStorage.getItem(AUTH_TOKEN_KEY)
+  const token = getCookie(AUTH_TOKEN_KEY)
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
   return headers

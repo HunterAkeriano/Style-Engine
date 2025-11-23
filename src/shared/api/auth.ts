@@ -1,6 +1,7 @@
 import type { LoginFormData, RegisterFormData } from '@/shared/lib/validation/auth'
 import { AUTH_TOKEN_KEY } from './constants'
 import { useApi } from './client'
+import { setCookie, removeCookie, getCookie } from '@/shared/lib/cookies'
 
 const api = useApi()
 
@@ -29,14 +30,14 @@ export interface ApiError {
 class AuthAPI {
   async login(data: LoginFormData): Promise<AuthResponse> {
     const response = await api.post<AuthResponse>('/auth/login', data)
-    localStorage.setItem(AUTH_TOKEN_KEY, response.data.token)
+    setCookie(AUTH_TOKEN_KEY, response.data.token, { days: 30, path: '/' })
     api.setAuthToken(response.data.token)
     return response.data
   }
 
   async register(data: RegisterFormData): Promise<AuthResponse> {
     const response = await api.post<AuthResponse>('/auth/register', data)
-    localStorage.setItem(AUTH_TOKEN_KEY, response.data.token)
+    setCookie(AUTH_TOKEN_KEY, response.data.token, { days: 30, path: '/' })
     api.setAuthToken(response.data.token)
     return response.data
   }
@@ -63,12 +64,12 @@ class AuthAPI {
   }
 
   logout() {
-    localStorage.removeItem(AUTH_TOKEN_KEY)
+    removeCookie(AUTH_TOKEN_KEY)
     api.removeAuthToken()
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem(AUTH_TOKEN_KEY)
+    return !!getCookie(AUTH_TOKEN_KEY)
   }
 }
 

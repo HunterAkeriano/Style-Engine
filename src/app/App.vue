@@ -1,6 +1,7 @@
 <template>
   <div class="app">
     <RouterView />
+    <CookieConsent />
     <Sprite />
   </div>
 </template>
@@ -11,6 +12,7 @@ import { useI18n } from 'vue-i18n'
 import { useHead } from '@unhead/vue'
 import { Sprite } from '@/shared/ui'
 import { useTheme, useViewportHeight } from '@/shared/composables'
+import CookieConsent from '@/widgets/common/cookie-consent/CookieConsent.vue'
 
 const route = useRoute()
 const { t, locale } = useI18n()
