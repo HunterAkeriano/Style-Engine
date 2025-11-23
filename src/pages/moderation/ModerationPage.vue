@@ -1,5 +1,6 @@
 <template>
   <div class="moderation-page">
+    <Breadcrumbs />
     <div class="moderation-page__header">
       <div>
         <h1 class="moderation-page__title">{{ t('MODERATION.TITLE') }}</h1>
@@ -58,6 +59,7 @@ import {
   type SavedItem,
   type SaveCategory
 } from '@/shared/api/saves'
+import { Breadcrumbs } from '@/widgets/common'
 
 const { t } = useI18n()
 

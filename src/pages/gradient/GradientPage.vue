@@ -2,6 +2,7 @@
   <div class="gradient-page">
     <div class="gradient-page__motion" aria-hidden="true"></div>
     <div class="container">
+      <Breadcrumbs />
       <header class="gradient-page__header">
         <div>
           <h1 class="gradient-page__title">{{ t('GRADIENT.TITLE') }}</h1>
@@ -20,6 +21,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { NavLink } from '@/shared/ui'
+import { Breadcrumbs } from '@/widgets/common'
 import { GradientGenerationProcess } from '@/processes'
 
 const { t } = useI18n()

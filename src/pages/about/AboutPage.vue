@@ -1,6 +1,7 @@
 <template>
   <div class="about-page">
     <div class="about-page__container">
+      <Breadcrumbs />
       <AboutHero />
       <AboutMission />
       <AboutPlans :plans="plans" @select="handlePlanSelect" />
@@ -14,6 +15,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { PRICING_PLANS, SubscriptionTier } from '@/shared/config/pricing'
+import { Breadcrumbs } from '@/widgets/common'
 import { AboutHero, AboutMission, AboutPlans, AboutCommunity } from '@/widgets/about'
 
 const { locale } = useI18n()

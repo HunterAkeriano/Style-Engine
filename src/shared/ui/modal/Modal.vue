@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body">
-    <transition name="fade">
+    <transition name="modal-pop">
       <div
         v-if="visible"
         ref="modalRef"

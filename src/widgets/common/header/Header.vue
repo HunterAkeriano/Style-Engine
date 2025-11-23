@@ -47,52 +47,54 @@
       </div>
     </div>
 
-    <transition name="mobile-menu">
-      <div v-if="isMobileMenuOpen" ref="mobileMenuRef" class="header__mobile-menu">
+    <div
+      ref="mobileMenuRef"
+      class="header__mobile-menu"
+      :class="{ 'header__mobile-menu_open': isMobileMenuOpen }"
+      :aria-hidden="!isMobileMenuOpen"
+    >
+      <nav class="header__mobile-nav">
+        <NavLink :to="`/${locale}/gradient`" class-name="header__mobile-link" @click="closeMobileMenu">
+          {{ t('NAV.GRADIENTS') }}
+        </NavLink>
 
-        <nav class="header__mobile-nav">
-          <NavLink :to="`/${locale}/gradient`" class-name="header__mobile-link" @click="closeMobileMenu">
-            {{ t('NAV.GRADIENTS') }}
+        <NavLink :to="`/${locale}/shadow`" class-name="header__mobile-link" @click="closeMobileMenu">
+          {{ t('NAV.SHADOWS') }}
+        </NavLink>
+
+        <NavLink :to="`/${locale}/animation`" class-name="header__mobile-link" @click="closeMobileMenu">
+          {{ t('NAV.ANIMATIONS') }}
+        </NavLink>
+
+        <NavLink :to="`/${locale}/docs`" class-name="header__mobile-link" @click="closeMobileMenu">
+          {{ t('NAV.DOCS') }}
+        </NavLink>
+
+        <NavLink :to="`/${locale}/about`" class-name="header__mobile-link" @click="closeMobileMenu">
+          {{ t('NAV.ABOUT') }}
+        </NavLink>
+      </nav>
+
+      <div class="header__mobile-actions">
+        <ThemeSwitcher />
+        <LanguageSwitcher />
+
+        <template v-if="authStore.isAuthenticated && authStore.user">
+          <NavLink :to="`/${locale}/profile`" class-name="header__mobile-link" @click="closeMobileMenu">
+            {{ t('NAV.PROFILE') }}
           </NavLink>
 
-          <NavLink :to="`/${locale}/shadow`" class-name="header__mobile-link" @click="closeMobileMenu">
-            {{ t('NAV.SHADOWS') }}
-          </NavLink>
-
-          <NavLink :to="`/${locale}/animation`" class-name="header__mobile-link" @click="closeMobileMenu">
-            {{ t('NAV.ANIMATIONS') }}
-          </NavLink>
-
-          <NavLink :to="`/${locale}/docs`" class-name="header__mobile-link" @click="closeMobileMenu">
-            {{ t('NAV.DOCS') }}
-          </NavLink>
-
-          <NavLink :to="`/${locale}/about`" class-name="header__mobile-link" @click="closeMobileMenu">
-            {{ t('NAV.ABOUT') }}
-          </NavLink>
-        </nav>
-
-        <div class="header__mobile-actions">
-          <ThemeSwitcher />
-          <LanguageSwitcher />
-
-          <template v-if="authStore.isAuthenticated && authStore.user">
-            <NavLink :to="`/${locale}/profile`" class-name="header__mobile-link" @click="closeMobileMenu">
-              {{ t('NAV.PROFILE') }}
-            </NavLink>
-
-            <Button size="md" variant="danger" style="width: 100%;" @click="handleLogout">
-              {{ t('NAV.LOGOUT') }}
-            </Button>
-          </template>
-          <template v-else>
-            <Button size="md" variant="primary" style="width: 100%;" @click="goToAuth">
-              {{ t('NAV.LOGIN') }}
-            </Button>
-          </template>
-        </div>
+          <Button size="md" variant="danger" style="width: 100%;" @click="handleLogout">
+            {{ t('NAV.LOGOUT') }}
+          </Button>
+        </template>
+        <template v-else>
+          <Button size="md" variant="primary" style="width: 100%;" @click="goToAuth">
+            {{ t('NAV.LOGIN') }}
+          </Button>
+        </template>
       </div>
-    </transition>
+    </div>
   </header>
 </template>
 

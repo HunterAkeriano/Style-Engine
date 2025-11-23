@@ -11,6 +11,20 @@ export default {
     THEME_LIGHT: 'Light',
     THEME_DARK: 'Dark'
   },
+  BREADCRUMBS: {
+    HOME: 'Home',
+    ABOUT: 'About',
+    PRIVACY_POLICY: 'Privacy Policy',
+    COOKIE_POLICY: 'Cookie Policy',
+    GRADIENT: 'Gradient Generator',
+    SHADOW: 'Shadow Generator',
+    ANIMATION: 'Animation Library',
+    ANIMATION_DETAIL: 'Animation',
+    DOCS: 'Documentation',
+    DOCS_TOPIC: 'Topic',
+    MODERATION: 'Moderation',
+    MODERATION_USERS: 'User Management'
+  },
   HOME: {
     TITLE: 'Style Engine',
     SUBTITLE: 'CSS gradient, shadow, and animation generator with live preview and code export',

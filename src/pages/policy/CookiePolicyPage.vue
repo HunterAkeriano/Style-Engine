@@ -2,6 +2,7 @@
   <section class="policy-page policy-page--cookie">
     <div class="policy-page__bg" aria-hidden="true"></div>
     <div class="policy-page__container">
+      <Breadcrumbs />
       <div class="policy-page__header">
         <p class="policy-page__tag">{{ t('COOKIE.TAG') }}</p>
         <h1 class="policy-page__title">
@@ -30,6 +31,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { Breadcrumbs } from '@/widgets/common'
 
 const { t } = useI18n()
 

@@ -7,6 +7,7 @@
     </div>
 
     <div class="container">
+      <Breadcrumbs />
       <AnimationHero
         :eyebrow="t('ANIMATION.EYEBROW')"
         :title="t('ANIMATION.TITLE')"
@@ -35,6 +36,7 @@ import { animationExamples } from '@/entities/animation'
 import { listPublicSaves, type SavedItem } from '@/shared/api/saves'
 import { buildCreatorProfile, getCreatorLabel } from '@/shared/lib/creator'
 import type { AnimationExample } from '@/entities/animation/model/examples-data'
+import { Breadcrumbs } from '@/widgets/common'
 
 const { t } = useI18n()
 
