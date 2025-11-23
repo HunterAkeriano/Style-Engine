@@ -47,7 +47,8 @@ useHead(() => {
   return {
     title,
     meta,
-    link
+    link,
+    htmlAttrs: { lang: locale.value }
   }
 })
 </script>

@@ -1,4 +1,4 @@
-import { createI18n } from 'vue-i18n'
+import { createI18n, type I18n } from 'vue-i18n'
 import uk from './locales/uk'
 import en from './locales/en'
 
@@ -20,22 +20,38 @@ const savedLocale = hasWindow ? ((localStorage.getItem('locale') as Locale | nul
 const browserLocale = hasWindow ? navigator.language.split('-')[0] : 'en'
 const defaultLocale = pathLocale || savedLocale || (browserLocale === 'uk' ? 'uk' : 'en')
 
-export const i18n = createI18n({
-  legacy: false,
-  locale: defaultLocale,
-  fallbackLocale: 'en',
-  messages: {
-    uk,
-    en
-  }
-})
+function createI18nInstance(locale: Locale) {
+  return createI18n({
+    legacy: false,
+    locale,
+    fallbackLocale: 'en',
+    messages: {
+      uk,
+      en
+    }
+  })
+}
+
+export let i18n: I18n = createI18nInstance(defaultLocale) as unknown as I18n
+
+export function initI18n(locale: Locale): I18n {
+  i18n = createI18nInstance(locale) as unknown as I18n
+  return i18n
+}
 
 export function setLocale(locale: Locale) {
-  i18n.global.locale.value = locale
+  const localeRef = i18n.global.locale as unknown as { value?: Locale }
+  localeRef.value = locale
   if (hasWindow) {
     localStorage.setItem('locale', locale)
     document.documentElement.setAttribute('lang', locale)
   }
+}
+
+export function getCurrentLocale(): Locale {
+  const localeRef = i18n.global.locale as unknown as { value?: Locale }
+  const current = localeRef.value
+  return (AVAILABLE_LOCALES.includes(current as Locale) ? current : undefined) || 'en'
 }
 
 if (hasWindow) {

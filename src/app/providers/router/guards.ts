@@ -1,5 +1,5 @@
 import type { Router } from 'vue-router'
-import { i18n, setLocale, AVAILABLE_LOCALES, type Locale } from '@/app/providers'
+import { setLocale, AVAILABLE_LOCALES, getCurrentLocale, type Locale } from '@/app/providers'
 import { useAuthStore } from '@/entities'
 
 export function setupRouterGuards(router: Router) {
@@ -14,7 +14,7 @@ export function setupRouterGuards(router: Router) {
     const localeFromPath = localeIndex >= 0 ? pathParts[localeIndex] : null
 
     if (!localeFromPath) {
-      const defaultLocale = i18n.global.locale.value || 'en'
+      const defaultLocale = getCurrentLocale()
       const newPath = `/${defaultLocale}${to.path === '/' ? '' : to.path}`
 
       next({
@@ -27,24 +27,24 @@ export function setupRouterGuards(router: Router) {
     }
 
     const locale = localeFromPath as Locale
-    if (i18n.global.locale.value !== locale) {
+    if (getCurrentLocale() !== locale) {
       setLocale(locale)
     }
 
     if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-      const currentLocale = i18n.global.locale.value
+      const currentLocale = getCurrentLocale()
       next({ name: `${currentLocale}-login`, query: { redirect: to.fullPath } })
       return
     }
 
     if (to.meta.requiresAdmin && !authStore.user?.isAdmin) {
-      const currentLocale = i18n.global.locale.value
+      const currentLocale = getCurrentLocale()
       next({ name: `${currentLocale}-home` })
       return
     }
 
     if (to.meta.guestOnly && authStore.isAuthenticated) {
-      const currentLocale = i18n.global.locale.value
+      const currentLocale = getCurrentLocale()
       next({ name: `${currentLocale}-home` })
       return
     }
