@@ -8,6 +8,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "build:ssg": "echo \"backend: skipping ssg\"",
+    "vercel-build": "echo \"backend: skipping vercel-build\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "swagger": "node dist/swagger-export.js",
     "migrate": "ts-node src/scripts/migrate.ts"
