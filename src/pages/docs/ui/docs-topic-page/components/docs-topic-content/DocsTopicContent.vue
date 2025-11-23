@@ -101,7 +101,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useToast } from 'vue-toastification'
+import { useToast } from '@/shared/lib/toast'
 import { useI18n } from 'vue-i18n'
 import type { DocsTopicContent } from '@/pages/docs/model/content'
 import { Button, NavLink } from '@/shared/ui'

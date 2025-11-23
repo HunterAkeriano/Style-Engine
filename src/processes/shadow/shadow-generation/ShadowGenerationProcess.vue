@@ -115,13 +115,13 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useToast } from 'vue-toastification'
+import { useToast } from '@/shared/lib/toast'
 import { useRoute, useRouter } from 'vue-router'
 import type { ShadowLayer, ShadowPreset } from '@/shared/types'
 import { randomHexColor, hexToRgb } from '@/shared/lib/color'
 import { copyToClipboard, formatBoxShadow, type CSSFormat, smoothScrollToTop } from '@/shared/lib'
 import { ShadowControls, ShadowPreview, ShadowCodeExport, ShadowPresets } from '@/features/shadow'
-import { SHADOW_PRESETS } from './shadow-presets'
+import { SHADOW_PRESETS } from '@/processes'
 import {
   listPublicSaves,
   listSaves,

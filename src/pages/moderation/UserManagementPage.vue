@@ -115,7 +115,7 @@ import { computed, reactive, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { z } from 'zod'
 import { Button, Input, Modal, Select, Table, type TableColumn } from '@/shared/ui'
-import { useToast } from 'vue-toastification'
+import { useToast } from '@/shared/lib/toast'
 import { getModerationUsers, updateUser, deleteUser, type PublicUser } from '@/shared/api/users'
 import type { UsersParams } from '@/shared/api/users'
 

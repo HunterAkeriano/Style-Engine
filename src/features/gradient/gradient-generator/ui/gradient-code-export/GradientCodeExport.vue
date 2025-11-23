@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useToast } from 'vue-toastification'
+import { useToast } from '@/shared/lib/toast'
 import { Button, Select, type SelectOption } from '@/shared/ui'
 import { copyToClipboard, type CSSFormat } from '@/shared/lib'
 
@@ -67,7 +67,7 @@ const emit = defineEmits<{
   'blocked-export': []
 }>()
 const { t } = useI18n()
-  const toast = useToast()
+const toast = useToast()
 
 const selectedFormat = ref<CSSFormat>('css')
 const copied = ref(false)

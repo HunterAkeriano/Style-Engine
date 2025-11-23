@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useToast } from 'vue-toastification'
+import { useToast } from '@/shared/lib/toast'
 import type { DocsSnippet } from '@/pages/docs/model/content'
 import { Button } from '@/shared/ui'
 import { copyToClipboard } from '@/shared/lib'

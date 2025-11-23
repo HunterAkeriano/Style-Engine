@@ -86,7 +86,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useToast } from 'vue-toastification'
+import { useToast } from '@/shared/lib/toast'
 import { Button } from '@/shared/ui'
 import {
   listPublicSaves,

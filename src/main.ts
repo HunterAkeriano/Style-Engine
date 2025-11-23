@@ -1,7 +1,7 @@
 import { createPinia } from 'pinia'
 import { ViteSSG } from 'vite-ssg'
 import { createHead } from '@unhead/vue/server'
-import Toast, { POSITION } from 'vue-toastification'
+import { toastPlugin } from '@/shared/lib/toast'
 import { App } from '@/app'
 import { clickOutside } from '@/shared/directives'
 import { i18n, routes, AVAILABLE_LOCALES, scrollBehavior } from '@/app/providers'
@@ -44,8 +44,8 @@ export const createApp = ViteSSG(
     if (!existingHead) {
       app.use(head)
     }
-    app.use(Toast, {
-      position: POSITION.BOTTOM_RIGHT,
+    app.use(toastPlugin, {
+      position: 'bottom-right',
       timeout: 2200,
       hideProgressBar: true,
       closeButton: false,

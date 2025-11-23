@@ -131,7 +131,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Modal, Button, NavLink, Input, Select } from '@/shared/ui'
 import { copyToClipboard } from '@/shared/lib'
-import { useToast } from 'vue-toastification'
+import { useToast } from '@/shared/lib/toast'
 import { animationExamples } from '@/entities/animation'
 import {
   createSave,

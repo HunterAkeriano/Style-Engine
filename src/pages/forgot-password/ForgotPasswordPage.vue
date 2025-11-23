@@ -44,7 +44,7 @@
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { useToast } from 'vue-toastification'
+import { useToast } from '@/shared/lib/toast'
 import { authAPI } from '@/shared/api/auth'
 import { forgotPasswordSchema, type ForgotPasswordForm } from '@/shared/lib/validation/auth'
 import { Input } from '@/shared/ui'
