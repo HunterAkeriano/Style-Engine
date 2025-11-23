@@ -11,17 +11,13 @@ export function getLocaleFromPath(): Locale {
   }
 
   const pathParts = window.location.pathname.split('/').filter(Boolean)
-  const firstPart = pathParts[0]
+  const localeFromPath = pathParts.find((part) => AVAILABLE_LOCALES.includes(part as Locale))
 
-  if (AVAILABLE_LOCALES.includes(firstPart as any)) {
-    return firstPart as Locale
-  }
-
-  return 'en'
+  return (localeFromPath as Locale) || 'en'
 }
 
 const pathLocale = getLocaleFromPath()
-const savedLocale = localStorage.getItem('locale') as Locale | null
+const savedLocale = (localStorage.getItem('locale') as Locale | null) ?? undefined
 const browserLocale = navigator.language.split('-')[0]
 const defaultLocale = pathLocale || savedLocale || (browserLocale === 'uk' ? 'uk' : 'en')
 

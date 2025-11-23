@@ -54,7 +54,7 @@ export function createAuthRouter(env: Env) {
    * /api/auth/register:
    *   post:
    *     summary: Регистрация нового пользователя
-   *     description: Создает новый аккаунт пользователя и возвращает JWT токен для авторизации
+   *     description: Создает новый аккаунт пользователя и возвращает access токен. Refresh токен устанавливается в httpOnly cookie.
    *     tags: [Auth]
    *     requestBody:
    *       required: true
@@ -154,7 +154,7 @@ export function createAuthRouter(env: Env) {
    * /api/auth/login:
    *   post:
    *     summary: Авторизация пользователя
-   *     description: Авторизует пользователя по email и паролю, возвращает JWT токен
+   *     description: Авторизует пользователя по email и паролю. Возвращает access токен, refresh устанавливается в httpOnly cookie.
    *     tags: [Auth]
    *     requestBody:
    *       required: true
@@ -241,6 +241,79 @@ export function createAuthRouter(env: Env) {
 
     const { passwordHash, ...safeUser } = user
     res.json({ token: accessToken, user: safeUser })
+  })
+
+  /**
+   * @swagger
+   * /api/auth/refresh:
+   *   post:
+   *     summary: Обновить access токен
+   *     description: Читает refresh токен из httpOnly cookie и возвращает новый access токен
+   *     tags: [Auth]
+   *     responses:
+   *       200:
+   *         description: Новый access токен
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 token:
+   *                   type: string
+   *                   description: Новый access токен
+   *                 user:
+   *                   $ref: '#/components/schemas/User'
+   *       401:
+   *         description: Refresh токен отсутствует или недействителен
+   */
+  router.post('/refresh', async (req, res) => {
+    const cookies = parseCookies(req.headers.cookie)
+    const token = cookies['refreshToken']
+    if (!token) return res.status(401).json({ message: 'Missing refresh token' })
+
+    const tokenHash = hashToken(token)
+    const result = await db.query(
+      `SELECT rt.id, rt.user_id as "userId", u.email, u.name, u.avatar_url as "avatarUrl",
+              u.subscription_tier as "subscriptionTier", u.subscription_expires_at as "subscriptionExpiresAt",
+              u.is_payment as "isPayment", u.is_admin as "isAdmin", u.created_at as "createdAt"
+       FROM refresh_tokens rt
+       JOIN users u ON u.id = rt.user_id
+       WHERE rt.token_hash = $1 AND rt.revoked = FALSE AND rt.expires_at > NOW()
+       LIMIT 1`,
+      [tokenHash]
+    )
+    const record = result.rows[0]
+    if (!record) return res.status(401).json({ message: 'Invalid refresh token' })
+
+    const accessToken = signAccessToken(env, record.userId)
+    const { userId, ...rest } = record
+    const safeUser = attachSuperFlag({ id: userId, ...rest })
+    res.json({ token: accessToken, user: safeUser })
+  })
+
+  /**
+   * @swagger
+   * /api/auth/logout:
+   *   post:
+   *     summary: Выход из аккаунта
+   *     description: Ревокает refresh токен и очищает cookie
+   *     tags: [Auth]
+   *     responses:
+   *       200:
+   *         description: Успешно
+   */
+  router.post('/logout', async (req, res) => {
+    const cookies = parseCookies(req.headers.cookie)
+    const token = cookies['refreshToken']
+    if (token) {
+      const tokenHash = hashToken(token)
+      await db.query('UPDATE refresh_tokens SET revoked = TRUE WHERE token_hash = $1', [tokenHash])
+    }
+    res.setHeader(
+      'Set-Cookie',
+      serializeCookie('refreshToken', '', { path: '/api/auth/refresh', httpOnly: true, maxAge: 0 })
+    )
+    res.json({ ok: true })
   })
 
   router.post('/refresh', async (req, res) => {

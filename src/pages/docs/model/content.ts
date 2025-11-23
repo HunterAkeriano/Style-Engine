@@ -199,27 +199,18 @@ box-shadow: 0 20px 60px rgba(124, 58, 237, 0.28),
             title: 'Colors & contrast',
             description: 'Readable UI on light/dark themes.',
             items: [
-              'Work in pairs: surface + border + text-contrast token.',
-              'Limit gradient steps; if text is on a gradient, add a solid overlay with 0.08–0.14 opacity.',
-              'Test contrast on hover/focus states, not only defaults.'
+              'Use foreground-on-background contrast of at least 4.5:1 for text.',
+              'Pair gradients with solid overlays for text legibility.',
+              'Test both light/dark themes for the same component before shipping.'
             ]
           },
           {
-            title: 'Motion & timing',
-            description: 'Animation rules without jank.',
+            title: 'Performance',
+            description: 'Ship smooth motion and avoid layout trashing.',
             items: [
-              'Use transform/opacity for transitions; avoid properties that trigger layout.',
-              'Stick to 180–320ms for hover/focus, 260–420ms for larger blocks.',
-              'Provide `prefers-reduced-motion` fallbacks with reduced duration or disabled loops.'
-            ]
-          },
-          {
-            title: 'Shadows & depth',
-            description: 'Layered shadows that stay sharp.',
-            items: [
-              'Combine one soft shadow for volume and one thin outline for crisp edges.',
-              'Hover shadows should be tighter (shorter blur and offset) than resting state.',
-              'On dark backgrounds, add subtle inner light (1px) instead of aggressive outer glow.'
+              'Animate transform/opacity only; avoid box-shadow/height transitions.',
+              'Cap animation duration for loops (under 1.4s for loaders).',
+              'Use will-change sparingly and only on elements that truly animate.'
             ]
           }
         ]
@@ -228,58 +219,46 @@ box-shadow: 0 20px 60px rgba(124, 58, 237, 0.28),
     topics: [
       {
         slug: 'gradients',
-        eyebrow: 'Color + depth',
-        title: 'Gradient guide',
-        subtitle: 'Angles, stops, transparency, and combining with overlays.',
+        eyebrow: 'Gradients',
+        title: 'Layered gradients for depth and clarity',
+        subtitle: 'Balance contrast, stop positions, and add subtle radial accents.',
         checklist: {
-          title: '4 steps to a clean gradient',
-          subtitle: 'Works for heroes and cards alike.',
+          title: 'Gradient checklist',
+          subtitle: 'Three steps to a clean gradient',
           points: [
-            'Start with two tones: accent + shadow with 20-30% opacity.',
-            'Use 120-150deg for backgrounds, 30-45deg for highlights.',
-            'Spread stops: 0%, 35-45%, 70-85% and mix transparent edges.',
-            'Layer gradient + colored overlay + blur(12px) mask.'
+            'Pick 2–3 hues; avoid muddy mixes by spacing stops.',
+            'Add a radial highlight to guide the eye.',
+            'Keep text contrast with overlays or solid backing.'
           ]
         },
         preview: {
-          title: 'Layered gradient',
-          subtitle: 'Conic + linear mix',
+          title: 'Layered blend',
+          subtitle: 'Linear base + radial glow',
           className: 'docs-topic__preview_gradients',
           code: `background:
-  radial-gradient(circle at 20% 20%, #6ee7ff, transparent 38%),
-  linear-gradient(135deg, rgba(124,58,237,.9) 0%, rgba(14,165,233,.6) 55%, rgba(16,185,129,.35) 100%),
-  radial-gradient(circle at 80% 60%, rgba(255,255,255,.22), transparent 45%);`,
-          layers: 3,
-          dots: 0
+  radial-gradient(circle at 30% 20%, rgba(255,255,255,0.16), transparent 45%),
+  linear-gradient(135deg, #7c3aed, #6ee7ff);`,
+          layers: 2,
+          dots: 5
         },
         patterns: {
-          title: 'Quick presets',
-          subtitle: 'Drop into the generator and tweak to your palette.',
+          title: 'Use cases',
+          subtitle: 'Hero backgrounds, CTA cards, avatars',
           items: [
             {
-              title: 'Glass + gradient',
-              description: 'soft-glass base with outline',
-              className: 'docs-topic__mini-preview_glass',
-              code: `background: linear-gradient(140deg, rgba(255,255,255,.28), rgba(255,255,255,.04));
-box-shadow: 0 16px 40px rgba(0,0,0,.25),
-            0 0 0 1px rgba(255,255,255,.08);`
+              title: 'Glass header',
+              description: 'Gradient + blur + soft border',
+              code: `background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+backdrop-filter: blur(14px);
+border: 1px solid rgba(255,255,255,0.12);`,
+              className: 'docs-topic__pattern docs-topic__pattern_card'
             },
             {
-              title: 'Neon band',
-              description: 'narrow bar with counter glow',
-              className: 'docs-topic__mini-preview_band',
-              code: `background: linear-gradient(90deg, #06b6d4, #a855f7 45%, #22d3ee);
-box-shadow: 0 0 32px rgba(168,85,247,.6),
-            0 12px 30px rgba(10,10,10,.35);`
-            },
-            {
-              title: 'Card sheen',
-              description: 'conic highlight with transparency',
-              className: 'docs-topic__mini-preview_sheen',
-              code: `background: conic-gradient(from 120deg,
-  rgba(255,255,255,.32),
-  rgba(255,255,255,0) 35%);
-mix-blend-mode: screen;`
+              title: 'Conic accent',
+              description: 'Thin sweep for labels',
+              code: `background: conic-gradient(from 120deg, #6dd3ff, #ff7ce6, #6dd3ff);
+mask: linear-gradient(90deg, transparent 0, black 25%, black 75%, transparent 100%);`,
+              className: 'docs-topic__pattern docs-topic__pattern_strip'
             }
           ]
         },
@@ -287,61 +266,47 @@ mix-blend-mode: screen;`
       },
       {
         slug: 'shadows',
-        eyebrow: 'Depth',
-        title: 'Shadow guide',
-        subtitle: 'Assemble clean multi-layer shadows without muddy edges.',
+        eyebrow: 'Shadows',
+        title: 'Crisp multi-layer shadows for UI',
+        subtitle: 'Stacked offsets without blur for sharp depth.',
         checklist: {
-          title: 'Shadow structure',
-          subtitle: 'Blend blur + outline + glow.',
+          title: 'Shadow checklist',
+          subtitle: 'Two layers: lift + contact',
           points: [
-            'Soft layer: 0 20px 60px rgba(0,0,0,0.3) for volume.',
-            'Inner + border: 0 0 0 1px rgba(255,255,255,0.08) for crisp edges.',
-            'Glow layer: 0 0 0 12px rgba(124,58,237,0.12) for rim light.',
-            'Hover: reduce blur by 15% and lift the offset a few px.'
+            'Layer 1: bigger spread, lower opacity for lift.',
+            'Layer 2: tighter spread for contact.',
+            'Avoid heavy blur for hard-edge components.'
           ]
         },
         preview: {
-          title: 'Multi-shadow',
-          subtitle: '3 layers + outline',
+          title: 'Layered shadow',
+          subtitle: 'Depth without blur',
           className: 'docs-topic__preview_shadows',
           code: `box-shadow:
-  0 20px 60px rgba(0, 0, 0, 0.28),
-  0 8px 18px rgba(0, 0, 0, 0.25),
-  0 0 0 1px rgba(255, 255, 255, 0.08),
-  0 0 0 14px rgba(124, 58, 237, 0.14);`,
-          layers: 0,
+  0 14px 34px rgba(15,23,42,0.25),
+  0 6px 14px rgba(15,23,42,0.16);`,
+          layers: 2,
           dots: 4
         },
         patterns: {
-          title: 'Ready-made stacks',
-          subtitle: 'Swap colors and intensity only.',
+          title: 'Use cases',
+          subtitle: 'Buttons, cards, floating chips',
           items: [
             {
-              title: 'Glass card',
-              description: 'transparent base + shadow corridor',
-              className: 'docs-topic__mini-preview_shadow-card',
+              title: 'Primary button',
+              description: 'Hover lift + inset glow',
               code: `box-shadow:
-  0 12px 45px rgba(0, 0, 0, 0.32),
-  0 0 0 1px rgba(255, 255, 255, 0.06);`
+  0 10px 20px rgba(79,70,229,0.25),
+  inset 0 0 0 1px rgba(255,255,255,0.12);`,
+              className: 'docs-topic__pattern docs-topic__pattern_button'
             },
             {
-              title: 'Rim light',
-              description: 'outline via inset + glow',
-              className: 'docs-topic__mini-preview_outline',
+              title: 'Floating chip',
+              description: 'Two layers, zero blur',
               code: `box-shadow:
-  inset 0 1px 0 rgba(255,255,255,.16),
-  0 0 0 8px rgba(34,211,238,.18),
-  0 16px 40px rgba(0,0,0,.25);`
-            },
-            {
-              title: 'Hover lift',
-              description: 'shadow shift on hover',
-              className: 'docs-topic__mini-preview_hover',
-              code: `.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 50px rgba(0,0,0,.3),
-              0 0 0 12px rgba(168,85,247,.16);
-  transition: 200ms ease; }`
+  0 16px 30px rgba(0,0,0,0.18),
+  0 6px 14px rgba(0,0,0,0.22);`,
+              className: 'docs-topic__pattern docs-topic__pattern_chip'
             }
           ]
         },
@@ -349,61 +314,44 @@ mix-blend-mode: screen;`
       },
       {
         slug: 'animations',
-        eyebrow: 'Motion',
-        title: 'Animation guide',
-        subtitle: 'Keyframes, easing and staggers: fast micro-motions.',
+        eyebrow: 'Animations',
+        title: 'Micro-motion with keyframes',
+        subtitle: 'Transform/opacity only, tuned easing and duration.',
         checklist: {
-          title: 'Stable motion',
-          subtitle: 'Timing and delays under control.',
+          title: 'Animation checklist',
+          subtitle: 'Smooth, readable motion',
           points: [
-            'Set duration precisely: 260–420ms for UI elements.',
-            'Prefer cubic-bezier(0.22, 1, 0.36, 1) for smooth exits.',
-            'Use will-change: transform/opacity only on active elements.',
-            'For staggers: delay = index * 80ms to avoid flashing.'
+            'Animate transform/opacity; avoid layout-affecting props.',
+            'Keep loaders under ~1.4s, loops 6–12s.',
+            'Stagger lists by 60–120ms for depth.'
           ]
         },
         preview: {
-          title: 'Motion timeline',
-          subtitle: '6-dot stagger',
+          title: 'Micro float',
+          subtitle: 'Y-translate + opacity',
           className: 'docs-topic__preview_animations',
-          code: `@keyframes rise {
-  from { transform: translateY(12px); opacity: 0; }
-  60% { transform: translateY(-8px); opacity: 1; }
-  to { transform: translateY(0); opacity: 1; }
+          code: `@keyframes float {
+  0%,100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(-12px); opacity: 0.85; }
 }`,
-          layers: 0,
+          layers: 1,
           dots: 6
         },
         patterns: {
-          title: 'Keyframe templates',
-          subtitle: 'Copy and adjust colors/timing.',
+          title: 'Use cases',
+          subtitle: 'Badges, loaders, marquee',
           items: [
             {
-              title: 'Shimmer',
-              description: 'highlight sweep across a card',
-              className: 'docs-topic__mini-preview_shimmer',
-              code: `@keyframes shimmer {
-  0% { transform: translateX(-120%); }
-  100% { transform: translateX(120%); }
-}`
+              title: 'Pill badge',
+              description: 'Sliding dot for active state',
+              code: `.pill::after { animation: slide 2.4s ease-in-out infinite; }`,
+              className: 'docs-topic__pattern docs-topic__pattern_badge'
             },
             {
-              title: 'Bounce',
-              description: 'bounce with slight squish',
-              className: 'docs-topic__mini-preview_bounce',
-              code: `@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  45% { transform: translateY(-16px) scale(1.02); }
-  70% { transform: translateY(2px) scale(.98); }
-}`
-            },
-            {
-              title: 'Orbit marker',
-              description: 'floating dot on a ring',
-              className: 'docs-topic__mini-preview_orbit',
-              code: `@keyframes orbit {
-  to { transform: rotate(360deg) translateX(52px) rotate(-360deg); }
-}`
+              title: 'Marquee',
+              description: 'Looping translateX',
+              code: `.marquee { animation: ticker 14s linear infinite; }`,
+              className: 'docs-topic__pattern docs-topic__pattern_marquee'
             }
           ]
         },
@@ -414,11 +362,11 @@ mix-blend-mode: screen;`
   uk: {
     page: {
       hero: {
-        eyebrow: 'CSS Гайд',
-        title: 'Живий гайд про градієнти, тіні та motion',
+        eyebrow: 'CSS гайд',
+        title: 'Живий гайд по градієнтам, тіням та анімаціям',
         subtitle:
-          'Документація з копійованими кодами та живими превʼю: видно як працюють градієнти, мульти-тіні й keyframes. Швидкі лінки ведуть на підсторінки для кожного типу ефектів.',
-        meta: ['Інтерактивні приклади', 'CSS для копіювання', 'Чеклист + практика'],
+          'Сторінка з документацією, готовими прикладами та живими прев’ю, щоб ви бачили, як працюють градієнти, стекинг тіней та keyframes. Є швидкі переходи у підрозділи для кожного типу ефектів.',
+        meta: ['Інтерактивні приклади', 'CSS для копіювання', 'Чекліст + практика'],
         cta: [
           { label: 'Гайд по градієнтах', to: '/docs/gradients', variant: 'primary' },
           { label: 'Гайд по тінях', to: '/docs/shadows', variant: 'secondary' },
@@ -429,64 +377,56 @@ mix-blend-mode: screen;`
         {
           slug: 'gradients',
           title: 'Градієнти',
-          description: 'Лінійні, радіальні й конусні мікси з кутами та стопами.',
-          badge: 'color + depth',
-          previewLabel: 'Слої кольору',
+          description: 'Лінійні, радіальні та конічні мікси з порадами по стопам.',
+          badge: 'колір + глибина',
+          previewLabel: 'Багатошаровий мікс',
           previewDots: 5,
           previewClass: 'docs-card__preview_gradients',
           points: [
             'Палітра через баланс світла/тіні',
-            'Сітки стопів і прозоростей',
-            'Двошарові бэкграунди для читабельності'
+            'Сітка стопів з прозорістю',
+            'Два шари фону для контрасту'
           ],
           link: '/docs/gradients',
-          hint: '5 прикладів + чеклист'
+          hint: '5 прикладів + чекліст'
         },
         {
           slug: 'shadows',
           title: 'Тіні',
-          description: 'Мульти-тіні без бруду й сірих плям.',
-          badge: 'depth',
-          previewLabel: 'Багатошарова тінь',
+          description: 'Мульті-тіньові стаки без бруду.',
+          badge: 'глибина',
+          previewLabel: 'Шарована тінь',
           previewDots: 4,
           previewClass: 'docs-card__preview_shadows',
-          points: [
-            'Soft-shadow + border-glow',
-            'Відділення hover/active',
-            'Пресети для glassmorphism'
-          ],
+          points: ['М’яка тінь + border glow', 'Розділення hover/active', 'Glass-friendly пресети'],
           link: '/docs/shadows',
-          hint: 'Готові схеми multi-shadow'
+          hint: 'Рецепти мульті-тіней'
         },
         {
           slug: 'animations',
           title: 'Анімації',
-          description: 'Keyframes з easing, затримками й стегером.',
+          description: 'Keyframes з easing, затримками та stagger нотатками.',
           badge: 'motion',
-          previewLabel: 'Micro-motion',
+          previewLabel: 'Мікро рух',
           previewDots: 6,
           previewClass: 'docs-card__preview_animations',
-          points: [
-            'Гачки для затримки та пауз',
-            'Стилізація marquee й loaders',
-            'Кращі криві easing'
-          ],
+          points: ['Хуки затримки', 'Стилі marquee та лоадерів', 'Кращі криві прискорення'],
           link: '/docs/animations',
           hint: 'Keyframes для копіювання'
         }
       ],
       playbook: [
         {
-          title: 'Градієнтна карточка',
-          description: 'Контрастний фон + мʼякий multi-shadow і легкий blur.',
+          title: 'Градієнтна картка',
+          description: 'Контрастний фон + м’який мульти-shadow і глибина.',
           code: `background: linear-gradient(135deg, #6ee7ff, #7c3aed);
 box-shadow: 0 20px 60px rgba(124, 58, 237, 0.28),
             0 8px 24px rgba(10, 10, 10, 0.25);`,
           preview: 'card'
         },
         {
-          title: 'Біжучий рядок',
-          description: 'translateX без шва і з налаштуванням швидкості.',
+          title: 'Marquee стрічка',
+          description: 'TranslateX з безшовним повтором і регульованою швидкістю.',
           code: `.marquee {
   display: flex;
   gap: 2rem;
@@ -499,8 +439,8 @@ box-shadow: 0 20px 60px rgba(124, 58, 237, 0.28),
           preview: 'marquee'
         },
         {
-          title: 'Пульс для CTA',
-          description: 'Два шари (scale + blur) для мʼякого фокуса.',
+          title: 'CTA pulse',
+          description: 'Два шари (scale + blur) для м’якого акценту.',
           code: `@keyframes pulse {
   0% { transform: scale(1); opacity: .9; }
   70% { transform: scale(1.25); opacity: 0; }
@@ -511,43 +451,34 @@ box-shadow: 0 20px 60px rgba(124, 58, 237, 0.28),
         }
       ],
       primer: {
-        title: 'Коротка CSS-документація',
-        subtitle: 'Нагадування для чистих і передбачуваних стилів у продакшені.',
+        title: 'Міні-документація CSS',
+        subtitle: 'Короткі нагадування для чистих стилів у проді.',
         sections: [
           {
-            title: 'Layout',
-            description: 'Стабільний потік без стрибків.',
+            title: 'Лейаут',
+            description: 'Стабільний flow без layout shifts.',
             items: [
-              'Використовуйте logical properties (margin-inline, padding-block) — простіше для RTL.',
-              'Резервуйте місце під асинхронний контент через min-height або aspect-ratio.',
-              'Віддавайте перевагу gap у grid/flex замість маршинів, щоб уникнути колапсів.'
+              'Логічні властивості (margin-inline, padding-block) для спрощення RTL.',
+              'Резервуйте місце під async контент (min-height або aspect-ratio).',
+              'Використовуйте gap у grid/flex замість margin stack.'
             ]
           },
           {
-            title: 'Колір і контраст',
+            title: 'Контраст',
             description: 'Читабельність у світлій/темній темах.',
             items: [
-              'Працюйте в парах: surface + border + текстовий контраст.',
-              'Обмежуйте кроки градієнта; для тексту на градієнті — додайте суцільний overlay 0.08–0.14.',
-              'Перевіряйте контраст для hover/focus, а не лише дефолту.'
+              'Контраст тексту 4.5:1 і більше.',
+              'Градієнти + solid overlay для тексту.',
+              'Тестуйте обидві теми перед релізом.'
             ]
           },
           {
-            title: 'Motion і таймінги',
-            description: 'Правила анімацій без джанку.',
+            title: 'Перформанс',
+            description: 'Плавний motion без трешу.',
             items: [
-              'Для переходів використовуйте transform/opacity, не властивості що змінюють layout.',
-              'Тримайте 180–320мс для hover/focus, 260–420мс для великих блоків.',
-              'Додавайте `prefers-reduced-motion`: менша тривалість або вимкнені цикли.'
-            ]
-          },
-          {
-            title: 'Тіні й глибина',
-            description: 'Шари тіней, що залишаються чіткими.',
-            items: [
-              'Поєднуйте один soft-шар для обʼєму і тонкий outline для чіткості.',
-              'Hover-тіні робіть компактнішими (менше blur та offset), ніж у спокої.',
-              'На темному фоні додайте легкий inner light (1px) замість агресивного зовнішнього glow.'
+              'Анімуйте transform/opacity, не чіпайте розміри/тіні.',
+              'Обмежуйте тривалість циклів (лоадери <1.4c).',
+              'will-change — тільки на реально анімованих елементах.'
             ]
           }
         ]
@@ -556,58 +487,46 @@ box-shadow: 0 20px 60px rgba(124, 58, 237, 0.28),
     topics: [
       {
         slug: 'gradients',
-        eyebrow: 'Color + depth',
-        title: 'Гайд по градієнтах',
-        subtitle: 'Кути, стопи, прозорості й робота з overlay.',
+        eyebrow: 'Градієнти',
+        title: 'Шарові градієнти з глибиною та читабельністю',
+        subtitle: 'Баланс контрасту, позицій стопів і легких радіальних акцентів.',
         checklist: {
-          title: '4 кроки до чистого градієнта',
-          subtitle: 'Підійде і для героя, і для карточки.',
+          title: 'Чекліст градієнтів',
+          subtitle: 'Три кроки до чистого градієнта',
           points: [
-            'Почніть з двох тонів: акцент + тінь з 20-30% прозорості.',
-            '120-150deg для фону, 30-45deg для бликів.',
-            'Розносьте стопи: 0%, 35-45%, 70-85% і прозорі межі.',
-            'Комбінуйте градієнт + кольоровий overlay + маску blur(12px).'
+            'Обирайте 2–3 відтінки; розводьте стопи, щоб уникнути «бруду».',
+            'Додайте радіальний хайлайт, щоб вести погляд.',
+            'Тримайте контраст тексту накладкою або суцільним фоном.'
           ]
         },
         preview: {
-          title: 'Слоєний градієнт',
-          subtitle: 'Конус + лінійний шар',
+          title: 'Шарований мікс',
+          subtitle: 'Лінійна база + радіальне світло',
           className: 'docs-topic__preview_gradients',
           code: `background:
-  radial-gradient(circle at 20% 20%, #6ee7ff, transparent 38%),
-  linear-gradient(135deg, rgba(124,58,237,.9) 0%, rgba(14,165,233,.6) 55%, rgba(16,185,129,.35) 100%),
-  radial-gradient(circle at 80% 60%, rgba(255,255,255,.22), transparent 45%);`,
-          layers: 3,
-          dots: 0
+  radial-gradient(circle at 30% 20%, rgba(255,255,255,0.16), transparent 45%),
+  linear-gradient(135deg, #7c3aed, #6ee7ff);`,
+          layers: 2,
+          dots: 5
         },
         patterns: {
-          title: 'Швидкі пресети',
-          subtitle: 'Вставляйте в генератор і коригуйте палітру.',
+          title: 'Де застосувати',
+          subtitle: 'Фони героїв, CTA-картки, аватари',
           items: [
             {
-              title: 'Glass + градієнт',
-              description: 'soft-glass база з контуром',
-              className: 'docs-topic__mini-preview_glass',
-              code: `background: linear-gradient(140deg, rgba(255,255,255,.28), rgba(255,255,255,.04));
-box-shadow: 0 16px 40px rgba(0,0,0,.25),
-            0 0 0 1px rgba(255,255,255,.08);`
+              title: 'Скляний хедер',
+              description: 'Градієнт + blur + м’який бордер',
+              code: `background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+backdrop-filter: blur(14px);
+border: 1px solid rgba(255,255,255,0.12);`,
+              className: 'docs-topic__pattern docs-topic__pattern_card'
             },
             {
-              title: 'Neon band',
-              description: 'вузька смуга з контровим glow',
-              className: 'docs-topic__mini-preview_band',
-              code: `background: linear-gradient(90deg, #06b6d4, #a855f7 45%, #22d3ee);
-box-shadow: 0 0 32px rgba(168,85,247,.6),
-            0 12px 30px rgba(10,10,10,.35);`
-            },
-            {
-              title: 'Блік для карточки',
-              description: 'конусний хайлайт + прозорість',
-              className: 'docs-topic__mini-preview_sheen',
-              code: `background: conic-gradient(from 120deg,
-  rgba(255,255,255,.32),
-  rgba(255,255,255,0) 35%);
-mix-blend-mode: screen;`
+              title: 'Конічний акцент',
+              description: 'Тонкий мазок для лейблів',
+              code: `background: conic-gradient(from 120deg, #6dd3ff, #ff7ce6, #6dd3ff);
+mask: linear-gradient(90deg, transparent 0, black 25%, black 75%, transparent 100%);`,
+              className: 'docs-topic__pattern docs-topic__pattern_strip'
             }
           ]
         },
@@ -615,61 +534,47 @@ mix-blend-mode: screen;`
       },
       {
         slug: 'shadows',
-        eyebrow: 'Depth',
-        title: 'Гайд по тінях',
-        subtitle: 'Як скласти чисту multi-shadow без бруду.',
+        eyebrow: 'Тіні',
+        title: 'Чіткі мульти-тіні для UI',
+        subtitle: 'Шаровані зсуви без розмиття, щоб зберегти чіткість.',
         checklist: {
-          title: 'Структура тіні',
-          subtitle: 'Поєднуйте blur + контур + glow.',
+          title: 'Чекліст тіней',
+          subtitle: 'Два шари: підйом + контакт',
           points: [
-            'Soft-шар: 0 20px 60px rgba(0,0,0,0.3) для обʼєму.',
-            'Inner + border: 0 0 0 1px rgba(255,255,255,0.08) для чіткого краю.',
-            'Glow-шар: 0 0 0 12px rgba(124,58,237,0.12) для контрового світла.',
-            'Hover: зменшуйте blur на 15% і підіймайте offset на пару пікселів.'
+            'Шар 1: більший спред і менша прозорість для підйому.',
+            'Шар 2: щільніший спред для контакту.',
+            'Уникайте великого blur для гострих компонентів.'
           ]
         },
         preview: {
-          title: 'Мульти-тінь',
-          subtitle: '3 шари + outline',
+          title: 'Шарована тінь',
+          subtitle: 'Глибина без розмиття',
           className: 'docs-topic__preview_shadows',
           code: `box-shadow:
-  0 20px 60px rgba(0, 0, 0, 0.28),
-  0 8px 18px rgba(0, 0, 0, 0.25),
-  0 0 0 1px rgba(255, 255, 255, 0.08),
-  0 0 0 14px rgba(124, 58, 237, 0.14);`,
-          layers: 0,
+  0 14px 34px rgba(15,23,42,0.25),
+  0 6px 14px rgba(15,23,42,0.16);`,
+          layers: 2,
           dots: 4
         },
         patterns: {
-          title: 'Готові схеми',
-          subtitle: 'Змінюйте лише колір і силу.',
+          title: 'Де застосувати',
+          subtitle: 'Кнопки, картки, «плаваючі» чіпи',
           items: [
             {
-              title: 'Glass-карта',
-              description: 'прозора база + тіньовий коридор',
-              className: 'docs-topic__mini-preview_shadow-card',
+              title: 'Кнопка primary',
+              description: 'Підйом на hover + inset підсвітка',
               code: `box-shadow:
-  0 12px 45px rgba(0, 0, 0, 0.32),
-  0 0 0 1px rgba(255, 255, 255, 0.06);`
+  0 10px 20px rgba(79,70,229,0.25),
+  inset 0 0 0 1px rgba(255,255,255,0.12);`,
+              className: 'docs-topic__pattern docs-topic__pattern_button'
             },
             {
-              title: 'Контрове світло',
-              description: 'outline через inset + glow',
-              className: 'docs-topic__mini-preview_outline',
+              title: 'Плаваючий чіп',
+              description: 'Два шари, без blur',
               code: `box-shadow:
-  inset 0 1px 0 rgba(255,255,255,.16),
-  0 0 0 8px rgba(34,211,238,.18),
-  0 16px 40px rgba(0,0,0,.25);`
-            },
-            {
-              title: 'Hover-підйом',
-              description: 'зміщення тіні при наведенні',
-              className: 'docs-topic__mini-preview_hover',
-              code: `.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 50px rgba(0,0,0,.3),
-              0 0 0 12px rgba(168,85,247,.16);
-  transition: 200ms ease; }`
+  0 16px 30px rgba(0,0,0,0.18),
+  0 6px 14px rgba(0,0,0,0.22);`,
+              className: 'docs-topic__pattern docs-topic__pattern_chip'
             }
           ]
         },
@@ -677,61 +582,44 @@ mix-blend-mode: screen;`
       },
       {
         slug: 'animations',
-        eyebrow: 'Motion',
-        title: 'Гайд по анімаціях',
-        subtitle: 'Keyframes, easing і стегер: набір мікрорухів.',
+        eyebrow: 'Анімації',
+        title: 'Мікро-рух на keyframes',
+        subtitle: 'Тільки transform/opacity з відточеним easing і тривалістю.',
         checklist: {
-          title: 'Стабільний motion',
-          subtitle: 'Час і затримки під контролем.',
+          title: 'Чекліст анімацій',
+          subtitle: 'Плавний і зрозумілий рух',
           points: [
-            'Тривалість в мс: 260–420 мс для UI-елементів.',
-            'cubic-bezier(0.22, 1, 0.36, 1) для плавного виходу.',
-            'will-change: transform/opacity лише на активних елементах.',
-            'Стегер: затримка = індекс * 80мс, щоб не спалахували.'
+            'Анімуйте лише transform/opacity; не рухайте розміри/тіні.',
+            'Лоадери тримайте до ~1.4с, цикли — 6–12с.',
+            'Списки розносьте на 60–120 мс для глибини.'
           ]
         },
         preview: {
-          title: 'Таймлайн руху',
-          subtitle: 'стегер з 6 точок',
+          title: 'Мікро float',
+          subtitle: 'Зсув по Y + прозорість',
           className: 'docs-topic__preview_animations',
-          code: `@keyframes rise {
-  from { transform: translateY(12px); opacity: 0; }
-  60% { transform: translateY(-8px); opacity: 1; }
-  to { transform: translateY(0); opacity: 1; }
+          code: `@keyframes float {
+  0%,100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(-12px); opacity: 0.85; }
 }`,
-          layers: 0,
+          layers: 1,
           dots: 6
         },
         patterns: {
-          title: 'Keyframe-шаблони',
-          subtitle: 'Скопіюйте й підкоригуйте колір/час.',
+          title: 'Де застосувати',
+          subtitle: 'Бейджі, лоадери, marquee',
           items: [
             {
-              title: 'Шиммер',
-              description: 'блик, що пробігає по карті',
-              className: 'docs-topic__mini-preview_shimmer',
-              code: `@keyframes shimmer {
-  0% { transform: translateX(-120%); }
-  100% { transform: translateX(120%); }
-}`
+              title: 'Pill бейдж',
+              description: 'Ковзна крапка для активного стану',
+              code: `.pill::after { animation: slide 2.4s ease-in-out infinite; }`,
+              className: 'docs-topic__pattern docs-topic__pattern_badge'
             },
             {
-              title: 'Стрибок',
-              description: 'bounce з легким стисненням',
-              className: 'docs-topic__mini-preview_bounce',
-              code: `@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  45% { transform: translateY(-16px) scale(1.02); }
-  70% { transform: translateY(2px) scale(.98); }
-}`
-            },
-            {
-              title: 'Орбітальний маркер',
-              description: 'точка, що рухається по колу',
-              className: 'docs-topic__mini-preview_orbit',
-              code: `@keyframes orbit {
-  to { transform: rotate(360deg) translateX(52px) rotate(-360deg); }
-}`
+              title: 'Marquee',
+              description: 'Безкінечний translateX',
+              code: `.marquee { animation: ticker 14s linear infinite; }`,
+              className: 'docs-topic__pattern docs-topic__pattern_marquee'
             }
           ]
         },
@@ -741,16 +629,17 @@ mix-blend-mode: screen;`
   }
 }
 
-export function getDocsPageContent(locale: Locale): DocsPageContent {
+export function getDocsPageContent(locale: Locale) {
   return docsContent[locale]?.page ?? docsContent.en.page
 }
 
-export function getDocsTopicContent(locale: Locale, topic: DocsTopicKey): {
-  topic: DocsTopicContent
-  otherTopics: DocsTopicContent[]
-} {
-  const allTopics = docsContent[locale]?.topics ?? docsContent.en.topics
-  const found = allTopics.find(item => item.slug === topic) ?? allTopics[0]
-  const others = allTopics.filter(item => item.slug !== found.slug)
-  return { topic: found, otherTopics: others }
+export function getDocsTopics(locale: Locale) {
+  return docsContent[locale]?.topics ?? docsContent.en.topics
+}
+
+export function getDocsTopicContent(locale: Locale, slug: DocsTopicKey) {
+  const topics = getDocsTopics(locale)
+  const topic = topics.find((t) => t.slug === slug) ?? topics[0]
+  const otherTopics = topics.filter((t) => t.slug !== topic.slug)
+  return { topic, otherTopics }
 }

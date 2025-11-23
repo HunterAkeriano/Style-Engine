@@ -34,12 +34,8 @@
         <span class="docs-hero__dot docs-hero__dot_tiny"></span>
       </div>
       <div class="docs-hero__panel">
-        <p class="docs-hero__panel-title">motion.css</p>
-        <pre class="docs-hero__code"><code>@keyframes float {
-  from { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-  to { transform: translateY(0); }
-}</code></pre>
+        <p class="docs-hero__panel-title">pattern.css</p>
+        <pre class="docs-hero__code"><code>{{ defaultCode }}</code></pre>
       </div>
     </div>
   </section>
@@ -48,6 +44,11 @@
 <script setup lang="ts">
 import type { DocsHeroContent } from '@/pages/docs/model/content'
 import { NavLink } from '@/shared/ui'
+
+const defaultCode = `@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}`
 
 defineProps<{
   content: DocsHeroContent

@@ -75,9 +75,24 @@ export function setupSwagger(app: Express) {
                 type: 'boolean',
                 description: 'Есть ли оплаченный доступ'
               },
+              subscriptionTier: {
+                type: 'string',
+                enum: ['free', 'pro', 'premium'],
+                description: 'Текущий тариф пользователя'
+              },
+              subscriptionExpiresAt: {
+                type: 'string',
+                format: 'date-time',
+                nullable: true,
+                description: 'Дата окончания платной подписки (null для free, 2100-01-01 для бессрочной)'
+              },
               isAdmin: {
                 type: 'boolean',
                 description: 'Является ли пользователь администратором'
+              },
+              isSuperAdmin: {
+                type: 'boolean',
+                description: 'Отметка супер-админа (email из env)'
               },
               createdAt: {
                 type: 'string',

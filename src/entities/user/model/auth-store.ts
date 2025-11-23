@@ -5,13 +5,6 @@ import { AUTH_TOKEN_KEY } from '@/shared/api/constants'
 import { getCookie, removeCookie, setCookie } from '@/shared/lib/cookies'
 import type { User } from './types'
 
-function normalizeUser(user: User | null): User | null {
-  if (!user) return null
-  const tierRaw = user.subscriptionTier || user.plan || (user.isPayment ? 'pro' : 'free')
-  const subscriptionTier = tierRaw ? tierRaw.toLowerCase() as User['subscriptionTier'] : 'free'
-  return { ...user, subscriptionTier }
-}
-
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
   const isLoading = ref(false)
@@ -46,7 +39,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function setUser(newUser: User | null) {
-    user.value = normalizeUser(newUser)
+    user.value = newUser
   }
 
   function setLoading(loading: boolean) {

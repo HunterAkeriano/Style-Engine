@@ -10,9 +10,10 @@ export function setupRouterGuards(router: Router) {
     }
 
     const pathParts = to.path.split('/').filter(Boolean)
-    const localeFromPath = pathParts[0]
+    const localeIndex = pathParts.findIndex(part => AVAILABLE_LOCALES.includes(part as Locale))
+    const localeFromPath = localeIndex >= 0 ? pathParts[localeIndex] : null
 
-    if (!AVAILABLE_LOCALES.includes(localeFromPath as any)) {
+    if (!localeFromPath) {
       const defaultLocale = i18n.global.locale.value || 'en'
       const newPath = `/${defaultLocale}${to.path === '/' ? '' : to.path}`
 
