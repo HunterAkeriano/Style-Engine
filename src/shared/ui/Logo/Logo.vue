@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import Icon from '@/shared/ui/icon/Icon.vue'
+import Icon from '@/shared/ui/Icon/Icon.vue'
 </script>
 
 <style lang="scss" scoped src="./Logo.scss"></style>

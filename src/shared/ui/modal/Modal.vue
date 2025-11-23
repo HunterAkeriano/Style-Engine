@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock-upgrade'
-import Button from '@/shared/ui/button/Button.vue'
+import Button from '@/shared/ui/Button/Button.vue'
 
 interface Props {
   visible: boolean

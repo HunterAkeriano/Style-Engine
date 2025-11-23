@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import Icon from '@/shared/ui/icon/Icon.vue'
+import Icon from '@/shared/ui/Icon/Icon.vue'
 
 type SortOrder = 'asc' | 'desc'
 type Align = 'left' | 'center' | 'right'

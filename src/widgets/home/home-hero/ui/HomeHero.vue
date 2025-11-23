@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import Logo from '@/shared/ui/logo/Logo.vue'
+import Logo from '@/shared/ui/Logo/Logo.vue'
 import { NavLink } from '@/shared/ui'
 
 const { t } = useI18n()

@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import Icon from '@/shared/ui/icon/Icon.vue'
+import Icon from '@/shared/ui/Icon/Icon.vue'
 import type { SelectOption } from './types'
 
 interface Props {

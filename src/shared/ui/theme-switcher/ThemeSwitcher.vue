@@ -15,7 +15,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTheme } from '@/shared/composables'
-import Icon from '@/shared/ui/icon/Icon.vue'
+import Icon from '@/shared/ui/Icon/Icon.vue'
 
 const { toggleTheme, isDark } = useTheme()
 const { t } = useI18n()

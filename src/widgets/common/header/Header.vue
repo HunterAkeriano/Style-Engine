@@ -103,7 +103,7 @@ import { useI18n } from 'vue-i18n'
 import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock-upgrade'
 import { useAuthStore } from '@/entities'
 import { LanguageSwitcher } from '@/features'
-import Logo from '@/shared/ui/logo/Logo.vue'
+import Logo from '@/shared/ui/Logo/Logo.vue'
 import { Button, Icon, NavLink, ThemeSwitcher } from '@/shared/ui'
 import UserMenu from '@/widgets/common/user-menu/UserMenu.vue'
 

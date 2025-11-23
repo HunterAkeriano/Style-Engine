@@ -84,7 +84,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Logo from '@/shared/ui/logo/Logo.vue'
+import Logo from '@/shared/ui/Logo/Logo.vue'
 import { NavLink } from '@/shared/ui'
 import ThemeSwitcher from '@/shared/ui/theme-switcher/ThemeSwitcher.vue'
 import { LanguageSwitcher } from '@/features'
