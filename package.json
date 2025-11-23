@@ -11,6 +11,7 @@
     "dev": "vite --host",
     "build": "vue-tsc && vite build",
     "build:ssg": "vue-tsc && vite-ssg build",
+    "vercel-build": "VITE_BASE=/ npm run build:ssg",
     "preview": "vite preview",
     "preview:ssg": "vite preview --host --port 4173",
     "type-check": "vue-tsc --noEmit",
