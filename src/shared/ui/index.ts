@@ -9,5 +9,5 @@ export { default as ThemeSwitcher } from './theme-switcher/ThemeSwitcher.vue'
 export { default as Modal } from './modal/Modal.vue'
 export { default as Table } from './table/Table.vue'
 
-export type { SelectOption } from './select/Select.vue'
+export type { SelectOption } from './select/types'
 export type { TableColumn, RowData } from './table/Table.vue'

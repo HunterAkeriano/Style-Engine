@@ -226,11 +226,11 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
           "select",
           { "select_error": __props.error, "select_disabled": __props.disabled, "select_open": isOpen.value, "select_drop-up": isDropUp.value }
         ]
-      }, _attrs))} data-v-9a7e3634>`);
+      }, _attrs))} data-v-aaabcf99>`);
       if (__props.label) {
-        _push(`<label class="select__label" data-v-9a7e3634>${ssrInterpolate(__props.label)} `);
+        _push(`<label class="select__label" data-v-aaabcf99>${ssrInterpolate(__props.label)} `);
         if (__props.required) {
-          _push(`<span class="select__required" data-v-9a7e3634>*</span>`);
+          _push(`<span class="select__required" data-v-aaabcf99>*</span>`);
         } else {
           _push(`<!---->`);
         }
@@ -238,7 +238,7 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
       } else {
         _push(`<!---->`);
       }
-      _push(`<div class="select__wrapper" data-v-9a7e3634><button${ssrIncludeBooleanAttr(__props.disabled) ? " disabled" : ""} type="button" class="select__control" data-v-9a7e3634><span class="${ssrRenderClass(["select__value", { "select__value_placeholder": !selectedOption.value }])}" data-v-9a7e3634>${ssrInterpolate(((_a = selectedOption.value) == null ? void 0 : _a.label) ?? __props.placeholder ?? "Выберите значение")}</span>`);
+      _push(`<div class="select__wrapper" data-v-aaabcf99><button${ssrIncludeBooleanAttr(__props.disabled) ? " disabled" : ""} type="button" class="select__control" data-v-aaabcf99><span class="${ssrRenderClass(["select__value", { "select__value_placeholder": !selectedOption.value }])}" data-v-aaabcf99>${ssrInterpolate(((_a = selectedOption.value) == null ? void 0 : _a.label) ?? __props.placeholder ?? "Выберите значение")}</span>`);
       _push(ssrRenderComponent(Icon, {
         size: 14,
         class: ["select__chevron", { "select__chevron_open": isOpen.value, "select__chevron_drop-up": isDropUp.value }],
@@ -246,9 +246,9 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
       }, null, _parent));
       _push(`</button>`);
       if (isOpen.value) {
-        _push(`<div class="select__dropdown" data-v-9a7e3634><!--[-->`);
+        _push(`<div class="select__dropdown" data-v-aaabcf99><!--[-->`);
         ssrRenderList(__props.options, (option) => {
-          _push(`<button class="${ssrRenderClass(["select__option", { "select__option_active": option.value === __props.modelValue }])}" type="button" data-v-9a7e3634>${ssrInterpolate(option.label)}</button>`);
+          _push(`<button class="${ssrRenderClass(["select__option", { "select__option_active": option.value === __props.modelValue }])}" type="button" data-v-aaabcf99>${ssrInterpolate(option.label)}</button>`);
         });
         _push(`<!--]--></div>`);
       } else {
@@ -256,9 +256,9 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
       }
       _push(`</div>`);
       if (__props.error) {
-        _push(`<span class="select__error" data-v-9a7e3634>${ssrInterpolate(__props.error)}</span>`);
+        _push(`<span class="select__error" data-v-aaabcf99>${ssrInterpolate(__props.error)}</span>`);
       } else if (__props.hint) {
-        _push(`<span class="select__hint" data-v-9a7e3634>${ssrInterpolate(__props.hint)}</span>`);
+        _push(`<span class="select__hint" data-v-aaabcf99>${ssrInterpolate(__props.hint)}</span>`);
       } else {
         _push(`<!---->`);
       }
@@ -272,7 +272,7 @@ _sfc_main$p.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("src/shared/ui/select/Select.vue");
   return _sfc_setup$p ? _sfc_setup$p(props, ctx) : void 0;
 };
-const Select = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["__scopeId", "data-v-9a7e3634"]]);
+const Select = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["__scopeId", "data-v-aaabcf99"]]);
 const _sfc_main$o = /* @__PURE__ */ defineComponent({
   __name: "Card",
   __ssrInlineRender: true,
