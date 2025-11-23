@@ -38,13 +38,18 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHead } from '@unhead/vue'
-import type { Locale } from '@/app/providers/i18n'
+import { getLocaleFromPath, setLocale, type Locale } from '@/app/providers'
 import { getDocsPageContent } from '@/pages/docs/model/content'
 import { DocsHero, DocsTopics, DocsPlaybook, DocsPrimer } from '@/widgets/docs'
+import { useRoute } from 'vue-router'
 
-const { locale, t } = useI18n()
+const route = useRoute()
+const routeLocale = computed(() => getLocaleFromPath(route.fullPath) as Locale)
+setLocale(routeLocale.value)
 
-const content = computed(() => getDocsPageContent(locale.value as Locale))
+const { t } = useI18n()
+
+const content = computed(() => getDocsPageContent(routeLocale.value))
 
 const topicsLabel = computed(() => t('DOCS.TOPICS_LABEL'))
 const topicsTitle = computed(() => t('DOCS.TOPICS_TITLE'))

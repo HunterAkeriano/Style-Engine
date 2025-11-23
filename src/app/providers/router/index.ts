@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, type RouteRecordRaw, type RouterScrollBehavior } from 'vue-router'
 import { setupRouterGuards } from './guards'
-import { AVAILABLE_LOCALES } from '../i18n'
+import { AVAILABLE_LOCALES, getLocaleFromPath, setLocale, type Locale } from '../i18n'
 import GeneratorLayout from '@/app/layouts/generator-layout/GeneratorLayout.vue'
 import DocsLayout from '@/app/layouts/docs-layout/DocsLayout.vue'
 
@@ -240,6 +240,11 @@ export function createRouterInstance(base?: string) {
     scrollBehavior
   })
 
+  router.beforeEach((to, _, next) => {
+    const targetLocale = getLocaleFromPath(to.fullPath) as Locale
+    setLocale(targetLocale)
+    next()
+  })
   setupRouterGuards(router)
   return router
 }

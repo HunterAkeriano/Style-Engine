@@ -4,7 +4,7 @@ import { createHead } from '@unhead/vue/server'
 import { toastPlugin } from '@/shared/lib/toast'
 import { App } from '@/app'
 import { clickOutside } from '@/shared/directives'
-import { i18n, routes, AVAILABLE_LOCALES, scrollBehavior } from '@/app/providers'
+import { i18n, routes, AVAILABLE_LOCALES, scrollBehavior, getLocaleFromPath, setLocale } from '@/app/providers'
 import { setupRouterGuards } from '@/app/providers/router/guards'
 
 import '@/app/styles/index.scss'
@@ -38,6 +38,9 @@ export const createApp = ViteSSG(
   ({ app, router, head: existingHead }) => {
     const pinia = createPinia()
     const head = existingHead ?? createHead()
+
+    const initialLocale = getLocaleFromPath(router.currentRoute.value.fullPath)
+    setLocale(initialLocale)
 
     app.use(pinia)
     app.use(i18n)
