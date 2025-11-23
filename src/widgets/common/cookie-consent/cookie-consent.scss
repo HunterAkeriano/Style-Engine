@@ -42,7 +42,6 @@
     radial-gradient(36% 36% at 80% 30%, color-var-alpha('color-accent', 0.22), transparent 62%),
     linear-gradient(120deg, color-var-alpha('panel-border', 0.16), transparent 60%);
   opacity: 0.8;
-  filter: blur(16px);
   animation: cookie-consent-glow 26s ease-in-out infinite alternate;
   pointer-events: none;
   z-index: 0;

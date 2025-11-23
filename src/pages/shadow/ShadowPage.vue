@@ -13,7 +13,7 @@
           <h1 class="shadow-page__title">{{ t('SHADOW.TITLE') }}</h1>
           <p class="shadow-page__subtitle">{{ t('SHADOW.SUBTITLE') }}</p>
         </div>
-        <NavLink to="/" className="shadow-page__back-link">← {{ t('SHADOW.BACK_TO_HOME') }}</NavLink>
+        <NavLink to="/" class-name="shadow-page__back-link">← {{ t('SHADOW.BACK_TO_HOME') }}</NavLink>
       </header>
 
       <div class="shadow-page__content">

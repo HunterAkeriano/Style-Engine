@@ -39,19 +39,19 @@ const mainLayoutChildren: RouteRecordRaw[] = [
       {
         path: 'gradients',
         name: 'profile-gradients',
-        component: () => import('@/pages/profile/SavedGradientsPage.vue'),
+        component: () => import('@/pages/profile/saved/SavedGradientsPage.vue'),
         meta: { requiresAuth: true }
       },
       {
         path: 'shadows',
         name: 'profile-shadows',
-        component: () => import('@/pages/profile/SavedShadowsPage.vue'),
+        component: () => import('@/pages/profile/saved/SavedShadowsPage.vue'),
         meta: { requiresAuth: true }
       },
       {
         path: 'animations',
         name: 'profile-animations',
-        component: () => import('@/pages/profile/SavedAnimationsPage.vue'),
+        component: () => import('@/pages/profile/saved/SavedAnimationsPage.vue'),
         meta: { requiresAuth: true }
       }
     ]

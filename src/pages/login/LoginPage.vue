@@ -76,7 +76,6 @@ import { Input } from '@/shared/ui'
 import ThemeSwitcher from '@/shared/ui/theme-switcher/ThemeSwitcher.vue'
 import LanguageSwitcher from '@/features/common/language-switcher/ui/language-switcher/LanguageSwitcher.vue'
 import { loginSchema, type LoginFormData } from '@/shared/lib/validation/auth'
-import { authAPI } from '@/shared/api/auth'
 
 const router = useRouter()
 const route = useRoute()
@@ -116,9 +115,16 @@ async function handleSubmit() {
   isSubmitting.value = true
 
   try {
-    const response = await authAPI.login(formData)
-    authStore.setToken(response.token)
-    authStore.setUser(response.user)
+    await authStore.login(formData.email, formData.password)
+
+    if (authStore.error) {
+      serverError.value =
+        authStore.error === 'Invalid credentials'
+          ? t('VALIDATION.INVALID_CREDENTIALS')
+          : authStore.error
+      return
+    }
+
     const redirectPath =
       typeof route.query.redirect === 'string' ? route.query.redirect : `/${locale.value}/profile`
     router.push(redirectPath)

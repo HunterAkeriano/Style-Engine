@@ -7,7 +7,7 @@ export default {
     ABOUT: 'Про нас',
     LOGIN: 'Увійти',
     LOGOUT: 'Вийти',
-    PROFILE: 'Особистий кабінет',
+    PROFILE: 'Кабінет',
     THEME_LIGHT: 'Світла',
     THEME_DARK: 'Темна'
   },

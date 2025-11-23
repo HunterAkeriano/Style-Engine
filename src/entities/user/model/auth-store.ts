@@ -15,7 +15,11 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => user.value !== null)
   const userPlan = computed(() => (user.value?.isPayment ? 'pro' : user.value?.plan || 'free'))
   const isAdmin = computed(() => Boolean(user.value?.isAdmin))
-  const isPaid = computed(() => Boolean(user.value?.isPayment))
+const isPaid = computed(() => {
+  const tier = user.value?.subscriptionTier
+  const plan = user.value?.plan
+  return tier === 'pro' || tier === 'premium' || plan === 'pro' || plan === 'premium' || Boolean(user.value?.isPayment)
+})
 
   function setToken(next: string | null) {
     token.value = next
@@ -72,7 +76,8 @@ export const useAuthStore = defineStore('auth', () => {
       setToken(response.data.token)
       setUser(response.data.user)
       try {
-        await fetchProfile()
+        const freshUser = await fetchProfile()
+        setUser(freshUser)
       } catch (err) {
         console.error('Failed to refresh profile after login', err)
       }
@@ -96,7 +101,8 @@ export const useAuthStore = defineStore('auth', () => {
       setToken(response.data.token)
       setUser(response.data.user)
       try {
-        await fetchProfile()
+        const freshUser = await fetchProfile()
+        setUser(freshUser)
       } catch (err) {
         console.error('Failed to refresh profile after register', err)
       }

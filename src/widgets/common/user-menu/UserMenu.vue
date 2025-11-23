@@ -2,7 +2,7 @@
   <div class="user-menu" v-click-outside="closeMenu">
     <button class="user-menu__trigger" @click="toggleMenu">
       <div class="user-menu__avatar-wrapper">
-        <div class="user-menu__avatar">
+        <div :class="['user-menu__avatar', { 'user-menu__avatar_premium': isPremiumUser }]">
           <img
             v-if="user.avatarUrl"
             :src="user.avatarUrl"
@@ -11,6 +11,7 @@
           />
           <span v-else class="user-menu__avatar-initials">{{ initials }}</span>
         </div>
+
         <Icon
           v-if="isPaidUser"
           :size="12"
@@ -28,16 +29,16 @@
 
     <transition name="dropdown">
       <div v-if="isOpen" class="user-menu__dropdown">
-        <NavLink :to="`/${locale}/profile`" className="user-menu__item" @click="closeMenu">
-          <Icon :size="20" className="user-menu__item-icon" name="icon-user" />
-          <span>Особистий кабінет</span>
+        <NavLink :to="`/${locale}/profile`" class-name="user-menu__item" @click="closeMenu">
+          <Icon :size="20" class-name="user-menu__item-icon" name="icon-user" />
+          <span>{{ t('NAV.PROFILE') }}</span>
         </NavLink>
 
         <div class="user-menu__divider"></div>
 
         <button class="user-menu__item user-menu__item_danger" @click="handleLogout">
-          <Icon :size="20" className="user-menu__item-icon" name="icon-logout" />
-          <span>Вийти</span>
+          <Icon :size="20" class-name="user-menu__item-icon" name="icon-logout" />
+          <span>{{ t('NAV.LOGOUT') }}</span>
         </button>
       </div>
     </transition>
@@ -59,7 +60,7 @@ interface Props {
 const props = defineProps<Props>()
 const router = useRouter()
 const authStore = useAuthStore()
-const { locale } = useI18n()
+const { t, locale } = useI18n()
 
 const isOpen = ref(false)
 
@@ -70,11 +71,20 @@ const initials = computed(() => {
 })
 
 const isPaidUser = computed(() => {
-  return props.user.subscriptionTier === 'pro' || props.user.subscriptionTier === 'premium'
+  return (
+    props.user.subscriptionTier === 'pro' ||
+    props.user.subscriptionTier === 'premium' ||
+    props.user.plan === 'pro' ||
+    props.user.plan === 'premium' ||
+    Boolean(props.user.isPayment)
+  )
 })
 
 const isPremiumUser = computed(() => {
-  return props.user.subscriptionTier === 'premium'
+  return (
+    props.user.subscriptionTier === 'premium' ||
+    props.user.plan === 'premium'
+  )
 })
 
 function toggleMenu() {

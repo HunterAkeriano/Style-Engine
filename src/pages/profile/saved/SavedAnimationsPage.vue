@@ -7,5 +7,5 @@
 </template>
 
 <script setup lang="ts">
-import ProfileSavedList from './components/ProfileSavedList.vue'
+import ProfileSavedList from '@/widgets/profile/ProfileSavedList.vue'
 </script>

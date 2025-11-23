@@ -32,7 +32,7 @@
       <span class="animation-hero__chip">{{ t('ANIMATION.KEYFRAMES_READY') }}</span>
     </div>
     <div class="animation-hero__actions">
-      <NavLink to="/" className="button button_primary">
+      <NavLink to="/" class-name="button button_primary">
         {{ backText }}
       </NavLink>
       <a

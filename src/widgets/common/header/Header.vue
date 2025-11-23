@@ -5,19 +5,23 @@
         <Logo />
 
           <nav class="header__nav">
-            <NavLink :to="`/${locale}/gradient`" className="header__nav-link">
+            <NavLink :to="`/${locale}/gradient`" class-name="header__nav-link">
               {{ t('NAV.GRADIENTS') }}
             </NavLink>
-            <NavLink :to="`/${locale}/shadow`" className="header__nav-link">
+
+            <NavLink :to="`/${locale}/shadow`" class-name="header__nav-link">
               {{ t('NAV.SHADOWS') }}
             </NavLink>
-            <NavLink :to="`/${locale}/animation`" className="header__nav-link">
+
+            <NavLink :to="`/${locale}/animation`" class-name="header__nav-link">
               {{ t('NAV.ANIMATIONS') }}
             </NavLink>
-            <NavLink :to="`/${locale}/docs`" className="header__nav-link">
+
+            <NavLink :to="`/${locale}/docs`" class-name="header__nav-link">
               {{ t('NAV.DOCS') }}
             </NavLink>
-            <NavLink :to="`/${locale}/about`" className="header__nav-link">
+
+            <NavLink :to="`/${locale}/about`" class-name="header__nav-link">
               {{ t('NAV.ABOUT') }}
             </NavLink>
           </nav>
@@ -47,23 +51,23 @@
       <div v-if="isMobileMenuOpen" ref="mobileMenuRef" class="header__mobile-menu">
 
         <nav class="header__mobile-nav">
-          <NavLink :to="`/${locale}/gradient`" className="header__mobile-link" @click="closeMobileMenu">
+          <NavLink :to="`/${locale}/gradient`" class-name="header__mobile-link" @click="closeMobileMenu">
             {{ t('NAV.GRADIENTS') }}
           </NavLink>
 
-          <NavLink :to="`/${locale}/shadow`" className="header__mobile-link" @click="closeMobileMenu">
+          <NavLink :to="`/${locale}/shadow`" class-name="header__mobile-link" @click="closeMobileMenu">
             {{ t('NAV.SHADOWS') }}
           </NavLink>
 
-          <NavLink :to="`/${locale}/animation`" className="header__mobile-link" @click="closeMobileMenu">
+          <NavLink :to="`/${locale}/animation`" class-name="header__mobile-link" @click="closeMobileMenu">
             {{ t('NAV.ANIMATIONS') }}
           </NavLink>
 
-          <NavLink :to="`/${locale}/docs`" className="header__mobile-link" @click="closeMobileMenu">
+          <NavLink :to="`/${locale}/docs`" class-name="header__mobile-link" @click="closeMobileMenu">
             {{ t('NAV.DOCS') }}
           </NavLink>
 
-          <NavLink :to="`/${locale}/about`" className="header__mobile-link" @click="closeMobileMenu">
+          <NavLink :to="`/${locale}/about`" class-name="header__mobile-link" @click="closeMobileMenu">
             {{ t('NAV.ABOUT') }}
           </NavLink>
         </nav>
@@ -73,7 +77,7 @@
           <LanguageSwitcher />
 
           <template v-if="authStore.isAuthenticated && authStore.user">
-            <NavLink :to="`/${locale}/profile`" className="header__mobile-link" @click="closeMobileMenu">
+            <NavLink :to="`/${locale}/profile`" class-name="header__mobile-link" @click="closeMobileMenu">
               {{ t('NAV.PROFILE') }}
             </NavLink>
 

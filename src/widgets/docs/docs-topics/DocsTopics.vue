@@ -30,7 +30,7 @@
         </ul>
 
         <div class="docs-card__footer">
-          <NavLink :to="topic.link" className="button button_primary button_sm">
+          <NavLink :to="topic.link" class-name="button button_primary button_sm">
             {{ openLabel }}
           </NavLink>
           <span class="docs-card__hint">{{ topic.hint }}</span>

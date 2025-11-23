@@ -41,10 +41,10 @@
         <p class="not-found-page__subtitle">{{ t('NOT_FOUND.DESCRIPTION') }}</p>
 
         <div class="not-found-page__actions">
-          <NavLink to="/" className="not-found-page__cta not-found-page__cta_primary">
+          <NavLink to="/" class-name="not-found-page__cta not-found-page__cta_primary">
             {{ t('NOT_FOUND.CTA_HOME') }}
           </NavLink>
-          <NavLink to="/docs" className="not-found-page__cta not-found-page__cta_ghost">
+          <NavLink to="/docs" class-name="not-found-page__cta not-found-page__cta_ghost">
             {{ t('NOT_FOUND.CTA_DOCS') }}
           </NavLink>
         </div>
@@ -52,9 +52,9 @@
         <div class="not-found-page__shortcuts" aria-label="Quick links">
           <span class="not-found-page__shortcut-label">{{ t('NOT_FOUND.SHORTCUTS') }}</span>
           <div class="not-found-page__chips">
-            <NavLink to="/gradient" className="not-found-page__chip">{{ t('NAV.GRADIENTS') }}</NavLink>
-            <NavLink to="/shadow" className="not-found-page__chip">{{ t('NAV.SHADOWS') }}</NavLink>
-            <NavLink to="/animation" className="not-found-page__chip">{{ t('NAV.ANIMATIONS') }}</NavLink>
+            <NavLink to="/gradient" class-name="not-found-page__chip">{{ t('NAV.GRADIENTS') }}</NavLink>
+            <NavLink to="/shadow" class-name="not-found-page__chip">{{ t('NAV.SHADOWS') }}</NavLink>
+            <NavLink to="/animation" class-name="not-found-page__chip">{{ t('NAV.ANIMATIONS') }}</NavLink>
           </div>
         </div>
       </div>

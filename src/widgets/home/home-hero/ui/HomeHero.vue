@@ -11,15 +11,15 @@
       </p>
 
       <div class="home-hero__actions">
-        <NavLink to="/gradient" className="home-hero__button home-hero__button_primary">
+        <NavLink to="/gradient" class-name="home-hero__button home-hero__button_primary">
           {{ t('HOME.GRADIENT_BUTTON') }}
         </NavLink>
 
-        <NavLink to="/shadow" className="home-hero__button home-hero__button_secondary">
+        <NavLink to="/shadow" class-name="home-hero__button home-hero__button_secondary">
           {{ t('HOME.SHADOW_BUTTON') }}
         </NavLink>
 
-        <NavLink to="/animation" className="home-hero__button home-hero__button_secondary">
+        <NavLink to="/animation" class-name="home-hero__button home-hero__button_secondary">
           {{ t('HOME.ANIMATION_BUTTON') }}
         </NavLink>
       </div>

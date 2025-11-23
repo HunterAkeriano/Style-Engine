@@ -10,7 +10,7 @@
           v-for="action in content.cta"
           :key="action.to"
           :to="action.to"
-          :className="`button ${action.variant === 'primary' ? 'button_primary' : 'button_secondary'}`"
+          :class-name="`button ${action.variant === 'primary' ? 'button_primary' : 'button_secondary'}`"
         >
           {{ action.label }}
         </NavLink>

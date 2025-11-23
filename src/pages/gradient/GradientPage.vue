@@ -7,7 +7,7 @@
           <h1 class="gradient-page__title">{{ t('GRADIENT.TITLE') }}</h1>
           <p class="gradient-page__subtitle">{{ t('GRADIENT.SUBTITLE') }}</p>
         </div>
-        <NavLink to="/" className="gradient-page__back-link">← {{ t('GRADIENT.BACK_TO_HOME') }}</NavLink>
+        <NavLink to="/" class-name="gradient-page__back-link">← {{ t('GRADIENT.BACK_TO_HOME') }}</NavLink>
       </header>
 
       <div class="gradient-page__content">

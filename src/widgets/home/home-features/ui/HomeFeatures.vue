@@ -8,7 +8,7 @@
         <div class="home-features__card">
           <h3 class="home-features__card-title">{{ t('HOME.FEATURES_GRADIENT_TITLE') }}</h3>
           <p class="home-features__card-description">{{ t('HOME.FEATURES_GRADIENT_DESCRIPTION') }}</p>
-          <NavLink to="/gradient" className="home-features__card-link">
+          <NavLink to="/gradient" class-name="home-features__card-link">
             {{ t('HOME.GRADIENT_BUTTON') }} →
           </NavLink>
         </div>
@@ -16,7 +16,7 @@
         <div class="home-features__card">
           <h3 class="home-features__card-title">{{ t('HOME.FEATURES_SHADOW_TITLE') }}</h3>
           <p class="home-features__card-description">{{ t('HOME.FEATURES_SHADOW_DESCRIPTION') }}</p>
-          <NavLink to="/shadow" className="home-features__card-link">
+          <NavLink to="/shadow" class-name="home-features__card-link">
             {{ t('HOME.SHADOW_BUTTON') }} →
           </NavLink>
         </div>
@@ -24,7 +24,7 @@
         <div class="home-features__card">
           <h3 class="home-features__card-title">{{ t('HOME.FEATURES_ANIMATION_TITLE') }}</h3>
           <p class="home-features__card-description">{{ t('HOME.FEATURES_ANIMATION_DESCRIPTION') }}</p>
-          <NavLink to="/animation" className="home-features__card-link">
+          <NavLink to="/animation" class-name="home-features__card-link">
             {{ t('HOME.ANIMATION_BUTTON') }} →
           </NavLink>
         </div>

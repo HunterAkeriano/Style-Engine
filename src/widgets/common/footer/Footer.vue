@@ -13,16 +13,16 @@
         <div class="footer__section">
           <h4 class="footer__section-title">{{ t('FOOTER.NAVIGATION') }}</h4>
           <nav class="footer__nav">
-            <NavLink to="/gradient" className="footer__link">
+            <NavLink to="/gradient" class-name="footer__link">
               {{ t('NAV.GRADIENTS') }}
             </NavLink>
-            <NavLink to="/shadow" className="footer__link">
+            <NavLink to="/shadow" class-name="footer__link">
               {{ t('NAV.SHADOWS') }}
             </NavLink>
-            <NavLink to="/animation" className="footer__link">
+            <NavLink to="/animation" class-name="footer__link">
               {{ t('NAV.ANIMATIONS') }}
             </NavLink>
-            <NavLink to="/about" className="footer__link">
+            <NavLink to="/about" class-name="footer__link">
               {{ t('NAV.ABOUT') }}
             </NavLink>
           </nav>
@@ -31,13 +31,13 @@
         <div class="footer__section">
           <h4 class="footer__section-title">{{ t('FOOTER.DOCUMENTATION') }}</h4>
           <nav class="footer__nav">
-            <NavLink to="/docs" className="footer__link">
+            <NavLink to="/docs" class-name="footer__link">
               {{ t('NAV.DOCS') }}
             </NavLink>
-            <NavLink to="/privacy-policy" className="footer__link">
+            <NavLink to="/privacy-policy" class-name="footer__link">
               {{ t('PRIVACY.NAV') }}
             </NavLink>
-            <NavLink to="/cookie-policy" className="footer__link">
+            <NavLink to="/cookie-policy" class-name="footer__link">
               {{ t('COOKIE.NAV') }}
             </NavLink>
           </nav>

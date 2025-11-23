@@ -2,7 +2,7 @@
   <div class="docs-topic">
     <header class="docs-topic__header">
       <div class="docs-topic__breadcrumb">
-        <NavLink to="/docs" className="docs-topic__back">{{ backLabel }}</NavLink>
+        <NavLink to="/docs" class-name="docs-topic__back">{{ backLabel }}</NavLink>
         <span class="docs-topic__pill">{{ topic.eyebrow }}</span>
       </div>
       <h1 class="docs-topic__title">{{ topic.title }}</h1>
@@ -88,7 +88,7 @@
             v-for="other in otherTopics"
             :key="other.slug"
             :to="other.link"
-            className="docs-topic__link"
+            class-name="docs-topic__link"
           >
             <span class="docs-topic__link-dot"></span>
             {{ other.title }}

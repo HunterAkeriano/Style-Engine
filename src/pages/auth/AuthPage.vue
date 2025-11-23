@@ -50,7 +50,7 @@
           <p v-if="auth.error" class="auth-form__error">{{ auth.error }}</p>
         </form>
 
-        <NavLink to="/" className="auth-card__back-link">← Вернуться на главную</NavLink>
+        <NavLink to="/" class-name="auth-card__back-link">← Вернуться на главную</NavLink>
       </div>
     </div>
   </div>

@@ -93,7 +93,7 @@
         <NavLink
           v-if="!example.isCommunity"
           :to="`/animation/${example.id}`"
-          className="animation-card__link"
+          class-name="animation-card__link"
         >
           {{ t('ANIMATION.OPEN') }}
         </NavLink>

@@ -13,7 +13,7 @@
           <p class="animation-detail__subtitle">{{ description }}</p>
         </div>
         <div class="animation-detail__actions">
-          <NavLink to="/animation" className="button button_secondary">
+          <NavLink to="/animation" class-name="button button_secondary">
             {{ t('ANIMATION.BACK') }}
           </NavLink>
         </div>

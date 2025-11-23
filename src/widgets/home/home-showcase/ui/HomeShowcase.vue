@@ -28,7 +28,7 @@
           <div class="home-showcase__info">
             <h3 class="home-showcase__label">{{ t('HOME.SHOWCASE_ANIMATION_LABEL') }}</h3>
             <p class="home-showcase__description">{{ t('HOME.SHOWCASE_ANIMATION_DESCRIPTION') }}</p>
-            <NavLink to="/animation" className="home-showcase__link">
+            <NavLink to="/animation" class-name="home-showcase__link">
               {{ t('HOME.SHOWCASE_TRY') }} →
             </NavLink>
           </div>
@@ -48,7 +48,7 @@
           <div class="home-showcase__info">
             <h3 class="home-showcase__label">{{ t('HOME.SHOWCASE_GRADIENT_LABEL') }}</h3>
             <p class="home-showcase__description">{{ t('HOME.SHOWCASE_GRADIENT_DESCRIPTION') }}</p>
-            <NavLink to="/gradient" className="home-showcase__link">
+            <NavLink to="/gradient" class-name="home-showcase__link">
               {{ t('HOME.SHOWCASE_TRY') }} →
             </NavLink>
           </div>
