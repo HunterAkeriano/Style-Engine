@@ -239,7 +239,8 @@ export function createAuthRouter(env: Env) {
     })
     res.setHeader('Set-Cookie', cookie)
 
-    const { passwordHash, ...safeUser } = user
+    const { passwordHash: _unusedPasswordHash, ...safeUser } = user
+    void _unusedPasswordHash
     res.json({ token: accessToken, user: safeUser })
   })
 

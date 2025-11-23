@@ -1,15 +1,15 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-const storybook = require('eslint-plugin-storybook')
-const tsParser = require('@typescript-eslint/parser')
-const tsPlugin = require('@typescript-eslint/eslint-plugin')
-const vueParser = require('vue-eslint-parser')
-const vuePlugin = require('eslint-plugin-vue')
+// ESLint flat config (ESM)
+import storybook from 'eslint-plugin-storybook'
+import tsParser from '@typescript-eslint/parser'
+import tsPlugin from '@typescript-eslint/eslint-plugin'
+import vueParser from 'vue-eslint-parser'
+import vuePlugin from 'eslint-plugin-vue'
 
 const isProd = process.env.NODE_ENV === 'production'
-const vueEssentialRules = (vuePlugin.configs['vue3-essential'] && vuePlugin.configs['vue3-essential'].rules) || {}
-const tsRecommendedRules = (tsPlugin.configs.recommended && tsPlugin.configs.recommended.rules) || {}
+const vueEssentialRules = vuePlugin.configs['vue3-essential']?.rules ?? {}
+const tsRecommendedRules = tsPlugin.configs.recommended?.rules ?? {}
 
-module.exports = [
+export default [
   {
     ignores: ['dist/**', 'node_modules/**', 'coverage/**', 'storybook-static/**']
   },
@@ -57,7 +57,7 @@ module.exports = [
       storybook
     },
     rules: {
-      ...(storybook.configs['flat/recommended']?.rules || {})
+      ...(storybook.configs['flat/recommended']?.rules ?? {})
     }
   }
 ]
