@@ -115,6 +115,18 @@ const authLayoutRoutes: RouteRecordRaw[] = [
     name: 'register',
     component: () => import('@/pages/register/RegisterPage.vue'),
     meta: { titleKey: 'META.AUTH', descriptionKey: 'META_DESCRIPTION.AUTH', guestOnly: true }
+  },
+  {
+    path: 'forgot-password',
+    name: 'forgot-password',
+    component: () => import('@/pages/forgot-password/ForgotPasswordPage.vue'),
+    meta: { titleKey: 'META.AUTH', descriptionKey: 'META_DESCRIPTION.AUTH', guestOnly: true }
+  },
+  {
+    path: 'reset-password',
+    name: 'reset-password',
+    component: () => import('@/pages/reset-password/ResetPasswordPage.vue'),
+    meta: { titleKey: 'META.AUTH', descriptionKey: 'META_DESCRIPTION.AUTH', guestOnly: true }
   }
 ]
 

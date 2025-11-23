@@ -1,0 +1,121 @@
+@import '@/app/styles/variables';
+
+.auth-shell {
+  min-height: calc(var(--app-vh, 1vh) * 100);
+  display: grid;
+  place-items: center;
+  position: relative;
+  padding: $space-3xl $space-md;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 120% at 15% 15%, color-var-alpha('color-primary', 0.22), transparent 60%),
+    radial-gradient(120% 120% at 85% 12%, color-var-alpha('color-accent', 0.18), transparent 60%),
+    linear-gradient(180deg, color-var-alpha('surface-panel-2', 0.9), color-var-alpha('surface-panel-3', 0.92));
+}
+
+.auth-shell__card {
+  width: min(520px, 100%);
+  position: relative;
+  z-index: 1;
+  padding: $space-2xl;
+  border-radius: $border-radius-2xl;
+  background: color-var-alpha('surface-panel-1', 0.9);
+  border: 1px solid color-var-alpha('panel-border', 0.35);
+  box-shadow:
+    0 24px 80px color-var-alpha('color-primary', 0.2),
+    inset 0 1px 0 color-var-alpha('panel-border', 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+
+  @media (max-width: 640px) {
+    padding: $space-xl;
+    border-radius: $border-radius-xl;
+  }
+}
+
+.auth-shell__controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-sm;
+}
+
+.auth-shell__header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+}
+
+.auth-shell__eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+}
+
+.auth-shell__title {
+  margin: 0;
+  font-size: $font-size-2xl;
+  color: $color-text-primary;
+}
+
+.auth-shell__subtitle {
+  margin: 0;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
+.auth-shell__form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.auth-shell__submit {
+  width: 100%;
+  border: none;
+  border-radius: $border-radius-full;
+  padding: $space-md;
+  background: linear-gradient(135deg, $color-primary, $color-accent);
+  color: white;
+  font-weight: $font-weight-bold;
+  cursor: pointer;
+  transition: transform $transition-base, box-shadow $transition-base;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px color-var-alpha('color-primary', 0.2);
+  }
+}
+
+.auth-shell__success {
+  color: $color-success;
+  margin: 0;
+  font-size: $font-size-sm;
+}
+
+.auth-shell__error {
+  color: $color-error;
+  margin: 0;
+  font-size: $font-size-sm;
+}
+
+.auth-shell__footer {
+  display: flex;
+  justify-content: center;
+}
+
+.auth-shell__link {
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

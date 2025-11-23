@@ -71,6 +71,11 @@ export const useAuthStore = defineStore('auth', () => {
       })
       setToken(response.data.token)
       setUser(response.data.user)
+      try {
+        await fetchProfile()
+      } catch (err) {
+        console.error('Failed to refresh profile after login', err)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed')
     } finally {
@@ -90,6 +95,11 @@ export const useAuthStore = defineStore('auth', () => {
       })
       setToken(response.data.token)
       setUser(response.data.user)
+      try {
+        await fetchProfile()
+      } catch (err) {
+        console.error('Failed to refresh profile after register', err)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed')
     } finally {

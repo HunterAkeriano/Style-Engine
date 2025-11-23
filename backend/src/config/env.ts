@@ -6,7 +6,13 @@ const EnvSchema = z.object({
   JWT_SECRET: z.string().min(12),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   SUPER_ADMIN_EMAIL: z.string().email().default('superuser@gmail.com'),
-  SUPER_ADMIN_PASSWORD: z.string().min(8).default('12345678')
+  SUPER_ADMIN_PASSWORD: z.string().min(8).default('12345678'),
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.string().optional(),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_FROM: z.string().email().optional(),
+  APP_URL: z.string().url().optional()
 })
 
 export type Env = z.infer<typeof EnvSchema>

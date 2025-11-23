@@ -27,6 +27,11 @@ export interface ApiError {
   issues?: Array<{ path: string[]; message: string }>
 }
 
+export interface ResetPasswordPayload {
+  token: string
+  password: string
+}
+
 class AuthAPI {
   async login(data: LoginFormData): Promise<AuthResponse> {
     const response = await api.post<AuthResponse>('/auth/login', data)
@@ -70,6 +75,18 @@ class AuthAPI {
 
   isAuthenticated(): boolean {
     return !!getCookie(AUTH_TOKEN_KEY)
+  }
+
+  async requestPasswordReset(email: string): Promise<void> {
+    await api.post('/auth/forgot-password', { email })
+  }
+
+  async resetPassword(payload: ResetPasswordPayload): Promise<void> {
+    await api.post('/auth/reset-password', payload)
+  }
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    await api.post('/auth/change-password', { currentPassword, newPassword })
   }
 }
 

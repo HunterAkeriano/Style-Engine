@@ -1,0 +1,148 @@
+@import '@/app/styles/variables';
+
+.profile-form {
+  padding: $space-lg 0 0;
+  background: transparent;
+  border-radius: $border-radius-lg;
+
+  &__header {
+    margin-bottom: $space-sm;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: $font-size-lg;
+    color: $color-text-primary;
+  }
+
+  &__subtitle {
+    margin: $space-xs 0 0;
+    color: $color-text-secondary;
+    font-size: $font-size-sm;
+  }
+
+  &__field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+    margin-bottom: $space-md;
+  }
+
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__input {
+    padding: $space-md;
+    background: color-var-alpha('surface-panel-1', 0.12);
+    border: 1px solid color-var-alpha('panel-border', 0.35);
+    border-radius: $border-radius-md;
+    color: $color-text-primary;
+    font-size: $font-size-base;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      background: color-var-alpha('surface-panel-1', 0.18);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__text {
+    padding: $space-sm 0;
+    color: $color-text-primary;
+    font-size: $font-size-base;
+  }
+
+  &__submit {
+    width: 100%;
+    padding: $space-md $space-xl;
+    background: linear-gradient(135deg, $color-primary, $color-accent);
+    color: #fff;
+    border: none;
+    border-radius: $border-radius-md;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    margin-top: $space-md;
+    backface-visibility: hidden;
+
+    &:hover:not(:disabled) {
+      background: $color-primary-hover;
+      transform: translate3d(0, -2px, 0);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__error {
+    margin-top: $space-sm;
+    font-size: $font-size-sm;
+    color: $color-error;
+    text-align: left;
+    animation: error-slide-in 0.25s ease-out;
+  }
+
+  &__success {
+    margin-top: $space-sm;
+    font-size: $font-size-sm;
+    color: $color-success;
+    text-align: left;
+  }
+}
+
+.profile-form {
+  :deep(.input) {
+    --input-padding-y: #{$space-sm};
+    --input-padding-x: #{$space-md};
+    --input-font-size: #{$font-size-base};
+  }
+
+  :deep(.input__field) {
+    padding: 0 $space-sm;
+    font-size: $font-size-sm;
+    height: 18px;
+    line-height: 18px;
+  }
+
+  :deep(.input__label) {
+    font-size: $font-size-sm;
+  }
+
+  :deep(.input__error) {
+    animation: error-slide-in 0.25s ease-out;
+  }
+
+  :deep(.input.input--disabled .input__field) {
+    background: color-var-alpha('surface-panel-1', 0.2);
+    color: color-var-alpha('color-text-secondary', 0.8);
+    border-color: color-var-alpha('panel-border', 0.4);
+    cursor: not-allowed;
+  }
+}
+
+@keyframes error-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -8,9 +8,11 @@
           <h2 class="cookie-consent__title">{{ t('COOKIE_MODAL.TITLE') }}</h2>
           <p class="cookie-consent__text">{{ t('COOKIE_MODAL.DESCRIPTION') }}</p>
           <div class="cookie-consent__links">
+
             <NavLink to="/privacy-policy" className="cookie-consent__link">
               {{ t('PRIVACY.NAV') }}
             </NavLink>
+
             <NavLink to="/cookie-policy" className="cookie-consent__link">
               {{ t('COOKIE.NAV') }}
             </NavLink>

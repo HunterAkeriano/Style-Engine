@@ -1,10 +1,12 @@
 import { Router } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import crypto from 'crypto'
 import { z } from 'zod'
 import { getDb } from '../config/db'
 import type { Env } from '../config/env'
 import { isSuperAdminEmail } from '../config/super-admin'
+import { sendMail } from '../services/mailer'
 
 const credentialsSchema = z.object({
   email: z.string().email(),
@@ -12,9 +14,34 @@ const credentialsSchema = z.object({
   name: z.string().min(1).max(120).optional()
 })
 
+const forgotSchema = z.object({
+  email: z.string().email()
+})
+
+const resetSchema = z.object({
+  token: z.string().min(10),
+  password: z.string().min(8)
+})
+
+const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1),
+  newPassword: z.string().min(8)
+})
+
 export function createAuthRouter(env: Env) {
   const router = Router()
   const db = getDb()
+
+  // Ensure password reset table exists (in case migrations were not run)
+  db.query(`CREATE TABLE IF NOT EXISTS password_resets (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    token_hash TEXT NOT NULL,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    used BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  )`).catch((err) => console.error('Failed to ensure password_resets table', err))
+
   function attachSuperFlag(user: any) {
     if (!user) return user
     return { ...user, isSuperAdmin: isSuperAdminEmail(env, user.email) }
@@ -171,5 +198,131 @@ export function createAuthRouter(env: Env) {
     res.json({ token, user })
   })
 
+  router.post('/forgot-password', async (req, res) => {
+    const parsed = forgotSchema.safeParse(req.body)
+    if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
+    const { email } = parsed.data
+    const userResult = await db.query('SELECT id, email FROM users WHERE email = $1', [email.toLowerCase()])
+    const user = userResult.rows[0]
+    if (!user) {
+      return res.status(404).json({ message: 'Email not found' })
+    }
+
+    const token = crypto.randomBytes(24).toString('hex')
+    const tokenHash = await bcrypt.hash(token, 10)
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
+
+    await db.query(
+      `INSERT INTO password_resets (user_id, token_hash, expires_at, used)
+       VALUES ($1, $2, $3, FALSE)`,
+      [user.id, tokenHash, expiresAt.toISOString()]
+    )
+
+    const appUrl = env.APP_URL || 'http://localhost:5173'
+    const resetLink = `${appUrl}/reset-password?token=${token}`
+    const text = `We received a request to reset your password.\n\nReset link: ${resetLink}\nIf you did not request this, ignore the email.`
+    const html = buildResetEmail(resetLink)
+    await sendMail(env, {
+      to: user.email,
+      subject: 'Reset your Style Engine password',
+      text,
+      html
+    })
+
+    res.json({ ok: true })
+  })
+
+  router.post('/reset-password', async (req, res) => {
+    const parsed = resetSchema.safeParse(req.body)
+    if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
+    const { token, password } = parsed.data
+
+    const resetResult = await db.query(
+      `SELECT pr.id, pr.user_id as "userId", pr.token_hash as "tokenHash", pr.expires_at as "expiresAt", pr.used,
+              u.email
+       FROM password_resets pr
+       JOIN users u ON u.id = pr.user_id
+       WHERE pr.used = FALSE AND pr.expires_at > NOW()
+       ORDER BY pr.created_at DESC`
+    )
+
+    let matched: any = null
+    for (const row of resetResult.rows) {
+      if (await bcrypt.compare(token, row.tokenHash)) {
+        matched = row
+        break
+      }
+    }
+
+    if (!matched) {
+      return res.status(400).json({ message: 'Invalid or expired token' })
+    }
+
+    const newHash = await bcrypt.hash(password, 10)
+    await db.query('UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2', [
+      newHash,
+      matched.userId
+    ])
+    await db.query('UPDATE password_resets SET used = TRUE WHERE id = $1', [matched.id])
+
+    res.json({ ok: true })
+  })
+
+  router.post('/change-password', async (req, res) => {
+    const parsed = changePasswordSchema.safeParse(req.body)
+    if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
+    const { currentPassword, newPassword } = parsed.data
+
+    const authHeader = req.headers.authorization
+    if (!authHeader) return res.status(401).json({ message: 'Missing authorization header' })
+    const [, token] = authHeader.split(' ')
+    if (!token) return res.status(401).json({ message: 'Invalid authorization header' })
+
+    let userId: string | null = null
+    try {
+      const payload = jwt.verify(token, env.JWT_SECRET) as { sub: string }
+      userId = payload.sub
+    } catch {
+      return res.status(401).json({ message: 'Invalid or expired token' })
+    }
+
+    const result = await db.query(
+      'SELECT id, password_hash as "passwordHash" FROM users WHERE id = $1',
+      [userId]
+    )
+    const user = result.rows[0]
+    if (!user) return res.status(401).json({ message: 'User not found' })
+
+    const valid = await bcrypt.compare(currentPassword, user.passwordHash)
+    if (!valid) return res.status(400).json({ message: 'Invalid current password' })
+
+    const newHash = await bcrypt.hash(newPassword, 10)
+    await db.query('UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2', [newHash, userId])
+
+    res.json({ ok: true })
+  })
+
   return router
+}
+
+function buildResetEmail(resetLink: string) {
+  return `
+  <div style="font-family: 'Inter', Arial, sans-serif; background: #0b1220; color: #e2e8f0; padding: 32px;">
+    <div style="max-width: 520px; margin: 0 auto; background: linear-gradient(135deg, rgba(99,102,241,0.16), rgba(236,72,153,0.16)); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.35);">
+      <div style="padding: 24px 28px; background: radial-gradient(circle at 20% 20%, rgba(99,102,241,0.25), transparent 45%), radial-gradient(circle at 80% 0%, rgba(236,72,153,0.2), transparent 45%), rgba(15,23,42,0.92);">
+        <p style="margin: 0; text-transform: uppercase; letter-spacing: 0.08em; color: #a5b4fc; font-size: 12px;">Style Engine</p>
+        <h1 style="margin: 8px 0 6px; color: #f8fafc; font-size: 22px;">Reset your password</h1>
+        <p style="margin: 0; color: #cbd5e1; line-height: 1.6;">We received a request to reset your password. Click the button below to choose a new one.</p>
+      </div>
+      <div style="padding: 24px 28px; background: rgba(15,23,42,0.92); backdrop-filter: blur(8px);">
+        <div style="text-align: center; margin: 12px 0 18px;">
+          <a href="${resetLink}" style="display: inline-block; padding: 12px 20px; border-radius: 999px; background: linear-gradient(135deg, #6366f1, #ec4899); color: #fff; text-decoration: none; font-weight: 700; box-shadow: 0 10px 30px rgba(99,102,241,0.35);">Reset password</a>
+        </div>
+        <p style="margin: 0; color: #94a3b8; font-size: 14px; line-height: 1.6;">If the button doesn't work, copy and paste this link into your browser:</p>
+        <p style="word-break: break-all; color: #e2e8f0; font-size: 13px; margin-top: 6px;">${resetLink}</p>
+        <p style="margin-top: 14px; color: #64748b; font-size: 12px;">If you didn't request this, you can ignore the email — your password stays the same.</p>
+      </div>
+    </div>
+  </div>
+  `
 }

@@ -24,20 +24,26 @@
             @input="clearFieldError('email')"
           />
 
-          <Input
-            v-model="formData.password"
-            :label="t('AUTH.PASSWORD')"
-            :error="errors.password ? t(`VALIDATION.${errors.password}`) : ''"
-            type="password"
-            autocomplete="current-password"
-            @input="clearFieldError('password')"
-          />
+        <Input
+          v-model="formData.password"
+          :label="t('AUTH.PASSWORD')"
+          :error="errors.password ? t(`VALIDATION.${errors.password}`) : ''"
+          type="password"
+          autocomplete="current-password"
+          @input="clearFieldError('password')"
+        />
 
-          <button
-            :disabled="isSubmitting"
-            :class="{ 'login-form__submit_loading': isSubmitting }"
-            type="submit"
-            class="login-form__submit"
+        <div class="login-form__forgot">
+          <RouterLink :to="`/${locale}/forgot-password`" class="login-page__link">
+            {{ t('AUTH.FORGOT_PASSWORD') }}
+          </RouterLink>
+        </div>
+
+        <button
+          :disabled="isSubmitting"
+          :class="{ 'login-form__submit_loading': isSubmitting }"
+          type="submit"
+          class="login-form__submit"
           >
             <span>{{ isSubmitting ? t('AUTH.SIGNING_IN') : t('AUTH.LOGIN_BUTTON') }}</span>
           </button>

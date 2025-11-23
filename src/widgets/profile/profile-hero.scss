@@ -1,0 +1,208 @@
+@import '@/app/styles/variables';
+
+.profile-hero {
+  padding: $space-xl;
+  background: color-var-alpha('surface-panel-2', 0.45);
+  border-radius: $border-radius-lg;
+  border: 1px solid color-var-alpha('panel-border', 0.35);
+  box-shadow: 0 16px 50px color-var-alpha('color-text-primary', 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.profile-hero__top {
+  display: flex;
+  gap: $space-lg;
+  align-items: center;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.profile-hero__avatar {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-sm;
+}
+
+.profile-hero__photo {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid $color-primary;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backface-visibility: hidden;
+
+  &_premium {
+    border: 4px solid #10b981;
+    box-shadow:
+      0 0 0 4px rgba(16, 185, 129, 0.2),
+      0 8px 32px rgba(16, 185, 129, 0.4),
+      0 0 40px rgba(16, 185, 129, 0.3);
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.profile-hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-hero__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
+}
+
+.profile-hero__initials {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.profile-hero__crown {
+  position: absolute;
+  top: -8px;
+  right: 10px;
+  color: $color-warning;
+  z-index: 2;
+  backface-visibility: hidden;
+
+  &_premium {
+    color: #10b981;
+    animation: premium-glow-shadow 2s ease-in-out infinite;
+    will-change: box-shadow;
+    border-radius: 50%;
+  }
+}
+
+.profile-hero__badge {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translate3d(-50%, 0, 0);
+  padding: $space-xs $space-md;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: $border-radius-full;
+  box-shadow:
+    0 4px 12px rgba(16, 185, 129, 0.4),
+    0 0 20px rgba(16, 185, 129, 0.3);
+  z-index: 2;
+  animation: badge-pulse 2s ease-in-out infinite;
+  will-change: box-shadow;
+  backface-visibility: hidden;
+}
+
+.profile-hero__meta {
+  display: grid;
+  gap: $space-xs;
+}
+
+.profile-hero__label {
+  margin: 0;
+  font-size: $font-size-sm;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $color-text-secondary;
+}
+
+.profile-hero__value {
+  margin: 0;
+  font-size: $font-size-lg;
+  color: $color-text-primary;
+}
+
+.profile-hero__controls {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.profile-hero__file-input {
+  display: none;
+}
+
+.profile-hero__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+}
+
+.profile-hero__btn {
+  padding: $space-sm $space-lg;
+  background: $color-primary;
+  color: $color-text-primary;
+  border: none;
+  border-radius: $border-radius-md;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  backface-visibility: hidden;
+
+  &:hover:not(:disabled) {
+    background: $color-primary-hover;
+    transform: translate3d(0, -2px, 0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &_confirm {
+    background: $color-success;
+  }
+}
+
+.profile-hero__hint {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.profile-hero__error {
+  font-size: $font-size-sm;
+  color: $color-error;
+}
+
+@keyframes premium-glow-shadow {
+  0%, 100% {
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.9);
+  }
+}
+
+@keyframes badge-pulse {
+  0%, 100% {
+    box-shadow:
+      0 4px 12px rgba(16, 185, 129, 0.4),
+      0 0 20px rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 4px 16px rgba(16, 185, 129, 0.6),
+      0 0 30px rgba(16, 185, 129, 0.5);
+  }
+}

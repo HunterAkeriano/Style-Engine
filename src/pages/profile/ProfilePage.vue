@@ -17,148 +17,49 @@
         <h1 class="profile-page__title">{{ t('PROFILE.TITLE') }}</h1>
         <p class="profile-page__subtitle">{{ t('PROFILE.SUBTITLE') }}</p>
       </div>
-
       <div class="profile-page__content">
-        <div class="profile-page__avatar-section">
-          <div class="profile-avatar-wrapper">
-            <div :class="['profile-avatar', { 'profile-avatar_premium': isPremiumUser }]">
-              <img
-                v-if="displayAvatarUrl"
-                :src="displayAvatarUrl"
-                alt="Avatar"
-                class="profile-avatar__image"
-              />
-              <div v-else class="profile-avatar__placeholder">
-                <span class="profile-avatar__initials">{{ userInitials }}</span>
-              </div>
-            </div>
-            <Icon
-              v-if="isPaidUser"
-              :size="24"
-              :class="['profile-avatar__crown', { 'profile-avatar__crown_premium': isPremiumUser }]"
-              name="icon-crown"
-            />
-            <div v-if="isPremiumUser" class="profile-avatar__badge">
-              Premium
-            </div>
-          </div>
+        <ProfileHero
+          :display-avatar-url="displayAvatarUrl"
+          :initials="userInitials"
+          :is-paid-user="isPaidUser"
+          :is-premium-user="isPremiumUser"
+          :is-uploading="isUploading"
+          :selected-file="selectedFile"
+          :upload-error="uploadError"
+          :email="formData.email"
+          :member-since="memberSince"
+          @file-selected="handleFileSelect"
+          @upload="handleUpload"
+        />
 
-          <div class="profile-avatar__controls">
-            <input
-              ref="fileInputRef"
-              type="file"
-              accept="image/jpeg,image/jpg,image/png,image/gif"
-              class="profile-avatar__file-input"
-              @change="handleFileSelect"
-            />
-            <button
-              :disabled="isUploading"
-              type="button"
-              class="profile-avatar__upload-btn"
-              @click="fileInputRef?.click()"
-            >
-              {{ t('PROFILE.UPLOAD_AVATAR') }}
-            </button>
-            <button
-              v-if="selectedFile"
-              :disabled="isUploading"
-              type="button"
-              class="profile-avatar__confirm-btn"
-              @click="handleUpload"
-            >
-              {{ isUploading ? t('PROFILE.SAVING') : t('PROFILE.SAVE_CHANGES') }}
-            </button>
-            <p class="profile-avatar__hint">{{ t('PROFILE.UPLOAD_HINT') }}</p>
-            <p v-if="uploadError" class="profile-avatar__error">{{ uploadError }}</p>
-          </div>
-        </div>
+        <ProfileInfoForm
+          :name="formData.name"
+          :email="formData.email"
+          :member-since="memberSince"
+          :is-saving="isSaving"
+          :has-changes="hasChanges"
+          :save-error="saveError"
+          :save-success="saveSuccess"
+          @update:name="updateName"
+          @submit="handleProfileUpdate"
+        />
 
-        <form class="profile-form" @submit.prevent="handleProfileUpdate">
-          <div class="profile-form__field">
-            <label class="profile-form__label" for="name">
-              {{ t('AUTH.NAME') }}
-            </label>
-            <input
-              v-model="formData.name"
-              :disabled="isSaving"
-              id="name"
-              type="text"
-              class="profile-form__input"
-            />
-          </div>
+        <ProfilePasswordForm
+          :current-password="passwordForm.currentPassword"
+          :new-password="passwordForm.newPassword"
+          :confirm-password="passwordForm.confirmPassword"
+          :errors="passwordErrors"
+          :is-changing="isChangingPassword"
+          :success="passwordSuccess"
+          :server-error="passwordServerError"
+          @update:currentPassword="(value) => (passwordForm.currentPassword = value)"
+          @update:newPassword="(value) => (passwordForm.newPassword = value)"
+          @update:confirmPassword="(value) => (passwordForm.confirmPassword = value)"
+          @reset-errors="resetPasswordErrors"
+          @submit="handlePasswordChange"
+        />
 
-          <div class="profile-form__field">
-            <label class="profile-form__label" for="email">
-              {{ t('AUTH.EMAIL') }}
-            </label>
-            <input
-              v-model="formData.email"
-              id="email"
-              type="email"
-              disabled
-              class="profile-form__input"
-            />
-          </div>
-
-          <div class="profile-form__field">
-            <label class="profile-form__label">
-              {{ t('PROFILE.MEMBER_SINCE') }}
-            </label>
-            <p class="profile-form__text">{{ memberSince }}</p>
-          </div>
-
-          <button
-            :disabled="isSaving || !hasChanges"
-            type="submit"
-            class="profile-form__submit"
-          >
-            {{ isSaving ? t('PROFILE.SAVING') : t('PROFILE.SAVE_CHANGES') }}
-          </button>
-
-          <p v-if="saveError" class="profile-form__error">{{ saveError }}</p>
-          <p v-if="saveSuccess" class="profile-form__success">{{ t('PROFILE.SAVE_SUCCESS') }}</p>
-        </form>
-
-        <nav class="profile-page__navigation">
-          <RouterLink
-            :to="{ name: `${locale}-profile-gradients` }"
-            active-class="profile-page__nav-link_active"
-            class="profile-page__nav-link"
-          >
-            {{ t('PROFILE.NAV_GRADIENTS') }}
-          </RouterLink>
-
-          <RouterLink
-            :to="{ name: `${locale}-profile-shadows` }"
-            active-class="profile-page__nav-link_active"
-            class="profile-page__nav-link"
-          >
-            {{ t('PROFILE.NAV_SHADOWS') }}
-          </RouterLink>
-
-          <RouterLink
-            :to="{ name: `${locale}-profile-animations` }"
-            active-class="profile-page__nav-link_active"
-            class="profile-page__nav-link"
-          >
-            {{ t('PROFILE.NAV_ANIMATIONS') }}
-          </RouterLink>
-
-        <RouterLink
-          v-if="isAdmin"
-          :to="{ name: `${locale}-moderation` }"
-          class="profile-page__nav-link profile-page__nav-link_admin"
-        >
-          {{ t('PROFILE.MODERATION_LINK') }}
-        </RouterLink>
-        <RouterLink
-          v-if="isSuperAdmin"
-          :to="{ name: `${locale}-moderation-users` }"
-          class="profile-page__nav-link profile-page__nav-link_admin"
-        >
-          {{ t('PROFILE.USER_MANAGEMENT_LINK') }}
-        </RouterLink>
-        </nav>
+        <ProfileNavigation :is-admin="isAdmin" :is-super-admin="isSuperAdmin" />
 
         <div class="profile-page__router">
           <RouterView />
@@ -169,12 +70,16 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, onMounted } from 'vue'
-import { RouterLink, RouterView } from 'vue-router'
+import { computed, onMounted, reactive, ref } from 'vue'
+import { RouterView } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { authAPI, type User } from '@/shared/api/auth'
 import { useTheme } from '@/shared/composables/use-theme'
-import { Icon } from '@/shared/ui'
+import { changePasswordSchema, type ChangePasswordForm } from '@/shared/lib/validation/auth'
+import ProfileHero from '@/widgets/profile/ProfileHero.vue'
+import ProfileInfoForm from '@/widgets/profile/ProfileInfoForm.vue'
+import ProfilePasswordForm from '@/widgets/profile/ProfilePasswordForm.vue'
+import ProfileNavigation from '@/widgets/profile/ProfileNavigation.vue'
 import './profile-page.scss'
 
 const { t, locale } = useI18n()
@@ -193,7 +98,6 @@ function handleMouseMove(event: MouseEvent) {
   mouseY.value = event.clientY - rect.top - rect.height / 2
 }
 
-const fileInputRef = ref<HTMLInputElement | null>(null)
 const selectedFile = ref<File | null>(null)
 const previewUrl = ref<string | null>(null)
 const isUploading = ref(false)
@@ -201,6 +105,15 @@ const isSaving = ref(false)
 const uploadError = ref<string | null>(null)
 const saveError = ref<string | null>(null)
 const saveSuccess = ref(false)
+const passwordForm = reactive<ChangePasswordForm>({
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
+const passwordErrors = reactive<Partial<Record<keyof ChangePasswordForm, string>>>({})
+const passwordSuccess = ref(false)
+const passwordServerError = ref('')
+const isChangingPassword = ref(false)
 
 const user = ref<User | null>(null)
 const formData = reactive({
@@ -225,30 +138,28 @@ const userInitials = computed(() => {
   return '?'
 })
 
-const displayAvatarUrl = computed(() => {
-  return previewUrl.value || user.value?.avatarUrl || null
-})
+const displayAvatarUrl = computed(() => previewUrl.value || user.value?.avatarUrl || null)
 
 const memberSince = computed(() => {
   if (!user.value?.createdAt) return ''
   const date = new Date(user.value.createdAt)
-  return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long' })
+  return date.toLocaleDateString(locale.value || undefined, { year: 'numeric', month: 'long' })
 })
 
-const hasChanges = computed(() => {
-  return formData.name !== originalName.value
-})
+const hasChanges = computed(() => formData.name !== originalName.value)
 
 const isAdmin = computed(() => Boolean(user.value?.isAdmin))
 const isSuperAdmin = computed(() => Boolean(user.value?.isSuperAdmin))
 
-const isPaidUser = computed(() => {
-  return user.value?.subscriptionTier === 'pro' || user.value?.subscriptionTier === 'premium'
-})
+const isPaidUser = computed(() => user.value?.subscriptionTier === 'pro' || user.value?.subscriptionTier === 'premium')
 
-const isPremiumUser = computed(() => {
-  return user.value?.subscriptionTier === 'premium'
-})
+const isPremiumUser = computed(() => user.value?.subscriptionTier === 'premium')
+
+function resetPasswordErrors() {
+  passwordErrors.currentPassword = ''
+  passwordErrors.newPassword = ''
+  passwordErrors.confirmPassword = ''
+}
 
 async function loadProfile() {
   try {
@@ -275,7 +186,6 @@ function handleFileSelect(event: Event) {
     return
   }
 
-  // Validate file type
   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
   if (!allowedTypes.includes(file.type)) {
     uploadError.value = t('PROFILE.UPLOAD_FORMAT_ERROR')
@@ -284,7 +194,6 @@ function handleFileSelect(event: Event) {
     return
   }
 
-  // Validate file size (2MB)
   if (file.size > 2 * 1024 * 1024) {
     uploadError.value = t('PROFILE.UPLOAD_SIZE_ERROR')
     selectedFile.value = null
@@ -294,7 +203,6 @@ function handleFileSelect(event: Event) {
 
   selectedFile.value = file
 
-  // Create preview
   const reader = new FileReader()
   reader.onload = (e) => {
     previewUrl.value = e.target?.result as string
@@ -314,16 +222,16 @@ async function handleUpload() {
     user.value = response.user
     selectedFile.value = null
     previewUrl.value = null
-
-    // Reset file input
-    if (fileInputRef.value) {
-      fileInputRef.value.value = ''
-    }
   } catch (error: any) {
     uploadError.value = error?.message || t('PROFILE.UPLOAD_ERROR')
   } finally {
     isUploading.value = false
   }
+}
+
+function updateName(value: string) {
+  formData.name = value
+  saveSuccess.value = false
 }
 
 async function handleProfileUpdate() {
@@ -348,6 +256,34 @@ async function handleProfileUpdate() {
     saveError.value = error?.message || t('VALIDATION.SERVER_ERROR')
   } finally {
     isSaving.value = false
+  }
+}
+
+async function handlePasswordChange() {
+  resetPasswordErrors()
+  passwordSuccess.value = false
+  passwordServerError.value = ''
+
+  const result = changePasswordSchema.safeParse(passwordForm)
+  if (!result.success) {
+    result.error.issues.forEach((issue) => {
+      const field = issue.path[0] as keyof ChangePasswordForm
+      passwordErrors[field] = issue.message
+    })
+    return
+  }
+
+  isChangingPassword.value = true
+  try {
+    await authAPI.changePassword(passwordForm.currentPassword, passwordForm.newPassword)
+    passwordSuccess.value = true
+    passwordForm.currentPassword = ''
+    passwordForm.newPassword = ''
+    passwordForm.confirmPassword = ''
+  } catch (err: any) {
+    passwordServerError.value = err?.message || t('PROFILE.CHANGE_PASSWORD_ERROR')
+  } finally {
+    isChangingPassword.value = false
   }
 }
 
