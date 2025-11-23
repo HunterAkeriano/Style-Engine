@@ -102,12 +102,93 @@
   }
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
+.modal-pop-enter-active {
+  animation: modal-root-in 0.28s ease forwards;
 }
 
-.fade-enter-from,
-.fade-leave-to {
+.modal-pop-leave-active {
+  animation: modal-root-out 0.2s ease forwards;
+}
+
+.modal-pop-enter-active .modal__card {
+  animation: modal-pop-in 0.34s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+.modal-pop-leave-active .modal__card {
+  animation: modal-pop-out 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.modal-pop-enter-active .modal__backdrop {
+  animation: modal-backdrop-in 0.3s ease forwards;
+}
+
+.modal-pop-leave-active .modal__backdrop {
+  animation: modal-backdrop-out 0.2s ease forwards;
+}
+
+.modal-pop-enter-from,
+.modal-pop-leave-to {
   opacity: 0;
+}
+
+@keyframes modal-pop-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0) scale(0.94);
+  }
+  55% {
+    opacity: 1;
+    transform: translate3d(0, -4px, 0) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes modal-root-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-root-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes modal-pop-out {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0) scale(0.97);
+  }
+}
+
+@keyframes modal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
