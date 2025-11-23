@@ -92,6 +92,12 @@
           :options="tierOptions.slice(1)"
           :label="t('MODERATION.USERS_TABLE.PLAN')"
         />
+        <Select
+          v-if="form.subscriptionTier !== 'free'"
+          v-model="form.subscriptionDuration"
+          :options="durationOptions"
+          :label="t('MODERATION.USER_MODAL_DURATION')"
+        />
         <Input
           v-model="form.password"
           type="password"
@@ -139,7 +145,8 @@ const form = reactive({
   name: '',
   email: '',
   password: '',
-  subscriptionTier: 'free' as TierFilter
+  subscriptionTier: 'free' as TierFilter,
+  subscriptionDuration: 'month' as 'month' | 'forever' | 'free'
 })
 const formErrors = ref<Record<string, string>>({})
 
@@ -154,7 +161,8 @@ const userEditSchema = z.object({
     .max(120, { message: t('VALIDATION.NAME_MAX') })
     .optional(),
   password: z.string().min(8, { message: t('VALIDATION.PASSWORD_MIN') }).optional(),
-  subscriptionTier: z.enum(['free', 'pro', 'premium'])
+  subscriptionTier: z.enum(['free', 'pro', 'premium']),
+  subscriptionDuration: z.enum(['month', 'forever', 'free'])
 })
 
 const tierOptions = computed(() => [
@@ -162,6 +170,11 @@ const tierOptions = computed(() => [
   { value: 'free', label: t('MODERATION.UNIT.FREE') },
   { value: 'pro', label: t('MODERATION.UNIT.PRO') },
   { value: 'premium', label: t('MODERATION.UNIT.PREMIUM') }
+])
+
+const durationOptions = computed(() => [
+  { value: 'month', label: t('MODERATION.USER_MODAL_DURATION_MONTH') },
+  { value: 'forever', label: t('MODERATION.USER_MODAL_DURATION_FOREVER') }
 ])
 
 const columns = computed<TableColumn[]>(() => [
@@ -201,6 +214,7 @@ function openEdit(user: PublicUser) {
   form.name = user.name ?? ''
   form.email = user.email
   form.subscriptionTier = user.subscriptionTier
+  form.subscriptionDuration = user.subscriptionTier === 'free' ? 'free' : 'month'
   form.password = ''
   isModalOpen.value = true
 }
@@ -226,7 +240,8 @@ async function submitEdit() {
     email: trimmedEmail,
     name: trimmedName || undefined,
     password: form.password || undefined,
-    subscriptionTier: form.subscriptionTier
+    subscriptionTier: form.subscriptionTier,
+    subscriptionDuration: form.subscriptionTier === 'free' ? 'free' : form.subscriptionDuration
   })
 
   if (!parsed.success) {
@@ -245,7 +260,8 @@ async function submitEdit() {
   try {
     const payload: Record<string, unknown> = {
       email: parsed.data.email,
-      subscriptionTier: parsed.data.subscriptionTier
+      subscriptionTier: parsed.data.subscriptionTier,
+      subscriptionDuration: parsed.data.subscriptionDuration
     }
     if (parsed.data.name) {
       payload.name = parsed.data.name

@@ -7,6 +7,8 @@ import { getDb } from '../config/db'
 import type { Env } from '../config/env'
 import { isSuperAdminEmail } from '../config/super-admin'
 import { sendMail } from '../services/mailer'
+import { parseCookies, serializeCookie } from '../utils/cookies'
+import { generateRefreshToken, hashToken, signAccessToken } from '../utils/tokens'
 
 const credentialsSchema = z.object({
   email: z.string().email(),
@@ -117,12 +119,34 @@ export function createAuthRouter(env: Env) {
     const passwordHash = await bcrypt.hash(password, 10)
     const insert = await db.query(
       `INSERT INTO users (email, password_hash, name)
-       VALUES ($1, $2, $3) RETURNING id, email, name, avatar_url, created_at, is_payment as "isPayment", is_admin as "isAdmin"`,
+       VALUES ($1, $2, $3)
+       RETURNING id, email, name, avatar_url as "avatarUrl", created_at as "createdAt",
+                 is_payment as "isPayment", is_admin as "isAdmin",
+                 subscription_tier as "subscriptionTier", subscription_expires_at as "subscriptionExpiresAt"`,
       [email.toLowerCase(), passwordHash, name ?? null]
     )
     const user = attachSuperFlag(insert.rows[0])
-    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET, { expiresIn: '7d' })
-    res.status(201).json({ token, user })
+    const accessToken = signAccessToken(env, user.id)
+    const refreshToken = generateRefreshToken()
+    const refreshHash = hashToken(refreshToken)
+    const refreshExpires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+
+    await db.query(
+      `INSERT INTO refresh_tokens (user_id, token_hash, expires_at, revoked)
+       VALUES ($1, $2, $3, FALSE)`,
+      [user.id, refreshHash, refreshExpires.toISOString()]
+    )
+
+    const cookie = serializeCookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/api/auth/refresh',
+      maxAge: 30 * 24 * 60 * 60
+    })
+    res.setHeader('Set-Cookie', cookie)
+
+    res.status(201).json({ token: accessToken, user })
   })
 
   /**
@@ -184,7 +208,8 @@ export function createAuthRouter(env: Env) {
     const { email, password } = parsed.data
     const result = await db.query(
       `SELECT id, email, password_hash as "passwordHash", name, avatar_url as "avatarUrl",
-              created_at as "createdAt", is_payment as "isPayment", is_admin as "isAdmin"
+              created_at as "createdAt", is_payment as "isPayment", is_admin as "isAdmin",
+              subscription_tier as "subscriptionTier", subscription_expires_at as "subscriptionExpiresAt"
        FROM users WHERE email = $1`,
       [email.toLowerCase()]
     )
@@ -194,8 +219,67 @@ export function createAuthRouter(env: Env) {
     const valid = await bcrypt.compare(password, user.passwordHash)
     if (!valid) return res.status(401).json({ message: 'Invalid credentials' })
 
-    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET, { expiresIn: '7d' })
-    res.json({ token, user })
+    const accessToken = signAccessToken(env, user.id)
+    const refreshToken = generateRefreshToken()
+    const refreshHash = hashToken(refreshToken)
+    const refreshExpires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+
+    await db.query(
+      `INSERT INTO refresh_tokens (user_id, token_hash, expires_at, revoked)
+       VALUES ($1, $2, $3, FALSE)`,
+      [user.id, refreshHash, refreshExpires.toISOString()]
+    )
+
+    const cookie = serializeCookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/api/auth/refresh',
+      maxAge: 30 * 24 * 60 * 60
+    })
+    res.setHeader('Set-Cookie', cookie)
+
+    const { passwordHash, ...safeUser } = user
+    res.json({ token: accessToken, user: safeUser })
+  })
+
+  router.post('/refresh', async (req, res) => {
+    const cookies = parseCookies(req.headers.cookie)
+    const token = cookies['refreshToken']
+    if (!token) return res.status(401).json({ message: 'Missing refresh token' })
+
+    const tokenHash = hashToken(token)
+    const result = await db.query(
+      `SELECT rt.id, rt.user_id as "userId", u.email, u.name, u.avatar_url as "avatarUrl",
+              u.subscription_tier as "subscriptionTier", u.subscription_expires_at as "subscriptionExpiresAt",
+              u.is_payment as "isPayment", u.is_admin as "isAdmin", u.created_at as "createdAt"
+       FROM refresh_tokens rt
+       JOIN users u ON u.id = rt.user_id
+       WHERE rt.token_hash = $1 AND rt.revoked = FALSE AND rt.expires_at > NOW()
+       LIMIT 1`,
+      [tokenHash]
+    )
+    const record = result.rows[0]
+    if (!record) return res.status(401).json({ message: 'Invalid refresh token' })
+
+    const accessToken = signAccessToken(env, record.userId)
+    const { userId, ...rest } = record
+    const safeUser = attachSuperFlag({ id: userId, ...rest })
+    res.json({ token: accessToken, user: safeUser })
+  })
+
+  router.post('/logout', async (req, res) => {
+    const cookies = parseCookies(req.headers.cookie)
+    const token = cookies['refreshToken']
+    if (token) {
+      const tokenHash = hashToken(token)
+      await db.query('UPDATE refresh_tokens SET revoked = TRUE WHERE token_hash = $1', [tokenHash])
+    }
+    res.setHeader(
+      'Set-Cookie',
+      serializeCookie('refreshToken', '', { path: '/api/auth/refresh', httpOnly: true, maxAge: 0 })
+    )
+    res.json({ ok: true })
   })
 
   router.post('/forgot-password', async (req, res) => {

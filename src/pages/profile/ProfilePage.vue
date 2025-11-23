@@ -28,6 +28,7 @@
           :upload-error="uploadError"
           :email="formData.email"
           :member-since="memberSince"
+          :subscription-until="subscriptionUntil"
           @file-selected="handleFileSelect"
           @upload="handleUpload"
         />
@@ -144,6 +145,14 @@ const memberSince = computed(() => {
   if (!user.value?.createdAt) return ''
   const date = new Date(user.value.createdAt)
   return date.toLocaleDateString(locale.value || undefined, { year: 'numeric', month: 'long' })
+})
+
+const subscriptionUntil = computed(() => {
+  if (!user.value) return ''
+  if (!user.value.subscriptionExpiresAt) return ''
+  const expires = new Date(user.value.subscriptionExpiresAt)
+  if (expires.getFullYear() >= 2100) return t('PROFILE.SUBSCRIPTION_FOREVER')
+  return expires.toLocaleDateString(locale.value || undefined, { year: 'numeric', month: 'long', day: 'numeric' })
 })
 
 const hasChanges = computed(() => formData.name !== originalName.value)

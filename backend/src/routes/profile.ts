@@ -55,7 +55,8 @@ export function createProfileRouter(env: Env) {
   router.get('/', auth, async (req: AuthRequest, res) => {
     const result = await db.query(
       `SELECT id, email, name, avatar_url as "avatarUrl", created_at as "createdAt", updated_at as "updatedAt",
-              is_payment as "isPayment", subscription_tier as "subscriptionTier", is_admin as "isAdmin"
+              is_payment as "isPayment", subscription_tier as "subscriptionTier", is_admin as "isAdmin",
+              subscription_expires_at as "subscriptionExpiresAt"
        FROM users WHERE id = $1`,
       [req.userId]
     )
@@ -122,7 +123,8 @@ export function createProfileRouter(env: Env) {
       `UPDATE users SET name = COALESCE($2, name), avatar_url = COALESCE($3, avatar_url), updated_at = NOW()
        WHERE id = $1
        RETURNING id, email, name, avatar_url as "avatarUrl", created_at as "createdAt", updated_at as "updatedAt",
-                 is_payment as "isPayment", subscription_tier as "subscriptionTier", is_admin as "isAdmin"`,
+                 is_payment as "isPayment", subscription_tier as "subscriptionTier", is_admin as "isAdmin",
+                 subscription_expires_at as "subscriptionExpiresAt"`,
       [req.userId, name ?? null, avatarUrl ?? null]
     )
     const user = attachSuperFlag(result.rows[0])

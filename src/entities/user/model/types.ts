@@ -8,6 +8,7 @@ export interface User {
   isPayment?: boolean
   isAdmin?: boolean
   isSuperAdmin?: boolean
+  subscriptionExpiresAt?: string | null
   createdAt: string
   updatedAt?: string
 }

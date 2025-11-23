@@ -22,12 +22,14 @@
         <div v-if="isPremiumUser" class="profile-hero__badge">Premium</div>
       </div>
 
-      <div class="profile-hero__meta">
-        <p class="profile-hero__label">{{ t('AUTH.EMAIL') }}</p>
-        <p class="profile-hero__value">{{ email }}</p>
-        <p class="profile-hero__label">{{ t('PROFILE.MEMBER_SINCE') }}</p>
-        <p class="profile-hero__value">{{ memberSince }}</p>
-      </div>
+    <div class="profile-hero__meta">
+      <p class="profile-hero__label">{{ t('AUTH.EMAIL') }}</p>
+      <p class="profile-hero__value">{{ email }}</p>
+      <p class="profile-hero__label">{{ t('PROFILE.MEMBER_SINCE') }}</p>
+      <p class="profile-hero__value">{{ memberSince }}</p>
+      <p v-if="subscriptionUntil" class="profile-hero__label">{{ t('PROFILE.SUBSCRIPTION_UNTIL') }}</p>
+      <p v-if="subscriptionUntil" class="profile-hero__value">{{ subscriptionUntil }}</p>
+    </div>
     </div>
 
     <div class="profile-hero__controls">
@@ -79,6 +81,7 @@ interface Props {
   uploadError: string | null
   email: string
   memberSince: string
+  subscriptionUntil?: string
 }
 
 defineProps<Props>()

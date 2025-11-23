@@ -11,6 +11,7 @@ export interface User {
   name: string | null
   avatarUrl: string | null
   createdAt: string
+  subscriptionExpiresAt?: string | null
   subscriptionTier?: 'free' | 'pro' | 'premium'
   isPayment?: boolean
   isAdmin?: boolean
@@ -35,14 +36,21 @@ export interface ResetPasswordPayload {
 class AuthAPI {
   async login(data: LoginFormData): Promise<AuthResponse> {
     const response = await api.post<AuthResponse>('/auth/login', data)
-    setCookie(AUTH_TOKEN_KEY, response.data.token, { days: 30, path: '/' })
+    setCookie(AUTH_TOKEN_KEY, response.data.token, { days: 1, path: '/' })
     api.setAuthToken(response.data.token)
     return response.data
   }
 
   async register(data: RegisterFormData): Promise<AuthResponse> {
     const response = await api.post<AuthResponse>('/auth/register', data)
-    setCookie(AUTH_TOKEN_KEY, response.data.token, { days: 30, path: '/' })
+    setCookie(AUTH_TOKEN_KEY, response.data.token, { days: 1, path: '/' })
+    api.setAuthToken(response.data.token)
+    return response.data
+  }
+
+  async refresh(): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>('/auth/refresh', undefined, { withCredentials: true })
+    setCookie(AUTH_TOKEN_KEY, response.data.token, { days: 1, path: '/' })
     api.setAuthToken(response.data.token)
     return response.data
   }
@@ -69,6 +77,7 @@ class AuthAPI {
   }
 
   logout() {
+    api.post('/auth/logout').catch(() => {})
     removeCookie(AUTH_TOKEN_KEY)
     api.removeAuthToken()
   }

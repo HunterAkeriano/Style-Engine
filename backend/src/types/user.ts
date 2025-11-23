@@ -3,7 +3,6 @@ export type SubscriptionTier = 'free' | 'pro' | 'premium'
 export interface User {
   id: string
   email: string
-  passwordHash: string
   name: string | null
   avatarUrl: string | null
   isPayment: boolean
@@ -11,6 +10,7 @@ export interface User {
   isAdmin: boolean
   createdAt: Date
   updatedAt: Date
+  subscriptionExpiresAt?: Date | null
 }
 
 export interface SavedGradient {

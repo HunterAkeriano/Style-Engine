@@ -80,6 +80,7 @@ async function fetchUsers(
       name,
       avatar_url as "avatarUrl",
       subscription_tier as "subscriptionTier",
+      subscription_expires_at as "subscriptionExpiresAt",
       created_at as "createdAt"
     FROM users
     ${whereClause}
@@ -182,7 +183,7 @@ export function createUsersRouter(env: Env) {
 
   router.put('/:id', auth, requireAdmin, async (req: AuthRequest, res) => {
     const { id } = req.params
-    const { email, name, password, subscriptionTier } = req.body
+    const { email, name, password, subscriptionTier, subscriptionDuration } = req.body
 
     if (!id) {
       return res.status(400).json({ message: 'User id is required' })
@@ -217,6 +218,14 @@ export function createUsersRouter(env: Env) {
       updates.push(`is_payment = $${paramIndex}`)
       params.push(isPayment)
       paramIndex++
+
+      if (subscriptionTier === 'free') {
+        updates.push('subscription_expires_at = NULL')
+      } else if (subscriptionDuration === 'month') {
+        updates.push(`subscription_expires_at = NOW() + interval '30 days'`)
+      } else if (subscriptionDuration === 'forever') {
+        updates.push(`subscription_expires_at = '2100-01-01'::timestamptz`)
+      }
     }
 
     if (password) {
@@ -235,7 +244,8 @@ export function createUsersRouter(env: Env) {
       UPDATE users
       SET ${updates.join(', ')}
       WHERE id = $${paramIndex}
-      RETURNING id, email, name, subscription_tier as "subscriptionTier", is_payment as "isPayment", is_admin as "isAdmin", created_at as "createdAt"
+      RETURNING id, email, name, avatar_url as "avatarUrl", subscription_tier as "subscriptionTier", subscription_expires_at as "subscriptionExpiresAt",
+                is_payment as "isPayment", is_admin as "isAdmin", created_at as "createdAt"
     `
     params.push(id)
 

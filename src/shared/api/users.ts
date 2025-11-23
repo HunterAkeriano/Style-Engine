@@ -8,6 +8,7 @@ export interface PublicUser {
   name: string | null
   avatarUrl: string | null
   subscriptionTier: 'free' | 'pro' | 'premium'
+  subscriptionExpiresAt?: string | null
   createdAt: string
   isPayment?: boolean
   isAdmin?: boolean
@@ -63,6 +64,7 @@ interface UpdateUserPayload {
   name?: string
   password?: string
   subscriptionTier?: 'free' | 'pro' | 'premium'
+  subscriptionDuration?: 'month' | 'forever' | 'free'
 }
 
 export async function updateUser(id: string, payload: UpdateUserPayload) {

@@ -3,10 +3,11 @@ import axios, {
   type AxiosInstance,
   type AxiosRequestConfig,
   type AxiosResponse,
-  type Method
+  type Method,
+  type AxiosRequestHeaders
 } from 'axios'
 import { AUTH_TOKEN_KEY } from './constants'
-import { getCookie } from '@/shared/lib/cookies'
+import { getCookie, setCookie, removeCookie } from '@/shared/lib/cookies'
 
 export interface ApiClientConfig {
   baseURL: string
@@ -29,6 +30,7 @@ export interface ApiError {
 
 export class ApiClient {
   private instance: AxiosInstance
+  private refreshPromise: Promise<string | null> | null = null
 
   constructor(config: ApiClientConfig) {
     this.instance = axios.create({
@@ -47,10 +49,24 @@ export class ApiClient {
 
     this.instance.interceptors.response.use(
       (response) => response,
-      (error: AxiosError) => {
+      async (error: AxiosError) => {
+        const status = error.response?.status
+        const originalRequest = error.config
+
+        if (status === 401 && originalRequest && !(originalRequest as any)._retry) {
+          ;(originalRequest as any)._retry = true
+          const refreshed = await this.tryRefreshToken()
+          if (refreshed) {
+            const headers = (originalRequest.headers || {}) as AxiosRequestHeaders
+            headers.Authorization = `Bearer ${refreshed}`
+            originalRequest.headers = headers
+            return this.instance(originalRequest)
+          }
+        }
+
         const apiError: ApiError = {
           message: (error.response?.data as any)?.message || error.message,
-          status: error.response?.status,
+          status,
           data: error.response?.data
         }
         return Promise.reject(apiError)
@@ -61,13 +77,35 @@ export class ApiClient {
   setAuthToken(token: string | null) {
     if (token) {
       this.instance.defaults.headers.common['Authorization'] = `Bearer ${token}`
+      setCookie(AUTH_TOKEN_KEY, token, { days: 1, path: '/' })
     } else {
       delete this.instance.defaults.headers.common['Authorization']
+      removeCookie(AUTH_TOKEN_KEY)
     }
   }
 
   removeAuthToken() {
     this.setAuthToken(null)
+  }
+
+  private async tryRefreshToken(): Promise<string | null> {
+    if (this.refreshPromise) return this.refreshPromise
+    this.refreshPromise = this.instance
+      .post<{ token: string }>('/auth/refresh', undefined, { withCredentials: true })
+      .then((res) => {
+        const token = res.data.token
+        if (token) {
+          this.setAuthToken(token)
+          return token
+        }
+        return null
+      })
+      .catch(() => null)
+      .finally(() => {
+        this.refreshPromise = null
+      })
+
+    return this.refreshPromise
   }
 
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
