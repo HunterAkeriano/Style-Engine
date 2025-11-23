@@ -57,10 +57,47 @@
     font-size: $font-size-base;
     color: $color-text-primary;
     background: transparent;
+    caret-color: $color-text-primary;
 
     &::placeholder {
       color: $color-text-tertiary;
     }
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0 1000px $color-bg-primary inset;
+      box-shadow: 0 0 0 1000px $color-bg-primary inset;
+      -webkit-text-fill-color: $color-text-primary;
+      transition: background-color 9999s ease-in-out 0s;
+    }
+  }
+
+  &__toggle {
+    border: none;
+    background: transparent;
+    color: $color-text-secondary;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    cursor: pointer;
+    transition: color $transition-fast, transform $transition-fast;
+
+    &:hover {
+      color: $color-text-primary;
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+
+  &__toggle-icon {
+    width: 18px;
+    height: 18px;
   }
 
   &__error {

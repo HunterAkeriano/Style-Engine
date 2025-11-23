@@ -19,6 +19,7 @@
           :label="t('AUTH.NEW_PASSWORD')"
           :error="errors.password ? t(`VALIDATION.${errors.password}`) : ''"
           type="password"
+          show-password-toggle
           autocomplete="new-password"
           @input="errors.password = ''"
         />
@@ -27,6 +28,7 @@
           :label="t('AUTH.CONFIRM_PASSWORD')"
           :error="errors.confirmPassword ? t(`VALIDATION.${errors.confirmPassword}`) : ''"
           type="password"
+          show-password-toggle
           autocomplete="new-password"
           @input="errors.confirmPassword = ''"
         />

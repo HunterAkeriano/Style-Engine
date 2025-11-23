@@ -5,6 +5,8 @@ import type { Env } from '../config/env'
 import { createAuthMiddleware, type AuthRequest } from '../middleware/auth'
 import { uploadAvatar } from '../middleware/upload'
 import { isSuperAdminEmail } from '../config/super-admin'
+import fs from 'fs/promises'
+import path from 'path'
 
 const updateProfileSchema = z.object({
   name: z.string().min(1).max(120).optional(),
@@ -185,6 +187,8 @@ export function createProfileRouter(env: Env) {
       return res.status(400).json({ message: 'No file uploaded' })
     }
 
+    const currentAvatar = await db.query('SELECT avatar_url as "avatarUrl" FROM users WHERE id = $1', [req.userId])
+    const oldAvatarUrl = currentAvatar.rows[0]?.avatarUrl as string | undefined
     const avatarUrl = `${req.protocol}://${req.get('host')}/uploads/avatars/${req.file.filename}`
 
     const result = await db.query(
@@ -194,6 +198,16 @@ export function createProfileRouter(env: Env) {
                  is_payment as "isPayment", subscription_tier as "subscriptionTier", is_admin as "isAdmin"`,
       [req.userId, avatarUrl]
     )
+
+    if (oldAvatarUrl) {
+      const fileName = oldAvatarUrl.split('/uploads/avatars/')[1]
+      if (fileName) {
+        const filePath = path.join(__dirname, '../../uploads/avatars', path.basename(fileName))
+        fs.unlink(filePath).catch(() => {
+          /* best-effort cleanup */
+        })
+      }
+    }
 
     const user = attachSuperFlag(result.rows[0])
     res.json({ user, avatarUrl })

@@ -29,6 +29,7 @@
             :label="t('AUTH.PASSWORD')"
             :error="errors.password ? t(`VALIDATION.${errors.password}`) : ''"
             type="password"
+            show-password-toggle
             autocomplete="new-password"
             @input="clearFieldError('password')"
           />

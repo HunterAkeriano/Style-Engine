@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RouterLink, useRoute, useRouter, type RouteLocationRaw } from 'vue-router'
+import { RouterLink, useRoute, type RouteLocationRaw } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 type BreadcrumbItem = {
@@ -35,7 +35,6 @@ const props = defineProps<{
 }>()
 
 const route = useRoute()
-const router = useRouter()
 const { t, locale } = useI18n()
 
 const shouldHide = computed(() => route.matched.some(record => record.meta?.hideBreadcrumbs))
