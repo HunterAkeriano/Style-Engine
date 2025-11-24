@@ -35,14 +35,14 @@ export interface ResetPasswordPayload {
 
 class AuthAPI {
   async login(data: LoginFormData): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>('/auth/login', data)
+    const response = await api.post<AuthResponse>('/auth/login', data, { withCredentials: true })
     setCookie(AUTH_TOKEN_KEY, response.data.token, { days: 1, path: '/' })
     api.setAuthToken(response.data.token)
     return response.data
   }
 
   async register(data: RegisterFormData): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>('/auth/register', data)
+    const response = await api.post<AuthResponse>('/auth/register', data, { withCredentials: true })
     setCookie(AUTH_TOKEN_KEY, response.data.token, { days: 1, path: '/' })
     api.setAuthToken(response.data.token)
     return response.data

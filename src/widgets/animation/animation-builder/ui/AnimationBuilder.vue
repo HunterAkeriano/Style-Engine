@@ -517,6 +517,16 @@ async function confirmSaveAnimation(name: string) {
     await createSave('animation', finalName, context.payload)
     toast.success(t('COMMON.SAVE_SUCCESS', { entity: entityLabel.value }))
   } catch (error: any) {
+    if (error?.status === 403) {
+      proQuota.value = {
+        allowed: false,
+        limit: typeof error?.data?.limit === 'number' ? error.data.limit : 3,
+        used: proQuota.value?.used ?? 0,
+        plan: SubscriptionTier.FREE
+      }
+      showProLimitModal.value = true
+      return
+    }
     if (error?.status === 409) {
       toast.error(t('COMMON.ALREADY_SAVED', { entity: entityLabel.value }))
     } else {

@@ -9,6 +9,7 @@ export interface AuthRequest extends Request {
     id: string
     isAdmin: boolean
     isPayment: boolean
+    subscriptionTier: 'free' | 'pro' | 'premium'
   }
 }
 
@@ -26,7 +27,9 @@ export function createAuthMiddleware(env: Env) {
       const payload = jwt.verify(token, env.JWT_SECRET) as { sub: string }
       const db = getDb()
       const result = await db.query(
-        'SELECT id, is_admin as "isAdmin", is_payment as "isPayment" FROM users WHERE id = $1',
+        `SELECT id, is_admin as "isAdmin", is_payment as "isPayment", subscription_tier as "subscriptionTier"
+         FROM users
+         WHERE id = $1`,
         [payload.sub]
       )
       const user = result.rows[0]
@@ -38,7 +41,8 @@ export function createAuthMiddleware(env: Env) {
       req.authUser = {
         id: user.id,
         isAdmin: Boolean(user.isAdmin),
-        isPayment: Boolean(user.isPayment)
+        isPayment: Boolean(user.isPayment),
+        subscriptionTier: (user.subscriptionTier as 'free' | 'pro' | 'premium') ?? 'free'
       }
       next()
     } catch {

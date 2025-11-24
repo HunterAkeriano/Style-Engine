@@ -28,15 +28,19 @@ export function createSavesRouter(env: Env) {
   const auth = createAuthMiddleware(env)
   const db = getDb()
 
-  async function enforceLimit(category: Category, req: AuthRequest) {
-    if (req.authUser?.isPayment) return null
-    const table = tableForCategory(category)
-    const countResult = await db.query(`SELECT COUNT(*)::int AS count FROM ${table} WHERE user_id = $1`, [
-      req.userId
-    ])
-    const count = Number(countResult.rows[0]?.count || 0)
-    if (count >= 3) {
-      return { message: 'Free plan limit reached', limit: 3 }
+  async function enforceLimit(_category: Category, req: AuthRequest) {
+    const totalResult = await db.query(
+      `SELECT
+         (SELECT COUNT(*)::int FROM saved_gradients WHERE user_id = $1) +
+         (SELECT COUNT(*)::int FROM saved_shadows WHERE user_id = $1) +
+         (SELECT COUNT(*)::int FROM saved_animations WHERE user_id = $1) AS count`,
+      [req.userId]
+    )
+    const total = Number(totalResult.rows[0]?.count || 0)
+    const tier = req.authUser?.subscriptionTier || (req.authUser?.isPayment ? 'pro' : 'free')
+    const limit = tier === 'premium' ? Infinity : tier === 'pro' ? 50 : 5
+    if (total >= limit) {
+      return { message: 'Storage limit reached', limit }
     }
     return null
   }
