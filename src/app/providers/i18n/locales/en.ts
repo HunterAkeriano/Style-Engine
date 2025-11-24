@@ -331,7 +331,7 @@ export default {
     TELEGRAM: '{\'@\'}dima_gulak',
     VIBER: '+38 (097) 477-97-84',
     MAIL: 'Email',
-    EMAIL: 'you{\'@\'}example.com'
+    EMAIL: 'gamerstaject{\'@\'}gmail.com'
   },
   META_DESCRIPTION: {
     HOME: 'Style Engine is a CSS lab with generators for gradients, shadows, and animations plus live preview and clean code export.',
