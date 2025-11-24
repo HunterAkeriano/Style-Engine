@@ -30,11 +30,13 @@
     </div>
 
     <div class="gradient-generation-process__code">
-      <GradientCodeExport
+      <CodeExport
+        :title="t('GRADIENT.EXPORT_TITLE')"
         :get-code="getCode"
-        @save="handleSaveCurrentGradient"
-        :show-save-button="true"
         :allow-export="isExportAllowed"
+        :copy-label="t('GRADIENT.COPY')"
+        :copied-label="t('GRADIENT.COPIED')"
+        @save="handleSaveCurrentGradient"
         @blocked-export="showExportProModal = true"
       />
     </div>
@@ -93,11 +95,13 @@
       :title="t('COMMON.EXPORT')"
       @close="showExportModal = false"
     >
-      <GradientCodeExport
+      <CodeExport
+        :title="t('COMMON.EXPORT')"
         :get-code="getCode"
         :filename="exportFilename"
-        :show-save-button="true"
         :allow-export="isExportAllowed"
+        :copy-label="t('GRADIENT.COPY')"
+        :copied-label="t('GRADIENT.COPIED')"
         @save="handleSaveCurrentGradient"
         @blocked-export="showExportProModal = true"
       />
@@ -123,7 +127,7 @@ import { useRoute, useRouter } from 'vue-router'
 import type { GradientPreset } from './gradient-presets'
 import type { GradientType, GradientColor } from '@/shared/types'
 import { formatGradient, type CSSFormat, copyToClipboard, smoothScrollToTop } from '@/shared/lib'
-import { GradientPreview, GradientControls, GradientCodeExport, GradientPresets } from '@/features/gradient'
+import { GradientPreview, GradientControls, GradientPresets } from '@/features/gradient'
 import { GRADIENT_PRESETS } from './gradient-presets'
 import {
   listPublicSaves,
@@ -134,7 +138,7 @@ import {
 } from '@/shared/api/saves'
 import { useAuthStore } from '@/entities'
 import { useFloatingPreview } from '@/shared/composables'
-import { Modal, Button, Input } from '@/shared/ui'
+import { Modal, Button, Input, CodeExport } from '@/shared/ui'
 import { getUserLimit, SubscriptionTier } from '@/shared/config/pricing'
 import { evaluateSaveQuota, type SaveQuotaResult, resolveSubscriptionTier } from '@/shared/lib/save-quota'
 import { buildCreatorProfile } from '@/shared/lib/creator'

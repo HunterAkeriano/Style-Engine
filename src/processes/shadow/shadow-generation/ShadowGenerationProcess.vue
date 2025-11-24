@@ -1,10 +1,13 @@
 <template>
   <div class="shadow-generation" ref="processRef">
     <div class="shadow-generation__code">
-      <ShadowCodeExport
+      <CodeExport
+        :title="t('SHADOW.EXPORT_TITLE')"
         :get-code="getCode"
-        @save="handleSaveCurrentShadow"
         :allow-export="isExportAllowed"
+        :copy-label="t('SHADOW.COPY')"
+        :copied-label="t('SHADOW.COPIED')"
+        @save="handleSaveCurrentShadow"
         @blocked-export="showExportProModal = true"
       />
     </div>
@@ -91,11 +94,14 @@
       :title="t('COMMON.EXPORT')"
       @close="showExportModal = false"
     >
-      <ShadowCodeExport
+      <CodeExport
+        :title="t('COMMON.EXPORT')"
         :get-code="getCode"
         :filename="exportFilename"
         :show-save-button="false"
         :allow-export="isExportAllowed"
+        :copy-label="t('SHADOW.COPY')"
+        :copied-label="t('SHADOW.COPIED')"
         @blocked-export="showExportProModal = true"
       />
     </Modal>
@@ -120,7 +126,7 @@ import { useRoute, useRouter } from 'vue-router'
 import type { ShadowLayer, ShadowPreset } from '@/shared/types'
 import { randomHexColor, hexToRgb } from '@/shared/lib/color'
 import { copyToClipboard, formatBoxShadow, type CSSFormat, smoothScrollToTop } from '@/shared/lib'
-import { ShadowControls, ShadowPreview, ShadowCodeExport, ShadowPresets } from '@/features/shadow'
+import { ShadowControls, ShadowPreview, ShadowPresets } from '@/features/shadow'
 import { SHADOW_PRESETS } from '@/processes'
 import {
   listPublicSaves,
@@ -131,7 +137,7 @@ import {
 } from '@/shared/api/saves'
 import { useAuthStore } from '@/entities'
 import { useFloatingPreview } from '@/shared/composables'
-import { Modal, Button, Input } from '@/shared/ui'
+import { Modal, Button, Input, CodeExport } from '@/shared/ui'
 import { getUserLimit, SubscriptionTier } from '@/shared/config/pricing'
 import { evaluateSaveQuota, type SaveQuotaResult, resolveSubscriptionTier } from '@/shared/lib/save-quota'
 import { buildCreatorProfile } from '@/shared/lib/creator'

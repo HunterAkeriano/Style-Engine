@@ -99,6 +99,9 @@
                 <Button variant="secondary" size="sm" @click="handleExportRequest">
                   {{ t('COMMON.EXPORT') }}
                 </Button>
+                <Button variant="ghost" size="sm" @click="handleSaveAnimation">
+                  {{ t('COMMON.SAVE') }}
+                </Button>
               </div>
             </div>
           </div>
@@ -148,6 +151,34 @@
     @confirm="handleAuthConfirm"
     @close="showAuthModal = false"
   />
+  <Modal
+    :visible="showSaveModal"
+    :title="t('PROFILE.SAVES_TITLE')"
+    :subtitle="t('PROFILE.SAVES_SUBTITLE')"
+    @close="closeSaveModal"
+  >
+    <Input v-model="saveName" :label="t('COMMON.NAME')" />
+    <template #footer>
+      <div class="modal__actions">
+        <Button variant="ghost" size="md" @click="closeSaveModal">
+          {{ t('COMMON.CANCEL') }}
+        </Button>
+        <Button variant="primary" size="md" @click="confirmSaveAnimation(saveName)">
+          {{ t('COMMON.SAVE') }}
+        </Button>
+      </div>
+    </template>
+  </Modal>
+  <Modal
+    :visible="showProLimitModal"
+    :title="t('PROFILE.PRO_LIMIT_TITLE')"
+    :subtitle="proLimitSubtitle"
+    show-actions
+    :confirm-text="t('PROFILE.PRO_LIMIT_ACTION')"
+    :cancel-text="t('COMMON.CANCEL')"
+    @confirm="handleProLimitConfirm"
+    @close="showProLimitModal = false"
+  />
 </template>
 
 <script setup lang="ts">
@@ -157,10 +188,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { Button, Input, Select, Modal, type SelectOption } from '@/shared/ui'
 import { copyToClipboard } from '@/shared/lib'
 import { useToast } from '@/shared/lib/toast'
-import { listPublicSaves, type SavedItem } from '@/shared/api/saves'
+import { createSave, listPublicSaves, type SavedItem, type SaveCategory } from '@/shared/api/saves'
 import { useAuthStore } from '@/entities'
-import { resolveSubscriptionTier } from '@/shared/lib/save-quota'
-import { SubscriptionTier } from '@/shared/config/pricing'
+import { evaluateSaveQuota, resolveSubscriptionTier, type SaveQuotaResult } from '@/shared/lib/save-quota'
+import { getUserLimit, SubscriptionTier } from '@/shared/config/pricing'
 
 const { t, locale } = useI18n()
 const route = useRoute()
@@ -168,6 +199,19 @@ const router = useRouter()
 const toast = useToast()
 const authStore = useAuthStore()
 const showAuthModal = ref(false)
+const showSaveModal = ref(false)
+const showProLimitModal = ref(false)
+const saveName = ref('')
+const saveContext = ref<{ defaultName: string; payload: Record<string, unknown> } | null>(null)
+const entityLabel = computed(() => t('PROFILE.SAVED_ANIMATIONS'))
+const proSaveLimit = getUserLimit(SubscriptionTier.PRO, 'savedTemplates')
+const proQuota = ref<SaveQuotaResult | null>(null)
+const proLimitSubtitle = computed(() =>
+  t('PROFILE.PRO_LIMIT_MESSAGE', {
+    limit: proQuota.value?.limit ?? proSaveLimit,
+    entity: entityLabel.value
+  })
+)
 const animationName = 'style-engine-motion'
 
 const duration = ref(1200)
@@ -438,6 +482,72 @@ function handleExportUpgrade() {
     path: `/${locale.value}/about`,
     query: { plan: 'premium' }
   })
+}
+
+async function handleSaveAnimation() {
+  if (!authStore.isAuthenticated) {
+    showAuthModal.value = true
+    return
+  }
+
+  saveContext.value = {
+    defaultName: t('ANIMATION.BUILDER_TITLE'),
+    payload: {
+      motion: motionValues.value,
+      code: codeSnippet.value,
+      useVariables: useVariables.value
+    }
+  }
+  saveName.value = t('ANIMATION.BUILDER_TITLE')
+  showSaveModal.value = true
+}
+
+async function confirmSaveAnimation(name: string) {
+  const context = saveContext.value
+  if (!context) return
+
+  const finalName = name || context.defaultName
+  showSaveModal.value = false
+  const allowed = await ensureProQuota('animation')
+  if (!allowed) {
+    return
+  }
+
+  try {
+    await createSave('animation', finalName, context.payload)
+    toast.success(t('COMMON.SAVE_SUCCESS', { entity: entityLabel.value }))
+  } catch (error: any) {
+    if (error?.status === 409) {
+      toast.error(t('COMMON.ALREADY_SAVED', { entity: entityLabel.value }))
+    } else {
+      toast.error(error?.message || t('COMMON.SAVE_ERROR', { entity: entityLabel.value }))
+    }
+  } finally {
+    saveContext.value = null
+  }
+}
+
+async function ensureProQuota(category: SaveCategory) {
+  const quota = await evaluateSaveQuota(category)
+  proQuota.value = quota
+  if (!quota.allowed) {
+    showProLimitModal.value = true
+    return false
+  }
+  return true
+}
+
+function handleProLimitConfirm() {
+  showProLimitModal.value = false
+  router.push({
+    path: `/${locale.value}/about`,
+    query: { plan: 'premium' }
+  })
+}
+
+function closeSaveModal() {
+  showSaveModal.value = false
+  saveContext.value = null
 }
 
 async function copyExportCode() {

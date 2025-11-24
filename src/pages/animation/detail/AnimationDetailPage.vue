@@ -95,22 +95,14 @@
       :title="t('COMMON.EXPORT')"
       @close="showExportModal = false"
     >
-      <div class="animation-export">
-        <div class="animation-export__toolbar">
-          <Select v-model="exportFormat" :options="animationExportFormats" />
-          <div class="animation-export__actions">
-            <Button variant="outline" size="sm" @click="copyExportCode">
-              {{ t('COMMON.COPY') }}
-            </Button>
-            <Button variant="ghost" size="sm" @click="downloadExportCode">
-              {{ t('COMMON.DOWNLOAD') }}
-            </Button>
-          </div>
-        </div>
-        <div class="animation-export__code">
-          <pre class="code-block"><code>{{ exportCode }}</code></pre>
-        </div>
-      </div>
+      <CodeExport
+        :title="t('COMMON.EXPORT')"
+        :get-code="getExportCode"
+        :format-options="animationExportFormats"
+        :extension-map="animationExtensionMap"
+        :filename="selectedExample?.id ?? 'animation'"
+        :show-save-button="false"
+      />
     </Modal>
     <Modal
       :visible="showExportProModal"
@@ -130,7 +122,7 @@
 import { computed, defineAsyncComponent, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Modal, Button, NavLink, Input, Select } from '@/shared/ui'
+import { Modal, Button, NavLink, Input, CodeExport } from '@/shared/ui'
 import { copyToClipboard } from '@/shared/lib'
 import { useToast } from '@/shared/lib/toast'
 import { animationExamples } from '@/entities/animation'
@@ -183,24 +175,28 @@ const isAnimationSaved = computed(() =>
   animationPayloadHash.value ? savedAnimationHashes.value.has(animationPayloadHash.value) : false
 )
 
-const exportFormat = ref<'html' | 'css' | 'json'>('html')
 const animationExportFormats = [
   { label: 'HTML', value: 'html' },
   { label: 'CSS', value: 'css' },
   { label: 'JSON', value: 'json' }
 ]
-const exportCode = computed(() => {
+const animationExtensionMap = {
+  html: 'html',
+  css: 'css',
+  json: 'json'
+}
+
+function getExportCode(format: string) {
   const example = selectedExample.value
   if (!example) return ''
-  if (exportFormat.value === 'css') {
+  if (format === 'css') {
     return example.css
   }
-  if (exportFormat.value === 'json') {
+  if (format === 'json') {
     return JSON.stringify({ html: example.html, css: example.css }, null, 2)
   }
   return `${example.html}\n\n<style>\n${example.css}\n</style>`
-})
-const exportFileName = computed(() => `${selectedExample.value?.id ?? 'animation'}.${exportFormat.value}`)
+}
 
 const examplesWithComponents = animationExamples.map(example => ({
   ...example,
@@ -294,23 +290,6 @@ function handleExportUpgrade() {
     path: `/${locale.value}/about`,
     query: { plan: 'premium' }
   })
-}
-
-async function copyExportCode() {
-  if (!exportCode.value) return
-  const ok = await copyToClipboard(exportCode.value)
-  toast[ok ? 'success' : 'error'](ok ? t('COMMON.COPIED_TO_CLIPBOARD') : t('COMMON.COPY_FAILED'))
-}
-
-function downloadExportCode() {
-  const blob = new Blob([exportCode.value], { type: 'text/plain' })
-  const link = document.createElement('a')
-  link.href = URL.createObjectURL(blob)
-  link.download = exportFileName.value
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  URL.revokeObjectURL(link.href)
 }
 
 async function confirmSaveExample(name: string) {
