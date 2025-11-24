@@ -488,9 +488,10 @@ export default {
   VALIDATION: {
     EMAIL_REQUIRED: 'Email is required',
     EMAIL_INVALID: 'Please enter a valid email address',
-    PASSWORD_REQUIRED: 'Password is required',
-    PASSWORD_MIN: 'Password must be at least 8 characters',
-    PASSWORD_MISMATCH: 'Passwords do not match',
+      PASSWORD_REQUIRED: 'Password is required',
+      PASSWORD_MIN: 'Password must be at least 8 characters',
+      PASSWORD_STRONG: 'Password must include upper, lower, number, and symbol',
+      PASSWORD_MISMATCH: 'Passwords do not match',
     NAME_MIN: 'Name must be at least 1 character',
     NAME_MAX: 'Name must be less than 120 characters',
     SERVER_ERROR: 'Something went wrong. Please try again',

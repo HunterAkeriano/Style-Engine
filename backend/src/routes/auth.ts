@@ -10,9 +10,14 @@ import { sendMail } from '../services/mailer'
 import { parseCookies, serializeCookie } from '../utils/cookies'
 import { generateRefreshToken, hashToken, signAccessToken } from '../utils/tokens'
 
+const strongPassword = z
+  .string()
+  .min(8)
+  .regex(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z])/u, 'Weak password')
+
 const credentialsSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
+  password: strongPassword,
   name: z.string().min(1).max(120).optional()
 })
 
@@ -22,12 +27,17 @@ const forgotSchema = z.object({
 
 const resetSchema = z.object({
   token: z.string().min(10),
-  password: z.string().min(8)
+  password: strongPassword
 })
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1),
-  newPassword: z.string().min(8)
+  newPassword: strongPassword
+})
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1)
 })
 
 export function createAuthRouter(env: Env) {

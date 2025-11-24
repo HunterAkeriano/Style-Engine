@@ -1,13 +1,18 @@
 import { z } from 'zod'
 
+const strongPassword = z
+  .string()
+  .min(8, 'PASSWORD_MIN')
+  .regex(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z])/u, 'PASSWORD_STRONG')
+
 export const loginSchema = z.object({
   email: z.string().min(1, 'EMAIL_REQUIRED').email('EMAIL_INVALID'),
-  password: z.string().min(1, 'PASSWORD_REQUIRED').min(8, 'PASSWORD_MIN')
+  password: z.string().min(1, 'PASSWORD_REQUIRED')
 })
 
 export const registerSchema = z.object({
   email: z.string().min(1, 'EMAIL_REQUIRED').email('EMAIL_INVALID'),
-  password: z.string().min(1, 'PASSWORD_REQUIRED').min(8, 'PASSWORD_MIN'),
+  password: strongPassword,
   name: z.string().min(1, 'NAME_MIN').max(120, 'NAME_MAX').optional()
 })
 
@@ -22,8 +27,8 @@ export const forgotPasswordSchema = z.object({
 
 export const resetPasswordSchema = z
   .object({
-    password: z.string().min(8, 'PASSWORD_MIN'),
-    confirmPassword: z.string().min(8, 'PASSWORD_MIN')
+    password: strongPassword,
+    confirmPassword: strongPassword
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'PASSWORD_MISMATCH',
@@ -33,8 +38,8 @@ export const resetPasswordSchema = z
 export const changePasswordSchema = z
   .object({
     currentPassword: z.string().min(1, 'PASSWORD_REQUIRED'),
-    newPassword: z.string().min(8, 'PASSWORD_MIN'),
-    confirmPassword: z.string().min(8, 'PASSWORD_MIN')
+    newPassword: strongPassword,
+    confirmPassword: strongPassword
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: 'PASSWORD_MISMATCH',
