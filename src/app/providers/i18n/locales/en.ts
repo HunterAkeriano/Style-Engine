@@ -265,6 +265,7 @@ export default {
     COPY_FAILED: 'Failed to copy',
     SHARED_SUCCESS: 'Shared successfully',
     SHARE_UNAVAILABLE: 'Sharing is not available on this device',
+    NAME: 'Name',
     SAVE_SUCCESS: 'Saved {entity} to your profile',
     SAVE_ERROR: 'Failed to save {entity}. Please try again',
     AUTH_REQUIRED_TITLE: 'Sign in to continue',

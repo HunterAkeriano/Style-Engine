@@ -5,6 +5,33 @@
   margin: 0 auto;
   padding: $space-2xl $space-lg;
 
+  &__groups {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xl;
+  }
+
+  &__group-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $space-md;
+  }
+
+  &__group-title {
+    margin: 0;
+    color: $color-text-primary;
+    font-size: $font-size-2xl;
+    display: inline-flex;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  &__group-count {
+    color: $color-text-secondary;
+    font-size: $font-size-sm;
+  }
+
   &__header {
     display: flex;
     justify-content: space-between;
@@ -64,6 +91,9 @@
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: $border-radius-lg;
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
   }
 
   &__card-head {
@@ -106,6 +136,31 @@
     color: $color-text-secondary;
   }
 
+  &__preview {
+    margin: $space-sm 0;
+  }
+
+  &__gradient {
+    width: 100%;
+    min-height: 140px;
+    border-radius: $border-radius-md;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  &__shadow {
+    padding: $space-lg;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+    border-radius: $border-radius-md;
+  }
+
+  &__shadow-box {
+    width: 180px;
+    height: 120px;
+    margin: 0 auto;
+    border-radius: $border-radius-md;
+    background: #0f172a;
+  }
+
   &__payload {
     margin: 0;
     padding: $space-md;
@@ -113,5 +168,9 @@
     border-radius: $border-radius-md;
     color: $color-text-primary;
     overflow: auto;
+
+    &_compact {
+      max-height: 220px;
+    }
   }
 }

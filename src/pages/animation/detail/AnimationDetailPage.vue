@@ -122,7 +122,8 @@
 import { computed, defineAsyncComponent, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Modal, Button, NavLink, Input, CodeExport } from '@/shared/ui'
+import { Modal, Button, NavLink, Input } from '@/shared/ui'
+import CodeExport from '@/shared/ui/code-export/CodeExport.vue'
 import { copyToClipboard } from '@/shared/lib'
 import { useToast } from '@/shared/lib/toast'
 import { animationExamples } from '@/entities/animation'
@@ -186,13 +187,14 @@ const animationExtensionMap = {
   json: 'json'
 }
 
-function getExportCode(format: string) {
+function getExportCode(format: string | number) {
   const example = selectedExample.value
   if (!example) return ''
-  if (format === 'css') {
+  const normalized = String(format)
+  if (normalized === 'css') {
     return example.css
   }
-  if (format === 'json') {
+  if (normalized === 'json') {
     return JSON.stringify({ html: example.html, css: example.css }, null, 2)
   }
   return `${example.html}\n\n<style>\n${example.css}\n</style>`

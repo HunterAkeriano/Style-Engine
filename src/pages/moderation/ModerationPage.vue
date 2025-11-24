@@ -21,37 +21,60 @@
       {{ t('MODERATION.EMPTY') }}
     </div>
 
-    <div v-else class="moderation-page__list">
-      <div
-        v-for="item in items"
-        :key="item.id"
-        class="moderation-page__card"
-      >
-        <div class="moderation-page__card-head">
-          <div>
-            <p class="moderation-page__category">{{ t(`MODERATION.CATEGORY_${item.category?.toUpperCase()}`) }}</p>
-            <h3 class="moderation-page__name">{{ item.name }}</h3>
+    <div v-else class="moderation-page__groups">
+      <template v-for="group in categoryGroups" :key="group.key">
+        <div v-if="group.items.length" class="moderation-page__group">
+          <div class="moderation-page__group-head">
+            <h2 class="moderation-page__group-title">
+              {{ t(`MODERATION.CATEGORY_${group.key.toUpperCase()}`) }}
+              <span class="moderation-page__group-count">- {{ group.items.length }}</span>
+            </h2>
           </div>
-          <button
-            class="moderation-page__approve"
-            type="button"
-            :disabled="approvingId === item.id"
-            @click="approve(item)"
-          >
-            {{ approvingId === item.id ? t('MODERATION.APPROVING') : t('MODERATION.APPROVE') }}
-          </button>
+          <div class="moderation-page__list">
+            <div
+              v-for="item in group.items"
+              :key="item.id"
+              class="moderation-page__card"
+            >
+              <div class="moderation-page__card-head">
+                <div>
+                  <p class="moderation-page__category">{{ t(`MODERATION.CATEGORY_${group.key.toUpperCase()}`) }}</p>
+                  <h3 class="moderation-page__name">{{ item.name }}</h3>
+                </div>
+                <button
+                  class="moderation-page__approve"
+                  type="button"
+                  :disabled="approvingId === item.id"
+                  @click="approve(item)"
+                >
+                  {{ approvingId === item.id ? t('MODERATION.APPROVING') : t('MODERATION.APPROVE') }}
+                </button>
+              </div>
+              <p class="moderation-page__date">
+                {{ t('MODERATION.SUBMITTED') }} {{ new Date(item.createdAt).toLocaleString() }}
+              </p>
+              <div class="moderation-page__preview" v-if="group.key === 'gradient' && gradientStyle(item.payload)">
+                <div class="moderation-page__gradient" :style="gradientStyle(item.payload)" />
+              </div>
+              <div class="moderation-page__preview" v-else-if="group.key === 'shadow' && shadowStyle(item.payload)">
+                <div class="moderation-page__shadow">
+                  <div class="moderation-page__shadow-box" :style="shadowStyle(item.payload)" />
+                </div>
+              </div>
+              <div class="moderation-page__preview" v-else-if="group.key === 'animation'">
+                <pre class="moderation-page__payload moderation-page__payload_compact">{{ animationSnippet(item.payload) }}</pre>
+              </div>
+              <pre class="moderation-page__payload">{{ formatPayload(item.payload) }}</pre>
+            </div>
+          </div>
         </div>
-        <p class="moderation-page__date">
-          {{ t('MODERATION.SUBMITTED') }} {{ new Date(item.createdAt).toLocaleString() }}
-        </p>
-        <pre class="moderation-page__payload">{{ formatPayload(item.payload) }}</pre>
-      </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   approveSubmission,
@@ -68,12 +91,74 @@ const loading = ref(false)
 const approvingId = ref<string | null>(null)
 const error = ref('')
 
+const categoryGroups = computed<{ key: string; items: SavedItem[] }[]>(() => {
+  const groups: Record<string, SavedItem[]> = { gradient: [], shadow: [], animation: [] }
+  items.value.forEach(item => {
+    const key = item.category ?? 'other'
+    if (!groups[key]) {
+      groups[key] = []
+    }
+    groups[key].push(item)
+  })
+  return [
+    { key: 'gradient', items: groups.gradient },
+    { key: 'shadow', items: groups.shadow },
+    { key: 'animation', items: groups.animation }
+  ]
+})
+
 function formatPayload(value: unknown) {
   try {
     return JSON.stringify(value, null, 2)
   } catch {
     return ''
   }
+}
+
+function gradientStyle(payload: any) {
+  if (!payload || typeof payload !== 'object') return null
+  const type = payload.type || 'linear'
+  const angle = Number(payload.angle) || 90
+  const colors = Array.isArray(payload.colors) ? payload.colors : []
+  const stops = colors.map((c: any) => `${c.color ?? '#000'} ${c.position ?? 0}%`).join(', ')
+  if (!stops) return null
+  let background = ''
+  switch (type) {
+    case 'radial':
+      background = `radial-gradient(circle, ${stops})`
+      break
+    case 'conic':
+      background = `conic-gradient(from ${angle}deg, ${stops})`
+      break
+    default:
+      background = `linear-gradient(${angle}deg, ${stops})`
+  }
+  return { background }
+}
+
+function shadowStyle(payload: any) {
+  const layers = Array.isArray(payload?.layers) ? payload.layers : []
+  if (!layers.length) return null
+  const boxShadow = layers
+    .map((layer: any) => {
+      const x = Number(layer.x) || 0
+      const y = Number(layer.y) || 0
+      const spread = Number(layer.spread) || 0
+      const color = typeof layer.color === 'string' ? layer.color : '#000000'
+      const inset = layer.inset ? 'inset ' : ''
+      return `${inset}${x}px ${y}px 0 ${spread}px ${color}`
+    })
+    .join(', ')
+  return { boxShadow }
+}
+
+function animationSnippet(payload: any) {
+  if (!payload) return ''
+  if (payload.code) return String(payload.code).slice(0, 600)
+  if (payload.html || payload.css) {
+    return `${payload.html ?? ''}\n\n<style>\n${payload.css ?? ''}\n</style>`.trim().slice(0, 800)
+  }
+  return formatPayload(payload)
 }
 
 async function fetchPending() {

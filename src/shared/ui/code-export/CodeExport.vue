@@ -51,7 +51,7 @@ import { Button, Select, type SelectOption } from '@/shared/ui'
 
 interface Props {
   title: string
-  getCode: (format: string) => string
+  getCode: (format: string | number) => string
   filename?: string
   showSaveButton?: boolean
   allowExport?: boolean

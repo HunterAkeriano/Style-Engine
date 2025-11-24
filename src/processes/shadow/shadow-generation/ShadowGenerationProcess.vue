@@ -137,7 +137,8 @@ import {
 } from '@/shared/api/saves'
 import { useAuthStore } from '@/entities'
 import { useFloatingPreview } from '@/shared/composables'
-import { Modal, Button, Input, CodeExport } from '@/shared/ui'
+import { Modal, Button, Input } from '@/shared/ui'
+import CodeExport from '@/shared/ui/code-export/CodeExport.vue'
 import { getUserLimit, SubscriptionTier } from '@/shared/config/pricing'
 import { evaluateSaveQuota, type SaveQuotaResult, resolveSubscriptionTier } from '@/shared/lib/save-quota'
 import { buildCreatorProfile } from '@/shared/lib/creator'
@@ -303,7 +304,7 @@ function getNextLayerId() {
   return `${layerIdCounter}`
 }
 
-function getCode(format: CSSFormat) {
+function getCode(format: string | number) {
   const exportLayers = layers.value.map(layer => ({
     x: layer.x,
     y: layer.y,
@@ -313,7 +314,7 @@ function getCode(format: CSSFormat) {
     inset: layer.inset
   }))
 
-  return formatBoxShadow(exportLayers, format)
+  return formatBoxShadow(exportLayers, String(format) as CSSFormat)
 }
 
 function applyPreset(preset: ShadowPreset) {

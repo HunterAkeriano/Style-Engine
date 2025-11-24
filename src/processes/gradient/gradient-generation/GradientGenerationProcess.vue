@@ -138,7 +138,8 @@ import {
 } from '@/shared/api/saves'
 import { useAuthStore } from '@/entities'
 import { useFloatingPreview } from '@/shared/composables'
-import { Modal, Button, Input, CodeExport } from '@/shared/ui'
+import { Modal, Button, Input } from '@/shared/ui'
+import CodeExport from '@/shared/ui/code-export/CodeExport.vue'
 import { getUserLimit, SubscriptionTier } from '@/shared/config/pricing'
 import { evaluateSaveQuota, type SaveQuotaResult, resolveSubscriptionTier } from '@/shared/lib/save-quota'
 import { buildCreatorProfile } from '@/shared/lib/creator'
@@ -284,8 +285,8 @@ function updateColorPosition(id: string, position: number) {
   }
 }
 
-function getCode(format: CSSFormat): string {
-  return formatGradient(type.value, angle.value, colors.value, format)
+function getCode(format: string | number): string {
+  return formatGradient(type.value, angle.value, colors.value, String(format) as CSSFormat)
 }
 
 function applyPreset(preset: GradientPreset) {
