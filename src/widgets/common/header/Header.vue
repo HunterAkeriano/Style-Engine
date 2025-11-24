@@ -1,30 +1,34 @@
 <template>
-  <header class="header">
+  <header class="header" :class="{ header_open: isMobileMenuOpen }">
     <div class="container">
       <div class="header__content">
         <Logo />
 
-          <nav class="header__nav">
-            <NavLink :to="`/${locale}/gradient`" class-name="header__nav-link">
-              {{ t('NAV.GRADIENTS') }}
-            </NavLink>
+        <div class="header__mobile-title" aria-hidden="true">
+          style engine
+        </div>
 
-            <NavLink :to="`/${locale}/shadow`" class-name="header__nav-link">
-              {{ t('NAV.SHADOWS') }}
-            </NavLink>
+        <nav class="header__nav">
+          <NavLink :to="`/${locale}/gradient`" class-name="header__nav-link">
+            {{ t('NAV.GRADIENTS') }}
+          </NavLink>
 
-            <NavLink :to="`/${locale}/animation`" class-name="header__nav-link">
-              {{ t('NAV.ANIMATIONS') }}
-            </NavLink>
+          <NavLink :to="`/${locale}/shadow`" class-name="header__nav-link">
+            {{ t('NAV.SHADOWS') }}
+          </NavLink>
 
-            <NavLink :to="`/${locale}/docs`" class-name="header__nav-link">
-              {{ t('NAV.DOCS') }}
-            </NavLink>
+          <NavLink :to="`/${locale}/animation`" class-name="header__nav-link">
+            {{ t('NAV.ANIMATIONS') }}
+          </NavLink>
 
-            <NavLink :to="`/${locale}/about`" class-name="header__nav-link">
-              {{ t('NAV.ABOUT') }}
-            </NavLink>
-          </nav>
+          <NavLink :to="`/${locale}/docs`" class-name="header__nav-link">
+            {{ t('NAV.DOCS') }}
+          </NavLink>
+
+          <NavLink :to="`/${locale}/about`" class-name="header__nav-link">
+            {{ t('NAV.ABOUT') }}
+          </NavLink>
+        </nav>
 
         <div class="header__actions">
           <ThemeSwitcher />
