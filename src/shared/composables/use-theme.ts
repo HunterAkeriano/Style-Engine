@@ -28,7 +28,7 @@ function detectInitialTheme(): Theme {
   }
 
   mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-  return mediaQuery.matches ? 'dark' : 'light'
+  return 'dark'
 }
 
 function setupSystemListener() {

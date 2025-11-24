@@ -1,0 +1,171 @@
+.contact-widget {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: $z-popover;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  gap: $space-sm;
+  pointer-events: none;
+
+  &__glow {
+    position: absolute;
+    inset: -12px;
+    opacity: 0.85;
+    transform: scale(0.96);
+    transition: opacity $transition-base, transform $transition-base;
+    pointer-events: none;
+  }
+
+  &__fab {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: $space-sm;
+    padding: 0.85rem 1.1rem;
+    border-radius: $border-radius-full;
+    border: 1px solid rgba(var(--color-border), 0.6);
+    background: linear-gradient(130deg, rgba(var(--color-primary), 0.9), rgba(var(--color-secondary), 0.85), rgba(var(--color-accent), 0.8))
+      padding-box;
+    background-size: 220% 220%;
+    animation: contact-fab-sheen 6s ease-in-out infinite;
+    color: #fff;
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.01em;
+    box-shadow:
+      0 12px 35px rgba(var(--color-primary), 0.35),
+      0 4px 18px rgba(0, 0, 0, 0.3);
+    transition: box-shadow $transition-base, border-color $transition-base, background-position $transition-base;
+    cursor: pointer;
+    transform: none;
+
+    &:hover {
+      box-shadow:
+        0 16px 40px rgba(var(--color-primary), 0.42),
+        0 6px 20px rgba(0, 0, 0, 0.32);
+      border-color: rgba(var(--color-border-hover), 0.9);
+    }
+
+    &:active {
+      box-shadow:
+        0 12px 35px rgba(var(--color-primary), 0.35),
+        0 4px 18px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  &__dropdown {
+    pointer-events: auto;
+    width: 260px;
+    padding: $space-md;
+    border-radius: $border-radius-xl;
+    border: 1px solid rgba(var(--color-border), 0.7);
+    background: linear-gradient(150deg, rgba(var(--color-bg-secondary), 0.95), rgba(var(--color-bg-tertiary), 0.95));
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(var(--panel-border), 0.05);
+    transform-origin: 90% 100%;
+  }
+
+  &__title {
+    margin: 0 0 $space-sm;
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.01em;
+    color: $color-text-primary;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+  }
+
+  &__item {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    align-items: center;
+    gap: $space-sm;
+    padding: $space-sm;
+    border-radius: $border-radius-lg;
+    border: 1px solid rgba(var(--color-border), 0.6);
+    color: $color-text-primary;
+    text-decoration: none;
+    background: rgba(var(--color-bg-primary), 0.6);
+    transition: border-color $transition-base, transform $transition-base, background $transition-base, box-shadow $transition-base;
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: rgba(var(--color-primary), 0.6);
+      background: rgba(var(--color-primary), 0.08);
+      box-shadow: 0 10px 24px rgba(var(--color-primary), 0.24);
+    }
+
+    &_telegram {
+      color: #6aa3ff;
+    }
+
+    &_viber {
+      color: #b972f8;
+    }
+
+    &_mail {
+      color: $color-text-primary;
+    }
+  }
+
+  &__labels {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__label {
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.01em;
+  }
+
+  &__hint {
+    color: $color-text-secondary;
+    font-size: $font-size-sm;
+  }
+
+  &_open &__glow {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.contact-dropdown-enter-active,
+.contact-dropdown-leave-active {
+  transition: opacity $transition-base, transform $transition-base;
+}
+
+.contact-dropdown-enter-from,
+.contact-dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes contact-fab-sheen {
+  0% {
+    background-position: 0% 30%;
+  }
+  50% {
+    background-position: 100% 70%;
+  }
+  100% {
+    background-position: 0% 30%;
+  }
+}

@@ -324,6 +324,14 @@ export default {
     MODERATION: 'Moderation',
     NOT_FOUND: 'Page Not Found'
   },
+  CONTACT_WIDGET: {
+    TRIGGER: 'Contact',
+    TITLE: 'Quick contact',
+    TELEGRAM: '{\'@\'}dima_gulak',
+    VIBER: '+38 (097) 477-97-84',
+    MAIL: 'Email',
+    EMAIL: 'you{\'@\'}example.com'
+  },
   META_DESCRIPTION: {
     HOME: 'Style Engine is a CSS lab with generators for gradients, shadows, and animations plus live preview and clean code export.',
     GRADIENT: 'Design linear, radial, and conic CSS gradients, preview them instantly, and copy production-ready code.',

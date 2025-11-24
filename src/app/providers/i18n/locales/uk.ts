@@ -324,6 +324,14 @@ export default {
     MODERATION: 'Модерація',
     NOT_FOUND: 'Сторінку не знайдено'
   },
+  CONTACT_WIDGET: {
+    TRIGGER: 'Зв’язатися',
+    TITLE: 'Швидкий контакт',
+    TELEGRAM: '{\'@\'}dima_gulak',
+    VIBER: '+38 (097) 477-97-84',
+    MAIL: 'Пошта',
+    EMAIL: 'you{\'@\'}example.com'
+  },
   META_DESCRIPTION: {
     HOME: 'Style Engine — лабораторія CSS з генераторами градієнтів, тіней та анімацій, живим прев’ю і чистим кодом для експорту.',
     GRADIENT: 'Конструюйте лінійні, радіальні й конічні градієнти, дивіться прев’ю та копіюйте готовий CSS.',

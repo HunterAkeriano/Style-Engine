@@ -71,6 +71,22 @@
         fill="currentColor"
       />
     </symbol>
+
+    <symbol id="icon-message" viewBox="0 0 24 24">
+      <path d="M5 4h14a2 2 0 012 2v8a2 2 0 01-2 2H9l-4 4v-4H3a1 1 0 01-1-1V6a2 2 0 012-2z" fill="currentColor" />
+    </symbol>
+
+    <symbol id="icon-telegram" viewBox="0 0 24 24">
+      <path d="M21.6 3.4 18.9 20c-.2 1.1-.9 1.4-1.9.9l-5.2-3.9-2.5 2.4c-.3.3-.6.5-1 .5l.4-5.5L18.9 5.5c.3-.2 0-.4-.3-.2L7.2 13l-5-1.6C1 11 1 10.2 2.3 9.6l17.9-7c.9-.3 1.7.2 1.4.8z" fill="currentColor" />
+    </symbol>
+
+    <symbol id="icon-viber" viewBox="0 0 24 24">
+      <path d="M6.2 2h11.6A2.2 2.2 0 0120 4.2v11.6a2.2 2.2 0 01-2.2 2.2h-1.8l-2.7 2.7a1 1 0 01-1.7-.7V18H6.2A2.2 2.2 0 014 15.8V4.2A2.2 2.2 0 016.2 2zm5 4.2c2.9.2 4.6 2 4.7 5 .1.6-.4 1.1-1 1.1h-.1a1 1 0 01-1-.9c-.1-2-1.1-3-3.1-3.1a1 1 0 11.1-2.1zm0 2.6c1.5.1 2.3 1 2.4 2.5 0 .6-.4 1-1 1h-.1a1 1 0 01-1-.9c0-.7-.3-1-1-1.1a1 1 0 11-.3-2zm.1 3.2c.6 0 1 .4 1 1v.6c0 .5-.5 1-1 1-1.8-.1-3.3-1.6-3.4-3.4 0-.6.5-1 1-1h.6c.6 0 1 .4 1 1 0 .4.4.8.8.8z" fill="currentColor" />
+    </symbol>
+
+    <symbol id="icon-mail" viewBox="0 0 24 24">
+      <path d="M4 5h16a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm0 2v.2l8 4.8 8-4.8V7l-8 4.8L4 7z" fill="currentColor" />
+    </symbol>
   </svg>
 </template>
 
