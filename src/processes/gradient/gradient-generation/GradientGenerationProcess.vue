@@ -33,6 +33,7 @@
       <GradientCodeExport
         :get-code="getCode"
         @save="handleSaveCurrentGradient"
+        :show-save-button="true"
         :allow-export="isExportAllowed"
         @blocked-export="showExportProModal = true"
       />
@@ -95,8 +96,9 @@
       <GradientCodeExport
         :get-code="getCode"
         :filename="exportFilename"
-        :show-save-button="false"
+        :show-save-button="true"
         :allow-export="isExportAllowed"
+        @save="handleSaveCurrentGradient"
         @blocked-export="showExportProModal = true"
       />
     </Modal>

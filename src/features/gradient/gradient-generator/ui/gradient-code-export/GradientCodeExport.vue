@@ -30,7 +30,7 @@
             v-if="props.showSaveButton !== false"
             @click="emit('save')"
           >
-            {{ t('GRADIENT.SAVE') }}
+            {{ t('COMMON.SAVE') }}
           </Button>
         </div>
       </div>
