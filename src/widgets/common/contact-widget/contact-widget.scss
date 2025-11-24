@@ -23,7 +23,7 @@
     display: inline-flex;
     align-items: center;
     gap: $space-sm;
-    padding: 0.85rem 1.1rem;
+    padding: 0.85rem;
     border-radius: $border-radius-full;
     border: 1px solid rgba(var(--color-border), 0.6);
     background: linear-gradient(130deg, rgba(var(--color-primary), 0.9), rgba(var(--color-secondary), 0.85), rgba(var(--color-accent), 0.8))
