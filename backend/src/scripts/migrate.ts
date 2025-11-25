@@ -14,7 +14,6 @@ async function runMigrations() {
   const client = await pool.connect()
 
   try {
-    // Ensure migrations tracking table exists
     await client.query(`
       CREATE TABLE IF NOT EXISTS schema_migrations (
         version TEXT PRIMARY KEY,
@@ -22,11 +21,9 @@ async function runMigrations() {
       )
     `)
 
-    // Get list of already executed migrations
     const result = await client.query('SELECT version FROM schema_migrations ORDER BY version')
     const executedMigrations = new Set(result.rows.map(row => row.version))
 
-    // Read migration files
     const migrationsDir = join(__dirname, '../db/migrations')
     const files = readdirSync(migrationsDir)
       .filter(f => f.endsWith('.sql'))
@@ -34,7 +31,6 @@ async function runMigrations() {
 
     console.log(`Found ${files.length} migration files`)
 
-    // Run pending migrations
     for (const file of files) {
       const version = file.replace('.sql', '')
 

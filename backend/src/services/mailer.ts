@@ -84,7 +84,6 @@ async function getTransport(env?: Env | null) {
     return transporter
   }
 
-  // fallback: use ethereal test account (requires network)
   try {
     if (!testAccountPromise) {
       testAccountPromise = nodemailer.createTestAccount()

@@ -20,7 +20,6 @@ export function useSticky(options: UseStickyOptions = {}) {
     const rect = element.getBoundingClientRect()
     const containerElement = container?.value || document.documentElement
 
-    // Get the scroll container
     let scrollContainer = element.parentElement
     while (scrollContainer && scrollContainer !== containerElement) {
       const overflow = window.getComputedStyle(scrollContainer).overflow

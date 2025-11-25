@@ -9,10 +9,10 @@ export interface ClipPathPoint {
 export interface ClipPathLayer {
   id: string
   type: ClipPathType
-  points?: ClipPathPoint[] // для polygon
-  radius?: number // для circle
-  radiusX?: number // для ellipse
-  radiusY?: number // для ellipse
+  points?: ClipPathPoint[]
+  radius?: number
+  radiusX?: number
+  radiusY?: number
   inset?: {
     top: number
     right: number

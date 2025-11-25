@@ -369,7 +369,6 @@ function updateInset(id: string, side: 'top' | 'right' | 'bottom' | 'left' | 'ro
 }
 
 function loadFromSvg(newLayers: ClipPathLayer[]) {
-  // Force reactive update by spreading into new array
   layers.value = [...newLayers.slice(0, 3)]
   layerIdCounter = layers.value.length
   const allPoints = layers.value.flatMap(l => l.points ?? [])

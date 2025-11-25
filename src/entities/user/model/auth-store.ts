@@ -123,7 +123,6 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       await apiClient.post('/auth/logout')
     } catch {
-      // ignore
     } finally {
       setUser(null)
       setError(null)

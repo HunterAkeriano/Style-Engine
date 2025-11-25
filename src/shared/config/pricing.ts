@@ -65,10 +65,10 @@ export const PRICING_PLANS: Record<SubscriptionTier, PricingPlan> = {
     price: 10,
     interval: 'month',
     limits: {
-      savedTemplates: -1, // unlimited
+      savedTemplates: -1,
       exportFormats: ['css', 'scss', 'sass', 'less', 'json', 'figma', 'sketch'],
-      historyDays: -1, // unlimited
-      aiGenerations: -1 // unlimited
+      historyDays: -1,
+      aiGenerations: -1
     },
     features: [
       'PRICING.UNLIMITED_TEMPLATES',
@@ -92,6 +92,6 @@ export function getUserLimit(tier: SubscriptionTier, limitType: NumericLimitKey)
 
 export function canUserSaveTemplate(tier: SubscriptionTier, currentCount: number): boolean {
   const limit = getUserLimit(tier, 'savedTemplates')
-  if (limit === -1) return true // unlimited
+  if (limit === -1) return true
   return currentCount < limit
 }

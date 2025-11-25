@@ -67,7 +67,6 @@ export function parseClipPathFromSVG(svgContent: string): ClipPathLayer[] {
   const svg = doc.querySelector('svg')
   if (!svg) return layers
 
-  // Получаем размеры SVG для нормализации координат
   const viewBox = svg.getAttribute('viewBox')
   let width = parseFloat(svg.getAttribute('width') || '100')
   let height = parseFloat(svg.getAttribute('height') || '100')
@@ -80,29 +79,24 @@ export function parseClipPathFromSVG(svgContent: string): ClipPathLayer[] {
     }
   }
 
-  // Если размеры не валидны, используем дефолтные
   if (!width || width <= 0) width = 100
   if (!height || height <= 0) height = 100
 
   let layerIndex = 0
 
-  // Функция для сбора векторных элементов с приоритетом
   const collectShapes = (element: Element): Element[] => {
     const shapes: Element[] = []
 
-    // Приоритет 1: circle, ellipse (самые простые для clip-path)
     const basicShapes = ['circle', 'ellipse']
     basicShapes.forEach(selector => {
       const elements = element.querySelectorAll(selector)
       elements.forEach(el => shapes.push(el))
     })
 
-    // Если нашли базовые формы, возвращаем только их (игнорируем сложные path)
     if (shapes.length > 0) {
       return shapes.slice(0, 3)
     }
 
-    // Приоритет 2: rect, polygon
     const simpleShapes = ['rect', 'polygon']
     simpleShapes.forEach(selector => {
       const elements = element.querySelectorAll(selector)
@@ -113,14 +107,12 @@ export function parseClipPathFromSVG(svgContent: string): ClipPathLayer[] {
       return shapes.slice(0, 3)
     }
 
-    // Приоритет 3: любые path элементы
     const paths = element.querySelectorAll('path')
     paths.forEach(path => shapes.push(path))
 
     return shapes.slice(0, 3)
   }
 
-  // Собираем векторные элементы из SVG
   const allShapes = collectShapes(svg)
 
   allShapes.forEach((shape) => {
@@ -146,7 +138,6 @@ export function parseClipPathFromSVG(svgContent: string): ClipPathLayer[] {
         const r = parseFloat(shape.getAttribute('r') || '25')
 
         if (r > 0) {
-          // Нормализуем радиус к процентам
           const minSize = Math.min(width, height)
           const radiusPercent = Math.min(50, (r / minSize) * 100)
 
@@ -164,7 +155,6 @@ export function parseClipPathFromSVG(svgContent: string): ClipPathLayer[] {
         const ry = parseFloat(shape.getAttribute('ry') || '50')
 
         if (rx > 0 && ry > 0) {
-          // Нормализуем радиусы к процентам
           const radiusXPercent = Math.min(50, (rx / width) * 100)
           const radiusYPercent = Math.min(50, (ry / height) * 100)
 
@@ -216,7 +206,6 @@ export function parseClipPathFromSVG(svgContent: string): ClipPathLayer[] {
     }
   })
 
-  // Если ничего не нашли, создаём прямоугольник по размерам SVG
   if (layers.length === 0) {
     layers.push({
       id: 'layer-1',
@@ -231,7 +220,7 @@ export function parseClipPathFromSVG(svgContent: string): ClipPathLayer[] {
     })
   }
 
-  return layers.slice(0, 3) // Максимум 3 слоя
+  return layers.slice(0, 3)
 }
 
 function parsePolygonPoints(
@@ -247,7 +236,6 @@ function parsePolygonPoints(
       const x = parseFloat(coords[i])
       const y = parseFloat(coords[i + 1])
 
-      // Нормализуем координаты к процентам (0-100)
       const xPercent = (x / width) * 100
       const yPercent = (y / height) * 100
 
@@ -269,7 +257,6 @@ function parsePathToPoints(
 ): Array<{ id: string; x: number; y: number }> {
   const points: Array<{ id: string; x: number; y: number }> = []
 
-  // Расширенный парсер: извлекаем M, L, H, V команды (абсолютные)
   const allCommands = pathString.match(/[MLHVCSQTAZ][^MLHVCSQTAZ]*/gi) || []
 
   let currentX = 0
@@ -285,7 +272,6 @@ function parsePathToPoints(
       .map(v => parseFloat(v))
 
     if (cmd === 'M' || cmd === 'm') {
-      // MoveTo
       if (values.length >= 2) {
         if (cmd === 'M') {
           currentX = values[0]
@@ -309,7 +295,6 @@ function parsePathToPoints(
         }
       }
     } else if (cmd === 'L' || cmd === 'l') {
-      // LineTo
       for (let i = 0; i < values.length; i += 2) {
         if (i + 1 < values.length) {
           if (cmd === 'L') {
@@ -333,7 +318,6 @@ function parsePathToPoints(
         }
       }
     } else if (cmd === 'H' || cmd === 'h') {
-      // Horizontal LineTo
       values.forEach(value => {
         if (cmd === 'H') {
           currentX = value
@@ -353,7 +337,6 @@ function parsePathToPoints(
         }
       })
     } else if (cmd === 'V' || cmd === 'v') {
-      // Vertical LineTo
       values.forEach(value => {
         if (cmd === 'V') {
           currentY = value
@@ -373,12 +356,10 @@ function parsePathToPoints(
         }
       })
     } else if (cmd === 'Z' || cmd === 'z') {
-      // ClosePath - возвращаемся к начальной точке
       currentX = startX
       currentY = startY
     }
   })
 
-  // Если точек меньше 3, возвращаем пустой массив
   return points.length >= 3 ? points : []
 }

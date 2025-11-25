@@ -126,51 +126,7 @@ export function createUsersRouter(env: Env) {
     }
   })
 
-  /**
-   * @swagger
-   * /api/users:
-   *   get:
-   *     summary: Получить список пользователей
-   *     description: Возвращает список всех пользователей с пагинацией, фильтрацией и сортировкой (исключая супер-админа)
-   *     tags: [Users]
-   *     parameters:
-   *       - in: query
-   *         name: page
-   *         schema:
-   *           type: integer
-   *           default: 1
-   *         description: Номер страницы
-   *       - in: query
-   *         name: limit
-   *         schema:
-   *           type: integer
-   *           default: 20
-   *         description: Количество на странице
-   *       - in: query
-   *         name: tier
-   *         schema:
-   *           type: string
-   *           enum: [all, free, pro, premium]
-   *           default: all
-   *         description: Фильтр по тарифу
-   *       - in: query
-   *         name: sortBy
-   *         schema:
-   *           type: string
-   *           enum: [name, email, createdAt, subscriptionTier]
-   *           default: createdAt
-   *         description: Поле для сортировки
-   *       - in: query
-   *         name: sortOrder
-   *         schema:
-   *           type: string
-   *           enum: [asc, desc]
-   *           default: desc
-   *         description: Направление сортировки
-   *     responses:
-   *       200:
-   *         description: Список пользователей успешно получен
-   */
+  
   router.get('/', auth, requireAdmin, async (req, res) => {
     try {
       const payload = await fetchUsers(normalizeQuery(req), db, superAdminEmail)
