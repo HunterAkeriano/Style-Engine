@@ -44,6 +44,7 @@ const emit = defineEmits<{
 
 const containerRef = ref<HTMLElement | null>(null)
 const draggingPoint = ref<{ layerId: string; pointId: string } | null>(null)
+let rafId: number | null = null
 
 const visiblePolygonLayers = computed(() => {
   return props.layers.filter(layer => layer.visible && layer.type === 'polygon' && layer.points)
@@ -56,18 +57,31 @@ function startDrag(event: MouseEvent | TouchEvent, layerId: string, pointId: str
   const moveHandler = (e: MouseEvent | TouchEvent) => {
     if (!draggingPoint.value || !containerRef.value) return
 
-    const rect = containerRef.value.getBoundingClientRect()
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId)
+    }
 
-    const x = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100))
-    const y = Math.max(0, Math.min(100, ((clientY - rect.top) / rect.height) * 100))
+    rafId = requestAnimationFrame(() => {
+      if (!draggingPoint.value || !containerRef.value) return
 
-    emit('update-point', draggingPoint.value.layerId, draggingPoint.value.pointId, x, y)
+      const rect = containerRef.value.getBoundingClientRect()
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
+      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
+
+      const x = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100))
+      const y = Math.max(0, Math.min(100, ((clientY - rect.top) / rect.height) * 100))
+
+      emit('update-point', draggingPoint.value.layerId, draggingPoint.value.pointId, x, y)
+      rafId = null
+    })
   }
 
   const stopDrag = () => {
     draggingPoint.value = null
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId)
+      rafId = null
+    }
     document.removeEventListener('mousemove', moveHandler)
     document.removeEventListener('mouseup', stopDrag)
     document.removeEventListener('touchmove', moveHandler)

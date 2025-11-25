@@ -21,8 +21,8 @@
             {{ t('NAV.ANIMATIONS') }}
           </NavLink>
 
-          <NavLink :to="`/${locale}/docs`" class-name="header__nav-link">
-            {{ t('NAV.DOCS') }}
+          <NavLink :to="`/${locale}/clip-path`" class-name="header__nav-link">
+            {{ t('NAV.CLIP_PATHS') }}
           </NavLink>
 
           <NavLink :to="`/${locale}/about`" class-name="header__nav-link">
@@ -70,8 +70,8 @@
           {{ t('NAV.ANIMATIONS') }}
         </NavLink>
 
-        <NavLink :to="`/${locale}/docs`" class-name="header__mobile-link" @click="closeMobileMenu">
-          {{ t('NAV.DOCS') }}
+        <NavLink :to="`/${locale}/clip-path`" class-name="header__mobile-link" @click="closeMobileMenu">
+          {{ t('NAV.CLIP_PATHS') }}
         </NavLink>
 
         <NavLink :to="`/${locale}/about`" class-name="header__mobile-link" @click="closeMobileMenu">

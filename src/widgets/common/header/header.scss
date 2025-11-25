@@ -196,19 +196,15 @@
 @keyframes headerTitleSheen {
   0% {
     background-position: 0% 50%;
-    filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
   }
   40% {
     background-position: 100% 50%;
-    filter: drop-shadow(0 0 12px color-var-alpha('color-primary', 0.25));
   }
   60% {
     background-position: 80% 50%;
-    filter: drop-shadow(0 0 12px color-var-alpha('color-secondary', 0.22));
   }
   100% {
     background-position: 0% 50%;
-    filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
   }
 }
 

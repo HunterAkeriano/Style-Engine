@@ -317,8 +317,8 @@ function updatePointFromPreview(layerId: string, pointId: string, x: number, y: 
 
   const point = layer.points.find(p => p.id === pointId)
   if (point) {
-    point.x = Math.round(x * 10) / 10
-    point.y = Math.round(y * 10) / 10
+    point.x = x
+    point.y = y
   }
 }
 

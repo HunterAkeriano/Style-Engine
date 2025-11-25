@@ -22,6 +22,9 @@
             <NavLink to="/animation" class-name="footer__link">
               {{ t('NAV.ANIMATIONS') }}
             </NavLink>
+            <NavLink to="/clip-path" class-name="footer__link">
+              {{ t('NAV.CLIP_PATHS') }}
+            </NavLink>
             <NavLink to="/about" class-name="footer__link">
               {{ t('NAV.ABOUT') }}
             </NavLink>

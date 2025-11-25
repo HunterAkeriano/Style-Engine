@@ -10,8 +10,16 @@
     gap: $space-xl;
   }
 
-  &__preview {
+  &__code {
     order: 1;
+    grid-column: 1 / -1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__preview {
+    order: 2;
     min-width: 0;
     position: relative;
   }
@@ -24,21 +32,19 @@
     display: flex;
     flex-direction: column;
     gap: $space-lg;
-    order: 2;
-    min-width: 0;
-  }
-
-  &__code {
     order: 3;
-    grid-column: 1 / -1;
     min-width: 0;
-    display: flex;
-    flex-direction: column;
   }
 
   &__export {
     margin-top: $space-md;
     text-align: right;
+  }
+
+  &__presets {
+    order: 4;
+    grid-column: 1 / -1;
+    min-width: 0;
   }
 }
 

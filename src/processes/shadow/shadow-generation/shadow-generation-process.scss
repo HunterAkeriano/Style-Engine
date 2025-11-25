@@ -10,8 +10,14 @@
     gap: $space-xl;
   }
 
-  &__preview {
+  &__code {
     order: 1;
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  &__preview {
+    order: 2;
     min-width: 0;
     position: relative;
   }
@@ -20,19 +26,14 @@
     width: 100%;
   }
 
-  &__code {
-    order: 0;
-    grid-column: 1 / -1;
-    min-width: 0;
-  }
-  &__export {
-    margin-top: $space-md;
-    text-align: right;
-  }
-
   &__controls {
     order: 3;
     min-width: 0;
+  }
+
+  &__export {
+    margin-top: $space-md;
+    text-align: right;
   }
 
   &__presets {
