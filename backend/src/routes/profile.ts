@@ -22,7 +22,20 @@ export function createProfileRouter(env: Env) {
     return { ...user, isSuperAdmin: isSuperAdminEmail(env, user.email) }
   }
 
-  
+  /**
+   * @swagger
+   * /api/profile:
+   *   get:
+   *     summary: Получить профиль текущего пользователя
+   *     tags: [Profile]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: Профиль найден
+   *       404:
+   *         description: Пользователь не найден
+   */
   router.get('/', auth, async (req: AuthRequest, res) => {
     const result = await db.query(
       `SELECT id, email, name, avatar_url as "avatarUrl", created_at as "createdAt", updated_at as "updatedAt",
@@ -36,7 +49,32 @@ export function createProfileRouter(env: Env) {
     res.json({ user })
   })
 
-  
+  /**
+   * @swagger
+   * /api/profile:
+   *   put:
+   *     summary: Обновить профиль пользователя
+   *     tags: [Profile]
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               name:
+   *                 type: string
+   *               avatarUrl:
+   *                 type: string
+   *                 format: uri
+   *     responses:
+   *       200:
+   *         description: Профиль обновлен
+   *       400:
+   *         description: Невалидные данные
+   */
   router.put('/', auth, async (req: AuthRequest, res) => {
     const parsed = updateProfileSchema.safeParse(req.body)
     if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
@@ -54,7 +92,30 @@ export function createProfileRouter(env: Env) {
     res.json({ user })
   })
 
-  
+  /**
+   * @swagger
+   * /api/profile/avatar:
+   *   post:
+   *     summary: Загрузить аватар пользователя
+   *     tags: [Profile]
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         multipart/form-data:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               avatar:
+   *                 type: string
+   *                 format: binary
+   *     responses:
+   *       200:
+   *         description: Аватар обновлен
+   *       400:
+   *         description: Файл не загружен или невалиден
+   */
   router.post('/avatar', auth, uploadAvatar.single('avatar'), async (req: AuthRequest, res) => {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' })
