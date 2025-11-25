@@ -62,6 +62,10 @@
     white-space: pre;
     word-break: normal;
     overflow-x: auto;
+    overflow-y: hidden; // only allow horizontal scrolling; avoid right-side jump
+    scrollbar-gutter: stable; // reserve space for horizontal bar to prevent layout shift
+    padding-right: $space-md;
+    padding-bottom: $space-sm;
   }
 
   &__window-controls {

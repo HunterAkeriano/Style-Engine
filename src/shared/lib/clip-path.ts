@@ -133,8 +133,6 @@ export function parseClipPathFromSVG(svgContent: string): ClipPathLayer[] {
           }
         }
       } else if (tagName === 'circle') {
-        const cx = parseFloat(shape.getAttribute('cx') || '50')
-        const cy = parseFloat(shape.getAttribute('cy') || '50')
         const r = parseFloat(shape.getAttribute('r') || '25')
 
         if (r > 0) {
@@ -149,8 +147,6 @@ export function parseClipPathFromSVG(svgContent: string): ClipPathLayer[] {
           })
         }
       } else if (tagName === 'ellipse') {
-        const cx = parseFloat(shape.getAttribute('cx') || '50')
-        const cy = parseFloat(shape.getAttribute('cy') || '50')
         const rx = parseFloat(shape.getAttribute('rx') || '50')
         const ry = parseFloat(shape.getAttribute('ry') || '50')
 

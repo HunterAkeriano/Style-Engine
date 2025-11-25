@@ -30,7 +30,6 @@
         class="clip-path-generation-process__preview-inner"
       >
         <ClipPathPreview
-          :clip-path-style="clipPathStyle"
           :layers="layers"
           @update-point="updatePointFromPreview"
         />
@@ -216,13 +215,6 @@ const currentSavePreviewStyle = computed(() => {
   const clipPathValue = formatClipPath(payload.layers ?? [], 'inline')
   return {
     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    clipPath: clipPathValue.replace('clip-path:', '').replace(';', '').trim()
-  }
-})
-
-const clipPathStyle = computed(() => {
-  const clipPathValue = formatClipPath(layers.value, 'inline')
-  return {
     clipPath: clipPathValue.replace('clip-path:', '').replace(';', '').trim()
   }
 })

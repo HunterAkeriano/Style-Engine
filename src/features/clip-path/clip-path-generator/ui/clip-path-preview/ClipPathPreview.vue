@@ -2,8 +2,10 @@
   <div class="clip-path-preview">
     <div class="clip-path-preview__container" ref="containerRef">
       <div
-        class="clip-path-preview__element"
-        :style="clipPathStyle"
+        v-for="(layer, index) in visibleLayers"
+        :key="layer.id"
+        :style="getLayerStyle(layer, index, visibleLayers.length)"
+        class="clip-path-preview__layer"
       ></div>
 
       <!-- Draggable points for polygon layers -->
@@ -28,11 +30,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import type { StyleValue } from 'vue'
+import { formatClipPath } from '@/shared/lib'
 import type { ClipPathLayer } from '@/shared/types'
 
 interface Props {
-  clipPathStyle: StyleValue
   layers: ClipPathLayer[]
 }
 
@@ -46,9 +47,21 @@ const containerRef = ref<HTMLElement | null>(null)
 const draggingPoint = ref<{ layerId: string; pointId: string } | null>(null)
 let rafId: number | null = null
 
+const layerColors = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)', '#ef4444', '#22c55e']
+
+const visibleLayers = computed(() => props.layers.filter(layer => layer.visible))
 const visiblePolygonLayers = computed(() => {
   return props.layers.filter(layer => layer.visible && layer.type === 'polygon' && layer.points)
 })
+
+function getLayerStyle(layer: ClipPathLayer, index: number, total: number) {
+  const clipPathValue = formatClipPath([layer], 'inline')
+  return {
+    background: layerColors[index] ?? layerColors[layerColors.length - 1],
+    clipPath: clipPathValue.replace('clip-path:', '').replace(';', '').trim(),
+    zIndex: total - index
+  }
+}
 
 function startDrag(event: MouseEvent | TouchEvent, layerId: string, pointId: string) {
   event.preventDefault()
