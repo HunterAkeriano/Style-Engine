@@ -249,7 +249,6 @@ box-shadow: 0 20px 60px rgba(124, 58, 237, 0.28),
               title: 'Glass header',
               description: 'Gradient + blur + soft border',
               code: `background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-backdrop-filter: blur(14px);
 border: 1px solid rgba(255,255,255,0.12);`,
               className: 'docs-topic__pattern docs-topic__pattern_card'
             },
@@ -517,7 +516,6 @@ box-shadow: 0 20px 60px rgba(124, 58, 237, 0.28),
               title: 'Скляний хедер',
               description: 'Градієнт + blur + м’який бордер',
               code: `background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-backdrop-filter: blur(14px);
 border: 1px solid rgba(255,255,255,0.12);`,
               className: 'docs-topic__pattern docs-topic__pattern_card'
             },
