@@ -318,6 +318,7 @@ export default {
     ALREADY_SAVED: '{entity} вже є у вашому профілі',
     SAVE: 'Зберегти',
     CANCEL: 'Скасувати',
+    DELETE: 'Видалити',
     EXPORT: 'Експорт',
     DOWNLOAD: 'Завантажити',
     PRO_EXPORT_TITLE: 'Експорт лише для Pro',

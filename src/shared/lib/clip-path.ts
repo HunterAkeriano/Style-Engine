@@ -64,68 +64,321 @@ export function parseClipPathFromSVG(svgContent: string): ClipPathLayer[] {
   const doc = parser.parseFromString(svgContent, 'image/svg+xml')
   const layers: ClipPathLayer[] = []
 
-  // Ищем все <clipPath> элементы
-  const clipPaths = doc.querySelectorAll('clipPath')
+  const svg = doc.querySelector('svg')
+  if (!svg) return layers
 
-  clipPaths.forEach((clipPath, index) => {
-    // Ищем polygon внутри clipPath
-    const polygon = clipPath.querySelector('polygon')
-    if (polygon) {
-      const pointsAttr = polygon.getAttribute('points')
-      if (pointsAttr) {
-        const points = parsePolygonPoints(pointsAttr)
-        layers.push({
-          id: `layer-${index + 1}`,
-          type: 'polygon',
-          points,
-          visible: true
-        })
+  // Получаем размеры SVG для нормализации координат
+  const viewBox = svg.getAttribute('viewBox')
+  let width = parseFloat(svg.getAttribute('width') || '100')
+  let height = parseFloat(svg.getAttribute('height') || '100')
+
+  if (viewBox) {
+    const parts = viewBox.split(/[\s,]+/)
+    if (parts.length === 4) {
+      width = parseFloat(parts[2])
+      height = parseFloat(parts[3])
+    }
+  }
+
+  // Если размеры не валидны, используем дефолтные
+  if (!width || width <= 0) width = 100
+  if (!height || height <= 0) height = 100
+
+  let layerIndex = 0
+
+  // Функция для сбора векторных элементов с приоритетом
+  const collectShapes = (element: Element): Element[] => {
+    const shapes: Element[] = []
+
+    // Приоритет 1: circle, ellipse (самые простые для clip-path)
+    const basicShapes = ['circle', 'ellipse']
+    basicShapes.forEach(selector => {
+      const elements = element.querySelectorAll(selector)
+      elements.forEach(el => shapes.push(el))
+    })
+
+    // Если нашли базовые формы, возвращаем только их (игнорируем сложные path)
+    if (shapes.length > 0) {
+      return shapes.slice(0, 3)
+    }
+
+    // Приоритет 2: rect, polygon
+    const simpleShapes = ['rect', 'polygon']
+    simpleShapes.forEach(selector => {
+      const elements = element.querySelectorAll(selector)
+      elements.forEach(el => shapes.push(el))
+    })
+
+    if (shapes.length > 0) {
+      return shapes.slice(0, 3)
+    }
+
+    // Приоритет 3: любые path элементы
+    const paths = element.querySelectorAll('path')
+    paths.forEach(path => shapes.push(path))
+
+    return shapes.slice(0, 3)
+  }
+
+  // Собираем векторные элементы из SVG
+  const allShapes = collectShapes(svg)
+
+  allShapes.forEach((shape) => {
+    const tagName = shape.tagName.toLowerCase()
+
+    try {
+      if (tagName === 'polygon') {
+        const pointsAttr = shape.getAttribute('points')
+        if (pointsAttr) {
+          const points = parsePolygonPoints(pointsAttr, width, height)
+          if (points.length >= 3) {
+            layers.push({
+              id: `layer-${++layerIndex}`,
+              type: 'polygon',
+              points,
+              visible: true
+            })
+          }
+        }
+      } else if (tagName === 'circle') {
+        const cx = parseFloat(shape.getAttribute('cx') || '50')
+        const cy = parseFloat(shape.getAttribute('cy') || '50')
+        const r = parseFloat(shape.getAttribute('r') || '25')
+
+        if (r > 0) {
+          // Нормализуем радиус к процентам
+          const minSize = Math.min(width, height)
+          const radiusPercent = Math.min(50, (r / minSize) * 100)
+
+          layers.push({
+            id: `layer-${++layerIndex}`,
+            type: 'circle',
+            radius: radiusPercent,
+            visible: true
+          })
+        }
+      } else if (tagName === 'ellipse') {
+        const cx = parseFloat(shape.getAttribute('cx') || '50')
+        const cy = parseFloat(shape.getAttribute('cy') || '50')
+        const rx = parseFloat(shape.getAttribute('rx') || '50')
+        const ry = parseFloat(shape.getAttribute('ry') || '50')
+
+        if (rx > 0 && ry > 0) {
+          // Нормализуем радиусы к процентам
+          const radiusXPercent = Math.min(50, (rx / width) * 100)
+          const radiusYPercent = Math.min(50, (ry / height) * 100)
+
+          layers.push({
+            id: `layer-${++layerIndex}`,
+            type: 'ellipse',
+            radiusX: radiusXPercent,
+            radiusY: radiusYPercent,
+            visible: true
+          })
+        }
+      } else if (tagName === 'rect') {
+        const x = parseFloat(shape.getAttribute('x') || '0')
+        const y = parseFloat(shape.getAttribute('y') || '0')
+        const w = parseFloat(shape.getAttribute('width') || '0')
+        const h = parseFloat(shape.getAttribute('height') || '0')
+
+        if (w > 0 && h > 0) {
+          const points = [
+            { id: 'p1', x: Math.max(0, Math.min(100, (x / width) * 100)), y: Math.max(0, Math.min(100, (y / height) * 100)) },
+            { id: 'p2', x: Math.max(0, Math.min(100, ((x + w) / width) * 100)), y: Math.max(0, Math.min(100, (y / height) * 100)) },
+            { id: 'p3', x: Math.max(0, Math.min(100, ((x + w) / width) * 100)), y: Math.max(0, Math.min(100, ((y + h) / height) * 100)) },
+            { id: 'p4', x: Math.max(0, Math.min(100, (x / width) * 100)), y: Math.max(0, Math.min(100, ((y + h) / height) * 100)) }
+          ]
+
+          layers.push({
+            id: `layer-${++layerIndex}`,
+            type: 'polygon',
+            points,
+            visible: true
+          })
+        }
+      } else if (tagName === 'path') {
+        const d = shape.getAttribute('d')
+        if (d) {
+          const points = parsePathToPoints(d, width, height)
+          if (points.length >= 3) {
+            layers.push({
+              id: `layer-${++layerIndex}`,
+              type: 'polygon',
+              points,
+              visible: true
+            })
+          }
+        }
       }
-    }
-
-    // Ищем circle
-    const circle = clipPath.querySelector('circle')
-    if (circle) {
-      const r = parseFloat(circle.getAttribute('r') || '50')
-      layers.push({
-        id: `layer-${index + 1}`,
-        type: 'circle',
-        radius: r,
-        visible: true
-      })
-    }
-
-    // Ищем ellipse
-    const ellipse = clipPath.querySelector('ellipse')
-    if (ellipse) {
-      const rx = parseFloat(ellipse.getAttribute('rx') || '50')
-      const ry = parseFloat(ellipse.getAttribute('ry') || '50')
-      layers.push({
-        id: `layer-${index + 1}`,
-        type: 'ellipse',
-        radiusX: rx,
-        radiusY: ry,
-        visible: true
-      })
+    } catch (error) {
+      console.warn(`Failed to parse ${tagName} element:`, error)
     }
   })
 
-  return layers
+  // Если ничего не нашли, создаём прямоугольник по размерам SVG
+  if (layers.length === 0) {
+    layers.push({
+      id: 'layer-1',
+      type: 'polygon',
+      points: [
+        { id: 'p1', x: 0, y: 0 },
+        { id: 'p2', x: 100, y: 0 },
+        { id: 'p3', x: 100, y: 100 },
+        { id: 'p4', x: 0, y: 100 }
+      ],
+      visible: true
+    })
+  }
+
+  return layers.slice(0, 3) // Максимум 3 слоя
 }
 
-function parsePolygonPoints(pointsString: string): Array<{ id: string; x: number; y: number }> {
+function parsePolygonPoints(
+  pointsString: string,
+  width: number,
+  height: number
+): Array<{ id: string; x: number; y: number }> {
   const points: Array<{ id: string; x: number; y: number }> = []
   const coords = pointsString.trim().split(/[\s,]+/)
 
   for (let i = 0; i < coords.length; i += 2) {
     if (i + 1 < coords.length) {
+      const x = parseFloat(coords[i])
+      const y = parseFloat(coords[i + 1])
+
+      // Нормализуем координаты к процентам (0-100)
+      const xPercent = (x / width) * 100
+      const yPercent = (y / height) * 100
+
       points.push({
-        id: `point-${i / 2 + 1}`,
-        x: parseFloat(coords[i]),
-        y: parseFloat(coords[i + 1])
+        id: `p${i / 2 + 1}`,
+        x: Math.max(0, Math.min(100, xPercent)),
+        y: Math.max(0, Math.min(100, yPercent))
       })
     }
   }
 
   return points
+}
+
+function parsePathToPoints(
+  pathString: string,
+  width: number,
+  height: number
+): Array<{ id: string; x: number; y: number }> {
+  const points: Array<{ id: string; x: number; y: number }> = []
+
+  // Расширенный парсер: извлекаем M, L, H, V команды (абсолютные)
+  const allCommands = pathString.match(/[MLHVCSQTAZ][^MLHVCSQTAZ]*/gi) || []
+
+  let currentX = 0
+  let currentY = 0
+  let startX = 0
+  let startY = 0
+
+  allCommands.forEach((cmdStr) => {
+    const cmd = cmdStr[0].toUpperCase()
+    const values = cmdStr.substring(1).trim()
+      .split(/[\s,]+/)
+      .filter(v => v)
+      .map(v => parseFloat(v))
+
+    if (cmd === 'M' || cmd === 'm') {
+      // MoveTo
+      if (values.length >= 2) {
+        if (cmd === 'M') {
+          currentX = values[0]
+          currentY = values[1]
+        } else {
+          currentX += values[0]
+          currentY += values[1]
+        }
+        startX = currentX
+        startY = currentY
+
+        const xPercent = (currentX / width) * 100
+        const yPercent = (currentY / height) * 100
+
+        if (points.length < 10) {
+          points.push({
+            id: `p${points.length + 1}`,
+            x: Math.max(0, Math.min(100, xPercent)),
+            y: Math.max(0, Math.min(100, yPercent))
+          })
+        }
+      }
+    } else if (cmd === 'L' || cmd === 'l') {
+      // LineTo
+      for (let i = 0; i < values.length; i += 2) {
+        if (i + 1 < values.length) {
+          if (cmd === 'L') {
+            currentX = values[i]
+            currentY = values[i + 1]
+          } else {
+            currentX += values[i]
+            currentY += values[i + 1]
+          }
+
+          const xPercent = (currentX / width) * 100
+          const yPercent = (currentY / height) * 100
+
+          if (points.length < 10) {
+            points.push({
+              id: `p${points.length + 1}`,
+              x: Math.max(0, Math.min(100, xPercent)),
+              y: Math.max(0, Math.min(100, yPercent))
+            })
+          }
+        }
+      }
+    } else if (cmd === 'H' || cmd === 'h') {
+      // Horizontal LineTo
+      values.forEach(value => {
+        if (cmd === 'H') {
+          currentX = value
+        } else {
+          currentX += value
+        }
+
+        const xPercent = (currentX / width) * 100
+        const yPercent = (currentY / height) * 100
+
+        if (points.length < 10) {
+          points.push({
+            id: `p${points.length + 1}`,
+            x: Math.max(0, Math.min(100, xPercent)),
+            y: Math.max(0, Math.min(100, yPercent))
+          })
+        }
+      })
+    } else if (cmd === 'V' || cmd === 'v') {
+      // Vertical LineTo
+      values.forEach(value => {
+        if (cmd === 'V') {
+          currentY = value
+        } else {
+          currentY += value
+        }
+
+        const xPercent = (currentX / width) * 100
+        const yPercent = (currentY / height) * 100
+
+        if (points.length < 10) {
+          points.push({
+            id: `p${points.length + 1}`,
+            x: Math.max(0, Math.min(100, xPercent)),
+            y: Math.max(0, Math.min(100, yPercent))
+          })
+        }
+      })
+    } else if (cmd === 'Z' || cmd === 'z') {
+      // ClosePath - возвращаемся к начальной точке
+      currentX = startX
+      currentY = startY
+    }
+  })
+
+  // Если точек меньше 3, возвращаем пустой массив
+  return points.length >= 3 ? points : []
 }

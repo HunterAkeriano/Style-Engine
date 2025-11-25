@@ -10,7 +10,7 @@ const saveSchema = z.object({
   payload: z.record(z.any())
 })
 
-export type Category = 'gradient' | 'shadow' | 'animation'
+export type Category = 'gradient' | 'shadow' | 'animation' | 'clip-path'
 
 function tableForCategory(category: Category) {
   switch (category) {
@@ -20,6 +20,8 @@ function tableForCategory(category: Category) {
       return 'saved_shadows'
     case 'animation':
       return 'saved_animations'
+    case 'clip-path':
+      return 'saved_clip_paths'
   }
 }
 
@@ -33,7 +35,8 @@ export function createSavesRouter(env: Env) {
       `SELECT
          (SELECT COUNT(*)::int FROM saved_gradients WHERE user_id = $1) +
          (SELECT COUNT(*)::int FROM saved_shadows WHERE user_id = $1) +
-         (SELECT COUNT(*)::int FROM saved_animations WHERE user_id = $1) AS count`,
+         (SELECT COUNT(*)::int FROM saved_animations WHERE user_id = $1) +
+         (SELECT COUNT(*)::int FROM saved_clip_paths WHERE user_id = $1) AS count`,
       [req.userId]
     )
     const total = Number(totalResult.rows[0]?.count || 0)
@@ -643,6 +646,164 @@ export function createSavesRouter(env: Env) {
    *               $ref: '#/components/schemas/Error'
    */
   router.delete('/animations/:id', auth, (req, res) => remove('animation', req, res))
+
+  /**
+   * @swagger
+   * /api/saves/clip-paths:
+   *   get:
+   *     summary: Получить список сохраненных clip-path
+   *     description: Возвращает все сохраненные clip-path текущего пользователя
+   *     tags: [Saves]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: Список clip-path успешно получен
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 items:
+   *                   type: array
+   *                   items:
+   *                     $ref: '#/components/schemas/SavedItem'
+   *       401:
+   *         description: Не авторизован
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
+  router.get('/clip-paths', auth, (req, res) => list('clip-path', req, res))
+  /**
+   * @swagger
+   * /api/saves/public/clip-paths:
+   *   get:
+   *     summary: Получить опубликованные clip-path
+   *     tags: [Saves]
+   *     responses:
+   *       200:
+   *         description: Список опубликованных clip-path
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 items:
+   *                   type: array
+   *                   items:
+   *                     $ref: '#/components/schemas/SavedItem'
+   */
+  router.get('/public/clip-paths', (req, res) => listPublic('clip-path', req, res))
+
+  /**
+   * @swagger
+   * /api/saves/clip-paths:
+   *   post:
+   *     summary: Сохранить clip-path
+   *     description: Создает новую запись с настройками clip-path
+   *     tags: [Saves]
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - name
+   *               - payload
+   *             properties:
+   *               name:
+   *                 type: string
+   *                 minLength: 1
+   *                 maxLength: 120
+   *                 description: Название clip-path
+   *                 example: Star Shape
+   *               payload:
+   *                 type: object
+   *                 description: Настройки clip-path в JSON формате
+   *                 example: { "layers": [{"type": "polygon", "points": [{"x": 50, "y": 0}]}] }
+   *     responses:
+   *       201:
+   *         description: Clip-path успешно сохранен
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 item:
+   *                   $ref: '#/components/schemas/SavedItem'
+   *       400:
+   *         description: Неверный формат данных
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Не авторизован
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
+  router.post('/clip-paths', auth, (req, res) => create('clip-path', req, res))
+  /**
+   * @swagger
+   * /api/saves/clip-paths/{id}/publish:
+   *   post:
+   *     summary: Отправить clip-path на модерацию
+   *     tags: [Saves]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         required: true
+   *         description: ID сохраненного clip-path
+   *     responses:
+   *       200:
+   *         description: Clip-path отправлен на модерацию
+   *       401:
+   *         description: Не авторизован
+   *       404:
+   *         description: Элемент не найден
+   */
+  router.post('/clip-paths/:id/publish', auth, (req, res) => requestPublish('clip-path', req, res))
+
+  /**
+   * @swagger
+   * /api/saves/clip-paths/{id}:
+   *   delete:
+   *     summary: Удалить сохраненный clip-path
+   *     description: Удаляет clip-path по ID
+   *     tags: [Saves]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: ID clip-path
+   *     responses:
+   *       204:
+   *         description: Clip-path успешно удален
+   *       401:
+   *         description: Не авторизован
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
+  router.delete('/clip-paths/:id', auth, (req, res) => remove('clip-path', req, res))
 
   return router
 }

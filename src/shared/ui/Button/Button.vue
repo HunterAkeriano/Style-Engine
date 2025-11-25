@@ -3,6 +3,7 @@
     :class="['button', `button_${variant}`, `button_${size}`, { 'button_disabled': disabled }]"
     :disabled="disabled"
     :type="type"
+    :for="props.for"
     @click="handleClick"
   >
     <span v-if="$slots.icon" class="button__icon">
@@ -24,6 +25,7 @@ interface Props {
   size?: ButtonSize
   type?: ButtonType
   disabled?: boolean
+  for?: ButtonType
 }
 
 interface Emits {

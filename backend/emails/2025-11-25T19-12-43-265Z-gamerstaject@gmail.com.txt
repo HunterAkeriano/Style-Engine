@@ -1,0 +1,7 @@
+To: gamerstaject@gmail.com
+Subject: Reset your Style Engine password
+
+We received a request to reset your password.
+
+Reset link: http://localhost:5173/reset-password?token=1529cb478e24fcca7077a7f0b576c55d8c756d708cdb0e8d
+If you did not request this, ignore the email.

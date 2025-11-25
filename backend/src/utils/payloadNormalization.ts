@@ -71,6 +71,48 @@ function normalizeAnimationPayload(payload: Record<string, unknown>): Record<str
   }
 }
 
+function normalizeClipPathPayload(payload: Record<string, unknown>): Record<string, unknown> {
+  const layers = Array.isArray(payload.layers) ? payload.layers : []
+  const normalizedLayers = layers
+    .map((layer: any) => {
+      const normalized: any = {
+        id: typeof layer?.id === 'string' ? layer.id : '',
+        type: typeof layer?.type === 'string' ? layer.type : 'polygon',
+        visible: Boolean(layer?.visible)
+      }
+
+      if (layer?.type === 'polygon' && Array.isArray(layer.points)) {
+        normalized.points = layer.points
+          .map((point: any) => ({
+            id: typeof point?.id === 'string' ? point.id : '',
+            x: normalizeNumber(point?.x),
+            y: normalizeNumber(point?.y)
+          }))
+          .sort((a: any, b: any) => a.id.localeCompare(b.id))
+      } else if (layer?.type === 'circle') {
+        normalized.radius = normalizeNumber(layer?.radius)
+      } else if (layer?.type === 'ellipse') {
+        normalized.radiusX = normalizeNumber(layer?.radiusX)
+        normalized.radiusY = normalizeNumber(layer?.radiusY)
+      } else if (layer?.type === 'inset' && layer.inset) {
+        normalized.inset = {
+          top: normalizeNumber(layer.inset.top),
+          right: normalizeNumber(layer.inset.right),
+          bottom: normalizeNumber(layer.inset.bottom),
+          left: normalizeNumber(layer.inset.left),
+          round: normalizeNumber(layer.inset.round)
+        }
+      }
+
+      return normalized
+    })
+    .sort((a: any, b: any) => a.id.localeCompare(b.id))
+
+  return {
+    layers: normalizedLayers
+  }
+}
+
 export function normalizePayload(category: Category, payload: unknown): Record<string, unknown> {
   if (!payload || typeof payload !== 'object') {
     return {}
@@ -83,6 +125,8 @@ export function normalizePayload(category: Category, payload: unknown): Record<s
       return normalizeShadowPayload(payload as Record<string, unknown>)
     case 'animation':
       return normalizeAnimationPayload(payload as Record<string, unknown>)
+    case 'clip-path':
+      return normalizeClipPathPayload(payload as Record<string, unknown>)
     default:
       return payload as Record<string, unknown>
   }

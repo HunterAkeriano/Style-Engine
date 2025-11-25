@@ -13,17 +13,16 @@
     </div>
 
     <div class="clip-path-controls__upload">
-      <label class="clip-path-controls__upload-label">
-        <input
-          type="file"
-          accept=".svg"
-          @change="handleFileUpload"
-          class="clip-path-controls__upload-input"
-        />
-        <Button variant="outline" size="sm">
-          {{ t('CLIP_PATH.UPLOAD_SVG') }}
-        </Button>
-      </label>
+      <input
+        ref="fileInputRef"
+        type="file"
+        accept=".svg"
+        @change="handleFileUpload"
+        class="clip-path-controls__upload-input"
+      />
+      <Button variant="outline" size="sm" @click="triggerFileUpload">
+        {{ t('CLIP_PATH.UPLOAD_SVG') }}
+      </Button>
     </div>
 
     <div class="clip-path-controls__layers">
@@ -190,7 +189,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/shared/lib/toast'
 import type { ClipPathLayer, ClipPathType } from '@/shared/types'
@@ -220,6 +219,11 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const toast = useToast()
+const fileInputRef = ref<HTMLInputElement | null>(null)
+
+function triggerFileUpload() {
+  fileInputRef.value?.click()
+}
 
 const isClipPathType = (value: string | number): value is ClipPathType => typeof value === 'string'
 

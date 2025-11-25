@@ -311,6 +311,7 @@ export default {
     ALREADY_SAVED: '{entity} already exists in your profile',
     SAVE: 'Save',
     CANCEL: 'Cancel',
+    DELETE: 'Delete',
     EXPORT: 'Export',
     DOWNLOAD: 'Download',
     PRO_EXPORT_TITLE: 'Exporting is Pro-only',
