@@ -150,9 +150,7 @@
       color: $color-text-secondary;
     }
   }
-}
-
-.policy-page--cookie {
+.policy-page_cookie {
   background:
     radial-gradient(120% 120% at 20% 18%, color-var-alpha('color-accent', 0.22), transparent 55%),
     radial-gradient(120% 120% at 78% 14%, color-var-alpha('color-primary', 0.2), transparent 55%),

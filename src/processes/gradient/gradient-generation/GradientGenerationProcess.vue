@@ -1,6 +1,6 @@
 <template>
-  <div class="gradient-generation-process" ref="processRef">
-    <div class="gradient-generation-process__controls" ref="controlsRef">
+  <div ref="processRef" class="gradient-generation-process">
+    <div ref="controlsRef" class="gradient-generation-process__controls">
       <GradientControls
         :type="type"
         :angle="angle"
@@ -15,15 +15,15 @@
     </div>
 
     <div
-      class="gradient-generation-process__preview"
-      ref="gradientPreviewWrapperRef"
       :style="gradientPreviewWrapperStyle"
+      ref="gradientPreviewWrapperRef"
+      class="gradient-generation-process__preview"
     >
       <div
-        class="gradient-generation-process__preview-inner"
-        :class="{ 'gradient-generation-process__preview-inner--floating': isGradientPreviewFloating }"
         ref="gradientPreviewRef"
+        :class="{ 'gradient-generation-process__preview-inner_floating': isGradientPreviewFloating }"
         :style="gradientFloatingStyle"
+        class="gradient-generation-process__preview-inner"
       >
         <GradientPreview :gradient-style="gradientStyle" />
       </div>
@@ -52,9 +52,9 @@
       />
     </div>
     <Modal
-      :visible="showAuthModal"
       :title="t('COMMON.AUTH_REQUIRED_TITLE')"
       :subtitle="t('COMMON.AUTH_REQUIRED_DESCRIPTION')"
+      :visible="showAuthModal"
       :confirm-text="t('COMMON.AUTH_REQUIRED_CONFIRM')"
       :cancel-text="t('COMMON.AUTH_REQUIRED_CLOSE')"
       show-actions
@@ -62,12 +62,12 @@
       @close="showAuthModal = false"
     />
     <Modal
-      :visible="showSaveModal"
       :title="t('PROFILE.SAVES_TITLE')"
       :subtitle="t('PROFILE.SAVES_SUBTITLE')"
+      :visible="showSaveModal"
       @close="closeSaveModal"
     >
-      <div class="gradient-generation-process__save-preview" :style="currentSavePreviewStyle" />
+      <div :style="currentSavePreviewStyle" class="gradient-generation-process__save-preview" />
       <Input v-model="saveName" :label="t('COMMON.NAME')" />
       <template #footer>
         <div class="modal__actions">
@@ -81,9 +81,9 @@
       </template>
     </Modal>
     <Modal
-      :visible="showProLimitModal"
       :title="t('PROFILE.PRO_LIMIT_TITLE')"
       :subtitle="proLimitSubtitle"
+      :visible="showProLimitModal"
       show-actions
       :confirm-text="t('PROFILE.PRO_LIMIT_ACTION')"
       :cancel-text="t('COMMON.CANCEL')"
@@ -91,8 +91,8 @@
       @close="showProLimitModal = false"
     />
     <Modal
-      :visible="showExportModal"
       :title="t('COMMON.EXPORT')"
+      :visible="showExportModal"
       @close="showExportModal = false"
     >
       <CodeExport
@@ -107,9 +107,9 @@
       />
     </Modal>
     <Modal
-      :visible="showExportProModal"
       :title="t('COMMON.PRO_EXPORT_TITLE')"
       :subtitle="t('COMMON.PRO_EXPORT_MESSAGE')"
+      :visible="showExportProModal"
       show-actions
       :confirm-text="t('COMMON.PRO_EXPORT_ACTION')"
       :cancel-text="t('COMMON.CANCEL')"

@@ -1,5 +1,5 @@
 <template>
-  <div :class="['card', `card--${variant}`, { 'card--hoverable': hoverable }]">
+  <div :class="['card', `card_${variant}`, { card_hoverable: hoverable }]">
     <div v-if="$slots.header" class="card__header">
       <slot name="header" />
     </div>

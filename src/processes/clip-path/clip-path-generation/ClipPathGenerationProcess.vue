@@ -1,6 +1,6 @@
 <template>
-  <div class="clip-path-generation-process" ref="processRef">
-    <div class="clip-path-generation-process__controls" ref="controlsRef">
+  <div ref="processRef" class="clip-path-generation-process">
+    <div ref="controlsRef" class="clip-path-generation-process__controls">
       <ClipPathControls
         :layers="layers"
         @add-layer="addLayer"
@@ -19,15 +19,15 @@
     </div>
 
     <div
-      class="clip-path-generation-process__preview"
-      ref="clipPathPreviewWrapperRef"
       :style="clipPathPreviewWrapperStyle"
+      ref="clipPathPreviewWrapperRef"
+      class="clip-path-generation-process__preview"
     >
       <div
-        class="clip-path-generation-process__preview-inner"
-        :class="{ 'clip-path-generation-process__preview-inner--floating': isClipPathPreviewFloating }"
         ref="clipPathPreviewRef"
+        :class="{ 'clip-path-generation-process__preview-inner_floating': isClipPathPreviewFloating }"
         :style="clipPathFloatingStyle"
+        class="clip-path-generation-process__preview-inner"
       >
         <ClipPathPreview
           :clip-path-style="clipPathStyle"
@@ -61,9 +61,9 @@
     </div>
 
     <Modal
-      :visible="showAuthModal"
       :title="t('COMMON.AUTH_REQUIRED_TITLE')"
       :subtitle="t('COMMON.AUTH_REQUIRED_DESCRIPTION')"
+      :visible="showAuthModal"
       :confirm-text="t('COMMON.AUTH_REQUIRED_CONFIRM')"
       :cancel-text="t('COMMON.AUTH_REQUIRED_CLOSE')"
       show-actions
@@ -71,12 +71,12 @@
       @close="showAuthModal = false"
     />
     <Modal
-      :visible="showSaveModal"
       :title="t('PROFILE.SAVES_TITLE')"
       :subtitle="t('PROFILE.SAVES_SUBTITLE')"
+      :visible="showSaveModal"
       @close="closeSaveModal"
     >
-      <div class="clip-path-generation-process__save-preview" :style="currentSavePreviewStyle" />
+      <div :style="currentSavePreviewStyle" class="clip-path-generation-process__save-preview" />
       <Input v-model="saveName" :label="t('COMMON.NAME')" />
       <template #footer>
         <div class="modal__actions">
@@ -90,9 +90,9 @@
       </template>
     </Modal>
     <Modal
-      :visible="showProLimitModal"
       :title="t('PROFILE.PRO_LIMIT_TITLE')"
       :subtitle="proLimitSubtitle"
+      :visible="showProLimitModal"
       show-actions
       :confirm-text="t('PROFILE.PRO_LIMIT_ACTION')"
       :cancel-text="t('COMMON.CANCEL')"
@@ -100,9 +100,9 @@
       @close="showProLimitModal = false"
     />
     <Modal
-      :visible="showExportProModal"
       :title="t('COMMON.PRO_EXPORT_TITLE')"
       :subtitle="t('COMMON.PRO_EXPORT_MESSAGE')"
+      :visible="showExportProModal"
       show-actions
       :confirm-text="t('COMMON.PRO_EXPORT_ACTION')"
       :cancel-text="t('COMMON.CANCEL')"

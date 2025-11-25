@@ -1,6 +1,6 @@
 <template>
-  <section class="policy-page policy-page--cookie">
-    <div class="policy-page__bg" aria-hidden="true"></div>
+  <section class="policy-page policy-page_cookie">
+    <div aria-hidden="true" class="policy-page__bg"></div>
     <div class="policy-page__container">
       <Breadcrumbs />
       <div class="policy-page__header">
@@ -13,7 +13,7 @@
       </div>
 
       <div class="policy-page__content">
-        <div class="policy-page__section" v-for="section in sections" :key="section.title">
+        <div v-for="section in sections" :key="section.title" class="policy-page__section">
           <div class="policy-page__section-head">
             <span class="policy-page__pill">{{ section.pill }}</span>
             <h2 class="policy-page__section-title">{{ section.title }}</h2>

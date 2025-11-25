@@ -1,5 +1,5 @@
 <template>
-  <div :class="['input', { 'input--error': error, 'input--disabled': disabled }]">
+  <div :class="['input', { input_error: error, input_disabled: disabled }]">
     <label v-if="label" :for="inputId" class="input__label">
       {{ label }}
       <span v-if="required" class="input__required">*</span>

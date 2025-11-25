@@ -1,5 +1,5 @@
 <template>
-  <div class="shadow-generation" ref="processRef">
+  <div ref="processRef" class="shadow-generation">
     <div class="shadow-generation__code">
       <CodeExport
         :title="t('SHADOW.EXPORT_TITLE')"
@@ -12,7 +12,7 @@
       />
     </div>
 
-    <div class="shadow-generation__controls" ref="controlsRef">
+    <div ref="controlsRef" class="shadow-generation__controls">
       <ShadowControls
         :layers="layers"
         @update-layer="updateLayer"
@@ -22,15 +22,15 @@
     </div>
 
     <div
-      class="shadow-generation__preview"
-      ref="shadowPreviewWrapperRef"
       :style="shadowPreviewWrapperStyle"
+      ref="shadowPreviewWrapperRef"
+      class="shadow-generation__preview"
     >
       <div
-        class="shadow-generation__preview-inner"
-        :class="{ 'shadow-generation__preview-inner--floating': isShadowPreviewFloating }"
         ref="shadowPreviewRef"
+        :class="{ 'shadow-generation__preview-inner_floating': isShadowPreviewFloating }"
         :style="shadowFloatingStyle"
+        class="shadow-generation__preview-inner"
       >
         <ShadowPreview
           :box-shadow="boxShadowValue"
@@ -51,9 +51,9 @@
       />
     </div>
     <Modal
-      :visible="showAuthModal"
       :title="t('COMMON.AUTH_REQUIRED_TITLE')"
       :subtitle="t('COMMON.AUTH_REQUIRED_DESCRIPTION')"
+      :visible="showAuthModal"
       :confirm-text="t('COMMON.AUTH_REQUIRED_CONFIRM')"
       :cancel-text="t('COMMON.AUTH_REQUIRED_CLOSE')"
       show-actions
@@ -61,12 +61,12 @@
       @close="showAuthModal = false"
     />
     <Modal
-      :visible="showSaveModal"
       :title="t('PROFILE.SAVES_TITLE')"
       :subtitle="t('PROFILE.SAVES_SUBTITLE')"
+      :visible="showSaveModal"
       @close="closeSaveModal"
     >
-      <div class="shadow-generation__save-preview" :style="currentSavePreviewStyle" />
+      <div :style="currentSavePreviewStyle" class="shadow-generation__save-preview" />
       <Input v-model="saveName" :label="t('COMMON.NAME')" />
       <template #footer>
         <div class="modal__actions">
@@ -80,9 +80,9 @@
       </template>
     </Modal>
     <Modal
-      :visible="showProLimitModal"
       :title="t('PROFILE.PRO_LIMIT_TITLE')"
       :subtitle="proLimitSubtitle"
+      :visible="showProLimitModal"
       show-actions
       :confirm-text="t('PROFILE.PRO_LIMIT_ACTION')"
       :cancel-text="t('COMMON.CANCEL')"
@@ -90,8 +90,8 @@
       @close="showProLimitModal = false"
     />
     <Modal
-      :visible="showExportModal"
       :title="t('COMMON.EXPORT')"
+      :visible="showExportModal"
       @close="showExportModal = false"
     >
       <CodeExport
@@ -106,9 +106,9 @@
       />
     </Modal>
     <Modal
-      :visible="showExportProModal"
       :title="t('COMMON.PRO_EXPORT_TITLE')"
       :subtitle="t('COMMON.PRO_EXPORT_MESSAGE')"
+      :visible="showExportProModal"
       show-actions
       :confirm-text="t('COMMON.PRO_EXPORT_ACTION')"
       :cancel-text="t('COMMON.CANCEL')"

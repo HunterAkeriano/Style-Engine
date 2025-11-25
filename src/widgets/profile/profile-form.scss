@@ -127,7 +127,7 @@
     animation: error-slide-in 0.25s ease-out;
   }
 
-  :deep(.input.input--disabled .input__field) {
+  :deep(.input.input_disabled .input__field) {
     background: color-var-alpha('surface-panel-1', 0.2);
     color: color-var-alpha('color-text-secondary', 0.8);
     border-color: color-var-alpha('panel-border', 0.4);
