@@ -71,6 +71,35 @@ function normalizeAnimationPayload(payload: Record<string, unknown>) {
   }
 }
 
+function normalizeClipPathPayload(payload: Record<string, unknown>) {
+  const layers = Array.isArray(payload.layers) ? payload.layers : []
+  const normalizedLayers = layers.map((layer: any) => ({
+    id: typeof layer?.id === 'string' ? layer.id : '',
+    type: typeof layer?.type === 'string' ? layer.type : 'polygon',
+    points: Array.isArray(layer?.points)
+      ? layer.points.map((p: any) => ({
+          id: typeof p?.id === 'string' ? p.id : '',
+          x: normalizeNumber(p?.x),
+          y: normalizeNumber(p?.y)
+        }))
+      : undefined,
+    radius: layer?.radius !== undefined ? normalizeNumber(layer.radius) : undefined,
+    radiusX: layer?.radiusX !== undefined ? normalizeNumber(layer.radiusX) : undefined,
+    radiusY: layer?.radiusY !== undefined ? normalizeNumber(layer.radiusY) : undefined,
+    inset: layer?.inset ? {
+      top: normalizeNumber(layer.inset.top),
+      right: normalizeNumber(layer.inset.right),
+      bottom: normalizeNumber(layer.inset.bottom),
+      left: normalizeNumber(layer.inset.left),
+      round: layer.inset.round !== undefined ? normalizeNumber(layer.inset.round) : undefined
+    } : undefined,
+    visible: typeof layer?.visible === 'boolean' ? layer.visible : true
+  }))
+  return {
+    layers: normalizedLayers
+  }
+}
+
 export function normalizePayload(category: SaveCategory, payload: unknown) {
   if (!payload || typeof payload !== 'object') {
     return {}
@@ -83,6 +112,8 @@ export function normalizePayload(category: SaveCategory, payload: unknown) {
       return normalizeShadowPayload(payload as Record<string, unknown>)
     case 'animation':
       return normalizeAnimationPayload(payload as Record<string, unknown>)
+    case 'clip-path':
+      return normalizeClipPathPayload(payload as Record<string, unknown>)
     default:
       return payload as Record<string, unknown>
   }

@@ -65,6 +65,12 @@ const mainLayoutChildren: RouteRecordRaw[] = [
         name: 'profile-animations',
         component: () => import('@/pages/profile/saved/SavedAnimationsPage.vue'),
         meta: { requiresAuth: true }
+      },
+      {
+        path: 'clip-paths',
+        name: 'profile-clip-paths',
+        component: () => import('@/pages/profile/saved/SavedClipPathsPage.vue'),
+        meta: { requiresAuth: true }
       }
     ]
   }
@@ -117,6 +123,19 @@ const generatorLayoutRoutes: RouteRecordRaw[] = [
           descriptionKey: 'META_DESCRIPTION.ANIMATION',
           breadcrumbKey: 'BREADCRUMBS.ANIMATION_DETAIL'
         }
+      }
+    ]
+  },
+  {
+    path: 'clip-path',
+    component: GeneratorLayout,
+    meta: { breadcrumbKey: 'BREADCRUMBS.CLIP_PATH' },
+    children: [
+      {
+        path: '',
+        name: 'clip-path',
+        component: () => import('@/pages/clip-path/ClipPathPage.vue'),
+        meta: { titleKey: 'META.CLIP_PATH', descriptionKey: 'META_DESCRIPTION.CLIP_PATH' }
       }
     ]
   }

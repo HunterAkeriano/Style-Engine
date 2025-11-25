@@ -4,7 +4,7 @@ import { getCookie } from '@/shared/lib/cookies'
 
 const api = useApi()
 
-export type SaveCategory = 'gradient' | 'shadow' | 'animation'
+export type SaveCategory = 'gradient' | 'shadow' | 'animation' | 'clip-path'
 
 export interface SavedItem {
   id: string

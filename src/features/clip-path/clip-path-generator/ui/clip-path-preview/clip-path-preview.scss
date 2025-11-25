@@ -1,0 +1,66 @@
+.clip-path-preview {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-xl;
+
+  &__container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      linear-gradient(45deg, color-var-alpha('color-border', 0.1) 25%, transparent 25%),
+      linear-gradient(-45deg, color-var-alpha('color-border', 0.1) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, color-var-alpha('color-border', 0.1) 75%),
+      linear-gradient(-45deg, transparent 75%, color-var-alpha('color-border', 0.1) 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    border-radius: $border-radius-lg;
+  }
+
+  &__element {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
+    transition: clip-path 0.15s ease;
+  }
+
+  &__point {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    z-index: 10;
+    padding: $space-xs;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  &__point-dot {
+    width: 12px;
+    height: 12px;
+    background: $color-primary;
+    border: 2px solid $color-bg-primary;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+
+    .clip-path-preview__point:hover & {
+      transform: scale(1.3);
+      background: $color-secondary;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .clip-path-preview__point:active & {
+      transform: scale(1.5);
+      background: $color-accent;
+    }
+  }
+}

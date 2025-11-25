@@ -1,0 +1,118 @@
+.clip-path-controls {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+  }
+
+  &__upload {
+    display: flex;
+    gap: $space-md;
+  }
+
+  &__upload-label {
+    cursor: pointer;
+  }
+
+  &__upload-input {
+    display: none;
+  }
+
+  &__layers {
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+  }
+
+  &__layer {
+    padding: $space-md;
+    border-radius: $border-radius-lg;
+    background: color-var-alpha('surface-panel-2', 0.45);
+    border: 1px solid color-var-alpha('color-border', 0.35);
+  }
+
+  &__layer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $space-md;
+  }
+
+  &__layer-info {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  &__checkbox {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+    cursor: pointer;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+
+    input[type="checkbox"] {
+      cursor: pointer;
+    }
+  }
+
+  &__layer-body {
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+  }
+
+  &__points {
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+  }
+
+  &__point {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+  }
+
+  &__point-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__point-label {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+  }
+
+  &__remove-point {
+    font-size: $font-size-xl;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    color: $color-text-secondary;
+
+    &:hover {
+      color: $button-danger;
+    }
+  }
+
+  &__point-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-sm;
+  }
+}

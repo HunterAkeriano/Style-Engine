@@ -35,11 +35,6 @@ const changePasswordSchema = z.object({
   newPassword: strongPassword
 })
 
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1)
-})
-
 export function createAuthRouter(env: Env) {
   const router = Router()
   const db = getDb()

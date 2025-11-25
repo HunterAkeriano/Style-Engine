@@ -25,6 +25,7 @@
         <div class="profile-saved-list__preview" :class="`profile-saved-list__preview_${category}`">
           <div v-if="category === 'gradient'" class="profile-saved-list__preview-swatch" :style="getPreviewStyle(item)" />
           <div v-else-if="category === 'shadow'" class="profile-saved-list__preview-shadow" :style="getPreviewStyle(item)" />
+          <div v-else-if="category === 'clip-path'" class="profile-saved-list__preview-clip-path" :style="getPreviewStyle(item)" />
           <div v-else class="profile-saved-list__preview-animation">
             <div v-html="getAnimationHTML(item)" class="profile-saved-list__preview-animation-content" />
           </div>
@@ -96,7 +97,7 @@ import {
   type SavedItem,
   type SaveCategory
 } from '@/shared/api/saves'
-import { normalizePayload, stableStringify, formatGradient, formatBoxShadow, copyToClipboard } from '@/shared/lib'
+import { normalizePayload, stableStringify, formatGradient, formatBoxShadow, formatClipPath, copyToClipboard } from '@/shared/lib'
 
 const props = defineProps<{
   category: SaveCategory
@@ -238,6 +239,14 @@ function getPreviewStyle(item: SavedItem) {
       boxShadow
     }
   }
+  if (props.category === 'clip-path') {
+    const layers = Array.isArray(payload.layers) ? payload.layers : []
+    const clipPathValue = formatClipPath(layers, 'inline')
+    return {
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      clipPath: clipPathValue.replace('clip-path:', '').replace(';', '').trim()
+    }
+  }
   return {}
 }
 
@@ -267,6 +276,11 @@ function generateCSS(item: SavedItem): string {
   if (props.category === 'shadow') {
     const layers = Array.isArray(payload.layers) ? payload.layers : []
     return formatBoxShadow(layers, 'css')
+  }
+
+  if (props.category === 'clip-path') {
+    const layers = Array.isArray(payload.layers) ? payload.layers : []
+    return formatClipPath(layers, 'css')
   }
 
   if (props.category === 'animation') {
@@ -394,6 +408,12 @@ onMounted(() => {
     height: 100%;
     border-radius: inherit;
     background: $color-bg-primary;
+  }
+
+  &__preview-clip-path {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
   }
 
   &__preview-animation {
