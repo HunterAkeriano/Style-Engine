@@ -19,6 +19,7 @@ const ssgPublicRoutes = [
   '/gradient',
   '/shadow',
   '/animation',
+  '/clip-path',
   '/privacy-policy',
   '/cookie-policy'
 ];

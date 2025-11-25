@@ -20,6 +20,7 @@ const SSG_PUBLIC_ROUTES = [
   '/gradient',
   '/shadow',
   '/animation',
+  '/clip-path',
   '/privacy-policy',
   '/cookie-policy'
 ]
