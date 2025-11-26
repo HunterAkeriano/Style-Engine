@@ -522,9 +522,432 @@
 }
 
 
+// Shadow Dance
+.shadow-dance {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+}
+
+.shadow-dance__stage {
+  position: absolute;
+  bottom: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 3px;
+  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.15), transparent);
+  animation: shadowStageBreath 4s ease-in-out infinite;
+}
+
+.shadow-dance__orb {
+  position: absolute;
+  border-radius: 50%;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+
+  &_1 {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    top: 30%;
+    left: 25%;
+    box-shadow:
+      0 20px 40px rgba(102, 126, 234, 0.5),
+      0 30px 60px rgba(118, 75, 162, 0.4),
+      0 40px 80px rgba(102, 126, 234, 0.3);
+    animation: shadowOrbFloat1 6s ease-in-out infinite;
+  }
+
+  &_2 {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    top: 35%;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow:
+      0 25px 50px rgba(240, 147, 251, 0.6),
+      0 35px 70px rgba(245, 87, 108, 0.5),
+      0 45px 90px rgba(240, 147, 251, 0.4);
+    animation: shadowOrbFloat2 7s ease-in-out infinite;
+    z-index: 2;
+  }
+
+  &_3 {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    top: 32%;
+    right: 25%;
+    box-shadow:
+      0 18px 36px rgba(79, 172, 254, 0.5),
+      0 28px 56px rgba(0, 242, 254, 0.4),
+      0 38px 76px rgba(79, 172, 254, 0.3);
+    animation: shadowOrbFloat3 5.5s ease-in-out infinite;
+  }
+}
+
+.shadow-dance__card {
+  position: absolute;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(0px);
+
+  &_1 {
+    width: 140px;
+    height: 100px;
+    top: 45%;
+    left: 20%;
+    transform: rotate(-5deg);
+    box-shadow:
+      0 15px 35px rgba(138, 43, 226, 0.4),
+      0 25px 55px rgba(138, 43, 226, 0.3),
+      0 35px 75px rgba(138, 43, 226, 0.2);
+    animation: shadowCardFloat1 8s ease-in-out infinite;
+  }
+
+  &_2 {
+    width: 120px;
+    height: 90px;
+    top: 48%;
+    right: 22%;
+    transform: rotate(8deg);
+    box-shadow:
+      0 12px 30px rgba(255, 20, 147, 0.4),
+      0 22px 50px rgba(255, 20, 147, 0.3),
+      0 32px 70px rgba(255, 20, 147, 0.2);
+    animation: shadowCardFloat2 7.5s ease-in-out infinite;
+  }
+}
+
+.shadow-dance__rays {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    transparent 30%,
+    rgba(138, 43, 226, 0.08) 40%,
+    transparent 60%,
+    rgba(0, 191, 255, 0.06) 70%,
+    transparent 90%
+  );
+  animation: shadowRaysRotate 20s linear infinite;
+}
+
+@keyframes shadowStageBreath {
+  0%, 100% { transform: translateX(-50%) scaleX(1); opacity: 0.15; }
+  50% { transform: translateX(-50%) scaleX(1.1); opacity: 0.25; }
+}
+
+@keyframes shadowOrbFloat1 {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    box-shadow:
+      0 20px 40px rgba(102, 126, 234, 0.5),
+      0 30px 60px rgba(118, 75, 162, 0.4),
+      0 40px 80px rgba(102, 126, 234, 0.3);
+  }
+  50% {
+    transform: translateY(-25px) scale(1.05);
+    box-shadow:
+      0 35px 60px rgba(102, 126, 234, 0.7),
+      0 50px 90px rgba(118, 75, 162, 0.6),
+      0 65px 110px rgba(102, 126, 234, 0.5);
+  }
+}
+
+@keyframes shadowOrbFloat2 {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+    box-shadow:
+      0 25px 50px rgba(240, 147, 251, 0.6),
+      0 35px 70px rgba(245, 87, 108, 0.5),
+      0 45px 90px rgba(240, 147, 251, 0.4);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-30px) scale(1.08);
+    box-shadow:
+      0 40px 70px rgba(240, 147, 251, 0.8),
+      0 55px 95px rgba(245, 87, 108, 0.7),
+      0 70px 120px rgba(240, 147, 251, 0.6);
+  }
+}
+
+@keyframes shadowOrbFloat3 {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    box-shadow:
+      0 18px 36px rgba(79, 172, 254, 0.5),
+      0 28px 56px rgba(0, 242, 254, 0.4),
+      0 38px 76px rgba(79, 172, 254, 0.3);
+  }
+  50% {
+    transform: translateY(-22px) scale(1.06);
+    box-shadow:
+      0 32px 56px rgba(79, 172, 254, 0.7),
+      0 46px 80px rgba(0, 242, 254, 0.6),
+      0 60px 104px rgba(79, 172, 254, 0.5);
+  }
+}
+
+@keyframes shadowCardFloat1 {
+  0%, 100% {
+    transform: translateY(0) rotate(-5deg);
+    box-shadow:
+      0 15px 35px rgba(138, 43, 226, 0.4),
+      0 25px 55px rgba(138, 43, 226, 0.3),
+      0 35px 75px rgba(138, 43, 226, 0.2);
+  }
+  50% {
+    transform: translateY(-15px) rotate(-3deg);
+    box-shadow:
+      0 28px 50px rgba(138, 43, 226, 0.6),
+      0 42px 75px rgba(138, 43, 226, 0.5),
+      0 56px 100px rgba(138, 43, 226, 0.4);
+  }
+}
+
+@keyframes shadowCardFloat2 {
+  0%, 100% {
+    transform: translateY(0) rotate(8deg);
+    box-shadow:
+      0 12px 30px rgba(255, 20, 147, 0.4),
+      0 22px 50px rgba(255, 20, 147, 0.3),
+      0 32px 70px rgba(255, 20, 147, 0.2);
+  }
+  50% {
+    transform: translateY(-18px) rotate(6deg);
+    box-shadow:
+      0 24px 48px rgba(255, 20, 147, 0.6),
+      0 38px 68px rgba(255, 20, 147, 0.5),
+      0 52px 92px rgba(255, 20, 147, 0.4);
+  }
+}
+
+@keyframes shadowRaysRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+
+// Morph Magic
+.morph-magic {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.morph-magic__bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    #1a1a2e,
+    #16213e,
+    #0f3460
+  );
+}
+
+.morph-magic__shape {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  &_1 {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a6f, #c44569);
+    animation: morphShape1 10s ease-in-out infinite;
+    z-index: 1;
+  }
+
+  &_2 {
+    background: linear-gradient(135deg, #4ecdc4, #44a08d, #2e86ab);
+    animation: morphShape2 12s ease-in-out infinite;
+    transform: translate(-50%, -50%) scale(0.8);
+    z-index: 2;
+  }
+
+  &_3 {
+    background: linear-gradient(135deg, #f7b731, #fa8231, #eb3b5a);
+    animation: morphShape3 14s ease-in-out infinite;
+    transform: translate(-50%, -50%) scale(0.6);
+    z-index: 3;
+  }
+}
+
+.morph-magic__particles {
+  position: absolute;
+  inset: 0;
+}
+
+.morph-magic__particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9), transparent);
+
+  @for $i from 1 through 12 {
+    &:nth-child(#{$i}) {
+      $angle: ($i - 1) * 30deg;
+      $distance: 60 + random(80) + px;
+      $duration: 4 + random(4) + s;
+      $delay: random(4) + s;
+      $size: 4 + random(6) + px;
+
+      width: $size;
+      height: $size;
+      left: 50%;
+      top: 50%;
+      animation: morphParticleOrbit#{$i} $duration ease-in-out infinite;
+      animation-delay: -$delay;
+    }
+  }
+}
+
+@for $i from 1 through 12 {
+  @keyframes morphParticleOrbit#{$i} {
+    $angle: ($i - 1) * 30;
+    $distance: 80 + random(60);
+
+    0%, 100% {
+      transform:
+        translate(-50%, -50%)
+        rotate(#{$angle}deg)
+        translateX(#{$distance}px)
+        scale(0);
+      opacity: 0;
+    }
+    25% {
+      opacity: 1;
+      transform:
+        translate(-50%, -50%)
+        rotate(#{$angle}deg)
+        translateX(#{$distance}px)
+        scale(1);
+    }
+    75% {
+      opacity: 1;
+      transform:
+        translate(-50%, -50%)
+        rotate(#{$angle + 180}deg)
+        translateX(#{$distance}px)
+        scale(1);
+    }
+  }
+}
+
+.morph-magic__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: 300px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 107, 107, 0.2),
+    rgba(78, 205, 196, 0.15),
+    rgba(247, 183, 49, 0.1),
+    transparent 70%
+  );
+  animation: morphGlowPulse 5s ease-in-out infinite;
+}
+
+@keyframes morphShape1 {
+  0%, 100% {
+    clip-path: circle(50% at 50% 50%);
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  20% {
+    clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+    transform: translate(-50%, -50%) rotate(72deg);
+  }
+  40% {
+    clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
+    transform: translate(-50%, -50%) rotate(144deg);
+  }
+  60% {
+    clip-path: polygon(50% 0%, 90% 20%, 100% 60%, 75% 100%, 25% 100%, 0% 60%, 10% 20%);
+    transform: translate(-50%, -50%) rotate(216deg);
+  }
+  80% {
+    clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+    transform: translate(-50%, -50%) rotate(288deg);
+  }
+}
+
+@keyframes morphShape2 {
+  0%, 100% {
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    transform: translate(-50%, -50%) scale(0.8) rotate(0deg);
+  }
+  25% {
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+    transform: translate(-50%, -50%) scale(0.85) rotate(90deg);
+  }
+  50% {
+    clip-path: circle(50% at 50% 50%);
+    transform: translate(-50%, -50%) scale(0.9) rotate(180deg);
+  }
+  75% {
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    transform: translate(-50%, -50%) scale(0.85) rotate(270deg);
+  }
+}
+
+@keyframes morphShape3 {
+  0%, 100% {
+    clip-path: polygon(50% 0%, 80% 10%, 100% 35%, 100% 70%, 80% 90%, 50% 100%, 20% 90%, 0% 70%, 0% 35%, 20% 10%);
+    transform: translate(-50%, -50%) scale(0.6) rotate(0deg);
+  }
+  33% {
+    clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+    transform: translate(-50%, -50%) scale(0.65) rotate(120deg);
+  }
+  66% {
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    transform: translate(-50%, -50%) scale(0.7) rotate(240deg);
+  }
+}
+
+@keyframes morphParticleFloat {
+  0%, 100% {
+    transform: translate(-50%, -50%);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-20px);
+    opacity: 1;
+  }
+}
+
+@keyframes morphGlowPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.4;
+  }
+}
+
+
 @media (prefers-reduced-motion: reduce) {
   .holographic-dream *,
-  .aurora-sunset * {
+  .aurora-sunset *,
+  .shadow-dance *,
+  .morph-magic * {
     animation: none !important;
   }
 }

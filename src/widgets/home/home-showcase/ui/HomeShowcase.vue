@@ -53,6 +53,49 @@
             </NavLink>
           </div>
         </div>
+
+        <div class="home-showcase__card">
+          <div class="home-showcase__preview home-showcase__preview_shadow">
+            <div class="shadow-dance">
+              <div class="shadow-dance__stage"></div>
+              <div class="shadow-dance__orb shadow-dance__orb_1"></div>
+              <div class="shadow-dance__orb shadow-dance__orb_2"></div>
+              <div class="shadow-dance__orb shadow-dance__orb_3"></div>
+              <div class="shadow-dance__card shadow-dance__card_1"></div>
+              <div class="shadow-dance__card shadow-dance__card_2"></div>
+              <div class="shadow-dance__rays"></div>
+            </div>
+          </div>
+          <div class="home-showcase__info">
+            <h3 class="home-showcase__label">{{ t('HOME.SHOWCASE_SHADOW_LABEL') }}</h3>
+            <p class="home-showcase__description">{{ t('HOME.SHOWCASE_SHADOW_DESCRIPTION') }}</p>
+            <NavLink to="/shadow" class-name="home-showcase__link">
+              {{ t('HOME.SHOWCASE_TRY') }} →
+            </NavLink>
+          </div>
+        </div>
+
+        <div class="home-showcase__card">
+          <div class="home-showcase__preview home-showcase__preview_clippath">
+            <div class="morph-magic">
+              <div class="morph-magic__bg"></div>
+              <div class="morph-magic__shape morph-magic__shape_1"></div>
+              <div class="morph-magic__shape morph-magic__shape_2"></div>
+              <div class="morph-magic__shape morph-magic__shape_3"></div>
+              <div class="morph-magic__particles">
+                <div class="morph-magic__particle" v-for="n in 12" :key="n"></div>
+              </div>
+              <div class="morph-magic__glow"></div>
+            </div>
+          </div>
+          <div class="home-showcase__info">
+            <h3 class="home-showcase__label">{{ t('HOME.SHOWCASE_CLIPPATH_LABEL') }}</h3>
+            <p class="home-showcase__description">{{ t('HOME.SHOWCASE_CLIPPATH_DESCRIPTION') }}</p>
+            <NavLink to="/clip-path" class-name="home-showcase__link">
+              {{ t('HOME.SHOWCASE_TRY') }} →
+            </NavLink>
+          </div>
+        </div>
       </div>
     </section>
   </div>

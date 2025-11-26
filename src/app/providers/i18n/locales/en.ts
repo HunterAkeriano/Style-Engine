@@ -56,6 +56,10 @@ export default {
     SHOWCASE_ANIMATION_DESCRIPTION: 'Multi-layer animation with particles, orbitals, and liquid gradients',
     SHOWCASE_GRADIENT_LABEL: 'Aurora Sunset',
     SHOWCASE_GRADIENT_DESCRIPTION: 'Complex radial and conic gradient composition with vibrant colors',
+    SHOWCASE_SHADOW_LABEL: 'Shadow Dance',
+    SHOWCASE_SHADOW_DESCRIPTION: 'Dynamic multi-layer shadows with animated orbs and floating cards',
+    SHOWCASE_CLIPPATH_LABEL: 'Morph Magic',
+    SHOWCASE_CLIPPATH_DESCRIPTION: 'Shape-shifting clip-path animations morphing through geometric forms',
     SHOWCASE_TRY: 'Try it yourself'
   },
   GRADIENT: {

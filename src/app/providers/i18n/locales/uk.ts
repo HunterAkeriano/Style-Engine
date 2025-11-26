@@ -60,6 +60,10 @@ export default {
     SHOWCASE_ANIMATION_DESCRIPTION: 'Багатошарова анімація з частинками, орбітами й рідкими градієнтами',
     SHOWCASE_GRADIENT_LABEL: 'Аврора на заході',
     SHOWCASE_GRADIENT_DESCRIPTION: 'Складна композиція радіальних і конічних градієнтів з яскравими кольорами',
+    SHOWCASE_SHADOW_LABEL: 'Танець тіней',
+    SHOWCASE_SHADOW_DESCRIPTION: 'Динамічні багатошарові тіні з анімованими сферами та картками',
+    SHOWCASE_CLIPPATH_LABEL: 'Магія трансформацій',
+    SHOWCASE_CLIPPATH_DESCRIPTION: 'Морфінг clip-path анімацій з геометричними формами',
     SHOWCASE_TRY: 'Спробувати'
   },
   GRADIENT: {
