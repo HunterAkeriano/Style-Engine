@@ -1,0 +1,52 @@
+@import '@/app/styles/variables';
+
+.grid-generation-process {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-lg;
+  align-items: start;
+
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: $space-xl;
+  }
+
+  &__code {
+    order: 1;
+    grid-column: 1 / -1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-lg;
+  }
+
+  &__preview {
+    order: 2;
+    min-width: 0;
+    position: relative;
+  }
+
+  &__preview-inner {
+    width: 100%;
+
+    &_floating {
+      position: fixed;
+      z-index: 10;
+    }
+  }
+
+  &__controls {
+    display: flex;
+    flex-direction: column;
+    gap: $space-lg;
+    order: 3;
+    min-width: 0;
+  }
+
+  &__presets {
+    order: 4;
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+}

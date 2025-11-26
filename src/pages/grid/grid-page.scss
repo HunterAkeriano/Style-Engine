@@ -1,0 +1,307 @@
+@import '@/app/styles/variables';
+
+.grid-page {
+  padding: $space-3xl 0;
+  min-height: calc(var(--app-vh, 1vh) * 100);
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(140% 140% at 18% 15%, color-var-alpha('color-primary', 0.32), transparent 55%),
+    radial-gradient(140% 130% at 82% 20%, color-var-alpha('color-secondary', 0.25), transparent 58%),
+    radial-gradient(100% 100% at 50% 100%, color-var-alpha('color-accent', 0.18), transparent 70%),
+    linear-gradient(180deg, $color-bg-secondary, $color-bg-primary);
+  color: $color-text-primary;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -30%;
+    background:
+      radial-gradient(45% 50% at 20% 35%, color-var-alpha('color-primary', 0.42), transparent 65%),
+      radial-gradient(38% 42% at 75% 25%, color-var-alpha('color-secondary', 0.36), transparent 68%),
+      radial-gradient(48% 55% at 80% 75%, color-var-alpha('color-accent', 0.32), transparent 65%),
+      radial-gradient(50% 50% at 15% 85%, color-var-alpha('color-primary', 0.28), transparent 68%);
+    background-size: 130% 130%;
+    background-repeat: no-repeat;
+    opacity: 0.85;
+    animation: nebulaDrift 52s ease-in-out infinite alternate;
+    z-index: -2;
+    will-change: transform;
+    backface-visibility: hidden;
+    contain: layout paint;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -8%;
+    background-image:
+      radial-gradient(55% 55% at 20% 18%, color-var-alpha('color-text-primary', 0.12), transparent 38%),
+      radial-gradient(55% 55% at 80% 32%, color-var-alpha('color-text-primary', 0.08), transparent 40%),
+      repeating-linear-gradient(90deg, color-var-alpha('color-text-primary', 0.06) 0 1px, transparent 1px 110px),
+      repeating-linear-gradient(0deg, color-var-alpha('color-text-primary', 0.06) 0 1px, transparent 1px 110px);
+    background-size: 100% 100%, 100% 100%, 180px 180px, 180px 180px;
+    mix-blend-mode: overlay;
+    opacity: 0.55;
+    mask-image: radial-gradient(120% 120% at 50% 48%, rgba(0, 0, 0, 0.92), transparent 94%);
+    animation: gridPulse 50s ease-in-out infinite alternate;
+    z-index: -1;
+    pointer-events: none;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    contain: layout paint;
+  }
+}
+
+.grid-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $space-2xl;
+  gap: $space-lg;
+  flex-wrap: wrap;
+  padding: $space-lg;
+  border-radius: $border-radius-2xl;
+  background: linear-gradient(135deg, color-var-alpha('color-text-primary', 0.08), color-var-alpha('color-text-primary', 0.03));
+  border: 1px solid color-var-alpha('panel-border', 0.12);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4), 0 12px 30px $color-primary-alpha-18;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -40%;
+    background: radial-gradient(50% 50% at 80% 30%, color-var-alpha('color-accent', 0.15), transparent 60%);
+    opacity: 0.6;
+    background-repeat: no-repeat;
+    background-size: 140% 140%;
+    pointer-events: none;
+  }
+}
+
+.grid-page__title {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  margin-bottom: $space-xs;
+  color: $color-text-primary;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-4xl;
+  }
+}
+
+.grid-page__subtitle {
+  font-size: $font-size-base;
+  color: color-var-alpha('color-text-secondary', 0.9);
+  max-width: 640px;
+  line-height: 1.6;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-lg;
+  }
+}
+
+.grid-page__back-link {
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+  padding: $space-sm $space-md;
+  border-radius: $border-radius-full;
+  border: 1px solid color-var-alpha('color-border', 0.6);
+  background: color-var-alpha('color-bg-primary', 0.06);
+  box-shadow: inset 0 1px 0 color-var-alpha('color-border', 0.25);
+  transition: border-color $transition-base, transform $transition-base, box-shadow $transition-base;
+
+  &:hover {
+    border-color: color-var-alpha('color-text-primary', 0.22);
+    transform: translate3d(0, -1px, 0);
+    box-shadow: 0 8px 24px color-var-alpha('color-primary', 0.25);
+    backface-visibility: hidden;
+  }
+}
+
+.grid-page__motion {
+  position: absolute;
+  inset: -35% -45%;
+  background:
+    conic-gradient(from 135deg at 42% 38%, color-var-alpha('color-primary', 0.4), color-var-alpha('color-secondary', 0.22), color-var-alpha('color-accent', 0.3), color-var-alpha('color-primary', 0.4));
+  background-size: 150% 150%;
+  opacity: 0.65;
+  mix-blend-mode: screen;
+  animation: orbitSweep 68s linear infinite;
+  z-index: -2;
+  pointer-events: none;
+  mask-image: radial-gradient(72% 72% at 50% 48%, rgba(0, 0, 0, 0.95), transparent 92%);
+  will-change: transform;
+  backface-visibility: hidden;
+  contain: layout paint;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 15%;
+    left: 10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, color-var-alpha('color-primary', 0.5), transparent 70%);
+    border-radius: 50%;
+    animation: floatingOrb1 25s ease-in-out infinite alternate;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 20%;
+    right: 15%;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, color-var-alpha('color-accent', 0.45), transparent 70%);
+    border-radius: 50%;
+    animation: floatingOrb2 28s ease-in-out infinite alternate-reverse;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+}
+
+@keyframes nebulaDrift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  25% { transform: translate3d(-6%, 5%, 0) scale(1.05); }
+  50% { transform: translate3d(4%, -4%, 0) scale(1.04); }
+  75% { transform: translate3d(-3%, -6%, 0) scale(1.06); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes gridPulse {
+  0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.38; }
+  50% { transform: translate3d(2%, -2%, 0) scale(1.02); opacity: 0.5; }
+  100% { transform: translate3d(-1%, 2%, 0) scale(1.03); opacity: 0.42; }
+}
+
+@keyframes orbitSweep {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.03); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes floatingOrb1 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.5;
+  }
+  33% {
+    transform: translate3d(60px, -80px, 0) scale(1.15);
+    opacity: 0.7;
+  }
+  66% {
+    transform: translate3d(-50px, -40px, 0) scale(0.95);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.5;
+  }
+}
+
+@keyframes floatingOrb2 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.45;
+  }
+  33% {
+    transform: translate3d(-70px, 60px, 0) scale(1.1);
+    opacity: 0.65;
+  }
+  66% {
+    transform: translate3d(40px, 50px, 0) scale(0.9);
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.45;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-page {
+    padding: $space-2xl 0;
+
+    &__header {
+      padding: $space-md;
+      margin-bottom: $space-xl;
+      gap: $space-md;
+    }
+
+    &__title {
+      font-size: $font-size-2xl;
+    }
+
+    &__subtitle {
+      font-size: $font-size-sm;
+    }
+  }
+
+  .grid-page__motion {
+    &::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    &::after {
+      width: 250px;
+      height: 250px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-page {
+    padding: $space-xl 0;
+
+    &__header {
+      padding: $space-sm;
+      margin-bottom: $space-lg;
+      flex-direction: column;
+      gap: $space-sm;
+    }
+
+    &__title {
+      font-size: $font-size-xl;
+    }
+
+    &__subtitle {
+      font-size: $font-size-xs;
+    }
+
+    &__back-link {
+      width: 100%;
+      text-align: center;
+      padding: $space-xs $space-sm;
+      font-size: $font-size-sm;
+    }
+  }
+
+  .grid-page__motion {
+    &::before {
+      width: 200px;
+      height: 200px;
+    }
+
+    &::after {
+      width: 180px;
+      height: 180px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grid-page::before,
+  .grid-page::after,
+  .grid-page__motion,
+  .grid-page__motion::before,
+  .grid-page__motion::after {
+    animation: none !important;
+  }
+}

@@ -138,6 +138,19 @@ const generatorLayoutRoutes: RouteRecordRaw[] = [
         meta: { titleKey: 'META.CLIP_PATH', descriptionKey: 'META_DESCRIPTION.CLIP_PATH' }
       }
     ]
+  },
+  {
+    path: 'grid',
+    component: GeneratorLayout,
+    meta: { breadcrumbKey: 'BREADCRUMBS.GRID' },
+    children: [
+      {
+        path: '',
+        name: 'grid',
+        component: () => import('@/pages/grid/GridPage.vue'),
+        meta: { titleKey: 'META.GRID', descriptionKey: 'META_DESCRIPTION.GRID' }
+      }
+    ]
   }
 ]
 

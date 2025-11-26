@@ -9,21 +9,27 @@
         </div>
 
         <nav class="header__nav">
-          <NavLink :to="`/${locale}/gradient`" class-name="header__nav-link">
-            {{ t('NAV.GRADIENTS') }}
-          </NavLink>
+          <DropdownMenu :title="t('NAV.FUNCTIONS')">
+            <NavLink :to="`/${locale}/gradient`" class-name="header__nav-link">
+              {{ t('NAV.GRADIENTS') }}
+            </NavLink>
 
-          <NavLink :to="`/${locale}/shadow`" class-name="header__nav-link">
-            {{ t('NAV.SHADOWS') }}
-          </NavLink>
+            <NavLink :to="`/${locale}/shadow`" class-name="header__nav-link">
+              {{ t('NAV.SHADOWS') }}
+            </NavLink>
 
-          <NavLink :to="`/${locale}/animation`" class-name="header__nav-link">
-            {{ t('NAV.ANIMATIONS') }}
-          </NavLink>
+            <NavLink :to="`/${locale}/animation`" class-name="header__nav-link">
+              {{ t('NAV.ANIMATIONS') }}
+            </NavLink>
 
-          <NavLink :to="`/${locale}/clip-path`" class-name="header__nav-link">
-            {{ t('NAV.CLIP_PATHS') }}
-          </NavLink>
+            <NavLink :to="`/${locale}/clip-path`" class-name="header__nav-link">
+              {{ t('NAV.CLIP_PATHS') }}
+            </NavLink>
+
+            <NavLink :to="`/${locale}/grid`" class-name="header__nav-link">
+              {{ t('NAV.GRID') }}
+            </NavLink>
+          </DropdownMenu>
 
           <NavLink :to="`/${locale}/about`" class-name="header__nav-link">
             {{ t('NAV.ABOUT') }}
@@ -74,6 +80,10 @@
           {{ t('NAV.CLIP_PATHS') }}
         </NavLink>
 
+        <NavLink :to="`/${locale}/grid`" class-name="header__mobile-link" @click="closeMobileMenu">
+          {{ t('NAV.GRID') }}
+        </NavLink>
+
         <NavLink :to="`/${locale}/about`" class-name="header__mobile-link" @click="closeMobileMenu">
           {{ t('NAV.ABOUT') }}
         </NavLink>
@@ -112,6 +122,7 @@ import { LanguageSwitcher } from '@/features'
 import Logo from '@/shared/ui/Logo/Logo.vue'
 import { Button, Icon, NavLink, ThemeSwitcher } from '@/shared/ui'
 import UserMenu from '@/widgets/common/user-menu/UserMenu.vue'
+import DropdownMenu from './components/DropdownMenu.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
