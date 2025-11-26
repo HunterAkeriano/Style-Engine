@@ -93,7 +93,7 @@ import { resolveSubscriptionTier } from '@/shared/lib/save-quota'
 import { GridControls, GridPreview, GridPresets } from '@/features/grid'
 import type { GridItem } from '@/shared/types/grid'
 import type { SelectOption } from '@/shared/ui'
-import { GRID_PRESETS, type GridPreset } from './grid-presets'
+import { GRID_PRESETS, resolveGridTemplate, type GridPreset } from './grid-presets'
 
 const { t, locale } = useI18n()
 const router = useRouter()
@@ -183,33 +183,12 @@ const isExportAllowed = computed(() => {
   return Boolean(tier && tier !== SubscriptionTier.FREE)
 })
 
-const gridContainerStyle = computed(() => {
-  let gridTemplateColumns = ''
-  let gridTemplateRows = ''
-
-  if (columnTemplate.value === 'equal') {
-    gridTemplateColumns = `repeat(${columns.value}, 1fr)`
-  } else if (columnTemplate.value === 'auto') {
-    gridTemplateColumns = `repeat(${columns.value}, auto)`
-  } else {
-    gridTemplateColumns = customColumns.value
-  }
-
-  if (rowTemplate.value === 'equal') {
-    gridTemplateRows = `repeat(${rows.value}, 1fr)`
-  } else if (rowTemplate.value === 'auto') {
-    gridTemplateRows = `repeat(${rows.value}, auto)`
-  } else {
-    gridTemplateRows = customRows.value
-  }
-
-  return {
-    display: 'grid',
-    gridTemplateColumns,
-    gridTemplateRows,
-    gap: `${gap.value}px`
-  }
-})
+const gridContainerStyle = computed(() => ({
+  display: 'grid',
+  gridTemplateColumns: resolveGridTemplate(columnTemplate.value, columns.value, customColumns.value),
+  gridTemplateRows: resolveGridTemplate(rowTemplate.value, rows.value, customRows.value),
+  gap: `${gap.value}px`
+}))
 
 function findFreeCell(): { column: number; row: number } {
   // Создаем карту занятых ячеек

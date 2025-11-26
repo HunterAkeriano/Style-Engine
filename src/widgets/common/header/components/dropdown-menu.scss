@@ -36,7 +36,12 @@
     top: calc(100% + 0.5rem);
     left: 0;
     min-width: 200px;
-    background: var(--bg-secondary);
+    background: linear-gradient(
+      145deg,
+      rgba(var(--color-bg-secondary), 0.98),
+      rgba(var(--color-bg-primary), 0.98)
+    );
+    backdrop-filter: none;
     border: 1px solid var(--border-color);
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);

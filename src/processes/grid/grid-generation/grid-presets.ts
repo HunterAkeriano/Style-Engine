@@ -13,6 +13,18 @@ export interface GridPreset {
   items: Omit<GridItem, 'id'>[]
 }
 
+export function resolveGridTemplate(template: string, count: number, custom: string): string {
+  if (template === 'equal') {
+    return `repeat(${count}, 1fr)`
+  }
+
+  if (template === 'auto') {
+    return `repeat(${count}, auto)`
+  }
+
+  return custom
+}
+
 export const GRID_PRESETS: GridPreset[] = [
   {
     id: 'holy-grail',

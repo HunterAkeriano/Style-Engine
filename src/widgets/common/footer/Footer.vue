@@ -25,6 +25,9 @@
             <NavLink to="/clip-path" class-name="footer__link">
               {{ t('NAV.CLIP_PATHS') }}
             </NavLink>
+            <NavLink to="/grid" class-name="footer__link">
+              {{ t('NAV.GRID') }}
+            </NavLink>
             <NavLink to="/about" class-name="footer__link">
               {{ t('NAV.ABOUT') }}
             </NavLink>

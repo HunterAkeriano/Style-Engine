@@ -4,15 +4,25 @@
   position: relative;
   display: grid;
   grid-template-columns: 1fr;
+  grid-template-areas:
+    'preview'
+    'controls'
+    'code'
+    'presets';
   gap: $space-lg;
   align-items: start;
 
   @media (min-width: $breakpoint-lg) {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      'preview controls'
+      'code code'
+      'presets presets';
     gap: $space-xl;
   }
 
   &__code {
+    grid-area: code;
     order: 1;
     grid-column: 1 / -1;
     min-width: 0;
@@ -22,6 +32,7 @@
   }
 
   &__preview {
+    grid-area: preview;
     order: 2;
     min-width: 0;
     position: relative;
@@ -37,6 +48,7 @@
   }
 
   &__controls {
+    grid-area: controls;
     display: flex;
     flex-direction: column;
     gap: $space-lg;
@@ -45,6 +57,7 @@
   }
 
   &__presets {
+    grid-area: presets;
     order: 4;
     grid-column: 1 / -1;
     min-width: 0;

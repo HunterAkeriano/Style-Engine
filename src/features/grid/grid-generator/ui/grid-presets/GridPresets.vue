@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import type { GridPreset } from '@/processes/grid/grid-generation/grid-presets'
+import { resolveGridTemplate, type GridPreset } from '@/processes/grid/grid-generation/grid-presets'
 import type { GridItem } from '@/shared/types/grid'
 
 interface Props {
@@ -53,30 +53,11 @@ const emit = defineEmits<Emits>()
 const { t } = useI18n()
 
 function getPreviewContainerStyle(preset: GridPreset) {
-  let gridTemplateColumns = ''
-  let gridTemplateRows = ''
-
-  if (preset.columnTemplate === 'equal') {
-    gridTemplateColumns = `repeat(${preset.columns}, 1fr)`
-  } else if (preset.columnTemplate === 'auto') {
-    gridTemplateColumns = `repeat(${preset.columns}, auto)`
-  } else {
-    gridTemplateColumns = preset.customColumns
-  }
-
-  if (preset.rowTemplate === 'equal') {
-    gridTemplateRows = `repeat(${preset.rows}, 1fr)`
-  } else if (preset.rowTemplate === 'auto') {
-    gridTemplateRows = `repeat(${preset.rows}, auto)`
-  } else {
-    gridTemplateRows = preset.customRows
-  }
-
   return {
     display: 'grid',
-    gridTemplateColumns,
-    gridTemplateRows,
-    gap: `${Math.max(4, preset.gap / 2)}px`
+    gridTemplateColumns: resolveGridTemplate(preset.columnTemplate, preset.columns, preset.customColumns),
+    gridTemplateRows: resolveGridTemplate(preset.rowTemplate, preset.rows, preset.customRows),
+    gap: `${preset.gap}px`
   }
 }
 

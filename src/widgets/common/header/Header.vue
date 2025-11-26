@@ -9,6 +9,10 @@
         </div>
 
         <nav class="header__nav">
+          <NavLink :to="`/${locale}/docs`" class-name="header__nav-link">
+            {{ t('NAV.DOCS') }}
+          </NavLink>
+
           <DropdownMenu :title="t('NAV.FUNCTIONS')">
             <NavLink :to="`/${locale}/gradient`" class-name="header__nav-link">
               {{ t('NAV.GRADIENTS') }}
@@ -64,6 +68,10 @@
       :aria-hidden="!isMobileMenuOpen"
     >
       <nav class="header__mobile-nav">
+        <NavLink :to="`/${locale}/docs`" class-name="header__mobile-link" @click="closeMobileMenu">
+          {{ t('NAV.DOCS') }}
+        </NavLink>
+
         <NavLink :to="`/${locale}/gradient`" class-name="header__mobile-link" @click="closeMobileMenu">
           {{ t('NAV.GRADIENTS') }}
         </NavLink>
