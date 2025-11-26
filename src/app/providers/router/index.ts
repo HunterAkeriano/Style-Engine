@@ -39,7 +39,6 @@ const mainLayoutChildren: RouteRecordRaw[] = [
   },
   {
     path: 'profile',
-    name: 'profile',
     component: () => import('@/pages/profile/ProfilePage.vue'),
     meta: {
       titleKey: 'META.PROFILE',
@@ -48,6 +47,12 @@ const mainLayoutChildren: RouteRecordRaw[] = [
       hideBreadcrumbs: true
     },
     children: [
+      {
+        path: '',
+        name: 'profile',
+        component: () => import('@/pages/profile/settings/ProfileSettingsPage.vue'),
+        meta: { requiresAuth: true }
+      },
       {
         path: 'gradients',
         name: 'profile-gradients',

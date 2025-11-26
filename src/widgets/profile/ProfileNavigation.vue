@@ -1,8 +1,18 @@
 <template>
   <nav class="profile-page__navigation">
     <RouterLink
+      :to="{ name: `${locale}-profile` }"
+      active-class="profile-page__nav-link_active"
+      exact-active-class="profile-page__nav-link_active"
+      class="profile-page__nav-link"
+    >
+      {{ t('PROFILE.NAV_SETTINGS') }}
+    </RouterLink>
+
+    <RouterLink
       :to="{ name: `${locale}-profile-gradients` }"
       active-class="profile-page__nav-link_active"
+      exact-active-class="profile-page__nav-link_active"
       class="profile-page__nav-link"
     >
       {{ t('PROFILE.NAV_GRADIENTS') }}
@@ -11,6 +21,7 @@
     <RouterLink
       :to="{ name: `${locale}-profile-shadows` }"
       active-class="profile-page__nav-link_active"
+      exact-active-class="profile-page__nav-link_active"
       class="profile-page__nav-link"
     >
       {{ t('PROFILE.NAV_SHADOWS') }}
@@ -19,9 +30,19 @@
     <RouterLink
       :to="{ name: `${locale}-profile-animations` }"
       active-class="profile-page__nav-link_active"
+      exact-active-class="profile-page__nav-link_active"
       class="profile-page__nav-link"
     >
       {{ t('PROFILE.NAV_ANIMATIONS') }}
+    </RouterLink>
+
+    <RouterLink
+      :to="{ name: `${locale}-profile-clip-paths` }"
+      active-class="profile-page__nav-link_active"
+      exact-active-class="profile-page__nav-link_active"
+      class="profile-page__nav-link"
+    >
+      {{ t('PROFILE.NAV_CLIP_PATHS') }}
     </RouterLink>
 
     <RouterLink

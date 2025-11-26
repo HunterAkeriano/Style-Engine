@@ -179,7 +179,7 @@
   }
 
   &__container {
-    max-width: 800px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 $space-lg;
     position: relative;
@@ -207,6 +207,52 @@
     display: flex;
     flex-direction: column;
     gap: $space-2xl;
+  }
+
+  &__main {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: $space-2xl;
+    align-items: start;
+  }
+
+  &__sidebar {
+    position: sticky;
+    top: $space-2xl;
+    display: flex;
+    flex-direction: column;
+    gap: $space-xl;
+    padding: $space-xl;
+    background: color-var-alpha('surface-panel-2', 0.45);
+    border: 1px solid color-var-alpha('color-border', 0.35);
+    border-radius: $border-radius-xl;
+    box-shadow: 0 8px 32px color-var-alpha('color-border', 0.25);
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: color-var-alpha('color-primary', 0.4);
+      box-shadow: 0 12px 48px color-var-alpha('color-primary', 0.15);
+    }
+  }
+
+  &__sidebar-divider {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-var-alpha('color-border', 0.5) 50%,
+      transparent 100%
+    );
+    margin: $space-sm 0;
+  }
+
+  &__main-content {
+    min-height: 600px;
+    padding: $space-xl;
+    background: color-var-alpha('surface-panel-2', 0.35);
+    border: 1px solid color-var-alpha('color-border', 0.3);
+    border-radius: $border-radius-xl;
+    box-shadow: 0 4px 24px color-var-alpha('color-border', 0.2);
   }
 
   &__avatar-section {
@@ -516,34 +562,127 @@
 .profile-page {
   &__navigation {
     display: flex;
-    flex-wrap: wrap;
-    gap: $space-sm;
-    margin-top: $space-lg;
+    flex-direction: column;
+    gap: $space-xs;
   }
 
   &__nav-link {
-    padding: $space-xs $space-sm;
-    border-radius: $border-radius-full;
-    border: 1px solid color-var-alpha('color-border', 0.35);
-    color: $color-text-primary;
+    padding: $space-sm $space-md;
+    border-radius: $border-radius-md;
+    border: 1px solid transparent;
+    color: $color-text-secondary;
     font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: $color-primary;
+      transform: scaleY(0);
+      transition: transform 0.2s ease;
+    }
+
+    &:hover {
+      color: $color-text-primary;
+      background: color-var-alpha('color-primary', 0.08);
+      border-color: color-var-alpha('color-primary', 0.2);
+    }
   }
 
   &__nav-link_active {
-    border-color: $color-primary;
-    background: color-var-alpha('color-primary', 0.12);
+    color: $color-primary;
+    background: color-var-alpha('color-primary', 0.15);
+    border-color: color-var-alpha('color-primary', 0.35);
+    font-weight: $font-weight-bold;
+
+    &::before {
+      transform: scaleY(1);
+    }
   }
 
   &__nav-link_admin {
-    border-color: $color-success;
+    margin-top: $space-xs;
+    border-color: color-var-alpha('color-success', 0.35);
     color: $color-success;
+
+    &::before {
+      background: $color-success;
+    }
+
+    &:hover {
+      background: color-var-alpha('color-success', 0.08);
+      border-color: color-var-alpha('color-success', 0.4);
+    }
   }
 
   &__router {
     margin-top: $space-lg;
+  }
+}
+
+@media (max-width: 1200px) {
+  .profile-page {
+    &__main {
+      grid-template-columns: 320px 1fr;
+      gap: $space-xl;
+    }
+
+    &__sidebar {
+      padding: $space-lg;
+    }
+
+    &__main-content {
+      padding: $space-lg;
+    }
+  }
+}
+
+@media (max-width: 992px) {
+  .profile-page {
+    &__main {
+      grid-template-columns: 1fr;
+      gap: $space-2xl;
+    }
+
+    &__sidebar {
+      position: static;
+      top: auto;
+    }
+
+    &__navigation {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    &__nav-link {
+      flex: 0 0 auto;
+
+      &::before {
+        left: 0;
+        right: 0;
+        top: auto;
+        bottom: 0;
+        width: auto;
+        height: 3px;
+        transform: scaleX(0);
+      }
+
+      &_active::before {
+        transform: scaleX(1);
+      }
+    }
   }
 }
 
@@ -567,6 +706,15 @@
 
     &__content {
       gap: $space-xl;
+    }
+
+    &__sidebar {
+      padding: $space-md;
+      gap: $space-lg;
+    }
+
+    &__main-content {
+      padding: $space-md;
     }
   }
 

@@ -18,52 +18,46 @@
         <p class="profile-page__subtitle">{{ t('PROFILE.SUBTITLE') }}</p>
       </div>
       <div class="profile-page__content">
-        <ProfileHero
-          :display-avatar-url="displayAvatarUrl"
-          :initials="userInitials"
-          :is-paid-user="isPaidUser"
-          :is-premium-user="isPremiumUser"
-          :is-uploading="isUploading"
-          :selected-file="selectedFile"
-          :upload-error="uploadError"
-          :email="formData.email"
-          :member-since="memberSince"
-          :subscription-until="subscriptionUntil"
-          @file-selected="handleFileSelect"
-          @upload="handleUpload"
-        />
+        <div class="profile-page__main">
+          <aside class="profile-page__sidebar">
+            <ProfileHero
+              :display-avatar-url="displayAvatarUrl"
+              :initials="userInitials"
+              :is-paid-user="isPaidUser"
+              :is-premium-user="isPremiumUser"
+              :is-uploading="isUploading"
+              :selected-file="selectedFile"
+              :upload-error="uploadError"
+              :email="formData.email"
+              :user-name="formData.name"
+              :member-since="memberSince"
+              :subscription-until="subscriptionUntil"
+              @file-selected="handleFileSelect"
+              @upload="handleUpload"
+            />
 
-        <ProfileInfoForm
-          :name="formData.name"
-          :email="formData.email"
-          :member-since="memberSince"
-          :is-saving="isSaving"
-          :has-changes="hasChanges"
-          :save-error="saveError"
-          :save-success="saveSuccess"
-          @update:name="updateName"
-          @submit="handleProfileUpdate"
-        />
+            <div class="profile-page__sidebar-divider"></div>
 
-        <ProfilePasswordForm
-          :current-password="passwordForm.currentPassword"
-          :new-password="passwordForm.newPassword"
-          :confirm-password="passwordForm.confirmPassword"
-          :errors="passwordErrors"
-          :is-changing="isChangingPassword"
-          :success="passwordSuccess"
-          :server-error="passwordServerError"
-          @update:currentPassword="(value) => (passwordForm.currentPassword = value)"
-          @update:newPassword="(value) => (passwordForm.newPassword = value)"
-          @update:confirmPassword="(value) => (passwordForm.confirmPassword = value)"
-          @reset-errors="resetPasswordErrors"
-          @submit="handlePasswordChange"
-        />
+            <ProfileNavigation :is-admin="isAdmin" :is-super-admin="isSuperAdmin" />
 
-        <ProfileNavigation :is-admin="isAdmin" :is-super-admin="isSuperAdmin" />
+            <div class="profile-page__sidebar-divider"></div>
+          </aside>
 
-        <div class="profile-page__router">
-          <RouterView />
+          <main class="profile-page__main-content">
+            <RouterView v-slot="{ Component, route }">
+              <component
+                :is="Component"
+                v-bind="isSettingsRoute(route) ? settingsProps : {}"
+                @update:name="isSettingsRoute(route) ? updateName : undefined"
+                @submit="isSettingsRoute(route) ? handleProfileUpdate : undefined"
+                @update:currentPassword="isSettingsRoute(route) ? (value) => (passwordForm.currentPassword = value) : undefined"
+                @update:newPassword="isSettingsRoute(route) ? (value) => (passwordForm.newPassword = value) : undefined"
+                @update:confirmPassword="isSettingsRoute(route) ? (value) => (passwordForm.confirmPassword = value) : undefined"
+                @reset-errors="isSettingsRoute(route) ? resetPasswordErrors : undefined"
+                @submit-password="isSettingsRoute(route) ? handlePasswordChange : undefined"
+              />
+            </RouterView>
+          </main>
         </div>
       </div>
     </div>
@@ -78,8 +72,6 @@ import { authAPI, type User } from '@/shared/api/auth'
 import { useTheme } from '@/shared/composables/use-theme'
 import { changePasswordSchema, type ChangePasswordForm } from '@/shared/lib/validation/auth'
 import ProfileHero from '@/widgets/profile/ProfileHero.vue'
-import ProfileInfoForm from '@/widgets/profile/ProfileInfoForm.vue'
-import ProfilePasswordForm from '@/widgets/profile/ProfilePasswordForm.vue'
 import ProfileNavigation from '@/widgets/profile/ProfileNavigation.vue'
 import './profile-page.scss'
 
@@ -163,6 +155,27 @@ const isSuperAdmin = computed(() => Boolean(user.value?.isSuperAdmin))
 const isPaidUser = computed(() => user.value?.subscriptionTier === 'pro' || user.value?.subscriptionTier === 'premium')
 
 const isPremiumUser = computed(() => user.value?.subscriptionTier === 'premium')
+
+const settingsProps = computed(() => ({
+  name: formData.name,
+  email: formData.email,
+  memberSince: memberSince.value,
+  isSaving: isSaving.value,
+  hasChanges: hasChanges.value,
+  saveError: saveError.value,
+  saveSuccess: saveSuccess.value,
+  currentPassword: passwordForm.currentPassword,
+  newPassword: passwordForm.newPassword,
+  confirmPassword: passwordForm.confirmPassword,
+  errors: passwordErrors,
+  isChanging: isChangingPassword.value,
+  success: passwordSuccess.value,
+  serverError: passwordServerError.value
+}))
+
+function isSettingsRoute(route: any) {
+  return route?.name?.includes('profile') && !route?.name?.includes('gradients') && !route?.name?.includes('shadows') && !route?.name?.includes('animations') && !route?.name?.includes('clip-paths')
+}
 
 function resetPasswordErrors() {
   passwordErrors.currentPassword = ''

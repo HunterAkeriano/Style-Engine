@@ -1,6 +1,8 @@
 <template>
   <section class="profile-hero">
-    <div class="profile-hero__top">
+    <div class="profile-hero__user">
+      <h3 class="profile-hero__name">{{ userName || email }}</h3>
+
       <div class="profile-hero__avatar">
         <div :class="['profile-hero__photo', { 'profile-hero__photo_premium': isPremiumUser }]">
           <img
@@ -22,14 +24,14 @@
         <div v-if="isPremiumUser" class="profile-hero__badge">Premium</div>
       </div>
 
-    <div class="profile-hero__meta">
-      <p class="profile-hero__label">{{ t('AUTH.EMAIL') }}</p>
-      <p class="profile-hero__value">{{ email }}</p>
-      <p class="profile-hero__label">{{ t('PROFILE.MEMBER_SINCE') }}</p>
-      <p class="profile-hero__value">{{ memberSince }}</p>
-      <p v-if="subscriptionUntil" class="profile-hero__label">{{ t('PROFILE.SUBSCRIPTION_UNTIL') }}</p>
-      <p v-if="subscriptionUntil" class="profile-hero__value">{{ subscriptionUntil }}</p>
-    </div>
+      <div class="profile-hero__meta">
+        <p class="profile-hero__label">{{ t('AUTH.EMAIL') }}</p>
+        <p class="profile-hero__value">{{ email }}</p>
+        <p class="profile-hero__label">{{ t('PROFILE.MEMBER_SINCE') }}</p>
+        <p class="profile-hero__value">{{ memberSince }}</p>
+        <p v-if="subscriptionUntil" class="profile-hero__label">{{ t('PROFILE.SUBSCRIPTION_UNTIL') }}</p>
+        <p v-if="subscriptionUntil" class="profile-hero__value">{{ subscriptionUntil }}</p>
+      </div>
     </div>
 
     <div class="profile-hero__controls">
@@ -80,6 +82,7 @@ interface Props {
   selectedFile: File | null
   uploadError: string | null
   email: string
+  userName?: string
   memberSince: string
   subscriptionUntil?: string
 }
