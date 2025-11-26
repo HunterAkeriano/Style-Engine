@@ -15,26 +15,24 @@
         class="clip-path-presets__card"
         @click="emit('apply', preset)"
       >
+        <div v-if="preset.owner" class="clip-path-presets__author">
+          <div class="clip-path-presets__avatar" :style="computeCreatorAvatarStyle(preset.owner)">
+            <span v-if="!preset.owner.avatarUrl">{{ computeCreatorInitials(preset.owner) }}</span>
+          </div>
+          <div>
+            <span class="clip-path-presets__author-name" :title="computeCreatorLabel(preset.owner)">
+              {{ computeCreatorLabel(preset.owner) }}
+            </span>
+            <span v-if="preset.owner.email" class="clip-path-presets__author-email">
+              {{ preset.owner.email }}
+            </span>
+          </div>
+        </div>
+
         <div class="clip-path-presets__preview" :style="getPreviewStyle(preset)" />
 
         <div class="clip-path-presets__content">
-          <div class="clip-path-presets__card-top">
-            <h3 class="clip-path-presets__card-title">{{ preset.name }}</h3>
-          </div>
-
-          <div v-if="preset.owner" class="clip-path-presets__author">
-            <div class="clip-path-presets__avatar" :style="computeCreatorAvatarStyle(preset.owner)">
-              <span v-if="!preset.owner.avatarUrl">{{ computeCreatorInitials(preset.owner) }}</span>
-            </div>
-            <div>
-              <span class="clip-path-presets__author-name" :title="computeCreatorLabel(preset.owner)">
-                {{ computeCreatorLabel(preset.owner) }}
-              </span>
-              <span v-if="preset.owner.email" class="clip-path-presets__author-email">
-                {{ preset.owner.email }}
-              </span>
-            </div>
-          </div>
+          <h3 class="clip-path-presets__card-title">{{ preset.name }}</h3>
 
           <div class="clip-path-presets__actions">
             <Button size="sm" variant="ghost" @click.stop="emit('copy', preset)">

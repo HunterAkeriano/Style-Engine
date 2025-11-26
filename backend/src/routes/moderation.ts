@@ -12,6 +12,8 @@ function tableForCategory(category: Category) {
       return 'saved_shadows'
     case 'animation':
       return 'saved_animations'
+    case 'clip-path':
+      return 'saved_clip_paths'
   }
 }
 
@@ -54,6 +56,9 @@ export function createModerationRouter(env: Env) {
        UNION ALL
        SELECT id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", 'animation' as category, created_at as "createdAt"
        FROM saved_animations WHERE status = 'pending'
+       UNION ALL
+       SELECT id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", 'clip-path' as category, created_at as "createdAt"
+       FROM saved_clip_paths WHERE status = 'pending'
        ORDER BY "createdAt" DESC`
     )
 
@@ -94,7 +99,7 @@ export function createModerationRouter(env: Env) {
    */
   router.post('/:category/:id/approve', auth, requireAdmin, async (req: AuthRequest, res) => {
     const category = req.params.category as Category
-    if (!['gradient', 'shadow', 'animation'].includes(category)) {
+    if (!['gradient', 'shadow', 'animation', 'clip-path'].includes(category)) {
       return res.status(400).json({ message: 'Invalid category' })
     }
     const table = tableForCategory(category)

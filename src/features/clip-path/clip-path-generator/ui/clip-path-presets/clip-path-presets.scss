@@ -59,43 +59,43 @@
     }
   }
 
-  &__preview {
-    width: 100%;
-    aspect-ratio: 1;
-    background:
-      linear-gradient(45deg, color-var-alpha('color-border', 0.1) 25%, transparent 25%),
-      linear-gradient(-45deg, color-var-alpha('color-border', 0.1) 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, color-var-alpha('color-border', 0.1) 75%),
-      linear-gradient(-45deg, transparent 75%, color-var-alpha('color-border', 0.1) 75%);
-    background-size: 20px 20px;
-    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-  }
-
-  &__content {
-    padding: $space-md;
-  }
-
-  &__card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: $space-sm;
-  }
-
-  &__card-title {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 700;
-    color: $color-text-primary;
-  }
-
   &__author {
+    position: absolute;
+    top: $space-md;
+    left: $space-md;
+    right: $space-md;
+    z-index: 2;
     display: flex;
     align-items: center;
     gap: $space-xs;
-    margin-top: $space-sm;
+    padding: $space-sm;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: $border-radius-md;
     font-size: $font-size-xs;
     color: $color-text-secondary;
+  }
+
+  &__preview {
+    width: 100%;
+    aspect-ratio: 1;
+  }
+
+  &__content {
+    position: absolute;
+    left: $space-md;
+    right: $space-md;
+    bottom: $space-md;
+    z-index: 1;
+  }
+
+  &__card-title {
+    margin: 0 0 $space-sm;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    padding: $space-sm $space-md;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: $border-radius-md;
   }
 
   &__avatar {
@@ -115,7 +115,7 @@
     display: block;
     max-width: 140px;
     font-weight: $font-weight-semibold;
-    color: $color-text-primary;
+    color: white;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -133,7 +133,6 @@
   &__actions {
     display: flex;
     gap: $space-sm;
-    margin-top: $space-md;
     transform: translate3d(0, 140%, 0);
     opacity: 0;
     transition: transform 160ms ease, opacity 160ms ease;

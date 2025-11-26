@@ -124,7 +124,6 @@ import {
   listPublicSaves,
   type SavedItem,
   createSave,
-  listSaves,
   type SaveCategory
 } from '@/shared/api/saves'
 import { useAuthStore } from '@/entities'
@@ -187,7 +186,6 @@ const saveContext = ref<{
   defaultName: string
 } | null>(null)
 const proQuota = ref<SaveQuotaResult | null>(null)
-const savedClipPathHashes = ref<Set<string>>(new Set())
 const proSaveLimit = getUserLimit(SubscriptionTier.PRO, 'savedTemplates')
 
 function getUserTier(): SubscriptionTier | undefined {
@@ -422,7 +420,6 @@ async function confirmSaveClipPath(name: string) {
   try {
     await createSave('clip-path' as SaveCategory, finalName, context.payload)
     toast.success(t('COMMON.SAVE_SUCCESS', { entity: entityLabel.value }))
-    savedClipPathHashes.value.add(JSON.stringify(context.payload))
   } catch (error: any) {
     if (error?.status === 403) {
       proQuota.value = {
@@ -530,8 +527,8 @@ async function handleSavePreset(preset: ClipPathPreset) {
   showSaveModal.value = true
 }
 
-function isPresetSaved(preset: ClipPathPreset) {
-  return savedClipPathHashes.value.has(presetHash(preset))
+function isPresetSaved(_preset: ClipPathPreset) {
+  return false
 }
 
 function updatePresetQuery(presetId: string | null) {
@@ -626,24 +623,9 @@ async function loadCommunityPresets() {
   }
 }
 
-async function loadSavedClipPaths() {
-  if (!authStore.isAuthenticated) {
-    savedClipPathHashes.value = new Set()
-    return
-  }
-
-  try {
-    const saved = await listSaves('clip-path')
-    savedClipPathHashes.value = new Set(saved.map(item => JSON.stringify(item.payload)))
-  } catch (error) {
-    console.warn('Failed to load saved clip paths', error)
-  }
-}
-
 onMounted(() => {
   applyPresetFromQuery(route.query.preset)
   loadCommunityPresets()
-  loadSavedClipPaths()
 })
 
 watch(

@@ -61,6 +61,9 @@
                   <div class="moderation-page__shadow-box" :style="shadowStyle(item.payload)" />
                 </div>
               </div>
+              <div class="moderation-page__preview" v-else-if="group.key === 'clip-path' && clipPathStyle(item.payload)">
+                <div class="moderation-page__clip-path" :style="clipPathStyle(item.payload)" />
+              </div>
               <div class="moderation-page__preview" v-else-if="group.key === 'animation'">
                 <pre class="moderation-page__payload moderation-page__payload_compact">{{ animationSnippet(item.payload) }}</pre>
               </div>
@@ -92,7 +95,7 @@ const approvingId = ref<string | null>(null)
 const error = ref('')
 
 const categoryGroups = computed<{ key: string; items: SavedItem[] }[]>(() => {
-  const groups: Record<string, SavedItem[]> = { gradient: [], shadow: [], animation: [] }
+  const groups: Record<string, SavedItem[]> = { gradient: [], shadow: [], animation: [], 'clip-path': [] }
   items.value.forEach(item => {
     const key = item.category ?? 'other'
     if (!groups[key]) {
@@ -103,7 +106,8 @@ const categoryGroups = computed<{ key: string; items: SavedItem[] }[]>(() => {
   return [
     { key: 'gradient', items: groups.gradient },
     { key: 'shadow', items: groups.shadow },
-    { key: 'animation', items: groups.animation }
+    { key: 'animation', items: groups.animation },
+    { key: 'clip-path', items: groups['clip-path'] }
   ]
 })
 
@@ -150,6 +154,39 @@ function shadowStyle(payload: any) {
     })
     .join(', ')
   return { boxShadow }
+}
+
+function clipPathStyle(payload: any) {
+  const layers = Array.isArray(payload?.layers) ? payload.layers : []
+  if (!layers.length) return null
+
+  const clipPathValue = layers
+    .map((layer: any) => {
+      const { type, value } = layer
+      if (type === 'polygon' && value) {
+        return `polygon(${value})`
+      }
+      if (type === 'circle' && value) {
+        return `circle(${value})`
+      }
+      if (type === 'ellipse' && value) {
+        return `ellipse(${value})`
+      }
+      if (type === 'inset' && value) {
+        return `inset(${value})`
+      }
+      return null
+    })
+    .filter(Boolean)[0]
+
+  if (!clipPathValue) return null
+
+  return {
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    clipPath: clipPathValue,
+    width: '100%',
+    height: '200px'
+  }
 }
 
 function animationSnippet(payload: any) {

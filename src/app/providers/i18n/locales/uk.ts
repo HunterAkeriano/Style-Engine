@@ -691,6 +691,7 @@ export default {
     CATEGORY_GRADIENT: 'Градієнт',
     CATEGORY_SHADOW: 'Тінь',
     CATEGORY_ANIMATION: 'Анімація',
+    'CATEGORY_CLIP-PATH': 'Clip Path',
     USERS_TITLE: 'Керування користувачами',
     USERS_SUBTITLE: 'Оновлюйте email, імʼя, паролі та плани.',
     USERS_FILTER_LABEL: 'План',

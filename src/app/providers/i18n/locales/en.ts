@@ -680,6 +680,7 @@ export default {
     CATEGORY_GRADIENT: 'Gradient',
     CATEGORY_SHADOW: 'Shadow',
     CATEGORY_ANIMATION: 'Animation',
+    'CATEGORY_CLIP-PATH': 'Clip Path',
     USERS_TITLE: 'User management',
     USERS_SUBTITLE: 'Update accounts, rename emails, and adjust subscription tiers.',
     USERS_FILTER_LABEL: 'Plan',
