@@ -47,14 +47,14 @@
             <RouterView v-slot="{ Component, route }">
               <component
                 :is="Component"
-                v-bind="isSettingsRoute(route) ? settingsProps : {}"
-                @update:name="isSettingsRoute(route) ? updateName : undefined"
-                @submit="isSettingsRoute(route) ? handleProfileUpdate : undefined"
-                @update:currentPassword="isSettingsRoute(route) ? (value: string) => (passwordForm.currentPassword = value) : undefined"
-                @update:newPassword="isSettingsRoute(route) ? (value: string) => (passwordForm.newPassword = value) : undefined"
-                @update:confirmPassword="isSettingsRoute(route) ? (value: string) => (passwordForm.confirmPassword = value) : undefined"
-                @reset-errors="isSettingsRoute(route) ? resetPasswordErrors : undefined"
-                @submit-password="isSettingsRoute(route) ? handlePasswordChange : undefined"
+                v-bind="settingsProps"
+                @update:name="updateName"
+                @submit="handleProfileUpdate"
+                @update:currentPassword="(value: string) => (passwordForm.currentPassword = value)"
+                @update:newPassword="(value: string) => (passwordForm.newPassword = value)"
+                @update:confirmPassword="(value: string) => (passwordForm.confirmPassword = value)"
+                @reset-errors="resetPasswordErrors"
+                @submit-password="handlePasswordChange"
               />
             </RouterView>
           </main>
@@ -69,6 +69,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { RouterView } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { authAPI, type User } from '@/shared/api/auth'
+import { useAuthStore } from '@/entities'
 import { useTheme } from '@/shared/composables/use-theme'
 import { changePasswordSchema, type ChangePasswordForm } from '@/shared/lib/validation/auth'
 import ProfileHero from '@/widgets/profile/ProfileHero.vue'
@@ -77,6 +78,7 @@ import './profile-page.scss'
 
 const { t, locale } = useI18n()
 const { isDark } = useTheme()
+const authStore = useAuthStore()
 
 const mouseX = ref(0)
 const mouseY = ref(0)
@@ -174,7 +176,8 @@ const settingsProps = computed(() => ({
 }))
 
 function isSettingsRoute(route: any) {
-  return route?.name?.includes('profile') && !route?.name?.includes('gradients') && !route?.name?.includes('shadows') && !route?.name?.includes('animations') && !route?.name?.includes('clip-paths')
+  const routeName = route?.name
+  return routeName === `${locale.value}-profile`
 }
 
 function resetPasswordErrors() {
@@ -268,7 +271,9 @@ async function handleProfileUpdate() {
       name: formData.name || undefined
     })
     user.value = response.user
+    formData.name = response.user.name || ''
     originalName.value = response.user.name || ''
+    authStore.setUser(response.user)
     saveSuccess.value = true
 
     setTimeout(() => {

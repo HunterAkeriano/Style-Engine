@@ -14,6 +14,7 @@
         type="password"
         :label="t('AUTH.CURRENT_PASSWORD')"
         :error="errors.currentPassword ? t(`VALIDATION.${errors.currentPassword}`) : ''"
+        :show-password-toggle="true"
         @update:modelValue="onUpdate('currentPassword', $event as string)"
       />
     </div>
@@ -25,6 +26,7 @@
         type="password"
         :label="t('AUTH.NEW_PASSWORD')"
         :error="errors.newPassword ? t(`VALIDATION.${errors.newPassword}`) : ''"
+        :show-password-toggle="true"
         @update:modelValue="onUpdate('newPassword', $event as string)"
       />
     </div>
@@ -36,6 +38,7 @@
         type="password"
         :label="t('AUTH.CONFIRM_PASSWORD')"
         :error="errors.confirmPassword ? t(`VALIDATION.${errors.confirmPassword}`) : ''"
+        :show-password-toggle="true"
         @update:modelValue="onUpdate('confirmPassword', $event as string)"
       />
     </div>
