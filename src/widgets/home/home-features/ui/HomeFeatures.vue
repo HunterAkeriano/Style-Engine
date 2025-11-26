@@ -28,6 +28,22 @@
             {{ t('HOME.ANIMATION_BUTTON') }} →
           </NavLink>
         </div>
+
+        <div class="home-features__card">
+          <h3 class="home-features__card-title">{{ t('HOME.FEATURES_CLIPPATH_TITLE') }}</h3>
+          <p class="home-features__card-description">{{ t('HOME.FEATURES_CLIPPATH_DESCRIPTION') }}</p>
+          <NavLink to="/clip-path" class-name="home-features__card-link">
+            {{ t('HOME.CLIPPATH_BUTTON') }} →
+          </NavLink>
+        </div>
+
+        <div class="home-features__card">
+          <h3 class="home-features__card-title">{{ t('HOME.FEATURES_GRID_TITLE') }}</h3>
+          <p class="home-features__card-description">{{ t('HOME.FEATURES_GRID_DESCRIPTION') }}</p>
+          <NavLink to="/grid" class-name="home-features__card-link">
+            {{ t('HOME.GRID_BUTTON') }} →
+          </NavLink>
+        </div>
       </div>
     </section>
   </div>

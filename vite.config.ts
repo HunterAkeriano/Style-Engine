@@ -20,6 +20,7 @@ const ssgPublicRoutes = [
   '/shadow',
   '/animation',
   '/clip-path',
+  '/grid',
   '/privacy-policy',
   '/cookie-policy'
 ];

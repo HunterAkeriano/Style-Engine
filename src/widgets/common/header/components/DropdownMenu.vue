@@ -11,7 +11,7 @@
     </button>
 
     <transition name="dropdown-fade">
-      <div v-if="isOpen" class="dropdown-menu__content">
+      <div v-if="isOpen" class="dropdown-menu__content" @click="handleContentClick">
         <slot />
       </div>
     </transition>
@@ -41,6 +41,17 @@ function handleMouseLeave() {
   closeTimeout = setTimeout(() => {
     isOpen.value = false
   }, 200)
+}
+
+function handleContentClick(event: MouseEvent) {
+  const target = event.target as HTMLElement
+  if (target.tagName === 'A' || target.closest('a')) {
+    isOpen.value = false
+    if (closeTimeout) {
+      clearTimeout(closeTimeout)
+      closeTimeout = null
+    }
+  }
 }
 </script>
 

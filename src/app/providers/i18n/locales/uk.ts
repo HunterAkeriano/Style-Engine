@@ -36,6 +36,8 @@ export default {
     GRADIENT_BUTTON: 'Генератор градієнтів',
     SHADOW_BUTTON: 'Генератор тіней',
     ANIMATION_BUTTON: 'Генератор анімацій',
+    CLIPPATH_BUTTON: 'Генератор Clip Path',
+    GRID_BUTTON: 'Генератор сіток',
     ABOUT_TAG: 'Що це',
     ABOUT_TITLE: 'Лабораторія дизайну градієнтів, тіней і руху',
     ABOUT_TEXT:
@@ -54,6 +56,12 @@ export default {
     FEATURES_ANIMATION_TITLE: 'Бібліотека анімацій',
     FEATURES_ANIMATION_DESCRIPTION:
       '40+ готових CSS‑анімацій з живим превʼю. Копіюйте HTML і CSS або налаштовуйте таймінг, easing і трансформи в конструкторі.',
+    FEATURES_CLIPPATH_TITLE: 'Генератор Clip Path',
+    FEATURES_CLIPPATH_DESCRIPTION:
+      'Проєктуйте власні CSS clip-path форми з візуальним редактором. Створюйте полігони, кола, еліпси та вставки. Шаруйте форми та експортуйте готовий код.',
+    FEATURES_GRID_TITLE: 'Генератор сіток',
+    FEATURES_GRID_DESCRIPTION:
+      'Створюйте складні CSS Grid макети з точною настройкою. Визначайте колонки, рядки, проміжки та розміщення елементів. Миттєве превʼю та готовий HTML з CSS.',
     SHOWCASE_TAG: 'Живі приклади',
     SHOWCASE_TITLE: 'Подивіться, що можна зібрати',
     SHOWCASE_ANIMATION_LABEL: 'Голографічна мрія',
