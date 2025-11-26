@@ -481,10 +481,6 @@ function applyPreset(preset: ClipPathPreset) {
   smoothScrollToTop()
 }
 
-function presetHash(preset: ClipPathPreset) {
-  return JSON.stringify({ layers: preset.layers })
-}
-
 function setPresetState(preset: ClipPathPreset) {
   layers.value = preset.layers.map((layer, layerIndex) => {
     const newLayer: ClipPathLayer = {
@@ -527,7 +523,7 @@ async function handleSavePreset(preset: ClipPathPreset) {
   showSaveModal.value = true
 }
 
-function isPresetSaved(_preset: ClipPathPreset) {
+function isPresetSaved() {
   return false
 }
 

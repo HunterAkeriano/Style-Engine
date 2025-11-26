@@ -1,4 +1,3 @@
-import { ref } from 'vue'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import CodeExport from './CodeExport.vue'
 import type { SelectOption } from '@/shared/ui'
@@ -34,88 +33,58 @@ const gradientCode = {
   inline: `style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"`
 }
 
+const getGradientCode = (format: string | number) => {
+  return gradientCode[format as keyof typeof gradientCode] || gradientCode.css
+}
+
 export const Default: Story = {
-  render: args => ({
-    components: { CodeExport },
-    setup() {
-      const getCode = (format: string) => {
-        return gradientCode[format as keyof typeof gradientCode] || gradientCode.css
-      }
-      return { args, getCode }
-    },
-    template: '<CodeExport v-bind="args" :getCode="getCode" />'
-  })
+  args: {
+    getCode: getGradientCode
+  }
+}
+
+const customFormats: SelectOption[] = [
+  { label: 'JavaScript', value: 'js' },
+  { label: 'TypeScript', value: 'ts' },
+  { label: 'JSON', value: 'json' }
+]
+
+const codeMap = {
+  js: `const gradient = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';`,
+  ts: `const gradient: string = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';`,
+  json: `{\n  "gradient": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"\n}`
+}
+
+const getCustomCode = (format: string | number) => {
+  return codeMap[format as keyof typeof codeMap] || codeMap.js
 }
 
 export const WithCustomFormats: Story = {
-  render: args => ({
-    components: { CodeExport },
-    setup() {
-      const customFormats: SelectOption[] = [
-        { label: 'JavaScript', value: 'js' },
-        { label: 'TypeScript', value: 'ts' },
-        { label: 'JSON', value: 'json' }
-      ]
-
-      const codeMap = {
-        js: `const gradient = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';`,
-        ts: `const gradient: string = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';`,
-        json: `{\n  "gradient": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"\n}`
-      }
-
-      const getCode = (format: string) => {
-        return codeMap[format as keyof typeof codeMap] || codeMap.js
-      }
-
-      return { args, getCode, customFormats }
-    },
-    template: '<CodeExport v-bind="args" :getCode="getCode" :formatOptions="customFormats" />'
-  }),
   args: {
     title: 'Custom Formats',
-    filename: 'config'
+    filename: 'config',
+    getCode: getCustomCode,
+    formatOptions: customFormats
   }
 }
 
 export const WithoutSaveButton: Story = {
-  render: args => ({
-    components: { CodeExport },
-    setup() {
-      const getCode = (format: string) => {
-        return gradientCode[format as keyof typeof gradientCode] || gradientCode.css
-      }
-      return { args, getCode }
-    },
-    template: '<CodeExport v-bind="args" :getCode="getCode" />'
-  }),
   args: {
-    showSaveButton: false
+    showSaveButton: false,
+    getCode: getGradientCode
   }
 }
 
 export const ExportDisabled: Story = {
-  render: args => ({
-    components: { CodeExport },
-    setup() {
-      const getCode = (format: string) => {
-        return gradientCode[format as keyof typeof gradientCode] || gradientCode.css
-      }
-      return { args, getCode }
-    },
-    template: '<CodeExport v-bind="args" :getCode="getCode" />'
-  }),
   args: {
     allowExport: false,
-    title: 'Export Disabled'
+    title: 'Export Disabled',
+    getCode: getGradientCode
   }
 }
 
-export const LongCode: Story = {
-  render: args => ({
-    components: { CodeExport },
-    setup() {
-      const longCodeMap = {
-        css: `/* Complex gradient */
+const longCodeMap = {
+  css: `/* Complex gradient */
 .gradient-box {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 12px;
@@ -128,7 +97,7 @@ export const LongCode: Story = {
   transform: translateY(-5px);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
 }`,
-        scss: `// Complex gradient
+  scss: `// Complex gradient
 $gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 
 .gradient-box {
@@ -143,7 +112,7 @@ $gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
   }
 }`,
-        sass: `// Complex gradient
+  sass: `// Complex gradient
 $gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
 
 .gradient-box
@@ -156,7 +125,7 @@ $gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
   &:hover
     transform: translateY(-5px)
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3)`,
-        stylus: `// Complex gradient
+  stylus: `// Complex gradient
 gradient-primary = linear-gradient(135deg, #667eea 0%, #764ba2 100%)
 
 .gradient-box
@@ -169,18 +138,17 @@ gradient-primary = linear-gradient(135deg, #667eea 0%, #764ba2 100%)
   &:hover
     transform translateY(-5px)
     box-shadow 0 15px 40px rgba(0, 0, 0, 0.3)`,
-        inline: `style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 2rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); transition: all 0.3s ease;"`
-      }
+  inline: `style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 2rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); transition: all 0.3s ease;"`
+}
 
-      const getCode = (format: string) => {
-        return longCodeMap[format as keyof typeof longCodeMap] || longCodeMap.css
-      }
-      return { args, getCode }
-    },
-    template: '<CodeExport v-bind="args" :getCode="getCode" />'
-  }),
+const getLongCode = (format: string | number) => {
+  return longCodeMap[format as keyof typeof longCodeMap] || longCodeMap.css
+}
+
+export const LongCode: Story = {
   args: {
     title: 'Complex Styles',
-    filename: 'gradient-box'
+    filename: 'gradient-box',
+    getCode: getLongCode
   }
 }

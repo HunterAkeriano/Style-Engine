@@ -50,9 +50,9 @@
                 v-bind="isSettingsRoute(route) ? settingsProps : {}"
                 @update:name="isSettingsRoute(route) ? updateName : undefined"
                 @submit="isSettingsRoute(route) ? handleProfileUpdate : undefined"
-                @update:currentPassword="isSettingsRoute(route) ? (value) => (passwordForm.currentPassword = value) : undefined"
-                @update:newPassword="isSettingsRoute(route) ? (value) => (passwordForm.newPassword = value) : undefined"
-                @update:confirmPassword="isSettingsRoute(route) ? (value) => (passwordForm.confirmPassword = value) : undefined"
+                @update:currentPassword="isSettingsRoute(route) ? (value: string) => (passwordForm.currentPassword = value) : undefined"
+                @update:newPassword="isSettingsRoute(route) ? (value: string) => (passwordForm.newPassword = value) : undefined"
+                @update:confirmPassword="isSettingsRoute(route) ? (value: string) => (passwordForm.confirmPassword = value) : undefined"
                 @reset-errors="isSettingsRoute(route) ? resetPasswordErrors : undefined"
                 @submit-password="isSettingsRoute(route) ? handlePasswordChange : undefined"
               />
