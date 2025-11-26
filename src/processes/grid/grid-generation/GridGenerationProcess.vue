@@ -191,7 +191,6 @@ const gridContainerStyle = computed(() => ({
 }))
 
 function findFreeCell(): { column: number; row: number } {
-  // Создаем карту занятых ячеек
   const occupiedCells = new Set<string>()
 
   gridItems.value.forEach(item => {
@@ -202,7 +201,6 @@ function findFreeCell(): { column: number; row: number } {
     }
   })
 
-  // Ищем первую свободную ячейку
   for (let row = 1; row <= rows.value; row++) {
     for (let col = 1; col <= columns.value; col++) {
       if (!occupiedCells.has(`${row}-${col}`)) {
@@ -211,7 +209,6 @@ function findFreeCell(): { column: number; row: number } {
     }
   }
 
-  // Если все ячейки заняты, возвращаем первую ячейку
   return { column: 1, row: 1 }
 }
 
@@ -256,7 +253,6 @@ function generateCSS(format: string): string {
     return generateInlineCSS()
   }
 
-  // Format-specific settings
   const indent = '  '
   const useBraces = format !== 'sass' && format !== 'stylus'
   const useColon = format !== 'stylus'
@@ -264,7 +260,6 @@ function generateCSS(format: string): string {
 
   let css = ''
 
-  // Grid container
   css += `.grid-container${useBraces ? ' {' : ''}\n`
   css += `${indent}display${useColon ? ':' : ''} grid${useSemicolon ? ';' : ''}\n`
   css += `${indent}grid-template-columns${useColon ? ':' : ''} ${style.gridTemplateColumns}${useSemicolon ? ';' : ''}\n`
@@ -273,7 +268,6 @@ function generateCSS(format: string): string {
   if (useBraces) css += '}\n\n'
   else css += '\n'
 
-  // Grid items
   gridItems.value.forEach((item, index) => {
     css += `.grid-item-${index + 1}${useBraces ? ' {' : ''}\n`
     css += `${indent}grid-column${useColon ? ':' : ''} ${item.columnStart} / ${item.columnEnd}${useSemicolon ? ';' : ''}\n`
@@ -311,7 +305,6 @@ function applyPreset(preset: GridPreset) {
   customColumns.value = preset.customColumns
   customRows.value = preset.customRows
 
-  // Recreate items with proper IDs
   gridItems.value = preset.items.map((item, index) => ({
     id: `${index + 1}`,
     label: item.label,
