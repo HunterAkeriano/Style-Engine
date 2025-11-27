@@ -180,4 +180,120 @@
       max-height: 220px;
     }
   }
+
+  &__tabs {
+    display: flex;
+    gap: $space-sm;
+    margin-bottom: $space-xl;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  &__tab {
+    padding: $space-md $space-lg;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: $color-text-secondary;
+    cursor: pointer;
+    font-size: $font-size-xs;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: $color-text-primary;
+    }
+
+    &_active {
+      color: $color-primary;
+      border-bottom-color: $color-primary;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: $space-sm;
+  }
+
+  &__edit {
+    padding: $space-sm $space-md;
+    border-radius: $border-radius-md;
+    border: 1px solid $color-primary;
+    background: transparent;
+    color: $color-text-primary;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      background: $color-primary;
+      color: $color-text-primary;
+    }
+  }
+
+  &__delete {
+    padding: $space-sm $space-md;
+    border-radius: $border-radius-md;
+    border: 1px solid $color-error;
+    background: transparent;
+    color: $color-error;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background: $color-error;
+      color: $color-text-primary;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__name-edit {
+    display: flex;
+    gap: $space-sm;
+    align-items: center;
+  }
+
+  &__name-input {
+    padding: $space-xs $space-sm;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: $border-radius-md;
+    color: $color-text-primary;
+    font-size: $font-size-xs;
+    outline: none;
+    min-width: 200px;
+
+    &:focus {
+      border-color: $color-primary;
+    }
+  }
+
+  &__save-btn {
+    padding: $space-xs $space-sm;
+    border-radius: $border-radius-md;
+    border: none;
+    background: $color-success;
+    color: $color-text-primary;
+    cursor: pointer;
+    font-size: $font-size-sm;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+
+  &__cancel-btn {
+    padding: $space-xs $space-sm;
+    border-radius: $border-radius-md;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: $color-text-secondary;
+    cursor: pointer;
+    font-size: $font-size-sm;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
 }

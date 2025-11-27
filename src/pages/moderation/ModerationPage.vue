@@ -6,19 +6,38 @@
         <h1 class="moderation-page__title">{{ t('MODERATION.TITLE') }}</h1>
         <p class="moderation-page__subtitle">{{ t('MODERATION.SUBTITLE') }}</p>
       </div>
-      <button class="moderation-page__refresh" type="button" @click="fetchPending" :disabled="loading">
+      <button class="moderation-page__refresh" type="button" @click="fetchItems" :disabled="loading">
         {{ loading ? t('MODERATION.LOADING') : t('MODERATION.REFRESH') }}
+      </button>
+    </div>
+
+    <div class="moderation-page__tabs">
+      <button
+        class="moderation-page__tab"
+        :class="{ 'moderation-page__tab_active': activeTab === 'pending' }"
+        type="button"
+        @click="activeTab = 'pending'"
+      >
+        {{ t('MODERATION.TAB_PENDING') }} ({{ items.length }})
+      </button>
+      <button
+        class="moderation-page__tab"
+        :class="{ 'moderation-page__tab_active': activeTab === 'approved' }"
+        type="button"
+        @click="activeTab = 'approved'"
+      >
+        {{ t('MODERATION.TAB_APPROVED') }} ({{ approvedItems.length }})
       </button>
     </div>
 
     <div v-if="error" class="moderation-page__error">{{ error }}</div>
 
-    <div v-if="loading && !items.length" class="moderation-page__empty">
+    <div v-if="loading && !currentItems.length" class="moderation-page__empty">
       {{ t('MODERATION.LOADING') }}
     </div>
 
-    <div v-else-if="!items.length" class="moderation-page__empty">
-      {{ t('MODERATION.EMPTY') }}
+    <div v-else-if="!currentItems.length" class="moderation-page__empty">
+      {{ activeTab === 'pending' ? t('MODERATION.EMPTY') : t('MODERATION.EMPTY_APPROVED') }}
     </div>
 
     <div v-else class="moderation-page__groups">
@@ -39,16 +58,53 @@
               <div class="moderation-page__card-head">
                 <div>
                   <p class="moderation-page__category">{{ t(`MODERATION.CATEGORY_${group.key.toUpperCase()}`) }}</p>
-                  <h3 class="moderation-page__name">{{ item.name }}</h3>
+                  <div v-if="activeTab === 'approved' && editingId === item.id" class="moderation-page__name-edit">
+                    <input
+                      v-model="editingName"
+                      type="text"
+                      class="moderation-page__name-input"
+                      @keydown.enter="saveEdit(item)"
+                      @keydown.esc="cancelEdit"
+                    />
+                    <button class="moderation-page__save-btn" type="button" @click="saveEdit(item)">
+                      {{ t('MODERATION.SAVE') }}
+                    </button>
+                    <button class="moderation-page__cancel-btn" type="button" @click="cancelEdit">
+                      {{ t('MODERATION.CANCEL') }}
+                    </button>
+                  </div>
+                  <h3 v-else class="moderation-page__name" @dblclick="activeTab === 'approved' && startEdit(item)">
+                    {{ item.name }}
+                  </h3>
                 </div>
-                <button
-                  class="moderation-page__approve"
-                  type="button"
-                  :disabled="approvingId === item.id"
-                  @click="approve(item)"
-                >
-                  {{ approvingId === item.id ? t('MODERATION.APPROVING') : t('MODERATION.APPROVE') }}
-                </button>
+                <div class="moderation-page__actions">
+                  <button
+                    v-if="activeTab === 'pending'"
+                    class="moderation-page__approve"
+                    type="button"
+                    :disabled="approvingId === item.id"
+                    @click="approve(item)"
+                  >
+                    {{ approvingId === item.id ? t('MODERATION.APPROVING') : t('MODERATION.APPROVE') }}
+                  </button>
+                  <template v-else>
+                    <button
+                      class="moderation-page__edit"
+                      type="button"
+                      @click="startEdit(item)"
+                    >
+                      {{ t('MODERATION.EDIT') }}
+                    </button>
+                    <button
+                      class="moderation-page__delete"
+                      type="button"
+                      :disabled="deletingId === item.id"
+                      @click="deleteItem(item)"
+                    >
+                      {{ deletingId === item.id ? t('MODERATION.DELETING') : t('MODERATION.DELETE') }}
+                    </button>
+                  </template>
+                </div>
               </div>
               <p class="moderation-page__date">
                 {{ t('MODERATION.SUBMITTED') }} {{ new Date(item.createdAt).toLocaleString() }}
@@ -82,6 +138,9 @@ import { useI18n } from 'vue-i18n'
 import {
   approveSubmission,
   listPendingModeration,
+  listApprovedModeration,
+  updateModerationItem,
+  deleteModerationItem,
   type SavedItem,
   type SaveCategory
 } from '@/shared/api/saves'
@@ -90,13 +149,22 @@ import { Breadcrumbs } from '@/widgets/common'
 const { t } = useI18n()
 
 const items = ref<SavedItem[]>([])
+const approvedItems = ref<SavedItem[]>([])
 const loading = ref(false)
 const approvingId = ref<string | null>(null)
+const deletingId = ref<string | null>(null)
+const editingId = ref<string | null>(null)
+const editingName = ref('')
 const error = ref('')
+const activeTab = ref<'pending' | 'approved'>('pending')
+
+const currentItems = computed(() => {
+  return activeTab.value === 'pending' ? items.value : approvedItems.value
+})
 
 const categoryGroups = computed<{ key: string; items: SavedItem[] }[]>(() => {
   const groups: Record<string, SavedItem[]> = { gradient: [], shadow: [], animation: [], 'clip-path': [] }
-  items.value.forEach(item => {
+  currentItems.value.forEach(item => {
     const key = item.category ?? 'other'
     if (!groups[key]) {
       groups[key] = []
@@ -210,6 +278,26 @@ async function fetchPending() {
   }
 }
 
+async function fetchApproved() {
+  loading.value = true
+  error.value = ''
+  try {
+    approvedItems.value = await listApprovedModeration()
+  } catch (err: any) {
+    error.value = err?.message || t('MODERATION.LOAD_ERROR')
+  } finally {
+    loading.value = false
+  }
+}
+
+async function fetchItems() {
+  if (activeTab.value === 'pending') {
+    await fetchPending()
+  } else {
+    await fetchApproved()
+  }
+}
+
 async function approve(item: SavedItem) {
   if (!item.category) return
   approvingId.value = item.id
@@ -224,7 +312,50 @@ async function approve(item: SavedItem) {
   }
 }
 
-onMounted(fetchPending)
+function startEdit(item: SavedItem) {
+  editingId.value = item.id
+  editingName.value = item.name
+}
+
+function cancelEdit() {
+  editingId.value = null
+  editingName.value = ''
+}
+
+async function saveEdit(item: SavedItem) {
+  if (!item.category || !editingName.value.trim()) return
+  error.value = ''
+  try {
+    await updateModerationItem(item.category as SaveCategory, item.id, editingName.value.trim())
+    const itemIndex = approvedItems.value.findIndex(i => i.id === item.id)
+    if (itemIndex !== -1) {
+      approvedItems.value[itemIndex].name = editingName.value.trim()
+    }
+    cancelEdit()
+  } catch (err: any) {
+    error.value = err?.message || t('MODERATION.UPDATE_ERROR')
+  }
+}
+
+async function deleteItem(item: SavedItem) {
+  if (!item.category) return
+  if (!confirm(t('MODERATION.DELETE_CONFIRM'))) return
+  deletingId.value = item.id
+  error.value = ''
+  try {
+    await deleteModerationItem(item.category as SaveCategory, item.id)
+    approvedItems.value = approvedItems.value.filter(i => i.id !== item.id)
+  } catch (err: any) {
+    error.value = err?.message || t('MODERATION.DELETE_ERROR')
+  } finally {
+    deletingId.value = null
+  }
+}
+
+onMounted(() => {
+  fetchPending()
+  fetchApproved()
+})
 </script>
 
 <style scoped lang="scss" src="./ModerationPage.scss"></style>

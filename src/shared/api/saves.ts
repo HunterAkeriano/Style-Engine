@@ -54,11 +54,31 @@ export async function listPendingModeration(): Promise<SavedItem[]> {
   return response.data.items
 }
 
+export async function listApprovedModeration(): Promise<SavedItem[]> {
+  const response = await api.get<{ items: SavedItem[] }>('/moderation/approved', {
+    headers: authHeaders()
+  })
+  return response.data.items
+}
+
 export async function approveSubmission(category: SaveCategory, id: string): Promise<SavedItem> {
   const response = await api.post<{ item: SavedItem }>(`/moderation/${category}/${id}/approve`, undefined, {
     headers: authHeaders()
   })
   return response.data.item
+}
+
+export async function updateModerationItem(category: SaveCategory, id: string, name: string): Promise<SavedItem> {
+  const response = await api.put<{ item: SavedItem }>(`/moderation/${category}/${id}`, { name }, {
+    headers: authHeaders()
+  })
+  return response.data.item
+}
+
+export async function deleteModerationItem(category: SaveCategory, id: string): Promise<void> {
+  await api.delete(`/moderation/${category}/${id}`, {
+    headers: authHeaders()
+  })
 }
 
 export async function createSave(category: SaveCategory, name: string, payload: Record<string, unknown>): Promise<SavedItem> {

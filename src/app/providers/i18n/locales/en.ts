@@ -669,9 +669,12 @@ export default {
     USER_MODAL_DURATION: 'Subscription duration',
     USER_MODAL_DURATION_MONTH: '1 month',
     USER_MODAL_DURATION_FOREVER: 'Lifetime',
+    TAB_PENDING: 'Pending',
+    TAB_APPROVED: 'Approved',
     REFRESH: 'Refresh',
     LOADING: 'Loading...',
     EMPTY: 'No items waiting for review.',
+    EMPTY_APPROVED: 'No approved items yet.',
     LOAD_ERROR: 'Failed to load moderation queue',
     APPROVE: 'Approve',
     APPROVING: 'Approving...',
@@ -681,6 +684,14 @@ export default {
     CATEGORY_SHADOW: 'Shadow',
     CATEGORY_ANIMATION: 'Animation',
     'CATEGORY_CLIP-PATH': 'Clip Path',
+    EDIT: 'Edit',
+    DELETE: 'Delete',
+    DELETING: 'Deleting...',
+    SAVE: 'Save',
+    CANCEL: 'Cancel',
+    UPDATE_ERROR: 'Failed to update item',
+    DELETE_ERROR: 'Failed to delete item',
+    DELETE_CONFIRM: 'Are you sure you want to delete this item? This cannot be undone.',
     USERS_TITLE: 'User management',
     USERS_SUBTITLE: 'Update accounts, rename emails, and adjust subscription tiers.',
     USERS_FILTER_LABEL: 'Plan',
@@ -692,8 +703,6 @@ export default {
       CREATED: 'Created',
       ACTIONS: 'Actions'
     },
-    EDIT: 'Edit',
-    DELETE: 'Remove',
     UNIT: {
       FREE: 'Free',
       PRO: 'Pro',
@@ -708,7 +717,7 @@ export default {
     USER_UPDATE_ERROR: 'Failed to update user',
     USER_DELETE_SUCCESS: 'User removed',
     USER_DELETE_ERROR: 'Failed to remove user',
-    DELETE_CONFIRM: 'Delete the account for {name}? This cannot be undone.'
+    USER_DELETE_CONFIRM: 'Delete the account for {name}? This cannot be undone.'
   },
   ABOUT: {
     PAGE_TAG: 'About us',

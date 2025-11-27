@@ -680,9 +680,12 @@ export default {
     USER_MODAL_DURATION: 'Тривалість підписки',
     USER_MODAL_DURATION_MONTH: '1 місяць',
     USER_MODAL_DURATION_FOREVER: 'Довічно',
+    TAB_PENDING: 'На розгляді',
+    TAB_APPROVED: 'Схвалені',
     REFRESH: 'Оновити',
     LOADING: 'Завантаження...',
     EMPTY: 'Немає елементів, що очікують.',
+    EMPTY_APPROVED: 'Немає схвалених елементів.',
     LOAD_ERROR: 'Не вдалося завантажити чергу',
     APPROVE: 'Схвалити',
     APPROVING: 'Схвалюємо...',
@@ -692,6 +695,14 @@ export default {
     CATEGORY_SHADOW: 'Тінь',
     CATEGORY_ANIMATION: 'Анімація',
     'CATEGORY_CLIP-PATH': 'Clip Path',
+    EDIT: 'Редагувати',
+    DELETE: 'Видалити',
+    DELETING: 'Видаляємо...',
+    SAVE: 'Зберегти',
+    CANCEL: 'Скасувати',
+    UPDATE_ERROR: 'Не вдалося оновити елемент',
+    DELETE_ERROR: 'Не вдалося видалити елемент',
+    DELETE_CONFIRM: 'Ви впевнені, що хочете видалити цей елемент? Дія незворотня.',
     USERS_TITLE: 'Керування користувачами',
     USERS_SUBTITLE: 'Оновлюйте email, імʼя, паролі та плани.',
     USERS_FILTER_LABEL: 'План',
@@ -703,8 +714,6 @@ export default {
       CREATED: 'Створено',
       ACTIONS: 'Дії'
     },
-    EDIT: 'Редагувати',
-    DELETE: 'Видалити',
     UNIT: {
       FREE: 'Free',
       PRO: 'Pro',
@@ -719,7 +728,7 @@ export default {
     USER_UPDATE_ERROR: 'Не вдалося оновити користувача',
     USER_DELETE_SUCCESS: 'Користувача видалено',
     USER_DELETE_ERROR: 'Не вдалося видалити користувача',
-    DELETE_CONFIRM: 'Видалити акаунт для {name}? Дія незворотня.'
+    USER_DELETE_CONFIRM: 'Видалити акаунт для {name}? Дія незворотня.'
   },
   ABOUT: {
     PAGE_TAG: 'Про нас',
