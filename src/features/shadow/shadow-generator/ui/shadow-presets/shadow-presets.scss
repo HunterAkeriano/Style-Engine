@@ -1,12 +1,47 @@
 .shadow-presets {
   display: flex;
   flex-direction: column;
-  gap: $space-lg;
-  padding: $space-xl;
-  border-radius: $border-radius-xl;
-  background: linear-gradient(145deg, color-var-alpha('color-bg-primary', 0.92), color-var-alpha('color-bg-secondary', 0.94));
-  border: 1px solid color-var-alpha('panel-border', 0.6);
-  box-shadow: $shadow-lg;
+  gap: $space-2xl;
+  padding: $space-2xl;
+  border-radius: $border-radius-2xl;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
+    linear-gradient(165deg, color-var-alpha('color-bg-primary', 0.95), color-var-alpha('color-bg-secondary', 0.98));
+  border: 1px solid color-var-alpha('panel-border', 0.3);
+  box-shadow:
+    inset 0 1px 0 color-var-alpha('color-border', 0.1),
+    0 24px 48px color-var-alpha('color-text-primary', 0.1),
+    0 12px 24px color-var-alpha('color-text-primary', 0.06);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 200px;
+    background: radial-gradient(
+      ellipse at center,
+      color-var-alpha('color-primary', 0.08),
+      transparent 70%
+    );
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  [data-theme='light'] & {
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9)),
+      linear-gradient(165deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 1px solid color-var-alpha('panel-border', 0.6);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 24px 48px rgba(0, 0, 0, 0.06),
+      0 12px 24px rgba(0, 0, 0, 0.04);
+  }
 }
 
 .shadow-presets__header {
@@ -15,57 +50,108 @@
   align-items: center;
   gap: $space-lg;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
 }
 
 .shadow-presets__tag {
-  font-size: $font-size-xs;
-  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: color-var-alpha('color-text-secondary', 0.9);
-  margin-bottom: $space-xs;
+  color: color-var-alpha('color-text-secondary', 0.75);
+  margin-bottom: $space-sm;
+  padding: $space-xs $space-md;
+  border-radius: $border-radius-full;
+  background: color-var-alpha('color-primary', 0.12);
+  border: 1px solid color-var-alpha('color-primary', 0.2);
+  display: inline-block;
 }
 
 .shadow-presets__title {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
-  margin-bottom: $space-xs;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  margin-bottom: $space-sm;
+  background: linear-gradient(
+    135deg,
+    $color-text-primary 0%,
+    color-var-alpha('color-primary', 0.9) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-3xl;
+  }
 }
 
 .shadow-presets__subtitle {
-  color: color-var-alpha('color-text-secondary', 0.95);
+  color: color-var-alpha('color-text-secondary', 0.85);
   max-width: 720px;
+  line-height: 1.6;
+  font-size: $font-size-base;
 }
 
 .shadow-presets__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: $space-md;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: $space-xl;
+  position: relative;
+  z-index: 1;
 }
 
 .shadow-presets__card {
-  border-radius: $border-radius-lg;
-  padding: $space-md;
-  background: linear-gradient(140deg, color-var-alpha('color-bg-primary', 0.88), color-var-alpha('color-bg-secondary', 0.92));
-  border: 1px solid color-var-alpha('panel-border', 0.6);
+  border-radius: $border-radius-xl;
+  padding: $space-lg;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    linear-gradient(165deg, color-var-alpha('color-bg-primary', 0.92), color-var-alpha('color-bg-secondary', 0.96));
+  border: 1px solid color-var-alpha('panel-border', 0.4);
   box-shadow:
-    inset 0 1px 0 color-var-alpha('color-border', 0.2),
-    0 16px 36px color-var-alpha('color-text-primary', 0.14);
+    inset 0 1px 0 color-var-alpha('color-border', 0.15),
+    0 20px 40px color-var-alpha('color-text-primary', 0.12),
+    0 8px 16px color-var-alpha('color-text-primary', 0.08);
   display: flex;
   flex-direction: column;
-  gap: $space-md;
+  gap: $space-lg;
   cursor: pointer;
   position: relative;
-  transition: transform $transition-base, border-color $transition-base, box-shadow $transition-base;
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.2s ease-out,
+    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+  will-change: transform;
+  contain: layout style paint;
+  backface-visibility: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: $border-radius-xl;
+    background: radial-gradient(
+      circle at 50% 50%,
+      color-var-alpha('color-primary', 0.08),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+    pointer-events: none;
+    will-change: opacity;
+  }
 
   &:hover {
     transform: translate3d(0, -4px, 0);
-    border-color: color-var-alpha('color-text-primary', 0.24);
+    border-color: color-var-alpha('color-primary', 0.4);
     box-shadow:
-      inset 0 1px 0 color-var-alpha('color-border', 0.22),
-      0 20px 42px color-var-alpha('color-primary', 0.18);
+      inset 0 1px 0 color-var-alpha('color-border', 0.25),
+      0 24px 48px color-var-alpha('color-primary', 0.18),
+      0 12px 24px color-var-alpha('color-primary', 0.12);
 
-    &::after {
+    &::before {
       opacity: 1;
     }
   }
@@ -73,50 +159,178 @@
   &_active {
     border-color: $color-primary;
     box-shadow:
-      inset 0 0 0 1px color-var-alpha('color-primary', 0.3),
-      0 18px 40px color-var-alpha('color-primary', 0.22);
+      inset 0 0 0 2px color-var-alpha('color-primary', 0.4),
+      0 20px 40px color-var-alpha('color-primary', 0.2),
+      0 10px 20px color-var-alpha('color-primary', 0.15);
+  }
+
+  [data-theme='light'] & {
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9)),
+      linear-gradient(165deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 1px solid color-var-alpha('panel-border', 0.6);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      0 20px 40px rgba(0, 0, 0, 0.08),
+      0 8px 16px rgba(0, 0, 0, 0.05);
   }
 }
 
 .shadow-presets__swatch {
   position: relative;
-  height: 140px;
-  border-radius: $border-radius-lg;
-  background: radial-gradient(circle at 20% 20%, color-var-alpha('color-primary', 0.12), transparent 60%),
-    radial-gradient(circle at 80% 20%, color-var-alpha('color-secondary', 0.12), transparent 62%),
-    linear-gradient(135deg, color-var-alpha('color-bg-primary', 0.95), color-var-alpha('color-bg-secondary', 0.92));
-  border: 1px solid color-var-alpha('panel-border', 0.65);
+  height: 200px;
+  border-radius: $border-radius-xl;
+  background:
+    radial-gradient(circle at 30% 30%, color-var-alpha('color-primary', 0.08), transparent 50%),
+    radial-gradient(circle at 70% 70%, color-var-alpha('color-accent', 0.08), transparent 50%),
+    linear-gradient(165deg, #0f172a 0%, #1e293b 100%);
+  border: 1px solid color-var-alpha('panel-border', 0.3);
   display: grid;
   place-items: center;
   overflow: hidden;
+  contain: layout paint;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        color-var-alpha('color-text-primary', 0.02) 0 1px,
+        transparent 1px 24px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        color-var-alpha('color-text-primary', 0.02) 0 1px,
+        transparent 1px 24px
+      );
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    background: conic-gradient(
+      from 180deg at 50% 50%,
+      color-var-alpha('color-primary', 0.12),
+      color-var-alpha('color-secondary', 0.08),
+      color-var-alpha('color-accent', 0.1),
+      color-var-alpha('color-primary', 0.12)
+    );
+    animation: shadowSwatchRotate 30s linear infinite;
+    opacity: 0.3;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  [data-theme='light'] & {
+    background:
+      radial-gradient(circle at 30% 30%, color-var-alpha('color-primary', 0.12), transparent 50%),
+      radial-gradient(circle at 70% 70%, color-var-alpha('color-accent', 0.12), transparent 50%),
+      linear-gradient(165deg, #f8fafc 0%, #e2e8f0 100%);
+
+    &::before {
+      background:
+        repeating-linear-gradient(
+          90deg,
+          color-var-alpha('color-text-primary', 0.04) 0 1px,
+          transparent 1px 24px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          color-var-alpha('color-text-primary', 0.04) 0 1px,
+          transparent 1px 24px
+        );
+    }
+
+    &::after {
+      opacity: 0.2;
+    }
+  }
 }
 
 .shadow-presets__inner {
-  width: 130px;
-  height: 88px;
-  border-radius: $border-radius-lg;
-  background: linear-gradient(145deg, color-var-alpha('color-bg-secondary', 0.9), color-var-alpha('color-bg-primary', 0.94));
-  border: 1px solid color-var-alpha('panel-border', 0.5);
+  width: 160px;
+  height: 120px;
+  border-radius: $border-radius-xl;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+    linear-gradient(165deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid color-var-alpha('panel-border', 0.3);
   display: grid;
   place-items: center;
-  transition: transform $transition-fast;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: var(--shadow-value, none);
+  position: relative;
+  z-index: 1;
+  will-change: transform;
+  backface-visibility: hidden;
+  contain: layout style paint;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: $border-radius-xl;
+    padding: 1px;
+    background: linear-gradient(
+      165deg,
+      color-var-alpha('color-primary', 0.3),
+      transparent 40%,
+      transparent 60%,
+      color-var-alpha('color-accent', 0.3)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+    will-change: opacity;
+  }
+
+  [data-theme='light'] & {
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95)),
+      linear-gradient(165deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 1px solid color-var-alpha('panel-border', 0.5);
+  }
 }
 
 .shadow-presets__card:hover .shadow-presets__inner {
-  transform: translate3d(0, -2px, 0) rotate(-0.5deg);
+  transform: translate3d(0, -6px, 0) scale(1.03);
+
+  &::before {
+    opacity: 1;
+  }
 }
 
 .shadow-presets__badge {
-  padding: $space-xs $space-sm;
+  padding: $space-xs $space-md;
   border-radius: $border-radius-full;
-  font-size: $font-size-xs;
+  font-size: 10px;
+  font-weight: $font-weight-bold;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: linear-gradient(120deg, color-var-alpha('color-primary', 0.2), color-var-alpha('color-secondary', 0.18));
-  border: 1px solid color-var-alpha('panel-border', 0.6);
+  letter-spacing: 0.1em;
+  background: linear-gradient(135deg, color-var-alpha('color-primary', 0.3), color-var-alpha('color-secondary', 0.25));
+  border: 1px solid color-var-alpha('panel-border', 0.4);
   color: $color-text-primary;
-  box-shadow: inset 0 1px 0 color-var-alpha('color-border', 0.2);
+  box-shadow:
+    inset 0 1px 0 color-var-alpha('color-border', 0.3),
+    0 4px 12px color-var-alpha('color-primary', 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  contain: layout style paint;
+}
+
+@keyframes shadowSwatchRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .shadow-presets__content {
@@ -126,26 +340,37 @@
 }
 
 .shadow-presets__card-title {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  background: linear-gradient(135deg, $color-text-primary, color-var-alpha('color-text-primary', 0.8));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: $space-xs;
+  line-height: 1.3;
 }
 
 .shadow-presets__description {
-  color: color-var-alpha('color-text-secondary', 0.95);
-  line-height: 1.5;
+  color: color-var-alpha('color-text-secondary', 0.85);
+  line-height: 1.6;
+  font-size: $font-size-sm;
 }
 
 .shadow-presets__author {
   display: flex;
   align-items: center;
-  gap: $space-xs;
+  gap: $space-sm;
   font-size: $font-size-xs;
   color: $color-text-secondary;
+  padding: $space-sm;
+  border-radius: $border-radius-lg;
+  background: color-var-alpha('color-bg-secondary', 0.5);
+  border: 1px solid color-var-alpha('panel-border', 0.3);
 }
 
 .shadow-presets__avatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: $border-radius-full;
   display: grid;
   place-items: center;
@@ -154,6 +379,8 @@
   color: #fff;
   background-size: cover;
   background-position: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 2px solid color-var-alpha('panel-border', 0.3);
 }
 
 .shadow-presets__author-name {
@@ -163,19 +390,49 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: $font-size-sm;
 }
 
 .shadow-presets__author-email {
   display: block;
-  font-size: $font-size-xs;
+  font-size: 11px;
   color: $color-text-secondary;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  opacity: 0.8;
 }
 
 .shadow-presets__actions {
   display: inline-flex;
   gap: $space-sm;
   flex-wrap: wrap;
+  width: 100%;
+
+  button {
+    flex: 1;
+    min-width: 100px;
+    font-weight: $font-weight-semibold;
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    backface-visibility: hidden;
+
+    &:hover:not(:disabled) {
+      transform: translate3d(0, -2px, 0);
+    }
+
+    &:active:not(:disabled) {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shadow-presets__swatch::after,
+  .shadow-presets__card,
+  .shadow-presets__inner,
+  .shadow-presets__actions button {
+    animation: none !important;
+    transition: none !important;
+  }
 }
