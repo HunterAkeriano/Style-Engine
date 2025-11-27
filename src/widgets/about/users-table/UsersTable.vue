@@ -25,20 +25,20 @@
       {{ error }}
     </div>
 
-    <Table
-      v-else
-      class="users-table__table"
-      :columns="columns"
-      :rows="users"
-      row-key="id"
-      :sort-by="sortBy"
-      :sort-order="sortOrder"
-      sticky-header
-      striped
-      hoverable
-      size="sm"
-      @sort-change="handleSortChange"
-    >
+    <div v-else class="users-table__table-wrapper" :class="{ 'users-table__table-wrapper_refreshing': isRefreshing }">
+      <Table
+        class="users-table__table"
+        :columns="columns"
+        :rows="users"
+        row-key="id"
+        :sort-by="sortBy"
+        :sort-order="sortOrder"
+        sticky-header
+        striped
+        hoverable
+        size="sm"
+        @sort-change="handleSortChange"
+      >
       <template #cell-avatar="{ row }">
         <div class="user-avatar">
           <img
@@ -85,6 +85,11 @@
         </div>
       </template>
     </Table>
+
+      <div v-if="isRefreshing" class="users-table__refreshing-overlay">
+        <div class="users-table__refreshing-spinner"></div>
+      </div>
+    </div>
 
     <div ref="loadMoreTrigger" class="users-table__sentinel" aria-hidden="true"></div>
 
@@ -151,6 +156,7 @@ const router = useRouter()
 
 const users = ref<PublicUser[]>([])
 const loading = ref(false)
+const isRefreshing = ref(false)
 const error = ref('')
 const currentPage = ref(1)
 const totalUsers = ref(0)
@@ -241,13 +247,13 @@ async function loadUsers(options: { reset?: boolean; page?: number } = {}) {
 
   const { reset = false, page = currentPage.value } = options
 
-  if (reset) {
-    users.value = []
-    currentPage.value = 1
-    hasMore.value = false
+  // Если это обновление данных (сортировка/фильтр), показываем индикатор обновления
+  if (reset && users.value.length > 0) {
+    isRefreshing.value = true
+  } else {
+    loading.value = true
   }
 
-  loading.value = true
   error.value = ''
 
   try {
@@ -274,6 +280,7 @@ async function loadUsers(options: { reset?: boolean; page?: number } = {}) {
     hasMore.value = false
   } finally {
     loading.value = false
+    isRefreshing.value = false
   }
 }
 
