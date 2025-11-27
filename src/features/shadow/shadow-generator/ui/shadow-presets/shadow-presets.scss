@@ -189,6 +189,7 @@
   place-items: center;
   overflow: hidden;
   contain: layout paint;
+  margin-bottom: 20px;
 
   &::before {
     content: '';
