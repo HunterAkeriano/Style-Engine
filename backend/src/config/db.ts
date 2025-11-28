@@ -1,19 +1,30 @@
-import { Pool } from 'pg'
+import { Sequelize } from 'sequelize'
 import type { Env } from './env'
+import { initModels, type Models } from '../models'
 
-let pool: Pool | null = null
+let sequelize: Sequelize | null = null
+let models: Models | null = null
 
 export function initDb(env: Env) {
-  pool = new Pool({
-    connectionString: env.DATABASE_URL,
-    ssl: env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined
+  sequelize = new Sequelize(env.DATABASE_URL, {
+    dialect: 'postgres',
+    logging: false,
+    dialectOptions: env.NODE_ENV === 'production' ? { ssl: { require: true, rejectUnauthorized: false } } : undefined
   })
-  return pool
+  models = initModels(sequelize)
+  return { sequelize, models }
 }
 
-export function getDb() {
-  if (!pool) {
+export function getSequelize() {
+  if (!sequelize) {
     throw new Error('DB not initialized')
   }
-  return pool
+  return sequelize
+}
+
+export function getModels() {
+  if (!models) {
+    throw new Error('Models not initialized')
+  }
+  return models
 }

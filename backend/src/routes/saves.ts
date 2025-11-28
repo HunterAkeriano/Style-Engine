@@ -1,9 +1,11 @@
 import { Router } from 'express'
 import { z } from 'zod'
-import { getDb } from '../config/db'
+import { col, fn, literal, Op, where } from 'sequelize'
+import { getModels } from '../config/db'
 import type { Env } from '../config/env'
 import { createAuthMiddleware, type AuthRequest } from '../middleware/auth'
 import { normalizePayload, stableStringify } from '../utils/payloadNormalization'
+import type { SavedAnimation, SavedClipPath, SavedGradient, SavedShadow, User } from '../models'
 
 const saveSchema = z.object({
   name: z.string().min(1).max(120),
@@ -12,34 +14,37 @@ const saveSchema = z.object({
 
 export type Category = 'gradient' | 'shadow' | 'animation' | 'clip-path'
 
-function tableForCategory(category: Category) {
-  switch (category) {
-    case 'gradient':
-      return 'saved_gradients'
-    case 'shadow':
-      return 'saved_shadows'
-    case 'animation':
-      return 'saved_animations'
-    case 'clip-path':
-      return 'saved_clip_paths'
-  }
-}
+type SavedModelClass = typeof SavedGradient | typeof SavedShadow | typeof SavedAnimation | typeof SavedClipPath
 
 export function createSavesRouter(env: Env) {
   const router = Router()
   const auth = createAuthMiddleware(env)
-  const db = getDb()
+  const { SavedGradient, SavedShadow, SavedAnimation, SavedClipPath, User } = getModels()
+  const modelMap: Record<Category, SavedModelClass> = {
+    gradient: SavedGradient,
+    shadow: SavedShadow,
+    animation: SavedAnimation,
+    'clip-path': SavedClipPath
+  }
+
+  function modelForCategory(category: Category) {
+    return modelMap[category]
+  }
+
+  function toPlainSaved(item: SavedGradient | SavedShadow | SavedAnimation | SavedClipPath) {
+    const plain = item.get({ plain: true }) as any
+    delete plain.user
+    return plain
+  }
 
   async function enforceLimit(_category: Category, req: AuthRequest) {
-    const totalResult = await db.query(
-      `SELECT
-         (SELECT COUNT(*)::int FROM saved_gradients WHERE user_id = $1) +
-         (SELECT COUNT(*)::int FROM saved_shadows WHERE user_id = $1) +
-         (SELECT COUNT(*)::int FROM saved_animations WHERE user_id = $1) +
-         (SELECT COUNT(*)::int FROM saved_clip_paths WHERE user_id = $1) AS count`,
-      [req.userId]
-    )
-    const total = Number(totalResult.rows[0]?.count || 0)
+    const [gradients, shadows, animations, clipPaths] = await Promise.all([
+      SavedGradient.count({ where: { userId: req.userId } }),
+      SavedShadow.count({ where: { userId: req.userId } }),
+      SavedAnimation.count({ where: { userId: req.userId } }),
+      SavedClipPath.count({ where: { userId: req.userId } })
+    ])
+    const total = gradients + shadows + animations + clipPaths
     const tier = req.authUser?.subscriptionTier || (req.authUser?.isPayment ? 'pro' : 'free')
     const limit = tier === 'premium' ? Infinity : tier === 'pro' ? 50 : 5
     if (total >= limit) {
@@ -49,64 +54,53 @@ export function createSavesRouter(env: Env) {
   }
 
   async function list(category: Category, req: AuthRequest, res: any) {
-    const table = tableForCategory(category)
-    const result = await db.query(
-      `SELECT id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", created_at as "createdAt"
-       FROM ${table}
-       WHERE user_id = $1
-       ORDER BY created_at DESC`,
-      [req.userId]
-    )
-    res.json({ items: result.rows })
+    const model = modelForCategory(category)
+    const items = await model.findAll({
+      where: { userId: req.userId },
+      order: [['createdAt', 'DESC']]
+    })
+    res.json({ items: items.map(toPlainSaved) })
   }
 
   async function listPublic(category: Category, _req: any, res: any) {
-    const table = tableForCategory(category)
+    const model = modelForCategory(category)
 
-    // For clip-paths, show all approved items including those from super admin
-    // For other categories, exclude super admin's items (default presets)
-    const excludeSuperAdmin = category !== 'clip-path'
+    const whereConditions: any = { status: 'approved' }
+    if (category !== 'clip-path') {
+      whereConditions[Op.and] = [
+        {
+          [Op.or]: [
+            { '$user.email$': null },
+            where(fn('LOWER', col('user.email')), { [Op.ne]: env.SUPER_ADMIN_EMAIL.toLowerCase() })
+          ]
+        }
+      ]
+    }
 
-    const query = excludeSuperAdmin
-      ? `SELECT
-           s.id,
-           s.name,
-           s.payload,
-           s.status,
-           s.is_featured as "isFeatured",
-           s.approved_at as "approvedAt",
-           s.created_at as "createdAt",
-           s.user_id as "userId",
-           u.name as "ownerName",
-           u.email as "ownerEmail",
-           u.avatar_url as "ownerAvatar"
-         FROM ${table} s
-         LEFT JOIN users u ON u.id = s.user_id
-         WHERE s.status = 'approved'
-           AND (u.email IS NULL OR LOWER(u.email) != LOWER($1))
-         ORDER BY s.is_featured DESC, s.approved_at DESC NULLS LAST, s.created_at DESC
-         LIMIT 50`
-      : `SELECT
-           s.id,
-           s.name,
-           s.payload,
-           s.status,
-           s.is_featured as "isFeatured",
-           s.approved_at as "approvedAt",
-           s.created_at as "createdAt",
-           s.user_id as "userId",
-           u.name as "ownerName",
-           u.email as "ownerEmail",
-           u.avatar_url as "ownerAvatar"
-         FROM ${table} s
-         LEFT JOIN users u ON u.id = s.user_id
-         WHERE s.status = 'approved'
-         ORDER BY s.is_featured DESC, s.approved_at DESC NULLS LAST, s.created_at DESC
-         LIMIT 50`
+    const items = await model.findAll({
+      where: whereConditions,
+      include: [{ model: User, as: 'user', attributes: ['name', 'email', 'avatarUrl'], required: false }],
+      order: [
+        ['isFeatured', 'DESC'],
+        [literal('"approved_at"'), 'DESC'],
+        ['createdAt', 'DESC']
+      ],
+      limit: 50
+    })
 
-    const params = excludeSuperAdmin ? [env.SUPER_ADMIN_EMAIL] : []
-    const result = await db.query(query, params)
-    res.json({ items: result.rows })
+    const mapped = items.map((item) => {
+      const plain = item.get({ plain: true }) as any
+      const owner = plain.user as User | undefined
+      delete plain.user
+      return {
+        ...plain,
+        ownerName: owner?.name ?? null,
+        ownerEmail: owner?.email ?? null,
+        ownerAvatar: owner?.avatarUrl ?? null
+      }
+    })
+
+    res.json({ items: mapped })
   }
 
   async function create(category: Category, req: AuthRequest, res: any) {
@@ -114,57 +108,50 @@ export function createSavesRouter(env: Env) {
     if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
     const limitError = await enforceLimit(category, req)
     if (limitError) return res.status(403).json(limitError)
-    const table = tableForCategory(category)
+    const model = modelForCategory(category)
     const { name, payload } = parsed.data
-    const duplicateCheck = await db.query(
-      `SELECT id FROM ${table} WHERE user_id = $1 AND payload = $2`,
-      [req.userId, payload]
-    )
-    if (duplicateCheck.rowCount) {
+    const duplicateCheck = await model.findOne({ where: { userId: req.userId, payload } })
+    if (duplicateCheck) {
       return res.status(409).json({ message: 'Already saved' })
     }
-    const result = await db.query(
-      `INSERT INTO ${table} (user_id, name, payload, status)
-       VALUES ($1, $2, $3, 'private')
-       RETURNING id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", created_at as "createdAt"`,
-      [req.userId, name, payload]
-    )
-    res.status(201).json({ item: result.rows[0] })
+    const created = await model.create({
+      userId: req.userId,
+      name,
+      payload,
+      status: 'private'
+    })
+    res.status(201).json({ item: toPlainSaved(created) })
   }
 
   async function remove(category: Category, req: AuthRequest, res: any) {
-    const table = tableForCategory(category)
+    const model = modelForCategory(category)
     const id = req.params.id
-    await db.query(`DELETE FROM ${table} WHERE id = $1 AND user_id = $2`, [id, req.userId])
+    await model.destroy({ where: { id, userId: req.userId } })
     res.status(204).send()
   }
 
   async function requestPublish(category: Category, req: AuthRequest, res: any) {
-    const table = tableForCategory(category)
+    const model = modelForCategory(category)
     const id = req.params.id
 
     // Get the item to publish
-    const itemResult = await db.query(
-      `SELECT id, payload FROM ${table} WHERE id = $1 AND user_id = $2 AND status = 'private'`,
-      [id, req.userId]
-    )
+    const item = await model.findOne({ where: { id, userId: req.userId, status: 'private' } })
 
-    if (!itemResult.rowCount) {
+    if (!item) {
       return res.status(404).json({ message: 'Item not found or already published' })
     }
 
-    const item = itemResult.rows[0]
-    const normalizedPayload = normalizePayload(category, item.payload)
+    const normalizedPayload = normalizePayload(category, item.payload as any)
     const payloadHash = stableStringify(normalizedPayload)
 
     // Check for duplicates in approved or pending items
-    const allPublicItems = await db.query(
-      `SELECT payload FROM ${table} WHERE status IN ('approved', 'pending')`,
-      []
-    )
+    const allPublicItems = await model.findAll({
+      where: { status: { [Op.in]: ['approved', 'pending'] } },
+      attributes: ['payload']
+    })
 
-    for (const publicItem of allPublicItems.rows) {
-      const publicNormalized = normalizePayload(category, publicItem.payload)
+    for (const publicItem of allPublicItems) {
+      const publicNormalized = normalizePayload(category, publicItem.payload as any)
       const publicHash = stableStringify(publicNormalized)
 
       if (payloadHash === publicHash) {
@@ -173,19 +160,8 @@ export function createSavesRouter(env: Env) {
     }
 
     // Update status to pending
-    const result = await db.query(
-      `UPDATE ${table}
-       SET status = 'pending'
-       WHERE id = $1 AND user_id = $2 AND status = 'private'
-       RETURNING id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", created_at as "createdAt"`,
-      [id, req.userId]
-    )
-
-    if (!result.rowCount) {
-      return res.status(404).json({ message: 'Item not found' })
-    }
-
-    res.json({ item: result.rows[0] })
+    await item.update({ status: 'pending' })
+    res.json({ item: toPlainSaved(item) })
   }
 
   /**

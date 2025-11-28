@@ -10,12 +10,12 @@ import { createApiRouter } from './routes'
 import { setupSwagger } from './swagger'
 
 const env = loadEnv()
-const pool = initDb(env)
+const { sequelize } = initDb(env)
 
-pool
-  .connect()
-  .then(async (client) => {
-    client.release()
+sequelize
+  .authenticate()
+  .then(async () => {
+    await sequelize.sync()
     await ensureSuperAdmin(env)
   })
   .catch((err: unknown) => {

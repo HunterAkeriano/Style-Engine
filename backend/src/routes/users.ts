@@ -1,8 +1,10 @@
 import bcrypt from 'bcryptjs'
 import { Router } from 'express'
-import { getDb } from '../config/db'
+import { col, fn, literal, Op, where, type WhereOptions } from 'sequelize'
+import { getModels } from '../config/db'
 import type { Env } from '../config/env'
 import { createAuthMiddleware, requireAdmin, type AuthRequest } from '../middleware/auth'
+import type { User } from '../models'
 
 type Tier = 'all' | 'free' | 'pro' | 'premium'
 
@@ -34,6 +36,12 @@ const sortFieldMap: Record<typeof allowedSortFields[number], string> = {
   subscriptiontier: 'subscription_tier'
 }
 
+function serializeUser(user: User) {
+  const plain = user.get({ plain: true }) as any
+  delete plain.passwordHash
+  return plain
+}
+
 function normalizeQuery(req: any): QueryOptions {
   const page = Math.max(1, parseInt(req.query.page as string) || 1)
   const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20))
@@ -52,54 +60,42 @@ function normalizeQuery(req: any): QueryOptions {
 
 async function fetchUsers(
   options: QueryOptions,
-  db: ReturnType<typeof getDb>,
+  userModel: typeof User,
   superAdminEmail: string
 ): Promise<UsersPayload> {
   const offset = (options.page - 1) * options.limit
-  const queryParams: any[] = [superAdminEmail]
-  let paramIndex = 2
-  let whereClause = 'WHERE LOWER(email) != LOWER($1)'
+  const whereConditions: WhereOptions[] = [
+    where(fn('LOWER', col('email')), { [Op.ne]: superAdminEmail })
+  ]
 
   if (options.tier !== 'all') {
-    whereClause += ` AND subscription_tier = $${paramIndex}`
-    queryParams.push(options.tier)
-    paramIndex++
+    whereConditions.push({ subscriptionTier: options.tier } as WhereOptions)
   }
+  const whereClause: WhereOptions = { [Op.and]: whereConditions }
 
   const sortField = sortFieldMap[options.sortBy] || 'created_at'
   const sortDirection = options.sortOrder === 'asc' ? 'ASC' : 'DESC'
 
-  const countQuery = `SELECT COUNT(*)::int AS total FROM users ${whereClause}`
-  const countResult = await db.query(countQuery, queryParams)
-  const total = countResult.rows[0]?.total || 0
+  const total = await userModel.count({ where: whereClause })
 
-  const usersQuery = `
-    SELECT
-      id,
-      email,
-      name,
-      avatar_url as "avatarUrl",
-      subscription_tier as "subscriptionTier",
-      subscription_expires_at as "subscriptionExpiresAt",
-      created_at as "createdAt"
-    FROM users
-    ${whereClause}
-    ORDER BY
-      CASE
-        WHEN subscription_tier = 'premium' THEN 1
-        WHEN subscription_tier = 'pro' THEN 2
-        WHEN subscription_tier = 'free' THEN 3
-        ELSE 4
-      END,
-      ${sortField} ${sortDirection}
-    LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
-  `
-
-  queryParams.push(options.limit, offset)
-  const usersResult = await db.query(usersQuery, queryParams)
+  const users = await userModel.findAll({
+    where: whereClause,
+    attributes: ['id', 'email', 'name', 'avatarUrl', 'subscriptionTier', 'subscriptionExpiresAt', 'createdAt'],
+    order: [
+      [
+        literal(
+          `CASE WHEN "subscription_tier" = 'premium' THEN 1 WHEN "subscription_tier" = 'pro' THEN 2 WHEN "subscription_tier" = 'free' THEN 3 ELSE 4 END`
+        ),
+        'ASC'
+      ],
+      [literal(sortField), sortDirection]
+    ],
+    limit: options.limit,
+    offset
+  })
 
   return {
-    users: usersResult.rows,
+    users: users.map(serializeUser),
     pagination: {
       page: options.page,
       limit: options.limit,
@@ -112,13 +108,13 @@ async function fetchUsers(
 
 export function createUsersRouter(env: Env) {
   const router = Router()
-  const db = getDb()
+  const { User } = getModels()
   const auth = createAuthMiddleware(env)
   const superAdminEmail = env.SUPER_ADMIN_EMAIL.toLowerCase()
 
   router.get('/public', async (req, res) => {
     try {
-      const payload = await fetchUsers(normalizeQuery(req), db, superAdminEmail)
+      const payload = await fetchUsers(normalizeQuery(req), User, superAdminEmail)
       res.json(payload)
     } catch (error) {
       console.error('Failed to load public users:', error)
@@ -126,10 +122,10 @@ export function createUsersRouter(env: Env) {
     }
   })
 
-  
+
   router.get('/', auth, requireAdmin, async (req, res) => {
     try {
-      const payload = await fetchUsers(normalizeQuery(req), db, superAdminEmail)
+      const payload = await fetchUsers(normalizeQuery(req), User, superAdminEmail)
       res.json(payload)
     } catch (error) {
       console.error('Failed to fetch users:', error)
@@ -145,21 +141,10 @@ export function createUsersRouter(env: Env) {
       return res.status(400).json({ message: 'User id is required' })
     }
 
-    const updates: string[] = []
-    const params: any[] = []
-    let paramIndex = 1
+    const updates: any = {}
 
-    if (email) {
-      updates.push(`email = $${paramIndex}`)
-      params.push(email)
-      paramIndex++
-    }
-
-    if (name !== undefined) {
-      updates.push(`name = $${paramIndex}`)
-      params.push(name)
-      paramIndex++
-    }
+    if (email) updates.email = email
+    if (name !== undefined) updates.name = name
 
     if (subscriptionTier) {
       const allowed = ['free', 'pro', 'premium']
@@ -167,53 +152,42 @@ export function createUsersRouter(env: Env) {
         return res.status(400).json({ message: 'Invalid subscription tier' })
       }
 
-      updates.push(`subscription_tier = $${paramIndex}`)
-      params.push(subscriptionTier)
-      paramIndex++
       const isPayment = subscriptionTier !== 'free'
-      updates.push(`is_payment = $${paramIndex}`)
-      params.push(isPayment)
-      paramIndex++
+      updates.subscriptionTier = subscriptionTier
+      updates.isPayment = isPayment
 
       if (subscriptionTier === 'free') {
-        updates.push('subscription_expires_at = NULL')
+        updates.subscriptionExpiresAt = null
       } else if (subscriptionDuration === 'month') {
-        updates.push(`subscription_expires_at = NOW() + interval '30 days'`)
+        updates.subscriptionExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
       } else if (subscriptionDuration === 'forever') {
-        updates.push(`subscription_expires_at = '2100-01-01'::timestamptz`)
+        updates.subscriptionExpiresAt = new Date('2100-01-01T00:00:00Z')
       }
     }
 
     if (password) {
       const passwordHash = await bcrypt.hash(password, 10)
-      updates.push(`password_hash = $${paramIndex}`)
-      params.push(passwordHash)
-      paramIndex++
+      updates.passwordHash = passwordHash
     }
 
-    if (!updates.length) {
+    if (!Object.keys(updates).length) {
       return res.status(400).json({ message: 'Nothing to update' })
     }
 
-    updates.push('updated_at = NOW()')
-    const query = `
-      UPDATE users
-      SET ${updates.join(', ')}
-      WHERE id = $${paramIndex}
-      RETURNING id, email, name, avatar_url as "avatarUrl", subscription_tier as "subscriptionTier", subscription_expires_at as "subscriptionExpiresAt",
-                is_payment as "isPayment", is_admin as "isAdmin", created_at as "createdAt"
-    `
-    params.push(id)
+    updates.updatedAt = new Date()
 
     try {
-      const result = await db.query(query, params)
-      if (!result.rowCount) {
+      const user = await User.findByPk(id)
+      if (!user) {
         return res.status(404).json({ message: 'User not found' })
       }
-      res.json({ user: result.rows[0] })
+      await user.update(updates)
+      res.json({
+        user: serializeUser(user)
+      })
     } catch (error) {
       console.error('Failed to update user:', error)
-      if ((error as any).code === '23505') {
+      if ((error as any).code === '23505' || (error as any).name === 'SequelizeUniqueConstraintError') {
         return res.status(400).json({ message: 'Email already in use' })
       }
       res.status(500).json({ message: 'Failed to update user' })
@@ -225,8 +199,8 @@ export function createUsersRouter(env: Env) {
     if (!id) {
       return res.status(400).json({ message: 'User id is required' })
     }
-    const result = await db.query('DELETE FROM users WHERE id = $1 RETURNING id', [id])
-    if (!result.rowCount) {
+    const deleted = await User.destroy({ where: { id } })
+    if (!deleted) {
       return res.status(404).json({ message: 'User not found' })
     }
     res.status(204).send()

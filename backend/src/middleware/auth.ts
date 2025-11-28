@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import type { Env } from '../config/env'
-import { getDb } from '../config/db'
+import { getModels } from '../config/db'
 
 export interface AuthRequest extends Request {
   userId?: string
@@ -25,24 +25,21 @@ export function createAuthMiddleware(env: Env) {
     }
     try {
       const payload = jwt.verify(token, env.JWT_SECRET) as { sub: string }
-      const db = getDb()
-      const result = await db.query(
-        `SELECT id, is_admin as "isAdmin", is_payment as "isPayment", subscription_tier as "subscriptionTier"
-         FROM users
-         WHERE id = $1`,
-        [payload.sub]
-      )
-      const user = result.rows[0]
+      const { User } = getModels()
+      const user = await User.findByPk(payload.sub, {
+        attributes: ['id', 'isAdmin', 'isPayment', 'subscriptionTier']
+      })
       if (!user) {
         return res.status(401).json({ message: 'User not found' })
       }
 
-      req.userId = user.id
+      const plain = user.get()
+      req.userId = plain.id
       req.authUser = {
-        id: user.id,
-        isAdmin: Boolean(user.isAdmin),
-        isPayment: Boolean(user.isPayment),
-        subscriptionTier: (user.subscriptionTier as 'free' | 'pro' | 'premium') ?? 'free'
+        id: plain.id,
+        isAdmin: Boolean(plain.isAdmin),
+        isPayment: Boolean(plain.isPayment),
+        subscriptionTier: (plain.subscriptionTier as 'free' | 'pro' | 'premium') ?? 'free'
       }
       next()
     } catch {

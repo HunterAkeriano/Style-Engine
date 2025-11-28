@@ -3,8 +3,10 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import crypto from 'crypto'
 import { z } from 'zod'
-import { getDb } from '../config/db'
+import { Op } from 'sequelize'
+import { getModels } from '../config/db'
 import type { Env } from '../config/env'
+import type { PasswordReset, User } from '../models'
 import { isSuperAdminEmail } from '../config/super-admin'
 import { sendMail } from '../services/mailer'
 import { parseCookies, serializeCookie } from '../utils/cookies'
@@ -37,21 +39,20 @@ const changePasswordSchema = z.object({
 
 export function createAuthRouter(env: Env) {
   const router = Router()
-  const db = getDb()
+  const { User, RefreshToken, PasswordReset } = getModels()
 
-  // Ensure password reset table exists (in case migrations were not run)
-  db.query(`CREATE TABLE IF NOT EXISTS password_resets (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    token_hash TEXT NOT NULL,
-    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    used BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-  )`).catch((err) => console.error('Failed to ensure password_resets table', err))
+  PasswordReset.sync().catch((err) => console.error('Failed to ensure password_resets table', err))
 
   function attachSuperFlag(user: any) {
     if (!user) return user
     return { ...user, isSuperAdmin: isSuperAdminEmail(env, user.email) }
+  }
+
+  function toSafeUser(user: User | null) {
+    if (!user) return null
+    const plain = user.get({ plain: true }) as any
+    const { passwordHash: _ignoredPassword, ...rest } = plain
+    return attachSuperFlag(rest)
   }
 
   /**
@@ -118,29 +119,27 @@ export function createAuthRouter(env: Env) {
     const parsed = credentialsSchema.safeParse(req.body)
     if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
     const { email, password, name } = parsed.data
-    const existing = await db.query('SELECT id FROM users WHERE email = $1', [email.toLowerCase()])
-    if (existing.rowCount) return res.status(409).json({ message: 'User already exists' })
+    const existing = await User.findOne({ where: { email: email.toLowerCase() } })
+    if (existing) return res.status(409).json({ message: 'User already exists' })
 
     const passwordHash = await bcrypt.hash(password, 10)
-    const insert = await db.query(
-      `INSERT INTO users (email, password_hash, name)
-       VALUES ($1, $2, $3)
-       RETURNING id, email, name, avatar_url as "avatarUrl", created_at as "createdAt",
-                 is_payment as "isPayment", is_admin as "isAdmin",
-                 subscription_tier as "subscriptionTier", subscription_expires_at as "subscriptionExpiresAt"`,
-      [email.toLowerCase(), passwordHash, name ?? null]
-    )
-    const user = attachSuperFlag(insert.rows[0])
+    const user = await User.create({
+      email: email.toLowerCase(),
+      passwordHash,
+      name: name ?? null
+    })
+    const safeUser = toSafeUser(user)!
     const accessToken = signAccessToken(env, user.id)
     const refreshToken = generateRefreshToken()
     const refreshHash = hashToken(refreshToken)
     const refreshExpires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
 
-    await db.query(
-      `INSERT INTO refresh_tokens (user_id, token_hash, expires_at, revoked)
-       VALUES ($1, $2, $3, FALSE)`,
-      [user.id, refreshHash, refreshExpires.toISOString()]
-    )
+    await RefreshToken.create({
+      userId: user.id,
+      tokenHash: refreshHash,
+      expiresAt: refreshExpires,
+      revoked: false
+    })
 
     const cookie = serializeCookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -151,7 +150,7 @@ export function createAuthRouter(env: Env) {
     })
     res.setHeader('Set-Cookie', cookie)
 
-    res.status(201).json({ token: accessToken, user })
+    res.status(201).json({ token: accessToken, user: safeUser })
   })
 
   /**
@@ -211,14 +210,21 @@ export function createAuthRouter(env: Env) {
     const parsed = credentialsSchema.omit({ name: true }).safeParse(req.body)
     if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
     const { email, password } = parsed.data
-    const result = await db.query(
-      `SELECT id, email, password_hash as "passwordHash", name, avatar_url as "avatarUrl",
-              created_at as "createdAt", is_payment as "isPayment", is_admin as "isAdmin",
-              subscription_tier as "subscriptionTier", subscription_expires_at as "subscriptionExpiresAt"
-       FROM users WHERE email = $1`,
-      [email.toLowerCase()]
-    )
-    const user = attachSuperFlag(result.rows[0])
+    const user = await User.findOne({
+      where: { email: email.toLowerCase() },
+      attributes: [
+        'id',
+        'email',
+        'passwordHash',
+        'name',
+        'avatarUrl',
+        'createdAt',
+        'isPayment',
+        'isAdmin',
+        'subscriptionTier',
+        'subscriptionExpiresAt'
+      ]
+    })
     if (!user) return res.status(401).json({ message: 'Invalid credentials' })
 
     const valid = await bcrypt.compare(password, user.passwordHash)
@@ -229,11 +235,12 @@ export function createAuthRouter(env: Env) {
     const refreshHash = hashToken(refreshToken)
     const refreshExpires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
 
-    await db.query(
-      `INSERT INTO refresh_tokens (user_id, token_hash, expires_at, revoked)
-       VALUES ($1, $2, $3, FALSE)`,
-      [user.id, refreshHash, refreshExpires.toISOString()]
-    )
+    await RefreshToken.create({
+      userId: user.id,
+      tokenHash: refreshHash,
+      expiresAt: refreshExpires,
+      revoked: false
+    })
 
     const cookie = serializeCookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -244,9 +251,7 @@ export function createAuthRouter(env: Env) {
     })
     res.setHeader('Set-Cookie', cookie)
 
-    const { passwordHash: _unusedPasswordHash, ...safeUser } = user
-    void _unusedPasswordHash
-    res.json({ token: accessToken, user: safeUser })
+    res.json({ token: accessToken, user: toSafeUser(user) })
   })
 
   /**
@@ -278,23 +283,35 @@ export function createAuthRouter(env: Env) {
     if (!token) return res.status(401).json({ message: 'Missing refresh token' })
 
     const tokenHash = hashToken(token)
-    const result = await db.query(
-      `SELECT rt.id, rt.user_id as "userId", u.email, u.name, u.avatar_url as "avatarUrl",
-              u.subscription_tier as "subscriptionTier", u.subscription_expires_at as "subscriptionExpiresAt",
-              u.is_payment as "isPayment", u.is_admin as "isAdmin", u.created_at as "createdAt"
-       FROM refresh_tokens rt
-       JOIN users u ON u.id = rt.user_id
-       WHERE rt.token_hash = $1 AND rt.revoked = FALSE AND rt.expires_at > NOW()
-       LIMIT 1`,
-      [tokenHash]
-    )
-    const record = result.rows[0]
-    if (!record) return res.status(401).json({ message: 'Invalid refresh token' })
+    const record = await RefreshToken.findOne({
+      where: {
+        tokenHash,
+        revoked: false,
+        expiresAt: { [Op.gt]: new Date() }
+      },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          required: true,
+          attributes: [
+            'id',
+            'email',
+            'name',
+            'avatarUrl',
+            'subscriptionTier',
+            'subscriptionExpiresAt',
+            'isPayment',
+            'isAdmin',
+            'createdAt'
+          ]
+        }
+      ]
+    })
+    if (!record || !record.user) return res.status(401).json({ message: 'Invalid refresh token' })
 
-    const accessToken = signAccessToken(env, record.userId)
-    const { userId, ...rest } = record
-    const safeUser = attachSuperFlag({ id: userId, ...rest })
-    res.json({ token: accessToken, user: safeUser })
+    const accessToken = signAccessToken(env, record.user.id)
+    res.json({ token: accessToken, user: toSafeUser(record.user) })
   })
 
   /**
@@ -313,46 +330,7 @@ export function createAuthRouter(env: Env) {
     const token = cookies['refreshToken']
     if (token) {
       const tokenHash = hashToken(token)
-      await db.query('UPDATE refresh_tokens SET revoked = TRUE WHERE token_hash = $1', [tokenHash])
-    }
-    res.setHeader(
-      'Set-Cookie',
-      serializeCookie('refreshToken', '', { path: '/api/auth/refresh', httpOnly: true, maxAge: 0 })
-    )
-    res.json({ ok: true })
-  })
-
-  router.post('/refresh', async (req, res) => {
-    const cookies = parseCookies(req.headers.cookie)
-    const token = cookies['refreshToken']
-    if (!token) return res.status(401).json({ message: 'Missing refresh token' })
-
-    const tokenHash = hashToken(token)
-    const result = await db.query(
-      `SELECT rt.id, rt.user_id as "userId", u.email, u.name, u.avatar_url as "avatarUrl",
-              u.subscription_tier as "subscriptionTier", u.subscription_expires_at as "subscriptionExpiresAt",
-              u.is_payment as "isPayment", u.is_admin as "isAdmin", u.created_at as "createdAt"
-       FROM refresh_tokens rt
-       JOIN users u ON u.id = rt.user_id
-       WHERE rt.token_hash = $1 AND rt.revoked = FALSE AND rt.expires_at > NOW()
-       LIMIT 1`,
-      [tokenHash]
-    )
-    const record = result.rows[0]
-    if (!record) return res.status(401).json({ message: 'Invalid refresh token' })
-
-    const accessToken = signAccessToken(env, record.userId)
-    const { userId, ...rest } = record
-    const safeUser = attachSuperFlag({ id: userId, ...rest })
-    res.json({ token: accessToken, user: safeUser })
-  })
-
-  router.post('/logout', async (req, res) => {
-    const cookies = parseCookies(req.headers.cookie)
-    const token = cookies['refreshToken']
-    if (token) {
-      const tokenHash = hashToken(token)
-      await db.query('UPDATE refresh_tokens SET revoked = TRUE WHERE token_hash = $1', [tokenHash])
+      await RefreshToken.update({ revoked: true }, { where: { tokenHash } })
     }
     res.setHeader(
       'Set-Cookie',
@@ -365,8 +343,10 @@ export function createAuthRouter(env: Env) {
     const parsed = forgotSchema.safeParse(req.body)
     if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
     const { email } = parsed.data
-    const userResult = await db.query('SELECT id, email FROM users WHERE email = $1', [email.toLowerCase()])
-    const user = userResult.rows[0]
+    const user = await User.findOne({
+      where: { email: email.toLowerCase() },
+      attributes: ['id', 'email']
+    })
     if (!user) {
       return res.status(404).json({ message: 'Email not found' })
     }
@@ -375,11 +355,12 @@ export function createAuthRouter(env: Env) {
     const tokenHash = await bcrypt.hash(token, 10)
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 
-    await db.query(
-      `INSERT INTO password_resets (user_id, token_hash, expires_at, used)
-       VALUES ($1, $2, $3, FALSE)`,
-      [user.id, tokenHash, expiresAt.toISOString()]
-    )
+    await PasswordReset.create({
+      userId: user.id,
+      tokenHash,
+      expiresAt,
+      used: false
+    })
 
     const appUrl = env.APP_URL || 'http://localhost:5173'
     const resetLink = `${appUrl}/reset-password?token=${token}`
@@ -400,33 +381,30 @@ export function createAuthRouter(env: Env) {
     if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
     const { token, password } = parsed.data
 
-    const resetResult = await db.query(
-      `SELECT pr.id, pr.user_id as "userId", pr.token_hash as "tokenHash", pr.expires_at as "expiresAt", pr.used,
-              u.email
-       FROM password_resets pr
-       JOIN users u ON u.id = pr.user_id
-       WHERE pr.used = FALSE AND pr.expires_at > NOW()
-       ORDER BY pr.created_at DESC`
-    )
+    const resets = await PasswordReset.findAll({
+      where: {
+        used: false,
+        expiresAt: { [Op.gt]: new Date() }
+      },
+      include: [{ model: User, as: 'user', attributes: ['id', 'email'] }],
+      order: [['createdAt', 'DESC']]
+    })
 
-    let matched: any = null
-    for (const row of resetResult.rows) {
-      if (await bcrypt.compare(token, row.tokenHash)) {
-        matched = row
+    let matched: PasswordReset | null = null
+    for (const reset of resets) {
+      if (await bcrypt.compare(token, reset.tokenHash)) {
+        matched = reset
         break
       }
     }
 
-    if (!matched) {
+    if (!matched || !matched.user) {
       return res.status(400).json({ message: 'Invalid or expired token' })
     }
 
     const newHash = await bcrypt.hash(password, 10)
-    await db.query('UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2', [
-      newHash,
-      matched.userId
-    ])
-    await db.query('UPDATE password_resets SET used = TRUE WHERE id = $1', [matched.id])
+    await matched.user.update({ passwordHash: newHash, updatedAt: new Date() })
+    await matched.update({ used: true })
 
     res.json({ ok: true })
   })
@@ -449,18 +427,14 @@ export function createAuthRouter(env: Env) {
       return res.status(401).json({ message: 'Invalid or expired token' })
     }
 
-    const result = await db.query(
-      'SELECT id, password_hash as "passwordHash" FROM users WHERE id = $1',
-      [userId]
-    )
-    const user = result.rows[0]
+    const user = await User.findByPk(userId, { attributes: ['id', 'passwordHash'] })
     if (!user) return res.status(401).json({ message: 'User not found' })
 
     const valid = await bcrypt.compare(currentPassword, user.passwordHash)
     if (!valid) return res.status(400).json({ message: 'Invalid current password' })
 
     const newHash = await bcrypt.hash(newPassword, 10)
-    await db.query('UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2', [newHash, userId])
+    await user.update({ passwordHash: newHash, updatedAt: new Date() })
 
     res.json({ ok: true })
   })

@@ -1,26 +1,27 @@
 import { Router } from 'express'
-import { getDb } from '../config/db'
+import { getModels } from '../config/db'
 import type { Env } from '../config/env'
 import { createAuthMiddleware, requireAdmin, type AuthRequest } from '../middleware/auth'
 import type { Category } from './saves'
+import type { SavedAnimation, SavedClipPath, SavedGradient, SavedShadow } from '../models'
 
-function tableForCategory(category: Category) {
-  switch (category) {
-    case 'gradient':
-      return 'saved_gradients'
-    case 'shadow':
-      return 'saved_shadows'
-    case 'animation':
-      return 'saved_animations'
-    case 'clip-path':
-      return 'saved_clip_paths'
-  }
-}
 
 export function createModerationRouter(env: Env) {
   const router = Router()
   const auth = createAuthMiddleware(env)
-  const db = getDb()
+  const { SavedGradient, SavedShadow, SavedAnimation, SavedClipPath } = getModels()
+  type SavedModel = typeof SavedGradient | typeof SavedShadow | typeof SavedAnimation | typeof SavedClipPath
+  const modelMap: Record<Category, SavedModel> = {
+    gradient: SavedGradient,
+    shadow: SavedShadow,
+    animation: SavedAnimation,
+    'clip-path': SavedClipPath
+  }
+
+  const toItem = (item: SavedGradient | SavedShadow | SavedAnimation | SavedClipPath, category: Category) => ({
+    ...item.get({ plain: true }),
+    category
+  })
 
   /**
    * @swagger
@@ -47,22 +48,23 @@ export function createModerationRouter(env: Env) {
    *         description: Нет прав администратора
    */
   router.get('/pending', auth, requireAdmin, async (_req, res) => {
-    const result = await db.query(
-      `SELECT id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", 'gradient' as category, created_at as "createdAt"
-       FROM saved_gradients WHERE status = 'pending'
-       UNION ALL
-       SELECT id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", 'shadow' as category, created_at as "createdAt"
-       FROM saved_shadows WHERE status = 'pending'
-       UNION ALL
-       SELECT id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", 'animation' as category, created_at as "createdAt"
-       FROM saved_animations WHERE status = 'pending'
-       UNION ALL
-       SELECT id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", 'clip-path' as category, created_at as "createdAt"
-       FROM saved_clip_paths WHERE status = 'pending'
-       ORDER BY "createdAt" DESC`
+    const [gradients, shadows, animations, clipPaths] = await Promise.all([
+      SavedGradient.findAll({ where: { status: 'pending' } }),
+      SavedShadow.findAll({ where: { status: 'pending' } }),
+      SavedAnimation.findAll({ where: { status: 'pending' } }),
+      SavedClipPath.findAll({ where: { status: 'pending' } })
+    ])
+
+    const items = [
+      ...gradients.map((item) => toItem(item, 'gradient')),
+      ...shadows.map((item) => toItem(item, 'shadow')),
+      ...animations.map((item) => toItem(item, 'animation')),
+      ...clipPaths.map((item) => toItem(item, 'clip-path'))
+    ].sort(
+      (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
     )
 
-    res.json({ items: result.rows })
+    res.json({ items })
   })
 
   /**
@@ -90,22 +92,23 @@ export function createModerationRouter(env: Env) {
    *         description: Нет прав администратора
    */
   router.get('/approved', auth, requireAdmin, async (_req, res) => {
-    const result = await db.query(
-      `SELECT id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", 'gradient' as category, created_at as "createdAt"
-       FROM saved_gradients WHERE status = 'approved'
-       UNION ALL
-       SELECT id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", 'shadow' as category, created_at as "createdAt"
-       FROM saved_shadows WHERE status = 'approved'
-       UNION ALL
-       SELECT id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", 'animation' as category, created_at as "createdAt"
-       FROM saved_animations WHERE status = 'approved'
-       UNION ALL
-       SELECT id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", 'clip-path' as category, created_at as "createdAt"
-       FROM saved_clip_paths WHERE status = 'approved'
-       ORDER BY "approvedAt" DESC`
+    const [gradients, shadows, animations, clipPaths] = await Promise.all([
+      SavedGradient.findAll({ where: { status: 'approved' } }),
+      SavedShadow.findAll({ where: { status: 'approved' } }),
+      SavedAnimation.findAll({ where: { status: 'approved' } }),
+      SavedClipPath.findAll({ where: { status: 'approved' } })
+    ])
+
+    const items = [
+      ...gradients.map((item) => toItem(item, 'gradient')),
+      ...shadows.map((item) => toItem(item, 'shadow')),
+      ...animations.map((item) => toItem(item, 'animation')),
+      ...clipPaths.map((item) => toItem(item, 'clip-path'))
+    ].sort(
+      (a, b) => new Date(b.approvedAt ?? 0).getTime() - new Date(a.approvedAt ?? 0).getTime()
     )
 
-    res.json({ items: result.rows })
+    res.json({ items })
   })
 
   /**
@@ -142,21 +145,16 @@ export function createModerationRouter(env: Env) {
    */
   router.post('/:category/:id/approve', auth, requireAdmin, async (req: AuthRequest, res) => {
     const category = req.params.category as Category
-    if (!['gradient', 'shadow', 'animation', 'clip-path'].includes(category)) {
+    const model = modelMap[category]
+    if (!model) {
       return res.status(400).json({ message: 'Invalid category' })
     }
-    const table = tableForCategory(category)
-    const result = await db.query(
-      `UPDATE ${table}
-       SET status = 'approved', is_featured = TRUE, approved_at = NOW()
-       WHERE id = $1
-       RETURNING id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", created_at as "createdAt"`,
-      [req.params.id]
-    )
-    if (!result.rowCount) {
+    const item = await model.findByPk(req.params.id)
+    if (!item) {
       return res.status(404).json({ message: 'Item not found' })
     }
-    res.json({ item: { ...result.rows[0], category } })
+    await item.update({ status: 'approved', isFeatured: true, approvedAt: new Date() })
+    res.json({ item: toItem(item, category) })
   })
 
   /**
@@ -199,28 +197,23 @@ export function createModerationRouter(env: Env) {
    *         description: Нет прав администратора
    *       404:
    *         description: Элемент не найден
-   */
+  */
   router.put('/:category/:id', auth, requireAdmin, async (req: AuthRequest, res) => {
     const category = req.params.category as Category
-    if (!['gradient', 'shadow', 'animation', 'clip-path'].includes(category)) {
+    const model = modelMap[category]
+    if (!model) {
       return res.status(400).json({ message: 'Invalid category' })
     }
     const { name } = req.body
     if (!name || typeof name !== 'string') {
       return res.status(400).json({ message: 'Name is required' })
     }
-    const table = tableForCategory(category)
-    const result = await db.query(
-      `UPDATE ${table}
-       SET name = $1
-       WHERE id = $2 AND status = 'approved'
-       RETURNING id, name, payload, status, is_featured as "isFeatured", approved_at as "approvedAt", created_at as "createdAt"`,
-      [name, req.params.id]
-    )
-    if (!result.rowCount) {
+    const item = await model.findOne({ where: { id: req.params.id, status: 'approved' } })
+    if (!item) {
       return res.status(404).json({ message: 'Item not found or not approved' })
     }
-    res.json({ item: { ...result.rows[0], category } })
+    await item.update({ name })
+    res.json({ item: toItem(item, category) })
   })
 
   /**
@@ -257,17 +250,12 @@ export function createModerationRouter(env: Env) {
    */
   router.delete('/:category/:id', auth, requireAdmin, async (req: AuthRequest, res) => {
     const category = req.params.category as Category
-    if (!['gradient', 'shadow', 'animation', 'clip-path'].includes(category)) {
+    const model = modelMap[category]
+    if (!model) {
       return res.status(400).json({ message: 'Invalid category' })
     }
-    const table = tableForCategory(category)
-    const result = await db.query(
-      `DELETE FROM ${table}
-       WHERE id = $1 AND status = 'approved'
-       RETURNING id`,
-      [req.params.id]
-    )
-    if (!result.rowCount) {
+    const deleted = await model.destroy({ where: { id: req.params.id, status: 'approved' } })
+    if (!deleted) {
       return res.status(404).json({ message: 'Item not found or not approved' })
     }
     res.json({ success: true })

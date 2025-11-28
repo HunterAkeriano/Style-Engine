@@ -1,28 +1,24 @@
 import 'dotenv/config'
-import { Pool } from 'pg'
 import { readFileSync, readdirSync } from 'fs'
 import { join } from 'path'
 import { loadEnv } from '../config/env'
+import { initDb } from '../config/db'
 
 const env = loadEnv()
-const pool = new Pool({
-  connectionString: env.DATABASE_URL,
-  ssl: env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined
-})
+const { sequelize } = initDb(env)
 
 async function runMigrations() {
-  const client = await pool.connect()
-
   try {
-    await client.query(`
+    await sequelize.authenticate()
+    await sequelize.query(`
       CREATE TABLE IF NOT EXISTS schema_migrations (
         version TEXT PRIMARY KEY,
         executed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
       )
     `)
 
-    const result = await client.query('SELECT version FROM schema_migrations ORDER BY version')
-    const executedMigrations = new Set(result.rows.map(row => row.version))
+    const [result] = await sequelize.query('SELECT version FROM schema_migrations ORDER BY version')
+    const executedMigrations = new Set((result as any[]).map((row) => row.version))
 
     const migrationsDir = join(__dirname, '../db/migrations')
     const files = readdirSync(migrationsDir)
@@ -42,14 +38,17 @@ async function runMigrations() {
       console.log(`▶️  Running ${version}...`)
       const sql = readFileSync(join(migrationsDir, file), 'utf8')
 
-      await client.query('BEGIN')
+      const transaction = await sequelize.transaction()
       try {
-        await client.query(sql)
-        await client.query('INSERT INTO schema_migrations (version) VALUES ($1)', [version])
-        await client.query('COMMIT')
+        await sequelize.query(sql, { transaction })
+        await sequelize.query('INSERT INTO schema_migrations (version) VALUES ($1)', {
+          bind: [version],
+          transaction
+        })
+        await transaction.commit()
         console.log(`✅ ${version} completed`)
       } catch (error) {
-        await client.query('ROLLBACK')
+        await transaction.rollback()
         console.error(`❌ ${version} failed:`, error)
         throw error
       }
@@ -60,8 +59,7 @@ async function runMigrations() {
     console.error('Migration failed:', error)
     process.exit(1)
   } finally {
-    client.release()
-    await pool.end()
+    await sequelize.close()
   }
 }
 
