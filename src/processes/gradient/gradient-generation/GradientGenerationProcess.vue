@@ -539,6 +539,7 @@ async function loadCommunityPresets() {
     communityPresets.value = items
       .map(mapCommunityPreset)
       .filter(Boolean) as GradientPreset[]
+    applyPresetFromQuery(route.query.preset)
   } catch (error) {
     console.warn('Failed to load community gradients', error)
   }

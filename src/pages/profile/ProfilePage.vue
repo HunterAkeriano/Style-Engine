@@ -44,7 +44,7 @@
           </aside>
 
           <main class="profile-page__main-content">
-            <RouterView v-slot="{ Component, route }">
+            <RouterView v-slot="{ Component }">
               <component
                 :is="Component"
                 v-bind="settingsProps"
@@ -174,11 +174,6 @@ const settingsProps = computed(() => ({
   success: passwordSuccess.value,
   serverError: passwordServerError.value
 }))
-
-function isSettingsRoute(route: any) {
-  const routeName = route?.name
-  return routeName === `${locale.value}-profile`
-}
 
 function resetPasswordErrors() {
   passwordErrors.currentPassword = ''
