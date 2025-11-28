@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { getModels } from '../config/db'
+import { sendApiError } from '../utils/apiError'
 import type { Env } from '../config/env'
 import { createAuthMiddleware, requireAdmin, type AuthRequest } from '../middleware/auth'
 import type { Category } from './saves'
@@ -147,11 +148,11 @@ export function createModerationRouter(env: Env) {
     const category = req.params.category as Category
     const model = modelMap[category]
     if (!model) {
-      return res.status(400).json({ message: 'Invalid category' })
+      return sendApiError(res, 400, 'Invalid category')
     }
     const item = await model.findByPk(req.params.id)
     if (!item) {
-      return res.status(404).json({ message: 'Item not found' })
+      return sendApiError(res, 404, 'Item not found')
     }
     await item.update({ status: 'approved', isFeatured: true, approvedAt: new Date() })
     res.json({ item: toItem(item, category) })
@@ -202,15 +203,15 @@ export function createModerationRouter(env: Env) {
     const category = req.params.category as Category
     const model = modelMap[category]
     if (!model) {
-      return res.status(400).json({ message: 'Invalid category' })
+      return sendApiError(res, 400, 'Invalid category')
     }
     const { name } = req.body
     if (!name || typeof name !== 'string') {
-      return res.status(400).json({ message: 'Name is required' })
+      return sendApiError(res, 400, 'Name is required')
     }
     const item = await model.findOne({ where: { id: req.params.id, status: 'approved' } })
     if (!item) {
-      return res.status(404).json({ message: 'Item not found or not approved' })
+      return sendApiError(res, 404, 'Item not found or not approved')
     }
     await item.update({ name })
     res.json({ item: toItem(item, category) })
@@ -252,11 +253,11 @@ export function createModerationRouter(env: Env) {
     const category = req.params.category as Category
     const model = modelMap[category]
     if (!model) {
-      return res.status(400).json({ message: 'Invalid category' })
+      return sendApiError(res, 400, 'Invalid category')
     }
     const deleted = await model.destroy({ where: { id: req.params.id, status: 'approved' } })
     if (!deleted) {
-      return res.status(404).json({ message: 'Item not found or not approved' })
+      return sendApiError(res, 404, 'Item not found or not approved')
     }
     res.json({ success: true })
   })

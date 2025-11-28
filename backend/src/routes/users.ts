@@ -5,6 +5,7 @@ import { getModels } from '../config/db'
 import type { Env } from '../config/env'
 import { createAuthMiddleware, requireAdmin, type AuthRequest } from '../middleware/auth'
 import type { User } from '../models'
+import { sendApiError } from '../utils/apiError'
 
 type Tier = 'all' | 'free' | 'pro' | 'premium'
 
@@ -118,7 +119,7 @@ export function createUsersRouter(env: Env) {
       res.json(payload)
     } catch (error) {
       console.error('Failed to load public users:', error)
-      res.status(500).json({ message: 'Failed to load users' })
+      return sendApiError(res, 500, 'Failed to load users')
     }
   })
 
@@ -129,7 +130,7 @@ export function createUsersRouter(env: Env) {
       res.json(payload)
     } catch (error) {
       console.error('Failed to fetch users:', error)
-      res.status(500).json({ message: 'Failed to fetch users' })
+      return sendApiError(res, 500, 'Failed to fetch users')
     }
   })
 
@@ -138,7 +139,7 @@ export function createUsersRouter(env: Env) {
     const { email, name, password, subscriptionTier, subscriptionDuration } = req.body
 
     if (!id) {
-      return res.status(400).json({ message: 'User id is required' })
+      return sendApiError(res, 400, 'User id is required')
     }
 
     const updates: any = {}
@@ -149,7 +150,7 @@ export function createUsersRouter(env: Env) {
     if (subscriptionTier) {
       const allowed = ['free', 'pro', 'premium']
       if (!allowed.includes(subscriptionTier)) {
-        return res.status(400).json({ message: 'Invalid subscription tier' })
+        return sendApiError(res, 400, 'Invalid subscription tier')
       }
 
       const isPayment = subscriptionTier !== 'free'
@@ -171,7 +172,7 @@ export function createUsersRouter(env: Env) {
     }
 
     if (!Object.keys(updates).length) {
-      return res.status(400).json({ message: 'Nothing to update' })
+      return sendApiError(res, 400, 'Nothing to update')
     }
 
     updates.updatedAt = new Date()
@@ -179,7 +180,7 @@ export function createUsersRouter(env: Env) {
     try {
       const user = await User.findByPk(id)
       if (!user) {
-        return res.status(404).json({ message: 'User not found' })
+        return sendApiError(res, 404, 'User not found')
       }
       await user.update(updates)
       res.json({
@@ -188,20 +189,20 @@ export function createUsersRouter(env: Env) {
     } catch (error) {
       console.error('Failed to update user:', error)
       if ((error as any).code === '23505' || (error as any).name === 'SequelizeUniqueConstraintError') {
-        return res.status(400).json({ message: 'Email already in use' })
+        return sendApiError(res, 400, 'Email already in use')
       }
-      res.status(500).json({ message: 'Failed to update user' })
+      return sendApiError(res, 500, 'Failed to update user')
     }
   })
 
   router.delete('/:id', auth, requireAdmin, async (req, res) => {
     const { id } = req.params
     if (!id) {
-      return res.status(400).json({ message: 'User id is required' })
+      return sendApiError(res, 400, 'User id is required')
     }
     const deleted = await User.destroy({ where: { id } })
     if (!deleted) {
-      return res.status(404).json({ message: 'User not found' })
+      return sendApiError(res, 404, 'User not found')
     }
     res.status(204).send()
   })

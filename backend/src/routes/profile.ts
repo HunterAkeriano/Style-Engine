@@ -7,6 +7,7 @@ import { uploadAvatar } from '../middleware/upload'
 import { isSuperAdminEmail } from '../config/super-admin'
 import fs from 'fs/promises'
 import path from 'path'
+import { sendApiError } from '../utils/apiError'
 import type { User } from '../models'
 
 const updateProfileSchema = z.object({
@@ -60,7 +61,7 @@ export function createProfileRouter(env: Env) {
       ]
     })
     const safeUser = toSafeUser(user)
-    if (!safeUser) return res.status(404).json({ message: 'User not found' })
+    if (!safeUser) return sendApiError(res, 404, 'User not found')
     res.json({ user: safeUser })
   })
 
@@ -92,11 +93,13 @@ export function createProfileRouter(env: Env) {
    */
   router.put('/', auth, async (req: AuthRequest, res) => {
     const parsed = updateProfileSchema.safeParse(req.body)
-    if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
+    if (!parsed.success) {
+      return sendApiError(res, 400, 'Invalid payload', { details: parsed.error.issues })
+    }
 
     const { name, avatarUrl } = parsed.data
     const user = await User.findByPk(req.userId)
-    if (!user) return res.status(404).json({ message: 'User not found' })
+    if (!user) return sendApiError(res, 404, 'User not found')
 
     await user.update({
       name: name ?? user.name,
@@ -132,11 +135,11 @@ export function createProfileRouter(env: Env) {
    */
   router.post('/avatar', auth, uploadAvatar.single('avatar'), async (req: AuthRequest, res) => {
     if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' })
+      return sendApiError(res, 400, 'No file uploaded')
     }
 
     const user = await User.findByPk(req.userId)
-    if (!user) return res.status(404).json({ message: 'User not found' })
+    if (!user) return sendApiError(res, 404, 'User not found')
 
     const oldAvatarUrl = user.avatarUrl || undefined
     const avatarUrl = `${req.protocol}://${req.get('host')}/uploads/avatars/${req.file.filename}`

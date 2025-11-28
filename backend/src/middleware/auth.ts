@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import type { Env } from '../config/env'
 import { getModels } from '../config/db'
+import { sendApiError } from '../utils/apiError'
 
 export interface AuthRequest extends Request {
   userId?: string
@@ -17,11 +18,11 @@ export function createAuthMiddleware(env: Env) {
   return async function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
     const header = req.headers.authorization
     if (!header) {
-      return res.status(401).json({ message: 'Missing authorization header' })
+      return sendApiError(res, 401, 'Missing authorization header')
     }
     const [, token] = header.split(' ')
     if (!token) {
-      return res.status(401).json({ message: 'Invalid authorization header' })
+      return sendApiError(res, 401, 'Invalid authorization header')
     }
     try {
       const payload = jwt.verify(token, env.JWT_SECRET) as { sub: string }
@@ -30,7 +31,7 @@ export function createAuthMiddleware(env: Env) {
         attributes: ['id', 'isAdmin', 'isPayment', 'subscriptionTier']
       })
       if (!user) {
-        return res.status(401).json({ message: 'User not found' })
+        return sendApiError(res, 401, 'User not found')
       }
 
       const plain = user.get()
@@ -43,14 +44,14 @@ export function createAuthMiddleware(env: Env) {
       }
       next()
     } catch {
-      res.status(401).json({ message: 'Invalid or expired token' })
+      sendApiError(res, 401, 'Invalid or expired token')
     }
   }
 }
 
 export function requireAdmin(req: AuthRequest, res: Response, next: NextFunction) {
   if (!req.authUser?.isAdmin) {
-    return res.status(403).json({ message: 'Admin access required' })
+    return sendApiError(res, 403, 'Admin access required')
   }
   next()
 }

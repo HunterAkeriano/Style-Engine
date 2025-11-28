@@ -11,6 +11,7 @@ import { isSuperAdminEmail } from '../config/super-admin'
 import { sendMail } from '../services/mailer'
 import { parseCookies, serializeCookie } from '../utils/cookies'
 import { generateRefreshToken, hashToken, signAccessToken } from '../utils/tokens'
+import { sendApiError } from '../utils/apiError'
 
 const strongPassword = z
   .string()
@@ -117,10 +118,12 @@ export function createAuthRouter(env: Env) {
    */
   router.post('/register', async (req, res) => {
     const parsed = credentialsSchema.safeParse(req.body)
-    if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
+    if (!parsed.success) {
+      return sendApiError(res, 400, 'Invalid payload', { details: parsed.error.issues })
+    }
     const { email, password, name } = parsed.data
     const existing = await User.findOne({ where: { email: email.toLowerCase() } })
-    if (existing) return res.status(409).json({ message: 'User already exists' })
+    if (existing) return sendApiError(res, 409, 'User already exists')
 
     const passwordHash = await bcrypt.hash(password, 10)
     const user = await User.create({
@@ -208,7 +211,9 @@ export function createAuthRouter(env: Env) {
    */
   router.post('/login', async (req, res) => {
     const parsed = credentialsSchema.omit({ name: true }).safeParse(req.body)
-    if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
+    if (!parsed.success) {
+      return sendApiError(res, 400, 'Invalid payload', { details: parsed.error.issues })
+    }
     const { email, password } = parsed.data
     const user = await User.findOne({
       where: { email: email.toLowerCase() },
@@ -225,10 +230,10 @@ export function createAuthRouter(env: Env) {
         'subscriptionExpiresAt'
       ]
     })
-    if (!user) return res.status(401).json({ message: 'Invalid credentials' })
+    if (!user) return sendApiError(res, 401, 'Invalid credentials')
 
     const valid = await bcrypt.compare(password, user.passwordHash)
-    if (!valid) return res.status(401).json({ message: 'Invalid credentials' })
+    if (!valid) return sendApiError(res, 401, 'Invalid credentials')
 
     const accessToken = signAccessToken(env, user.id)
     const refreshToken = generateRefreshToken()
@@ -280,7 +285,7 @@ export function createAuthRouter(env: Env) {
   router.post('/refresh', async (req, res) => {
     const cookies = parseCookies(req.headers.cookie)
     const token = cookies['refreshToken']
-    if (!token) return res.status(401).json({ message: 'Missing refresh token' })
+    if (!token) return sendApiError(res, 401, 'Missing refresh token')
 
     const tokenHash = hashToken(token)
     const record = await RefreshToken.findOne({
@@ -308,7 +313,7 @@ export function createAuthRouter(env: Env) {
         }
       ]
     })
-    if (!record || !record.user) return res.status(401).json({ message: 'Invalid refresh token' })
+    if (!record || !record.user) return sendApiError(res, 401, 'Invalid refresh token')
 
     const accessToken = signAccessToken(env, record.user.id)
     res.json({ token: accessToken, user: toSafeUser(record.user) })
@@ -341,14 +346,16 @@ export function createAuthRouter(env: Env) {
 
   router.post('/forgot-password', async (req, res) => {
     const parsed = forgotSchema.safeParse(req.body)
-    if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
+    if (!parsed.success) {
+      return sendApiError(res, 400, 'Invalid payload', { details: parsed.error.issues })
+    }
     const { email } = parsed.data
     const user = await User.findOne({
       where: { email: email.toLowerCase() },
       attributes: ['id', 'email']
     })
     if (!user) {
-      return res.status(404).json({ message: 'Email not found' })
+      return sendApiError(res, 404, 'Email not found')
     }
 
     const token = crypto.randomBytes(24).toString('hex')
@@ -378,7 +385,9 @@ export function createAuthRouter(env: Env) {
 
   router.post('/reset-password', async (req, res) => {
     const parsed = resetSchema.safeParse(req.body)
-    if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
+    if (!parsed.success) {
+      return sendApiError(res, 400, 'Invalid payload', { details: parsed.error.issues })
+    }
     const { token, password } = parsed.data
 
     const resets = await PasswordReset.findAll({
@@ -399,7 +408,7 @@ export function createAuthRouter(env: Env) {
     }
 
     if (!matched || !matched.user) {
-      return res.status(400).json({ message: 'Invalid or expired token' })
+      return sendApiError(res, 400, 'Invalid or expired token')
     }
 
     const newHash = await bcrypt.hash(password, 10)
@@ -411,27 +420,29 @@ export function createAuthRouter(env: Env) {
 
   router.post('/change-password', async (req, res) => {
     const parsed = changePasswordSchema.safeParse(req.body)
-    if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
+    if (!parsed.success) {
+      return sendApiError(res, 400, 'Invalid payload', { details: parsed.error.issues })
+    }
     const { currentPassword, newPassword } = parsed.data
 
     const authHeader = req.headers.authorization
-    if (!authHeader) return res.status(401).json({ message: 'Missing authorization header' })
+    if (!authHeader) return sendApiError(res, 401, 'Missing authorization header')
     const [, token] = authHeader.split(' ')
-    if (!token) return res.status(401).json({ message: 'Invalid authorization header' })
+    if (!token) return sendApiError(res, 401, 'Invalid authorization header')
 
     let userId: string | null = null
     try {
       const payload = jwt.verify(token, env.JWT_SECRET) as { sub: string }
       userId = payload.sub
     } catch {
-      return res.status(401).json({ message: 'Invalid or expired token' })
+      return sendApiError(res, 401, 'Invalid or expired token')
     }
 
     const user = await User.findByPk(userId, { attributes: ['id', 'passwordHash'] })
-    if (!user) return res.status(401).json({ message: 'User not found' })
+    if (!user) return sendApiError(res, 401, 'User not found')
 
     const valid = await bcrypt.compare(currentPassword, user.passwordHash)
-    if (!valid) return res.status(400).json({ message: 'Invalid current password' })
+    if (!valid) return sendApiError(res, 400, 'Invalid current password')
 
     const newHash = await bcrypt.hash(newPassword, 10)
     await user.update({ passwordHash: newHash, updatedAt: new Date() })

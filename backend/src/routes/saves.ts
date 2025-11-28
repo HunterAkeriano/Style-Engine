@@ -5,6 +5,7 @@ import { getModels } from '../config/db'
 import type { Env } from '../config/env'
 import { createAuthMiddleware, type AuthRequest } from '../middleware/auth'
 import { normalizePayload, stableStringify } from '../utils/payloadNormalization'
+import { sendApiError } from '../utils/apiError'
 import type { SavedAnimation, SavedClipPath, SavedGradient, SavedShadow, User } from '../models'
 
 const saveSchema = z.object({
@@ -105,14 +106,18 @@ export function createSavesRouter(env: Env) {
 
   async function create(category: Category, req: AuthRequest, res: any) {
     const parsed = saveSchema.safeParse(req.body)
-    if (!parsed.success) return res.status(400).json({ message: 'Invalid payload', issues: parsed.error.issues })
+    if (!parsed.success) {
+      return sendApiError(res, 400, 'Invalid payload', { details: parsed.error.issues })
+    }
     const limitError = await enforceLimit(category, req)
-    if (limitError) return res.status(403).json(limitError)
+    if (limitError) {
+      return sendApiError(res, 403, limitError.message, { details: { limit: limitError.limit } })
+    }
     const model = modelForCategory(category)
     const { name, payload } = parsed.data
     const duplicateCheck = await model.findOne({ where: { userId: req.userId, payload } })
     if (duplicateCheck) {
-      return res.status(409).json({ message: 'Already saved' })
+      return sendApiError(res, 409, 'Already saved')
     }
     const created = await model.create({
       userId: req.userId,
@@ -138,7 +143,7 @@ export function createSavesRouter(env: Env) {
     const item = await model.findOne({ where: { id, userId: req.userId, status: 'private' } })
 
     if (!item) {
-      return res.status(404).json({ message: 'Item not found or already published' })
+      return sendApiError(res, 404, 'Item not found or already published')
     }
 
     const normalizedPayload = normalizePayload(category, item.payload as any)
@@ -155,7 +160,7 @@ export function createSavesRouter(env: Env) {
       const publicHash = stableStringify(publicNormalized)
 
       if (payloadHash === publicHash) {
-        return res.status(409).json({ message: 'This item already exists in public collection' })
+        return sendApiError(res, 409, 'This item already exists in public collection')
       }
     }
 
