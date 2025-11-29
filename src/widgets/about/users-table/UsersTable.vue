@@ -247,7 +247,6 @@ async function loadUsers(options: { reset?: boolean; page?: number } = {}) {
 
   const { reset = false, page = currentPage.value } = options
 
-  // Если это обновление данных (сортировка/фильтр), показываем индикатор обновления
   if (reset && users.value.length > 0) {
     isRefreshing.value = true
   } else {

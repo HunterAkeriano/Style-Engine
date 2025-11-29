@@ -46,6 +46,15 @@
     </RouterLink>
 
     <RouterLink
+      :to="{ name: `${locale}-profile-favicons` }"
+      active-class="profile-page__nav-link_active"
+      exact-active-class="profile-page__nav-link_active"
+      class="profile-page__nav-link"
+    >
+      {{ t('PROFILE.NAV_FAVICONS') }}
+    </RouterLink>
+
+    <RouterLink
       v-if="isAdmin"
       :to="{ name: `${locale}-moderation` }"
       class="profile-page__nav-link profile-page__nav-link_admin"

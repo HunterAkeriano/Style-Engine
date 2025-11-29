@@ -6,46 +6,48 @@ import type { Env } from '../config/env'
 import { createAuthMiddleware, type AuthRequest } from '../middleware/auth'
 import { normalizePayload, stableStringify } from '../utils/payloadNormalization'
 import { sendApiError } from '../utils/apiError'
-import type { SavedAnimation, SavedClipPath, SavedGradient, SavedShadow, User } from '../models'
+import type { SavedAnimation, SavedClipPath, SavedGradient, SavedShadow, SavedFavicon, User } from '../models'
 
 const saveSchema = z.object({
   name: z.string().min(1).max(120),
   payload: z.record(z.any())
 })
 
-export type Category = 'gradient' | 'shadow' | 'animation' | 'clip-path'
+export type Category = 'gradient' | 'shadow' | 'animation' | 'clip-path' | 'favicon'
 
-type SavedModelClass = typeof SavedGradient | typeof SavedShadow | typeof SavedAnimation | typeof SavedClipPath
+type SavedModelClass = typeof SavedGradient | typeof SavedShadow | typeof SavedAnimation | typeof SavedClipPath | typeof SavedFavicon
 
 export function createSavesRouter(env: Env) {
   const router = Router()
   const auth = createAuthMiddleware(env)
-  const { SavedGradient, SavedShadow, SavedAnimation, SavedClipPath, User } = getModels()
+  const { SavedGradient, SavedShadow, SavedAnimation, SavedClipPath, SavedFavicon, User } = getModels()
   const modelMap: Record<Category, SavedModelClass> = {
     gradient: SavedGradient,
     shadow: SavedShadow,
     animation: SavedAnimation,
-    'clip-path': SavedClipPath
+    'clip-path': SavedClipPath,
+    favicon: SavedFavicon
   }
 
   function modelForCategory(category: Category) {
     return modelMap[category]
   }
 
-  function toPlainSaved(item: SavedGradient | SavedShadow | SavedAnimation | SavedClipPath) {
+  function toPlainSaved(item: SavedGradient | SavedShadow | SavedAnimation | SavedClipPath | SavedFavicon) {
     const plain = item.get({ plain: true }) as any
     delete plain.user
     return plain
   }
 
   async function enforceLimit(_category: Category, req: AuthRequest) {
-    const [gradients, shadows, animations, clipPaths] = await Promise.all([
+    const [gradients, shadows, animations, clipPaths, favicons] = await Promise.all([
       SavedGradient.count({ where: { userId: req.userId } }),
       SavedShadow.count({ where: { userId: req.userId } }),
       SavedAnimation.count({ where: { userId: req.userId } }),
-      SavedClipPath.count({ where: { userId: req.userId } })
+      SavedClipPath.count({ where: { userId: req.userId } }),
+      SavedFavicon.count({ where: { userId: req.userId } })
     ])
-    const total = gradients + shadows + animations + clipPaths
+    const total = gradients + shadows + animations + clipPaths + favicons
     const tier = req.authUser?.subscriptionTier || (req.authUser?.isPayment ? 'pro' : 'free')
     const limit = tier === 'premium' ? Infinity : tier === 'pro' ? 50 : 5
     if (total >= limit) {
@@ -808,6 +810,12 @@ export function createSavesRouter(env: Env) {
    *               $ref: '#/components/schemas/Error'
    */
   router.delete('/clip-paths/:id', auth, (req, res) => remove('clip-path', req, res))
+
+  router.get('/favicons', auth, (req, res) => list('favicon', req, res))
+  router.get('/public/favicons', (req, res) => listPublic('favicon', req, res))
+  router.post('/favicons', auth, (req, res) => create('favicon', req, res))
+  router.post('/favicons/:id/publish', auth, (req, res) => requestPublish('favicon', req, res))
+  router.delete('/favicons/:id', auth, (req, res) => remove('favicon', req, res))
 
   return router
 }

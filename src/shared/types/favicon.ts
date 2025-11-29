@@ -27,6 +27,8 @@ export interface FaviconExportData {
   zipBlob?: Blob
 }
 
+import type { CreatorProfile } from './creator'
+
 export interface FaviconPreset {
   id: string
   name: string
@@ -34,6 +36,8 @@ export interface FaviconPreset {
   backgroundColor: string
   padding: number
   borderRadius: number
+  owner?: CreatorProfile
+  savedImages?: Record<number, string>
 }
 
 export const FAVICON_SIZES: FaviconSize[] = [

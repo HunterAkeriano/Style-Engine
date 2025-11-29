@@ -36,4 +36,21 @@
     grid-column: 1 / -1;
     min-width: 0;
   }
+
+  &__save-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $space-lg;
+    margin-bottom: $space-md;
+    background: var(--color-surface);
+    border-radius: $border-radius-md;
+    min-height: 120px;
+  }
+
+  &__save-thumbnail {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+  }
 }

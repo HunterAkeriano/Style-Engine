@@ -26,6 +26,19 @@
           <div v-if="category === 'gradient'" class="profile-saved-list__preview-swatch" :style="getPreviewStyle(item)" />
           <div v-else-if="category === 'shadow'" class="profile-saved-list__preview-shadow" :style="getPreviewStyle(item)" />
           <div v-else-if="category === 'clip-path'" class="profile-saved-list__preview-clip-path" :style="getPreviewStyle(item)" />
+          <div v-else-if="category === 'favicon'" class="profile-saved-list__preview-favicon" :style="getPreviewStyle(item)">
+            <img
+              v-if="getFaviconImage(item)"
+              :src="getFaviconImage(item)"
+              alt="Favicon"
+              class="profile-saved-list__preview-favicon-image"
+            />
+            <div v-else class="profile-saved-list__preview-favicon-icon">
+              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="40" fill="currentColor"/>
+              </svg>
+            </div>
+          </div>
           <div v-else class="profile-saved-list__preview-animation">
             <div v-html="getAnimationHTML(item)" class="profile-saved-list__preview-animation-content" />
           </div>
@@ -45,6 +58,16 @@
           </p>
           <div class="profile-saved-list__actions">
             <Button
+              v-if="category === 'favicon'"
+              variant="ghost"
+              size="sm"
+              :title="t('PROFILE.DOWNLOAD')"
+              @click="downloadFavicon(item)"
+            >
+              {{ t('PROFILE.DOWNLOAD') }}
+            </Button>
+            <Button
+              v-else
               variant="ghost"
               size="sm"
               :title="t('PROFILE.COPY_CSS')"
@@ -98,6 +121,8 @@ import {
   type SaveCategory
 } from '@/shared/api/saves'
 import { normalizePayload, stableStringify, formatGradient, formatBoxShadow, formatClipPath, copyToClipboard } from '@/shared/lib'
+import { createFaviconZip, downloadBlob } from '@/shared/lib/favicon'
+import type { GeneratedFavicon } from '@/shared/types/favicon'
 
 const props = defineProps<{
   category: SaveCategory
@@ -247,7 +272,22 @@ function getPreviewStyle(item: SavedItem) {
       clipPath: clipPathValue.replace('clip-path:', '').replace(';', '').trim()
     }
   }
+  if (props.category === 'favicon') {
+    return {
+      backgroundColor: payload.backgroundColor ?? '#ffffff',
+      padding: `${payload.padding ?? 10}px`,
+      borderRadius: `${payload.borderRadius ?? 0}px`
+    }
+  }
   return {}
+}
+
+function getFaviconImage(item: SavedItem): string | null {
+  const payload = item.payload as { images?: Record<number, string> }
+  if (payload.images) {
+    return payload.images[180] || payload.images[192] || payload.images[512] || payload.images[32] || null
+  }
+  return null
 }
 
 function getAnimationHTML(item: SavedItem): string {
@@ -287,6 +327,13 @@ function generateCSS(item: SavedItem): string {
     return payload.css || payload.html || ''
   }
 
+  if (props.category === 'favicon') {
+    const bg = payload.backgroundColor ?? '#ffffff'
+    const padding = payload.padding ?? 10
+    const radius = payload.borderRadius ?? 0
+    return `background-color: ${bg};\npadding: ${padding}px;\nborder-radius: ${radius}px;`
+  }
+
   return ''
 }
 
@@ -314,6 +361,55 @@ async function deleteItem(item: SavedItem) {
     toast.error(err?.message || t('PROFILE.DELETE_ERROR'))
   } finally {
     deletingId.value = null
+  }
+}
+
+async function downloadFavicon(item: SavedItem) {
+  try {
+    const payload = item.payload as {
+      images?: Record<number, string>
+      manifestJson?: string
+    }
+
+    if (!payload.images) {
+      toast.error(t('PROFILE.DOWNLOAD_ERROR'))
+      return
+    }
+
+    const favicons: GeneratedFavicon[] = []
+    const sizeMap: Record<number, string> = {
+      16: 'favicon-16x16.png',
+      32: 'favicon-32x32.png',
+      48: 'favicon-48x48.png',
+      144: 'mstile-144x144.png',
+      180: 'apple-touch-icon.png',
+      192: 'android-chrome-192x192.png',
+      512: 'android-chrome-512x512.png'
+    }
+
+    for (const [sizeStr, dataUrl] of Object.entries(payload.images)) {
+      const size = parseInt(sizeStr)
+      const filename = sizeMap[size] || `favicon-${size}x${size}.png`
+
+      const response = await fetch(dataUrl)
+      const blob = await response.blob()
+
+      favicons.push({
+        size,
+        dataUrl,
+        blob,
+        filename
+      })
+    }
+
+    const manifestJson = payload.manifestJson || '{}'
+    const zipBlob = await createFaviconZip(favicons, manifestJson)
+    downloadBlob(zipBlob, `${item.name.toLowerCase().replace(/\s+/g, '-')}-favicons.zip`)
+
+    toast.success(t('PROFILE.DOWNLOAD_SUCCESS'))
+  } catch (error) {
+    console.error('Failed to download favicon:', error)
+    toast.error(t('PROFILE.DOWNLOAD_ERROR'))
   }
 }
 
@@ -434,6 +530,35 @@ onMounted(() => {
     align-items: center;
     justify-content: center;
     transform: scale(0.7);
+  }
+
+  &__preview-favicon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+  }
+
+  &__preview-favicon-icon {
+    width: 60%;
+    height: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__preview-favicon-image {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
   }
 
   &__body {

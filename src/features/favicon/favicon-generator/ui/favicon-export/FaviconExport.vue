@@ -15,6 +15,15 @@
             {{ copied ? t('COMMON.COPIED_TO_CLIPBOARD') : t('COMMON.COPY') }}
           </Button>
           <Button
+            size="sm"
+            variant="outline"
+            class="favicon-export__save-button"
+            :disabled="!hasContent"
+            @click="handleSave"
+          >
+            {{ t('COMMON.SAVE') }}
+          </Button>
+          <Button
             variant="primary"
             size="sm"
             class="favicon-export__download-button"
@@ -51,6 +60,7 @@ interface Props {
 
 interface Emits {
   (e: 'download-all'): void
+  (e: 'save'): void
 }
 
 const props = defineProps<Props>()
@@ -89,6 +99,10 @@ async function handleCopy() {
 
 function handleDownloadAll() {
   emit('download-all')
+}
+
+function handleSave() {
+  emit('save')
 }
 </script>
 

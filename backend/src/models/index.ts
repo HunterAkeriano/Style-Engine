@@ -93,6 +93,18 @@ export class SavedClipPath extends Model<InferAttributes<SavedClipPath>, InferCr
   declare createdAt: CreationOptional<Date>
 }
 
+export class SavedFavicon extends Model<InferAttributes<SavedFavicon>, InferCreationAttributes<SavedFavicon>> {
+  declare id: CreationOptional<string>
+  declare userId: ForeignKey<User['id']> | null
+  declare user?: User | null
+  declare name: string
+  declare payload: Record<string, unknown>
+  declare status: CreationOptional<SavedStatus>
+  declare isFeatured: CreationOptional<boolean>
+  declare approvedAt: Date | null
+  declare createdAt: CreationOptional<Date>
+}
+
 export interface Models {
   User: typeof User
   RefreshToken: typeof RefreshToken
@@ -101,6 +113,7 @@ export interface Models {
   SavedShadow: typeof SavedShadow
   SavedAnimation: typeof SavedAnimation
   SavedClipPath: typeof SavedClipPath
+  SavedFavicon: typeof SavedFavicon
 }
 
 export function initModels(sequelize: Sequelize): Models {
@@ -323,6 +336,20 @@ export function initModels(sequelize: Sequelize): Models {
     { sequelize, tableName: 'saved_clip_paths', ...savedConfig }
   )
 
+  SavedFavicon.init(
+    {
+      id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+      userId: { type: DataTypes.UUID, allowNull: true, field: 'user_id' },
+      name: { type: DataTypes.TEXT, allowNull: false },
+      payload: { type: DataTypes.JSONB, allowNull: false },
+      status: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'private' },
+      isFeatured: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false, field: 'is_featured' },
+      approvedAt: { type: DataTypes.DATE, allowNull: true, field: 'approved_at' },
+      createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' }
+    },
+    { sequelize, tableName: 'saved_favicons', ...savedConfig }
+  )
+
   User.hasMany(RefreshToken, { foreignKey: 'userId', as: 'refreshTokens' })
   RefreshToken.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 
@@ -330,11 +357,13 @@ export function initModels(sequelize: Sequelize): Models {
   User.hasMany(SavedShadow, { foreignKey: 'userId', as: 'savedShadows' })
   User.hasMany(SavedAnimation, { foreignKey: 'userId', as: 'savedAnimations' })
   User.hasMany(SavedClipPath, { foreignKey: 'userId', as: 'savedClipPaths' })
+  User.hasMany(SavedFavicon, { foreignKey: 'userId', as: 'savedFavicons' })
 
   SavedGradient.belongsTo(User, { foreignKey: 'userId', as: 'user' })
   SavedShadow.belongsTo(User, { foreignKey: 'userId', as: 'user' })
   SavedAnimation.belongsTo(User, { foreignKey: 'userId', as: 'user' })
   SavedClipPath.belongsTo(User, { foreignKey: 'userId', as: 'user' })
+  SavedFavicon.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 
   User.hasMany(PasswordReset, { foreignKey: 'userId', as: 'passwordResets' })
   PasswordReset.belongsTo(User, { foreignKey: 'userId', as: 'user' })
@@ -346,6 +375,7 @@ export function initModels(sequelize: Sequelize): Models {
     SavedGradient,
     SavedShadow,
     SavedAnimation,
-    SavedClipPath
+    SavedClipPath,
+    SavedFavicon
   }
 }

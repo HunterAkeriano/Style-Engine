@@ -52,7 +52,6 @@ const { t } = useI18n()
 const faviconSizes = computed(() => FAVICON_SIZES)
 
 function getPreviewSize(size: number): string {
-  // Scale smaller sizes for better visibility
   if (size <= 32) {
     return '64px'
   } else if (size <= 48) {

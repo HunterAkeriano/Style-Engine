@@ -100,6 +100,28 @@ function normalizeClipPathPayload(payload: Record<string, unknown>) {
   }
 }
 
+function normalizeFaviconPayload(payload: Record<string, unknown>) {
+  const images = payload.images as Record<string, string> | undefined
+  if (!images) {
+    return {}
+  }
+
+  const sortedImages: Record<number, string> = {}
+  Object.keys(images)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .forEach(size => {
+      sortedImages[size] = images[size]
+    })
+
+  return {
+    images: sortedImages,
+    backgroundColor: normalizeColorString(payload.backgroundColor),
+    padding: normalizeNumber(payload.padding),
+    borderRadius: normalizeNumber(payload.borderRadius)
+  }
+}
+
 export function normalizePayload(category: SaveCategory, payload: unknown) {
   if (!payload || typeof payload !== 'object') {
     return {}
@@ -114,6 +136,8 @@ export function normalizePayload(category: SaveCategory, payload: unknown) {
       return normalizeAnimationPayload(payload as Record<string, unknown>)
     case 'clip-path':
       return normalizeClipPathPayload(payload as Record<string, unknown>)
+    case 'favicon':
+      return normalizeFaviconPayload(payload as Record<string, unknown>)
     default:
       return payload as Record<string, unknown>
   }

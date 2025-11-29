@@ -1,6 +1,5 @@
 <template>
   <div class="favicon-controls">
-    <!-- Image Upload Section -->
     <div class="favicon-controls__group">
       <label class="favicon-controls__label">{{ t('FAVICON.SOURCE_IMAGE') }}</label>
       <div
@@ -41,7 +40,6 @@
       </div>
     </div>
 
-    <!-- Background Color -->
     <div class="favicon-controls__group">
       <label class="favicon-controls__label">{{ t('FAVICON.BACKGROUND_COLOR') }}</label>
       <div class="favicon-controls__color-row">
@@ -69,7 +67,6 @@
       </div>
     </div>
 
-    <!-- Padding Slider -->
     <div class="favicon-controls__group">
       <label class="favicon-controls__label">
         {{ t('FAVICON.PADDING') }}: {{ padding }}%
@@ -84,7 +81,6 @@
       />
     </div>
 
-    <!-- Border Radius Slider -->
     <div class="favicon-controls__group">
       <label class="favicon-controls__label">
         {{ t('FAVICON.BORDER_RADIUS') }}: {{ borderRadius }}%

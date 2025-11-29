@@ -4,22 +4,23 @@ import { sendApiError } from '../utils/apiError'
 import type { Env } from '../config/env'
 import { createAuthMiddleware, requireAdmin, type AuthRequest } from '../middleware/auth'
 import type { Category } from './saves'
-import type { SavedAnimation, SavedClipPath, SavedGradient, SavedShadow } from '../models'
+import type { SavedAnimation, SavedClipPath, SavedGradient, SavedShadow, SavedFavicon } from '../models'
 
 
 export function createModerationRouter(env: Env) {
   const router = Router()
   const auth = createAuthMiddleware(env)
-  const { SavedGradient, SavedShadow, SavedAnimation, SavedClipPath } = getModels()
-  type SavedModel = typeof SavedGradient | typeof SavedShadow | typeof SavedAnimation | typeof SavedClipPath
+  const { SavedGradient, SavedShadow, SavedAnimation, SavedClipPath, SavedFavicon } = getModels()
+  type SavedModel = typeof SavedGradient | typeof SavedShadow | typeof SavedAnimation | typeof SavedClipPath | typeof SavedFavicon
   const modelMap: Record<Category, SavedModel> = {
     gradient: SavedGradient,
     shadow: SavedShadow,
     animation: SavedAnimation,
-    'clip-path': SavedClipPath
+    'clip-path': SavedClipPath,
+    favicon: SavedFavicon
   }
 
-  const toItem = (item: SavedGradient | SavedShadow | SavedAnimation | SavedClipPath, category: Category) => ({
+  const toItem = (item: SavedGradient | SavedShadow | SavedAnimation | SavedClipPath | SavedFavicon, category: Category) => ({
     ...item.get({ plain: true }),
     category
   })
@@ -49,18 +50,20 @@ export function createModerationRouter(env: Env) {
    *         description: Нет прав администратора
    */
   router.get('/pending', auth, requireAdmin, async (_req, res) => {
-    const [gradients, shadows, animations, clipPaths] = await Promise.all([
+    const [gradients, shadows, animations, clipPaths, favicons] = await Promise.all([
       SavedGradient.findAll({ where: { status: 'pending' } }),
       SavedShadow.findAll({ where: { status: 'pending' } }),
       SavedAnimation.findAll({ where: { status: 'pending' } }),
-      SavedClipPath.findAll({ where: { status: 'pending' } })
+      SavedClipPath.findAll({ where: { status: 'pending' } }),
+      SavedFavicon.findAll({ where: { status: 'pending' } })
     ])
 
     const items = [
       ...gradients.map((item) => toItem(item, 'gradient')),
       ...shadows.map((item) => toItem(item, 'shadow')),
       ...animations.map((item) => toItem(item, 'animation')),
-      ...clipPaths.map((item) => toItem(item, 'clip-path'))
+      ...clipPaths.map((item) => toItem(item, 'clip-path')),
+      ...favicons.map((item) => toItem(item, 'favicon'))
     ].sort(
       (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
     )
@@ -93,18 +96,20 @@ export function createModerationRouter(env: Env) {
    *         description: Нет прав администратора
    */
   router.get('/approved', auth, requireAdmin, async (_req, res) => {
-    const [gradients, shadows, animations, clipPaths] = await Promise.all([
+    const [gradients, shadows, animations, clipPaths, favicons] = await Promise.all([
       SavedGradient.findAll({ where: { status: 'approved' } }),
       SavedShadow.findAll({ where: { status: 'approved' } }),
       SavedAnimation.findAll({ where: { status: 'approved' } }),
-      SavedClipPath.findAll({ where: { status: 'approved' } })
+      SavedClipPath.findAll({ where: { status: 'approved' } }),
+      SavedFavicon.findAll({ where: { status: 'approved' } })
     ])
 
     const items = [
       ...gradients.map((item) => toItem(item, 'gradient')),
       ...shadows.map((item) => toItem(item, 'shadow')),
       ...animations.map((item) => toItem(item, 'animation')),
-      ...clipPaths.map((item) => toItem(item, 'clip-path'))
+      ...clipPaths.map((item) => toItem(item, 'clip-path')),
+      ...favicons.map((item) => toItem(item, 'favicon'))
     ].sort(
       (a, b) => new Date(b.approvedAt ?? 0).getTime() - new Date(a.approvedAt ?? 0).getTime()
     )

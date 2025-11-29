@@ -8,7 +8,6 @@
         class="clip-path-preview__layer"
       ></div>
 
-      <!-- Draggable points for polygon layers -->
       <template v-for="layer in visiblePolygonLayers" :key="layer.id">
         <div
           v-for="point in layer.points"

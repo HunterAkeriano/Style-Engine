@@ -92,9 +92,40 @@
     margin: 0;
   }
 
+  &__author {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+    padding: $space-xs 0;
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+  }
+
+  &__avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: $font-weight-semibold;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  &__author-name {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   &__actions {
     display: flex;
     gap: $space-sm;
     align-items: center;
+    flex-wrap: wrap;
   }
 }

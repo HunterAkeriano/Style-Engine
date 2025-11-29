@@ -76,6 +76,12 @@ const mainLayoutChildren: RouteRecordRaw[] = [
         name: 'profile-clip-paths',
         component: () => import('@/pages/profile/saved/SavedClipPathsPage.vue'),
         meta: { requiresAuth: true }
+      },
+      {
+        path: 'favicons',
+        name: 'profile-favicons',
+        component: () => import('@/pages/profile/saved/SavedFaviconsPage.vue'),
+        meta: { requiresAuth: true }
       }
     ]
   }
