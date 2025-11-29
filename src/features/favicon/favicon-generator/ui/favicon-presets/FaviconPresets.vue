@@ -11,6 +11,7 @@
         v-for="preset in presets"
         :key="preset.id"
         class="favicon-presets__item"
+        @click="emit('apply', preset)"
       >
         <div class="favicon-presets__preview" :style="{ backgroundColor: preset.backgroundColor }">
           <div
@@ -33,15 +34,8 @@
           <div class="favicon-presets__actions">
             <Button
               size="sm"
-              variant="outline"
-              @click="emit('apply', preset)"
-            >
-              {{ t('COMMON.APPLY') }}
-            </Button>
-            <Button
-              size="sm"
               variant="ghost"
-              @click="emit('download', preset)"
+              @click.stop="handleDownloadClick(preset)"
             >
               <Icon name="icon-download" :size="16" />
             </Button>
@@ -70,6 +64,9 @@ import {
   getCreatorInitials,
   getCreatorLabel
 } from '@/shared/lib/creator'
+import { useAuthStore } from '@/entities'
+
+const authStore = useAuthStore()
 
 interface Props {
   presets: FaviconPreset[]
@@ -81,6 +78,7 @@ interface Emits {
   (e: 'apply', preset: FaviconPreset): void
   (e: 'download', preset: FaviconPreset): void
   (e: 'save', preset: FaviconPreset): void
+  (e: 'upgrade-required'): void
 }
 
 const props = defineProps<Props>()
@@ -88,6 +86,15 @@ const emit = defineEmits<Emits>()
 const { presets, savingId, isSaved } = toRefs(props)
 const { t } = useI18n()
 const isPresetSaved = (preset: FaviconPreset) => (isSaved?.value && isSaved.value(preset)) ?? false
+
+function handleDownloadClick(preset: FaviconPreset) {
+  const userTier = authStore.user?.subscriptionTier
+  if (!userTier || userTier === 'free') {
+    emit('upgrade-required')
+    return
+  }
+  emit('download', preset)
+}
 </script>
 
 <style lang="scss" scoped src="./favicon-presets.scss"></style>

@@ -48,11 +48,16 @@
     border-radius: $border-radius-xl;
     box-shadow: $shadow-md;
     transition: all $transition-base;
+    cursor: pointer;
 
     &:hover {
-      transform: translateY(-2px);
+      transform: translateY(-4px);
       box-shadow: $shadow-lg;
       border-color: $color-primary;
+    }
+
+    &:active {
+      transform: translateY(-2px);
     }
   }
 

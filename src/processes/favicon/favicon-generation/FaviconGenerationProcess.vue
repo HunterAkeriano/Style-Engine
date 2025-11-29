@@ -39,6 +39,7 @@
         @apply="handleApplyPreset"
         @download="handleDownloadPreset"
         @save="handleSavePreset"
+        @upgrade-required="showUpgradeModal = true"
       />
     </div>
 
@@ -51,6 +52,17 @@
       show-actions
       @confirm="handleAuthConfirm"
       @close="showAuthModal = false"
+    />
+
+    <Modal
+      :title="t('COMMON.PRO_EXPORT_TITLE')"
+      :subtitle="t('COMMON.PRO_DOWNLOAD_MESSAGE')"
+      :visible="showUpgradeModal"
+      show-actions
+      :confirm-text="t('COMMON.PRO_EXPORT_ACTION')"
+      :cancel-text="t('COMMON.CANCEL')"
+      @confirm="handleUpgradeConfirm"
+      @close="showUpgradeModal = false"
     />
 
     <Modal
@@ -112,7 +124,7 @@ import {
   createFaviconZip,
   downloadBlob,
 } from '@/shared/lib/favicon'
-import { createSave, listPublicSaves, type SavedItem, type SaveCategory } from '@/shared/api/saves'
+import { createSave, listPublicSaves, listSaves, type SavedItem, type SaveCategory } from '@/shared/api/saves'
 import { evaluateSaveQuota, type SaveQuotaResult } from '@/shared/lib/save-quota'
 import { SubscriptionTier } from '@/shared/config/pricing'
 import { buildCreatorProfile } from '@/shared/lib/creator'
@@ -138,6 +150,7 @@ const sourceImageElement = ref<HTMLImageElement | null>(null)
 const showAuthModal = ref(false)
 const showSaveModal = ref(false)
 const showProLimitModal = ref(false)
+const showUpgradeModal = ref(false)
 const saveName = ref('')
 const saveThumbnail = ref<string | null>(null)
 const proQuota = ref<SaveQuotaResult | null>(null)
@@ -488,6 +501,14 @@ function handleAuthConfirm() {
   })
 }
 
+function handleUpgradeConfirm() {
+  showUpgradeModal.value = false
+  router.push({
+    path: `/${locale.value}/about`,
+    query: { plan: 'pro' }
+  })
+}
+
 async function handleSavePreset(preset: FaviconPreset) {
   if (!authStore.isAuthenticated) {
     showAuthModal.value = true
@@ -583,6 +604,35 @@ async function loadPublicFavicons() {
   }
 }
 
+async function loadUserSavedFavicons() {
+  if (!authStore.isAuthenticated) {
+    return
+  }
+
+  try {
+    const items = await listSaves('favicon')
+    items.forEach(item => {
+      const payload = item.payload as {
+        images?: Record<number, string>
+        backgroundColor?: string
+        padding?: number
+        borderRadius?: number
+      }
+      if (payload.images) {
+        const hash = JSON.stringify({
+          images: payload.images,
+          backgroundColor: payload.backgroundColor,
+          padding: payload.padding,
+          borderRadius: payload.borderRadius
+        })
+        savedFaviconHashes.value.add(hash)
+      }
+    })
+  } catch (error) {
+    console.error('Failed to load user saved favicons:', error)
+  }
+}
+
 function savedToPreset(item: SavedItem): FaviconPreset {
   const payload = item.payload as {
     backgroundColor?: string
@@ -614,6 +664,7 @@ function savedToPreset(item: SavedItem): FaviconPreset {
 
 onMounted(() => {
   loadPublicFavicons()
+  loadUserSavedFavicons()
 })
 
 watch(

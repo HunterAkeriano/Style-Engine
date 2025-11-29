@@ -21,6 +21,7 @@ const SSG_PUBLIC_ROUTES = [
   '/shadow',
   '/animation',
   '/clip-path',
+  '/favicon',
   '/privacy-policy',
   '/cookie-policy'
 ]

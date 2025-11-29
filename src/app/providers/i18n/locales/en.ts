@@ -391,7 +391,8 @@ export default {
     DOWNLOAD: 'Download',
     PRO_EXPORT_TITLE: 'Exporting is Pro-only',
     PRO_EXPORT_MESSAGE: 'Exporting code is reserved for Pro and Premium users. Upgrade to access HTML and format downloads.',
-    PRO_EXPORT_ACTION: 'View plans'
+    PRO_EXPORT_ACTION: 'View plans',
+    PRO_DOWNLOAD_MESSAGE: 'Download presets is available for Pro and Premium users. Upgrade to unlock this feature.'
   },
   FOOTER: {
     NAVIGATION: 'Navigation',
