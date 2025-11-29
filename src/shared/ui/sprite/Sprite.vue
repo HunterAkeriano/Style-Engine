@@ -87,6 +87,10 @@
     <symbol id="icon-mail" viewBox="0 0 24 24">
       <path d="M4 5h16a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2zm0 2v.2l8 4.8 8-4.8V7l-8 4.8L4 7z" fill="currentColor" />
     </symbol>
+
+    <symbol id="icon-download" viewBox="0 0 24 24">
+      <path d="M12 2v13m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
   </svg>
 </template>
 

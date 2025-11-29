@@ -156,6 +156,19 @@ const generatorLayoutRoutes: RouteRecordRaw[] = [
         meta: { titleKey: 'META.GRID', descriptionKey: 'META_DESCRIPTION.GRID' }
       }
     ]
+  },
+  {
+    path: 'favicon',
+    component: GeneratorLayout,
+    meta: { breadcrumbKey: 'BREADCRUMBS.FAVICON' },
+    children: [
+      {
+        path: '',
+        name: 'favicon',
+        component: () => import('@/pages/favicon/FaviconPage.vue'),
+        meta: { titleKey: 'META.FAVICON', descriptionKey: 'META_DESCRIPTION.FAVICON' }
+      }
+    ]
   }
 ]
 

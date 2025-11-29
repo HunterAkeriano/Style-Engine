@@ -33,6 +33,10 @@
             <NavLink :to="`/${locale}/grid`" class-name="header__nav-link">
               {{ t('NAV.GRID') }}
             </NavLink>
+
+            <NavLink :to="`/${locale}/favicon`" class-name="header__nav-link">
+              {{ t('NAV.FAVICON') }}
+            </NavLink>
           </DropdownMenu>
 
           <NavLink :to="`/${locale}/about`" class-name="header__nav-link">
@@ -90,6 +94,10 @@
 
         <NavLink :to="`/${locale}/grid`" class-name="header__mobile-link" @click="closeMobileMenu">
           {{ t('NAV.GRID') }}
+        </NavLink>
+
+        <NavLink :to="`/${locale}/favicon`" class-name="header__mobile-link" @click="closeMobileMenu">
+          {{ t('NAV.FAVICON') }}
         </NavLink>
 
         <NavLink :to="`/${locale}/about`" class-name="header__mobile-link" @click="closeMobileMenu">
