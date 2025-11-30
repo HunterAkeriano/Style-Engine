@@ -24,7 +24,7 @@
     gap: $space-md;
     flex-wrap: wrap;
     justify-content: center;
-    width: 100%;
+    width: fit-content;
     max-width: 840px;
 
     @media (min-width: $breakpoint-md) {
@@ -52,6 +52,14 @@
     &.router-link-active {
       color: $color-primary;
       background: $color-primary-alpha-10;
+    }
+
+    &:nth-of-type(1) {
+      margin-left: 200px;
+
+      @media (max-width: $breakpoint-lg) {
+        margin-left: unset;
+      }
     }
   }
 
