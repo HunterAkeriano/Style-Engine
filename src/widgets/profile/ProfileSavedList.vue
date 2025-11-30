@@ -29,7 +29,7 @@
           <div v-else-if="category === 'favicon'" class="profile-saved-list__preview-favicon" :style="getPreviewStyle(item)">
             <img
               v-if="getFaviconImage(item)"
-              :src="getFaviconImage(item)"
+              :src="getFaviconImage(item) ?? ''"
               alt="Favicon"
               class="profile-saved-list__preview-favicon-image"
             />

@@ -407,12 +407,6 @@ async function handleSave() {
     return
   }
 
-  const payload = {
-    backgroundColor: config.backgroundColor,
-    padding: config.padding,
-    borderRadius: config.borderRadius
-  }
-
   const favicon32 = generatedFavicons.value.find(f => f.size === 32)
   if (favicon32) {
     saveThumbnail.value = favicon32.dataUrl
@@ -547,7 +541,7 @@ async function handleSavePreset(preset: FaviconPreset) {
     const htmlCode = generateFaviconHTML(favicons)
     const manifestJson = generateManifestJSON(favicons)
 
-    const payload = {
+    const payload: any = {
       backgroundColor: preset.backgroundColor,
       padding: preset.padding,
       borderRadius: preset.borderRadius,
@@ -556,9 +550,30 @@ async function handleSavePreset(preset: FaviconPreset) {
       manifestJson
     }
 
+    if (preset.svg) {
+      payload.svg = preset.svg
+    }
+
     await createSave('favicon', preset.name, payload)
     toast.success(t('COMMON.SAVE_SUCCESS', { entity: entityLabel.value }))
-    savedFaviconHashes.value.add(JSON.stringify(payload))
+
+    if (preset.svg) {
+      const svgHash = JSON.stringify({
+        backgroundColor: preset.backgroundColor,
+        padding: preset.padding,
+        borderRadius: preset.borderRadius,
+        key: preset.svg
+      })
+      savedFaviconHashes.value.add(svgHash)
+    }
+
+    const nameHash = JSON.stringify({
+      backgroundColor: preset.backgroundColor,
+      padding: preset.padding,
+      borderRadius: preset.borderRadius,
+      name: preset.name
+    })
+    savedFaviconHashes.value.add(nameHash)
   } catch (error: any) {
     if (error?.status === 403) {
       proQuota.value = {
@@ -583,16 +598,25 @@ async function handleSavePreset(preset: FaviconPreset) {
 }
 
 function isPresetSaved(preset: FaviconPreset) {
-  if (preset.savedImages) {
-    const payload = {
-      images: preset.savedImages,
+  if (preset.svg) {
+    const svgHash = JSON.stringify({
       backgroundColor: preset.backgroundColor,
       padding: preset.padding,
-      borderRadius: preset.borderRadius
+      borderRadius: preset.borderRadius,
+      key: preset.svg
+    })
+    if (savedFaviconHashes.value.has(svgHash)) {
+      return true
     }
-    return savedFaviconHashes.value.has(JSON.stringify(payload))
   }
-  return false
+
+  const nameHash = JSON.stringify({
+    backgroundColor: preset.backgroundColor,
+    padding: preset.padding,
+    borderRadius: preset.borderRadius,
+    name: preset.name
+  })
+  return savedFaviconHashes.value.has(nameHash)
 }
 
 async function loadPublicFavicons() {
@@ -612,20 +636,26 @@ async function loadUserSavedFavicons() {
   try {
     const items = await listSaves('favicon')
     items.forEach(item => {
-      const payload = item.payload as {
-        images?: Record<number, string>
-        backgroundColor?: string
-        padding?: number
-        borderRadius?: number
-      }
-      if (payload.images) {
-        const hash = JSON.stringify({
-          images: payload.images,
+      if (item.payload) {
+        const payload = item.payload as any
+
+        if (payload.svg) {
+          const hash = JSON.stringify({
+            backgroundColor: payload.backgroundColor,
+            padding: payload.padding,
+            borderRadius: payload.borderRadius,
+            key: payload.svg
+          })
+          savedFaviconHashes.value.add(hash)
+        }
+
+        const nameHash = JSON.stringify({
           backgroundColor: payload.backgroundColor,
           padding: payload.padding,
-          borderRadius: payload.borderRadius
+          borderRadius: payload.borderRadius,
+          name: item.name
         })
-        savedFaviconHashes.value.add(hash)
+        savedFaviconHashes.value.add(nameHash)
       }
     })
   } catch (error) {
@@ -657,7 +687,7 @@ function savedToPreset(item: SavedItem): FaviconPreset {
     padding: payload.padding ?? 10,
     borderRadius: payload.borderRadius ?? 0,
     svg,
-    owner: buildCreatorProfile(item.ownerName, item.ownerEmail, item.ownerAvatar),
+    owner: buildCreatorProfile(item),
     savedImages: payload.images
   }
 }

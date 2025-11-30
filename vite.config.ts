@@ -22,6 +22,7 @@ const ssgPublicRoutes = [
   '/clip-path',
   '/grid',
   '/privacy-policy',
+  '/favicon',
   '/cookie-policy'
 ];
 const ssgIncludedRoutes = locales.flatMap(locale => ssgPublicRoutes.map(route => `/${locale}${route === '/' ? '' : route}`));
