@@ -75,7 +75,17 @@ export default {
     SHOWCASE_GRID_DESCRIPTION: 'Dynamic CSS Grid layout with animated cells and smooth transitions',
     SHOWCASE_FAVICON_LABEL: 'Icon Genesis',
     SHOWCASE_FAVICON_DESCRIPTION: 'Multi-format favicon generation with animated preview icons',
-    SHOWCASE_TRY: 'Try it yourself'
+    SHOWCASE_TRY: 'Try it yourself',
+    TECH_TAG: 'Our technology',
+    TECH_TITLE: 'Built with modern tools for maximum performance',
+    TECH_DESCRIPTION: 'We started with a simple idea: create a visual playground where designers and developers could craft CSS effects without writing code from scratch. What began as a gradient tool evolved into a full suite of generators, built on cutting-edge tech to stay fast, reliable, and easy to use.',
+    TECH_STACK_TITLE: 'Technology stack',
+    TECH_VUE_DESC: 'Reactive UI framework for smooth interactions',
+    TECH_TS_DESC: 'Type safety and better developer experience',
+    TECH_VITE_DESC: 'Lightning-fast build tool and dev server',
+    TECH_SCSS_DESC: 'Powerful CSS preprocessor for maintainable styles',
+    TECH_NODE_DESC: 'Backend runtime for API and server logic',
+    TECH_POSTGRES_DESC: 'Reliable database for user data and presets'
   },
   GRADIENT: {
     TITLE: 'Gradient Generator',

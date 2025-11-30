@@ -1,0 +1,389 @@
+.home-tech {
+  margin-top: $space-3xl;
+  margin-bottom: $space-3xl;
+  padding: $space-3xl $space-2xl;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    color-var-alpha('color-bg-secondary', 0.4),
+    color-var-alpha('color-bg-primary', 0.6),
+    color-var-alpha('color-bg-secondary', 0.4)
+  );
+  border: 1px solid color-var-alpha('panel-border', 0.1);
+  border-radius: $border-radius-2xl;
+  box-shadow:
+    0 0 0 1px color-var-alpha('panel-border', 0.05),
+    0 20px 52px rgba(0, 0, 0, 0.3),
+    0 12px 32px $color-primary-alpha-12;
+
+  @media (min-width: $breakpoint-lg) {
+    padding: $space-3xl;
+  }
+}
+
+.home-tech__story {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto $space-3xl;
+  position: relative;
+  z-index: 2;
+}
+
+.home-tech__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  padding: $space-xs $space-sm;
+  border-radius: $border-radius-full;
+  background: linear-gradient(135deg, $color-primary-alpha-16, $color-secondary-alpha-16);
+  border: 1px solid $color-primary-alpha-20;
+  color: $color-primary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-bottom: $space-md;
+  box-shadow: 0 0 20px $color-primary-alpha-20;
+  animation: techEyebrowPulse 3s ease-in-out infinite;
+}
+
+.home-tech__title {
+  font-size: $font-size-2xl;
+  line-height: 1.2;
+  margin-bottom: $space-md;
+  background: linear-gradient(135deg, $color-text-primary, $color-primary, $color-secondary);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: techTitleShift 6s ease-in-out infinite;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-3xl;
+  }
+}
+
+.home-tech__description {
+  color: color-var-alpha('color-text-secondary', 0.9);
+  line-height: 1.8;
+  font-size: $font-size-base;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-lg;
+  }
+}
+
+.home-tech__stack {
+  position: relative;
+  z-index: 2;
+}
+
+.home-tech__stack-title {
+  text-align: center;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $space-2xl;
+  color: $color-text-primary;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-2xl;
+  }
+}
+
+.home-tech__grid {
+  display: grid;
+  gap: $space-lg;
+  grid-template-columns: 1fr;
+
+  @media (min-width: $breakpoint-sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.home-tech__card {
+  padding: $space-xl;
+  background: linear-gradient(
+    135deg,
+    color-var-alpha('color-bg-primary', 0.8),
+    color-var-alpha('color-bg-secondary', 0.6)
+  );
+  border: 1px solid color-var-alpha('panel-border', 0.15);
+  border-radius: $border-radius-xl;
+  box-shadow:
+    0 0 0 1px color-var-alpha('panel-border', 0.08),
+    0 10px 28px rgba(0, 0, 0, 0.2);
+  transition: transform $transition-base, box-shadow $transition-base, border-color $transition-base;
+  position: relative;
+  overflow: hidden;
+  animation: techCardEntrance 0.8s ease-out backwards;
+  animation-delay: calc(var(--tech-index) * 0.1s);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    background: conic-gradient(
+      from 0deg at 50% 50%,
+      transparent,
+      $color-primary-alpha-12,
+      transparent 90deg,
+      $color-secondary-alpha-16,
+      transparent 180deg,
+      $color-accent-alpha-18,
+      transparent 270deg
+    );
+    animation: techCardRotate 8s linear infinite;
+    opacity: 0;
+    transition: opacity $transition-base;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      circle at 30% 30%,
+      $color-primary-alpha-08,
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity $transition-base;
+  }
+
+  &:hover {
+    transform: translateY(-6px);
+    border-color: $color-primary;
+    box-shadow:
+      0 0 0 1px $color-primary-alpha-32,
+      0 0 30px $color-primary-alpha-24,
+      0 16px 40px rgba(0, 0, 0, 0.3);
+
+    &::before {
+      opacity: 1;
+    }
+
+    &::after {
+      opacity: 1;
+    }
+
+    .home-tech__icon {
+      transform: scale(1.1) rotate(5deg);
+
+      svg {
+        color: $color-primary;
+      }
+    }
+  }
+}
+
+.home-tech__icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto $space-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $border-radius-lg;
+  background: linear-gradient(135deg, $color-primary-alpha-12, $color-secondary-alpha-16);
+  border: 1px solid $color-primary-alpha-20;
+  transition: transform $transition-base;
+  position: relative;
+  z-index: 1;
+
+  :deep(svg) {
+    color: $color-primary;
+    transition: color $transition-base;
+  }
+}
+
+.home-tech__card-title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $space-xs;
+  color: $color-text-primary;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.home-tech__card-description {
+  color: color-var-alpha('color-text-secondary', 0.85);
+  line-height: 1.6;
+  font-size: $font-size-sm;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-base;
+  }
+}
+
+.home-tech__particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.home-tech__particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, $color-primary, transparent);
+  opacity: 0.6;
+
+  $colors: ($color-primary, $color-secondary, $color-accent);
+
+  @for $i from 1 through 15 {
+    &:nth-child(#{$i}) {
+      $size: 3 + random(4) + px;
+      $left: random(100) + %;
+      $top: random(100) + %;
+      $duration: 8 + random(12) + s;
+      $delay: random(5) + s;
+
+      width: $size;
+      height: $size;
+      left: $left;
+      top: $top;
+      background: radial-gradient(circle, nth($colors, random(3)), transparent);
+      animation: techParticleFloat#{$i} $duration ease-in-out infinite;
+      animation-delay: -$delay;
+    }
+  }
+}
+
+@for $i from 1 through 15 {
+  @keyframes techParticleFloat#{$i} {
+    $moveX: -30 + random(60);
+    $moveY: -30 + random(60);
+
+    0%, 100% {
+      transform: translate(0, 0);
+      opacity: 0.3;
+    }
+    50% {
+      transform: translate(#{$moveX}px, #{$moveY}px);
+      opacity: 0.8;
+    }
+  }
+}
+
+.home-tech__glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+
+  &_1 {
+    width: 600px;
+    height: 600px;
+    top: -200px;
+    right: -200px;
+    background: radial-gradient(
+      circle,
+      $color-primary-alpha-12,
+      $color-secondary-alpha-16,
+      transparent 70%
+    );
+    animation: techGlow1 10s ease-in-out infinite;
+  }
+
+  &_2 {
+    width: 500px;
+    height: 500px;
+    bottom: -150px;
+    left: -150px;
+    background: radial-gradient(
+      circle,
+      $color-secondary-alpha-16,
+      $color-accent-alpha-18,
+      transparent 70%
+    );
+    animation: techGlow2 12s ease-in-out infinite;
+  }
+}
+
+@keyframes techEyebrowPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px $color-primary-alpha-20;
+  }
+  50% {
+    box-shadow: 0 0 30px $color-primary-alpha-32;
+  }
+}
+
+@keyframes techTitleShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes techCardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes techCardRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes techGlow1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(50px, -30px) scale(1.1);
+    opacity: 1;
+  }
+}
+
+@keyframes techGlow2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate(-40px, 40px) scale(1.15);
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-tech__eyebrow,
+  .home-tech__title,
+  .home-tech__card,
+  .home-tech__particle,
+  .home-tech__glow {
+    animation: none !important;
+  }
+
+  .home-tech__card {
+    opacity: 1;
+    transform: none;
+  }
+}

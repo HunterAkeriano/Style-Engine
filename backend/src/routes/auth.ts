@@ -52,6 +52,7 @@ export function createAuthRouter(env: Env) {
   function toSafeUser(user: User | null) {
     if (!user) return null
     const plain = user.get({ plain: true }) as any
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash: _ignoredPassword, ...rest } = plain
     return attachSuperFlag(rest)
   }
