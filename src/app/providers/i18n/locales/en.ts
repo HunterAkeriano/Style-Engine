@@ -40,6 +40,7 @@ export default {
     ANIMATION_BUTTON: 'Animation Generator',
     CLIPPATH_BUTTON: 'Clip Path Generator',
     GRID_BUTTON: 'Grid Generator',
+    FAVICON_BUTTON: 'Favicon Generator',
     ABOUT_TAG: 'What is it',
     ABOUT_TITLE: 'A design lab for CSS motion, gradients, and shadows',
     ABOUT_TEXT: 'Style Engine helps designers and developers craft production-ready gradients, shadows, and animations with live previews and instant code export.',
@@ -58,6 +59,8 @@ export default {
     FEATURES_CLIPPATH_DESCRIPTION: 'Design custom CSS clip-path shapes with a visual editor. Create polygons, circles, ellipses, and inset shapes. Layer multiple shapes and export production-ready code.',
     FEATURES_GRID_TITLE: 'Grid Generator',
     FEATURES_GRID_DESCRIPTION: 'Build complex CSS Grid layouts with precision control. Define columns, rows, gaps, and item placement. Preview instantly and copy complete HTML and CSS.',
+    FEATURES_FAVICON_TITLE: 'Favicon Generator',
+    FEATURES_FAVICON_DESCRIPTION: 'Generate favicons for all platforms from a single image. Create perfect icons for web, iOS, Android, and Windows with live preview and instant download.',
     SHOWCASE_TAG: 'Live examples',
     SHOWCASE_TITLE: 'See what you can build',
     SHOWCASE_ANIMATION_LABEL: 'Holographic Dream',
@@ -68,6 +71,10 @@ export default {
     SHOWCASE_SHADOW_DESCRIPTION: 'Dynamic multi-layer shadows with animated orbs and floating cards',
     SHOWCASE_CLIPPATH_LABEL: 'Morph Magic',
     SHOWCASE_CLIPPATH_DESCRIPTION: 'Shape-shifting clip-path animations morphing through geometric forms',
+    SHOWCASE_GRID_LABEL: 'Grid Flow',
+    SHOWCASE_GRID_DESCRIPTION: 'Dynamic CSS Grid layout with animated cells and smooth transitions',
+    SHOWCASE_FAVICON_LABEL: 'Icon Genesis',
+    SHOWCASE_FAVICON_DESCRIPTION: 'Multi-format favicon generation with animated preview icons',
     SHOWCASE_TRY: 'Try it yourself'
   },
   GRADIENT: {

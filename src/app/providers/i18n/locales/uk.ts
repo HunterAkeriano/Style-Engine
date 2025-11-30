@@ -40,6 +40,7 @@ export default {
     ANIMATION_BUTTON: 'Генератор анімацій',
     CLIPPATH_BUTTON: 'Генератор Clip Path',
     GRID_BUTTON: 'Генератор сіток',
+    FAVICON_BUTTON: 'Генератор Favicon',
     ABOUT_TAG: 'Що це',
     ABOUT_TITLE: 'Лабораторія дизайну градієнтів, тіней і руху',
     ABOUT_TEXT:
@@ -64,6 +65,9 @@ export default {
     FEATURES_GRID_TITLE: 'Генератор сіток',
     FEATURES_GRID_DESCRIPTION:
       'Створюйте складні CSS Grid макети з точною настройкою. Визначайте колонки, рядки, проміжки та розміщення елементів. Миттєве превʼю та готовий HTML з CSS.',
+    FEATURES_FAVICON_TITLE: 'Генератор Favicon',
+    FEATURES_FAVICON_DESCRIPTION:
+      'Генеруйте favicon для всіх платформ з одного зображення. Створюйте ідеальні іконки для веб, iOS, Android та Windows з живим превʼю та миттєвим завантаженням.',
     SHOWCASE_TAG: 'Живі приклади',
     SHOWCASE_TITLE: 'Подивіться, що можна зібрати',
     SHOWCASE_ANIMATION_LABEL: 'Голографічна мрія',
@@ -74,6 +78,10 @@ export default {
     SHOWCASE_SHADOW_DESCRIPTION: 'Динамічні багатошарові тіні з анімованими сферами та картками',
     SHOWCASE_CLIPPATH_LABEL: 'Магія трансформацій',
     SHOWCASE_CLIPPATH_DESCRIPTION: 'Морфінг clip-path анімацій з геометричними формами',
+    SHOWCASE_GRID_LABEL: 'Потік сіток',
+    SHOWCASE_GRID_DESCRIPTION: 'Динамічний CSS Grid макет з анімованими клітинками та плавними переходами',
+    SHOWCASE_FAVICON_LABEL: 'Генезис іконок',
+    SHOWCASE_FAVICON_DESCRIPTION: 'Генерація мультиформатних favicon з анімованим превʼю іконок',
     SHOWCASE_TRY: 'Спробувати'
   },
   GRADIENT: {

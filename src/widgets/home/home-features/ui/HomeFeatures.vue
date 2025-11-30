@@ -44,6 +44,14 @@
             {{ t('HOME.GRID_BUTTON') }} →
           </NavLink>
         </div>
+
+        <div class="home-features__card">
+          <h3 class="home-features__card-title">{{ t('HOME.FEATURES_FAVICON_TITLE') }}</h3>
+          <p class="home-features__card-description">{{ t('HOME.FEATURES_FAVICON_DESCRIPTION') }}</p>
+          <NavLink to="/favicon" class-name="home-features__card-link">
+            {{ t('HOME.FAVICON_BUTTON') }} →
+          </NavLink>
+        </div>
       </div>
     </section>
   </div>

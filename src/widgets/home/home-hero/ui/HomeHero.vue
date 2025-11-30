@@ -22,6 +22,18 @@
         <NavLink to="/animation" class-name="home-hero__button home-hero__button_secondary">
           {{ t('HOME.ANIMATION_BUTTON') }}
         </NavLink>
+
+        <NavLink to="/clip-path" class-name="home-hero__button home-hero__button_secondary">
+          {{ t('HOME.CLIPPATH_BUTTON') }}
+        </NavLink>
+
+        <NavLink to="/grid" class-name="home-hero__button home-hero__button_secondary">
+          {{ t('HOME.GRID_BUTTON') }}
+        </NavLink>
+
+        <NavLink to="/favicon" class-name="home-hero__button home-hero__button_secondary">
+          {{ t('HOME.FAVICON_BUTTON') }}
+        </NavLink>
       </div>
     </section>
   </div>

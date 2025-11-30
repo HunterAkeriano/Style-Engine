@@ -96,6 +96,59 @@
             </NavLink>
           </div>
         </div>
+
+        <div class="home-showcase__card">
+          <div class="home-showcase__preview home-showcase__preview_grid">
+            <div class="grid-flow">
+              <div class="grid-flow__bg"></div>
+              <div class="grid-flow__container">
+                <div class="grid-flow__cell grid-flow__cell_1"></div>
+                <div class="grid-flow__cell grid-flow__cell_2"></div>
+                <div class="grid-flow__cell grid-flow__cell_3"></div>
+                <div class="grid-flow__cell grid-flow__cell_4"></div>
+                <div class="grid-flow__cell grid-flow__cell_5"></div>
+                <div class="grid-flow__cell grid-flow__cell_6"></div>
+                <div class="grid-flow__cell grid-flow__cell_7"></div>
+                <div class="grid-flow__cell grid-flow__cell_8"></div>
+                <div class="grid-flow__cell grid-flow__cell_9"></div>
+              </div>
+              <div class="grid-flow__glow"></div>
+            </div>
+          </div>
+          <div class="home-showcase__info">
+            <h3 class="home-showcase__label">{{ t('HOME.SHOWCASE_GRID_LABEL') }}</h3>
+            <p class="home-showcase__description">{{ t('HOME.SHOWCASE_GRID_DESCRIPTION') }}</p>
+            <NavLink to="/grid" class-name="home-showcase__link">
+              {{ t('HOME.SHOWCASE_TRY') }} →
+            </NavLink>
+          </div>
+        </div>
+
+        <div class="home-showcase__card">
+          <div class="home-showcase__preview home-showcase__preview_favicon">
+            <div class="icon-genesis">
+              <div class="icon-genesis__bg"></div>
+              <div class="icon-genesis__icons">
+                <div class="icon-genesis__icon icon-genesis__icon_1"></div>
+                <div class="icon-genesis__icon icon-genesis__icon_2"></div>
+                <div class="icon-genesis__icon icon-genesis__icon_3"></div>
+                <div class="icon-genesis__icon icon-genesis__icon_4"></div>
+              </div>
+              <div class="icon-genesis__rings">
+                <div class="icon-genesis__ring icon-genesis__ring_1"></div>
+                <div class="icon-genesis__ring icon-genesis__ring_2"></div>
+              </div>
+              <div class="icon-genesis__shimmer"></div>
+            </div>
+          </div>
+          <div class="home-showcase__info">
+            <h3 class="home-showcase__label">{{ t('HOME.SHOWCASE_FAVICON_LABEL') }}</h3>
+            <p class="home-showcase__description">{{ t('HOME.SHOWCASE_FAVICON_DESCRIPTION') }}</p>
+            <NavLink to="/favicon" class-name="home-showcase__link">
+              {{ t('HOME.SHOWCASE_TRY') }} →
+            </NavLink>
+          </div>
+        </div>
       </div>
     </section>
   </div>
