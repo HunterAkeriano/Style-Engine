@@ -16,20 +16,25 @@
             <NavLink to="/gradient" class-name="footer__link">
               {{ t('NAV.GRADIENTS') }}
             </NavLink>
+
             <NavLink to="/shadow" class-name="footer__link">
               {{ t('NAV.SHADOWS') }}
             </NavLink>
+
             <NavLink to="/animation" class-name="footer__link">
               {{ t('NAV.ANIMATIONS') }}
             </NavLink>
+
             <NavLink to="/clip-path" class-name="footer__link">
               {{ t('NAV.CLIP_PATHS') }}
             </NavLink>
+
             <NavLink to="/grid" class-name="footer__link">
               {{ t('NAV.GRID') }}
             </NavLink>
-            <NavLink to="/about" class-name="footer__link">
-              {{ t('NAV.ABOUT') }}
+
+            <NavLink to="/favicon" class-name="footer__link">
+              {{ t('NAV.FAVICON') }}
             </NavLink>
           </nav>
         </div>
@@ -37,12 +42,18 @@
         <div class="footer__section">
           <h4 class="footer__section-title">{{ t('FOOTER.DOCUMENTATION') }}</h4>
           <nav class="footer__nav">
+            <NavLink to="/about" class-name="footer__link">
+              {{ t('NAV.ABOUT') }}
+            </NavLink>
+
             <NavLink to="/docs" class-name="footer__link">
               {{ t('NAV.DOCS') }}
             </NavLink>
+
             <NavLink to="/privacy-policy" class-name="footer__link">
               {{ t('PRIVACY.NAV') }}
             </NavLink>
+
             <NavLink to="/cookie-policy" class-name="footer__link">
               {{ t('COOKIE.NAV') }}
             </NavLink>
