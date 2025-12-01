@@ -10,13 +10,15 @@
       <div class="home-tech__stack">
         <h3 class="home-tech__stack-title">{{ t('HOME.TECH_STACK_TITLE') }}</h3>
 
-        <div class="home-tech__grid">
-          <div class="home-tech__card" v-for="(tech, index) in technologies" :key="tech.name" :style="{ '--tech-index': index }">
-            <div class="home-tech__icon">
-              <Icon :name="tech.icon" :size="40" />
-            </div>
-            <h4 class="home-tech__card-title">{{ tech.name }}</h4>
-            <p class="home-tech__card-description">{{ tech.description }}</p>
+        <div class="home-tech__scene" ref="sceneContainerRef">
+          <canvas ref="canvasRef" class="home-tech__canvas" aria-label="3D showcase of StyleEngine stack"></canvas>
+          <div class="home-tech__scene-glow"></div>
+        </div>
+
+        <div class="home-tech__legend" aria-hidden="true">
+          <div class="home-tech__chip" v-for="tech in technologies" :key="tech.name">
+            <Icon :name="tech.icon" :size="20" />
+            <span>{{ tech.name }}</span>
           </div>
         </div>
       </div>
@@ -32,10 +34,31 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Icon } from '@/shared/ui'
+import { createTechScene, type TechSceneHandle } from '@/three-js/script'
 
 const { t } = useI18n()
+
+const canvasRef = ref<HTMLCanvasElement | null>(null)
+const sceneContainerRef = ref<HTMLElement | null>(null)
+let sceneHandle: TechSceneHandle | null = null
+
+onMounted(() => {
+  if (!canvasRef.value) {
+    return
+  }
+
+  sceneHandle = createTechScene(canvasRef.value, {
+    container: sceneContainerRef.value
+  })
+})
+
+onUnmounted(() => {
+  sceneHandle?.dispose()
+  sceneHandle = null
+})
 
 const technologies = [
   {
