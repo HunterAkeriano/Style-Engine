@@ -19,7 +19,7 @@
 
     <transition name="dropdown-fade">
       <div
-        v-if="!isOpen"
+        v-if="isOpen"
         class="dropdown-menu__content"
         @click="handleContentClick"
       >
