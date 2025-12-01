@@ -80,7 +80,11 @@
       transition: all 0.2s;
       white-space: nowrap;
       width: fit-content;
-      margin: 0 auto;
+      margin: 0 auto 0 auto;
+
+      &:nth-of-type(1) {
+        margin: 0 auto;
+      }
 
       &:hover {
         background: var(--bg-tertiary);

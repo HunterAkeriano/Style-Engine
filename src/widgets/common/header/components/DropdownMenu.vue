@@ -1,6 +1,13 @@
 <template>
-  <div class="dropdown-menu" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
-    <button class="dropdown-menu__trigger" :class="{ 'dropdown-menu__trigger_active': isOpen }">
+  <div
+    class="dropdown-menu"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
+  >
+    <button
+      class="dropdown-menu__trigger"
+      :class="{ 'dropdown-menu__trigger_active': isOpen }"
+    >
       {{ title }}
       <Icon
         :size="16"
@@ -11,7 +18,11 @@
     </button>
 
     <transition name="dropdown-fade">
-      <div v-if="isOpen" class="dropdown-menu__content" @click="handleContentClick">
+      <div
+        v-if="!isOpen"
+        class="dropdown-menu__content"
+        @click="handleContentClick"
+      >
         <slot />
       </div>
     </transition>
@@ -19,37 +30,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Icon } from '@/shared/ui'
+import { ref } from "vue";
+import { Icon } from "@/shared/ui";
 
 defineProps<{
-  title: string
-}>()
+  title: string;
+}>();
 
-const isOpen = ref(false)
-let closeTimeout: NodeJS.Timeout | null = null
+const isOpen = ref(false);
+let closeTimeout: NodeJS.Timeout | null = null;
 
 function handleMouseEnter() {
   if (closeTimeout) {
-    clearTimeout(closeTimeout)
-    closeTimeout = null
+    clearTimeout(closeTimeout);
+    closeTimeout = null;
   }
-  isOpen.value = true
+  isOpen.value = true;
 }
 
 function handleMouseLeave() {
   closeTimeout = setTimeout(() => {
-    isOpen.value = false
-  }, 200)
+    isOpen.value = false;
+  }, 200);
 }
 
 function handleContentClick(event: MouseEvent) {
-  const target = event.target as HTMLElement
-  if (target.tagName === 'A' || target.closest('a')) {
-    isOpen.value = false
+  const target = event.target as HTMLElement;
+  if (target.tagName === "A" || target.closest("a")) {
+    isOpen.value = false;
     if (closeTimeout) {
-      clearTimeout(closeTimeout)
-      closeTimeout = null
+      clearTimeout(closeTimeout);
+      closeTimeout = null;
     }
   }
 }

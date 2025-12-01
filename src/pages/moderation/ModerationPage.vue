@@ -163,7 +163,7 @@ const currentItems = computed(() => {
 })
 
 const categoryGroups = computed<{ key: string; items: SavedItem[] }[]>(() => {
-  const groups: Record<string, SavedItem[]> = { gradient: [], shadow: [], animation: [], 'clip-path': [] }
+  const groups: Record<string, SavedItem[]> = { gradient: [], shadow: [], animation: [], 'clip-path': [], favicon: [] }
   currentItems.value.forEach(item => {
     const key = item.category ?? 'other'
     if (!groups[key]) {
@@ -175,7 +175,8 @@ const categoryGroups = computed<{ key: string; items: SavedItem[] }[]>(() => {
     { key: 'gradient', items: groups.gradient },
     { key: 'shadow', items: groups.shadow },
     { key: 'animation', items: groups.animation },
-    { key: 'clip-path', items: groups['clip-path'] }
+    { key: 'clip-path', items: groups['clip-path'] },
+    { key: 'favicon', items: groups.favicon }
   ]
 })
 
