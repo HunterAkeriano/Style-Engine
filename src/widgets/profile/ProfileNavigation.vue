@@ -68,6 +68,13 @@
     >
       {{ t('PROFILE.USER_MANAGEMENT_LINK') }}
     </RouterLink>
+    <RouterLink
+      v-if="isAdmin"
+      :to="{ name: `${locale}-quiz-manage` }"
+      class="profile-page__nav-link profile-page__nav-link_admin"
+    >
+      {{ t('PROFILE.QUIZ_MODERATION_LINK') }}
+    </RouterLink>
   </nav>
 </template>
 

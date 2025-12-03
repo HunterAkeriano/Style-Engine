@@ -15,6 +15,10 @@
         :id="inputId"
         :type="inputType"
         :placeholder="placeholder"
+        :min="min"
+        :max="max"
+        :step="step"
+        :inputmode="inputmode"
         :disabled="disabled"
         :required="required"
         :readonly="readonly"
@@ -61,6 +65,10 @@ interface Props {
   readonly?: boolean
   autocomplete?: string
   showPasswordToggle?: boolean
+  min?: number | string
+  max?: number | string
+  step?: number | string
+  inputmode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search'
 }
 
 interface Emits {

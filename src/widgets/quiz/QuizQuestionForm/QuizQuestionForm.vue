@@ -1,50 +1,47 @@
 <template>
-  <div class="quiz-question-form-overlay" @click.self="$emit('close')">
-    <div class="quiz-question-form">
-      <div class="quiz-question-form__header">
-        <h2 class="quiz-question-form__title">
-          {{ question ? 'Edit Question' : 'Add Question' }}
-        </h2>
-        <button class="quiz-question-form__close" @click="$emit('close')">×</button>
-      </div>
+  <Modal
+    :visible="visible"
+    :title="question ? t('QUIZ.MANAGE.FORM_TITLE_EDIT') : t('QUIZ.MANAGE.FORM_TITLE_ADD')"
+    :close-on-backdrop="true"
+    :closable="true"
+    :show-actions="false"
+    size="lg"
+    @close="handleClose"
+    @update:visible="handleVisibleChange"
+  >
+    <form class="quiz-question-form__form" @submit.prevent="handleSubmit">
+      <Textarea
+        v-model="formData.questionText"
+        class="quiz-question-form__field"
+        :label="t('QUIZ.MANAGE.FORM_QUESTION_LABEL')"
+        :placeholder="t('QUIZ.MANAGE.FORM_QUESTION_PLACEHOLDER')"
+        required
+        :rows="3"
+      />
 
-      <form class="quiz-question-form__form" @submit.prevent="handleSubmit">
-        <div class="quiz-question-form__field">
-          <label class="quiz-question-form__label">Question Text *</label>
-          <textarea
-            v-model="formData.questionText"
-            class="quiz-question-form__textarea"
-            rows="3"
-            placeholder="Enter the question..."
-            required
-          />
-        </div>
+      <Textarea
+        v-model="formData.codeSnippet"
+        class="quiz-question-form__field"
+        :label="t('QUIZ.MANAGE.FORM_SNIPPET_LABEL')"
+        :placeholder="t('QUIZ.MANAGE.FORM_SNIPPET_PLACEHOLDER')"
+        :rows="6"
+      />
 
-        <div class="quiz-question-form__field">
-          <label class="quiz-question-form__label">Code Snippet (optional)</label>
-          <textarea
-            v-model="formData.codeSnippet"
-            class="quiz-question-form__textarea quiz-question-form__textarea_code"
-            rows="6"
-            placeholder="Enter code snippet..."
-          />
-        </div>
-
-        <div class="quiz-question-form__field">
-          <label class="quiz-question-form__label">Answers * (2-6 answers)</label>
-          <div class="quiz-question-form__answers">
-            <div
-              v-for="(_, index) in formData.answers"
-              :key="index"
-              class="quiz-question-form__answer"
-            >
-              <input
-                v-model="formData.answers[index]"
-                type="text"
-                class="quiz-question-form__input"
-                placeholder="Answer text..."
-                required
-              />
+      <div class="quiz-question-form__field">
+        <label class="quiz-question-form__label">{{ t('QUIZ.MANAGE.FORM_ANSWERS_LABEL') }}</label>
+        <div class="quiz-question-form__answers">
+          <div
+            v-for="(_, index) in formData.answers"
+            :key="index"
+            class="quiz-question-form__answer"
+          >
+            <Input
+              v-model="formData.answers[index]"
+              :placeholder="t('QUIZ.MANAGE.FORM_ANSWER_PLACEHOLDER')"
+              class="quiz-question-form__input"
+              required
+            />
+            <label class="quiz-question-form__radio-label">
               <input
                 v-model="formData.correctAnswerIndex"
                 type="radio"
@@ -52,83 +49,89 @@
                 class="quiz-question-form__radio"
                 required
               />
-              <button
-                v-if="formData.answers.length > 2"
-                type="button"
-                class="quiz-question-form__remove"
-                @click="removeAnswer(index)"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-          <button
-            v-if="formData.answers.length < 6"
-            type="button"
-            class="quiz-question-form__add-answer"
-            @click="addAnswer"
-          >
-            + Add Answer
-          </button>
-        </div>
-
-        <div class="quiz-question-form__field">
-          <label class="quiz-question-form__label">Explanation (optional)</label>
-          <textarea
-            v-model="formData.explanation"
-            class="quiz-question-form__textarea"
-            rows="3"
-            placeholder="Explain the correct answer..."
-          />
-        </div>
-
-        <div class="quiz-question-form__row">
-          <div class="quiz-question-form__field">
-            <label class="quiz-question-form__label">Category *</label>
-            <select v-model="formData.category" class="quiz-question-form__select" required>
-              <option value="css">CSS</option>
-              <option value="scss">SCSS</option>
-              <option value="stylus">Stylus</option>
-            </select>
-          </div>
-
-          <div class="quiz-question-form__field">
-            <label class="quiz-question-form__label">Difficulty *</label>
-            <select v-model="formData.difficulty" class="quiz-question-form__select" required>
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-            </select>
+              {{ t('QUIZ.MANAGE.FORM_CORRECT') }}
+            </label>
+            <Button
+              v-if="formData.answers.length > 2"
+              type="button"
+              size="sm"
+              variant="ghost"
+              class="quiz-question-form__remove"
+              @click="removeAnswer(index)"
+            >
+              ×
+            </Button>
           </div>
         </div>
+        <Button
+          v-if="formData.answers.length < 6"
+          type="button"
+          variant="secondary"
+          size="sm"
+          class="quiz-question-form__add-answer"
+          @click="addAnswer"
+        >
+          {{ t('QUIZ.MANAGE.FORM_ADD_ANSWER') }}
+        </Button>
+      </div>
 
-        <div class="quiz-question-form__actions">
-          <Button type="button" variant="secondary" @click="$emit('close')">
-            Cancel
-          </Button>
-          <Button type="submit">
-            {{ question ? 'Update' : 'Create' }}
-          </Button>
-        </div>
-      </form>
-    </div>
-  </div>
+      <Textarea
+        v-model="formData.explanation"
+        class="quiz-question-form__field"
+        :label="t('QUIZ.MANAGE.FORM_EXPLANATION_LABEL')"
+        :placeholder="t('QUIZ.MANAGE.FORM_EXPLANATION_PLACEHOLDER')"
+        :rows="3"
+      />
+
+      <div class="quiz-question-form__row">
+        <Select
+          v-model="formData.category"
+          class="quiz-question-form__field"
+          :label="t('QUIZ.MANAGE.FORM_CATEGORY_LABEL')"
+          :options="categoryOptions"
+          required
+        />
+
+        <Select
+          v-model="formData.difficulty"
+          class="quiz-question-form__field"
+          :label="t('QUIZ.MANAGE.FORM_DIFFICULTY_LABEL')"
+          :options="difficultyOptions"
+          required
+        />
+      </div>
+
+      <div class="quiz-question-form__actions">
+        <Button type="button" variant="secondary" @click="handleClose">
+          {{ t('QUIZ.MANAGE.FORM_CANCEL') }}
+        </Button>
+        <Button type="submit">
+          {{ question ? t('QUIZ.MANAGE.FORM_UPDATE') : t('QUIZ.MANAGE.FORM_CREATE') }}
+        </Button>
+      </div>
+    </form>
+  </Modal>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { QuizQuestionAdmin } from '@/shared/types/quiz'
-import Button from '@/shared/ui/Button/Button.vue'
+import { Button, Input, Modal, Select, Textarea, type SelectOption } from '@/shared/ui'
 import './QuizQuestionForm.scss'
 
 const props = defineProps<{
   question: QuizQuestionAdmin | null
+  visible: boolean
 }>()
 
 const emit = defineEmits<{
   save: [data: any]
   close: []
+  'update:visible': [value: boolean]
 }>()
+
+const { t } = useI18n()
 
 const formData = ref({
   questionText: '',
@@ -140,7 +143,30 @@ const formData = ref({
   difficulty: 'medium' as 'easy' | 'medium' | 'hard'
 })
 
+const categoryOptions = computed<SelectOption[]>(() => [
+  { value: 'css', label: t('QUIZ.MANAGE.FORM_CATEGORY_CSS') },
+  { value: 'scss', label: t('QUIZ.MANAGE.FORM_CATEGORY_SCSS') },
+  { value: 'stylus', label: t('QUIZ.MANAGE.FORM_CATEGORY_STYLUS') }
+])
+
+const difficultyOptions = computed<SelectOption[]>(() => [
+  { value: 'easy', label: t('QUIZ.MANAGE.FORM_DIFFICULTY_EASY') },
+  { value: 'medium', label: t('QUIZ.MANAGE.FORM_DIFFICULTY_MEDIUM') },
+  { value: 'hard', label: t('QUIZ.MANAGE.FORM_DIFFICULTY_HARD') }
+])
+
 onMounted(() => {
+  hydrateForm()
+})
+
+watch(
+  () => props.question,
+  () => {
+    hydrateForm()
+  }
+)
+
+function hydrateForm() {
   if (props.question) {
     formData.value = {
       questionText: props.question.questionText,
@@ -151,8 +177,18 @@ onMounted(() => {
       category: props.question.category,
       difficulty: props.question.difficulty
     }
+  } else {
+    formData.value = {
+      questionText: '',
+      codeSnippet: '',
+      answers: ['', ''],
+      correctAnswerIndex: 0,
+      explanation: '',
+      category: 'css',
+      difficulty: 'medium'
+    }
   }
-})
+}
 
 function addAnswer() {
   if (formData.value.answers.length < 6) {
@@ -177,4 +213,17 @@ function handleSubmit() {
   }
   emit('save', data)
 }
+
+function handleClose() {
+  emit('close')
+  emit('update:visible', false)
+}
+
+function handleVisibleChange(value: boolean) {
+  if (!value) {
+    handleClose()
+  }
+}
 </script>
+
+<style scoped lang="scss" src="./QuizQuestionForm.scss"></style>

@@ -1,44 +1,32 @@
 <template>
   <div class="quiz-settings-form">
-    <div v-if="loading" class="quiz-settings-form__loading">Loading...</div>
+    <div v-if="loading" class="quiz-settings-form__loading">{{ t('QUIZ.MANAGE.SETTINGS_LOADING') }}</div>
 
     <form v-else class="quiz-settings-form__form" @submit.prevent="handleSubmit">
-      <div class="quiz-settings-form__field">
-        <label class="quiz-settings-form__label">
-          Questions Per Test (5-100)
-        </label>
-        <input
-          v-model.number="formData.questionsPerTest"
-          type="number"
-          min="5"
-          max="100"
-          class="quiz-settings-form__input"
-          required
-        />
-        <p class="quiz-settings-form__hint">
-          Number of questions to show in each test
-        </p>
-      </div>
+      <Input
+        v-model.number="formData.questionsPerTest"
+        type="number"
+        :min="5"
+        :max="100"
+        :label="t('QUIZ.MANAGE.SETTINGS_QUESTIONS_LABEL')"
+        :hint="t('QUIZ.MANAGE.SETTINGS_QUESTIONS_HINT')"
+        class="quiz-settings-form__field"
+        required
+      />
 
-      <div class="quiz-settings-form__field">
-        <label class="quiz-settings-form__label">
-          Time Per Question (10-300 seconds)
-        </label>
-        <input
-          v-model.number="formData.timePerQuestion"
-          type="number"
-          min="10"
-          max="300"
-          class="quiz-settings-form__input"
-          required
-        />
-        <p class="quiz-settings-form__hint">
-          Time limit for each question in seconds
-        </p>
-      </div>
+      <Input
+        v-model.number="formData.timePerQuestion"
+        type="number"
+        :min="10"
+        :max="300"
+        :label="t('QUIZ.MANAGE.SETTINGS_TIME_LABEL')"
+        :hint="t('QUIZ.MANAGE.SETTINGS_TIME_HINT')"
+        class="quiz-settings-form__field"
+        required
+      />
 
       <Button type="submit">
-        Save Settings
+        {{ t('QUIZ.MANAGE.SETTINGS_SAVE') }}
       </Button>
     </form>
   </div>
@@ -46,6 +34,8 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { Input } from '@/shared/ui'
+import { useI18n } from 'vue-i18n'
 import type { QuizSettings } from '@/shared/types/quiz'
 import Button from '@/shared/ui/Button/Button.vue'
 import './QuizSettingsForm.scss'
@@ -63,6 +53,8 @@ const formData = ref({
   questionsPerTest: 20,
   timePerQuestion: 60
 })
+
+const { t } = useI18n()
 
 watch(() => props.settings, (settings) => {
   if (settings) {

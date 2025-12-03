@@ -1,8 +1,8 @@
 <template>
   <div class="quiz-management">
     <div class="quiz-management__header">
-      <h1 class="quiz-management__title">Quiz Management</h1>
-      <Button @click="showQuestionForm = true">Add Question</Button>
+      <h1 class="quiz-management__title">{{ t('QUIZ.MANAGE.TITLE') }}</h1>
+      <Button @click="showQuestionForm = true">{{ t('QUIZ.MANAGE.ADD_QUESTION') }}</Button>
     </div>
 
     <div class="quiz-management__tabs">
@@ -11,14 +11,14 @@
         :class="{ 'quiz-management__tab_active': activeTab === 'questions' }"
         @click="activeTab = 'questions'"
       >
-        Questions
+        {{ t('QUIZ.MANAGE.TAB_QUESTIONS') }}
       </button>
       <button
         class="quiz-management__tab"
         :class="{ 'quiz-management__tab_active': activeTab === 'settings' }"
         @click="activeTab = 'settings'"
       >
-        Settings
+        {{ t('QUIZ.MANAGE.TAB_SETTINGS') }}
       </button>
     </div>
 
@@ -40,7 +40,7 @@
     </div>
 
     <QuizQuestionForm
-      v-if="showQuestionForm"
+      v-model:visible="showQuestionForm"
       :question="editingQuestion"
       @save="handleSaveQuestion"
       @close="closeQuestionForm"
@@ -50,6 +50,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { getAllQuestions, createQuestion, updateQuestion, deleteQuestion, getQuizSettings, updateQuizSettings } from '@/shared/api/quiz'
 import type { QuizQuestionAdmin, QuizSettings } from '@/shared/types/quiz'
 import Button from '@/shared/ui/Button/Button.vue'
@@ -57,6 +58,7 @@ import QuizQuestionsList from '@/widgets/quiz/QuizQuestionsList/QuizQuestionsLis
 import QuizQuestionForm from '@/widgets/quiz/QuizQuestionForm/QuizQuestionForm.vue'
 import QuizSettingsForm from '@/widgets/quiz/QuizSettingsForm/QuizSettingsForm.vue'
 
+const { t } = useI18n()
 const activeTab = ref<'questions' | 'settings'>('questions')
 const loading = ref(true)
 const settingsLoading = ref(true)
@@ -98,14 +100,14 @@ function handleEdit(question: QuizQuestionAdmin) {
 }
 
 async function handleDelete(id: string) {
-  if (!confirm('Are you sure you want to delete this question?')) return
+  if (!confirm(t('QUIZ.MANAGE.DELETE_CONFIRM'))) return
 
   try {
     await deleteQuestion(id)
     questions.value = questions.value.filter(q => q.id !== id)
   } catch (error) {
     console.error('Failed to delete question:', error)
-    alert('Failed to delete question')
+    alert(t('QUIZ.MANAGE.DELETE_ERROR'))
   }
 }
 
@@ -124,17 +126,17 @@ async function handleSaveQuestion(data: any) {
     closeQuestionForm()
   } catch (error) {
     console.error('Failed to save question:', error)
-    alert('Failed to save question')
+    alert(t('QUIZ.MANAGE.SAVE_ERROR'))
   }
 }
 
 async function handleSaveSettings(data: { questionsPerTest: number; timePerQuestion: number }) {
   try {
     settings.value = await updateQuizSettings(data)
-    alert('Settings saved successfully')
+    alert(t('QUIZ.MANAGE.SAVE_SETTINGS_SUCCESS'))
   } catch (error) {
     console.error('Failed to save settings:', error)
-    alert('Failed to save settings')
+    alert(t('QUIZ.MANAGE.SAVE_SETTINGS_ERROR'))
   }
 }
 
@@ -145,4 +147,3 @@ function closeQuestionForm() {
 </script>
 
 <style scoped lang="scss" src="./QuizManagementPage.scss"></style>
-

@@ -9,6 +9,7 @@ export { default as ThemeSwitcher } from './theme-switcher/ThemeSwitcher.vue'
 export { default as Modal } from './modal/Modal.vue'
 export { default as Table } from './table/Table.vue'
 export { default as CodeExport } from './code-export/CodeExport.vue'
+export { default as Textarea } from './Textarea/Textarea.vue'
 
 export type { SelectOption } from './Select/types'
 export type { TableColumn, RowData } from './table/Table.vue'

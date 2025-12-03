@@ -1,9 +1,9 @@
 <template>
   <div class="quiz-questions-list">
-    <div v-if="loading" class="quiz-questions-list__loading">Loading...</div>
+    <div v-if="loading" class="quiz-questions-list__loading">{{ t('QUIZ.MANAGE.LIST_LOADING') }}</div>
 
     <div v-else-if="questions.length === 0" class="quiz-questions-list__empty">
-      No questions found. Add your first question!
+      {{ t('QUIZ.MANAGE.LIST_EMPTY') }}
     </div>
 
     <div v-else class="quiz-questions-list__items">
@@ -20,23 +20,27 @@
         <p class="quiz-questions-list__item-text">{{ question.questionText }}</p>
 
         <div class="quiz-questions-list__item-info">
-          <span>{{ question.answers.length }} answers</span>
-          <span v-if="question.codeSnippet">Has code snippet</span>
+          <span>{{ t('QUIZ.MANAGE.LIST_ANSWERS', { count: question.answers.length }) }}</span>
+          <span v-if="question.codeSnippet">{{ t('QUIZ.MANAGE.LIST_HAS_SNIPPET') }}</span>
         </div>
 
         <div class="quiz-questions-list__item-actions">
-          <button
+          <Button
+            size="sm"
+            variant="secondary"
             class="quiz-questions-list__item-btn quiz-questions-list__item-btn_edit"
             @click="$emit('edit', question)"
           >
-            Edit
-          </button>
-          <button
+            {{ t('QUIZ.MANAGE.LIST_EDIT') }}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
             class="quiz-questions-list__item-btn quiz-questions-list__item-btn_delete"
             @click="$emit('delete', question.id)"
           >
-            Delete
-          </button>
+            {{ t('QUIZ.MANAGE.LIST_DELETE') }}
+          </Button>
         </div>
       </div>
     </div>
@@ -45,6 +49,8 @@
 
 <script setup lang="ts">
 import type { QuizQuestionAdmin } from '@/shared/types/quiz'
+import { useI18n } from 'vue-i18n'
+import { Button } from '@/shared/ui'
 import './QuizQuestionsList.scss'
 
 defineProps<{
@@ -56,4 +62,6 @@ defineEmits<{
   edit: [question: QuizQuestionAdmin]
   delete: [id: string]
 }>()
+
+const { t } = useI18n()
 </script>
