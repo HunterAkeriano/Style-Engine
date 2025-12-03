@@ -1,0 +1,121 @@
+@import '@/app/styles/variables.scss';
+
+.quiz-leaderboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+  background: $color-bg-primary;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  &__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $color-text-primary;
+  }
+
+  &__select {
+    padding: 0.75rem 1rem;
+    background: $color-bg-secondary;
+    border: 1px solid $color-border;
+    border-radius: 8px;
+    color: $color-text-primary;
+    font-size: 1rem;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+  }
+
+  &__loading,
+  &__empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: $color-text-secondary;
+    font-size: 1.125rem;
+  }
+
+  &__table {
+    background: $color-bg-secondary;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 80px 1fr 150px 100px 100px 120px;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid $color-border;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &_header {
+      background: $color-bg-primary;
+      font-weight: 700;
+      color: $color-text-primary;
+    }
+
+    &_gold {
+      background: color-var-alpha(warning, 0.1);
+    }
+
+    &_silver {
+      background: color-var-alpha(secondary, 0.1);
+    }
+
+    &_bronze {
+      background: color-var-alpha(success, 0.1);
+    }
+  }
+
+  &__cell {
+    display: flex;
+    align-items: center;
+    color: $color-text-primary;
+    font-size: 0.9375rem;
+
+    &_rank {
+      font-weight: 700;
+      font-size: 1.125rem;
+
+      .quiz-leaderboard__row_gold & {
+        color: $color-warning;
+      }
+
+      .quiz-leaderboard__row_silver & {
+        color: $color-secondary;
+      }
+
+      .quiz-leaderboard__row_bronze & {
+        color: $color-success;
+      }
+    }
+
+    &_username {
+      font-weight: 600;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .quiz-leaderboard__row {
+    grid-template-columns: 60px 1fr;
+    gap: 0.5rem;
+  }
+
+  .quiz-leaderboard__cell:nth-child(n+3) {
+    grid-column: 2;
+    font-size: 0.875rem;
+  }
+}

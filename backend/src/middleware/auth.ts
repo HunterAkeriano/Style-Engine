@@ -49,6 +49,38 @@ export function createAuthMiddleware(env: Env) {
   }
 }
 
+export function createOptionalAuthMiddleware(env: Env) {
+  return async function optionalAuthMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
+    const header = req.headers.authorization
+    if (!header) {
+      return next()
+    }
+    const [, token] = header.split(' ')
+    if (!token) {
+      return next()
+    }
+    try {
+      const payload = jwt.verify(token, env.JWT_SECRET) as { sub: string }
+      const { User } = getModels()
+      const user = await User.findByPk(payload.sub, {
+        attributes: ['id', 'isAdmin', 'isPayment', 'subscriptionTier']
+      })
+      if (user) {
+        const plain = user.get()
+        req.userId = plain.id
+        req.authUser = {
+          id: plain.id,
+          isAdmin: Boolean(plain.isAdmin),
+          isPayment: Boolean(plain.isPayment),
+          subscriptionTier: (plain.subscriptionTier as 'free' | 'pro' | 'premium') ?? 'free'
+        }
+      }
+    } catch {
+    }
+    next()
+  }
+}
+
 export function requireAdmin(req: AuthRequest, res: Response, next: NextFunction) {
   if (!req.authUser?.isAdmin) {
     return sendApiError(res, 403, 'Admin access required')

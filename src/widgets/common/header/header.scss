@@ -32,6 +32,16 @@
       flex: 1;
       gap: $space-sm;
     }
+
+    .dropdown-menu {
+      &:nth-of-type(1) {
+        margin-left: 200px;
+
+        @media (max-width: $breakpoint-lg) {
+          margin-left: unset;
+        }
+      }
+    }
   }
 
   &__nav-link {
@@ -52,14 +62,6 @@
     &.router-link-active {
       color: $color-primary;
       background: $color-primary-alpha-10;
-    }
-
-    &:nth-of-type(1) {
-      margin-left: 200px;
-
-      @media (max-width: $breakpoint-lg) {
-        margin-left: unset;
-      }
     }
   }
 

@@ -1,0 +1,122 @@
+@import '@/app/styles/variables.scss';
+
+.quiz-start-hero {
+  text-align: center;
+  margin-bottom: 6rem;
+
+  &__title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: $color-text-primary;
+    background: linear-gradient(135deg, $color-primary, $color-secondary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &__subtitle {
+    font-size: 1.5rem;
+    color: $color-text-secondary;
+    margin-bottom: 3rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &__content {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  &__importance {
+    text-align: left;
+    background: $color-bg-secondary;
+    padding: 2.5rem;
+    border-radius: 16px;
+    border: 1px solid $color-border;
+    margin-bottom: 2rem;
+  }
+
+  &__importance-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $color-text-primary;
+    margin-bottom: 1.5rem;
+  }
+
+  &__importance-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__importance-item {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+    color: $color-text-primary;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+
+    &::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: $color-primary;
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+  }
+
+  &__limit-warning {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    color: #ef4444;
+    text-align: center;
+
+    p {
+      margin: 0.25rem 0;
+    }
+  }
+
+  &__limit-info {
+    text-align: center;
+    padding: 1rem;
+    background: $color-primary-alpha-08;
+    border-radius: 8px;
+    color: $color-text-secondary;
+    margin-bottom: 1.5rem;
+  }
+
+  &__start-button {
+    width: 100%;
+    font-size: 1.25rem;
+    padding: 1.125rem 2rem;
+    background: linear-gradient(135deg, $color-primary, $color-secondary);
+    font-weight: 700;
+  }
+}
+
+@media (max-width: 768px) {
+  .quiz-start-hero {
+    margin-bottom: 4rem;
+
+    &__title {
+      font-size: 2.25rem;
+    }
+
+    &__subtitle {
+      font-size: 1.125rem;
+    }
+
+    &__importance,
+    &__limit-warning,
+    &__limit-info {
+      padding: 1.5rem;
+    }
+  }
+}

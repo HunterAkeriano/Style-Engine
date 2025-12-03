@@ -1,0 +1,240 @@
+@import '@/app/styles/variables.scss';
+
+.quiz-results {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  &__summary {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  &__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: $color-text-primary;
+  }
+
+  &__score {
+    margin-bottom: 2rem;
+  }
+
+  &__score-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $color-primary, $color-secondary);
+    margin-bottom: 1rem;
+  }
+
+  &__score-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  &__score-text {
+    font-size: 1.25rem;
+    color: $color-text-secondary;
+  }
+
+  &__stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 2rem;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__stat-label {
+    font-size: 0.875rem;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $color-text-primary;
+  }
+
+  &__detailed {
+    margin-bottom: 2rem;
+  }
+
+  &__detailed-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: $color-text-primary;
+  }
+
+  &__item {
+    background: $color-bg-secondary;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid transparent;
+
+    &_correct {
+      border-left-color: $color-success;
+    }
+
+    &_incorrect {
+      border-left-color: $color-error;
+    }
+  }
+
+  &__item-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  &__item-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: $color-primary;
+    color: white;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  &__item-status {
+    font-weight: 600;
+    font-size: 0.875rem;
+
+    .quiz-results__item_correct & {
+      color: $color-success;
+    }
+
+    .quiz-results__item_incorrect & {
+      color: $color-error;
+    }
+  }
+
+  &__item-question {
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: $color-text-primary;
+    line-height: 1.5;
+  }
+
+  &__item-code {
+    background: $color-bg-primary;
+    border: 1px solid $color-border;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+
+    code {
+      color: $color-text-primary;
+    }
+  }
+
+  &__item-answers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  &__item-answer {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: $color-bg-primary;
+    border: 2px solid $color-border;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+
+    &_correct {
+      border-color: $color-success;
+      background: color-var-alpha(success, 0.1);
+    }
+
+    &_wrong {
+      border-color: $color-error;
+      background: color-var-alpha(error, 0.1);
+    }
+  }
+
+  &__item-answer-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: $color-text-secondary;
+    color: white;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+
+    .quiz-results__item-answer_correct & {
+      background: $color-success;
+    }
+
+    .quiz-results__item-answer_wrong & {
+      background: $color-error;
+    }
+  }
+
+  &__item-answer-text {
+    flex: 1;
+    color: $color-text-primary;
+  }
+
+  &__item-answer-icon {
+    font-size: 1.25rem;
+    font-weight: 700;
+
+    .quiz-results__item-answer_correct & {
+      color: $color-success;
+    }
+
+    .quiz-results__item-answer_wrong & {
+      color: $color-error;
+    }
+  }
+
+  &__item-explanation {
+    padding: 1rem;
+    background: color-var-alpha(primary, 0.05);
+    border-radius: 8px;
+    color: $color-text-secondary;
+    line-height: 1.6;
+
+    strong {
+      color: $color-text-primary;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+}

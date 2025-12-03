@@ -11,7 +11,7 @@ const tsRecommendedRules = tsPlugin.configs.recommended?.rules ?? {}
 
 export default [
   {
-    ignores: ['dist/**', 'node_modules/**', 'coverage/**', 'storybook-static/**']
+    ignores: ['dist/**', 'backend/dist/**', 'node_modules/**', 'coverage/**', 'storybook-static/**']
   },
   {
     files: ['**/*.ts', '**/*.tsx'],

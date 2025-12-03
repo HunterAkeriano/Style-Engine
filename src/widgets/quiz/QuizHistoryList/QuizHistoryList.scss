@@ -1,0 +1,121 @@
+@import '@/app/styles/variables.scss';
+
+.quiz-history-list {
+  &__status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    gap: 1.5rem;
+    text-align: center;
+    color: $color-text-secondary;
+    font-size: 1.125rem;
+
+    &_loading {
+      color: $color-text-secondary;
+    }
+  }
+
+  &__cta {
+    margin-top: 0.5rem;
+  }
+
+  &__items {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  &__item {
+    background: $color-bg-secondary;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid $color-border;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: $color-primary;
+      transform: translateY(-2px);
+    }
+  }
+
+  &__item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  &__item-category {
+    padding: 0.25rem 0.75rem;
+    background: color-var-alpha(primary, 0.1);
+    color: $color-primary;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  &__item-date {
+    font-size: 0.875rem;
+    color: $color-text-secondary;
+  }
+
+  &__item-score {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  &__item-score-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $color-primary, $color-secondary);
+    flex-shrink: 0;
+  }
+
+  &__item-score-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  &__item-score-details {
+    flex: 1;
+  }
+
+  &__item-score-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $color-text-primary;
+    margin-bottom: 0.5rem;
+  }
+
+  &__item-time {
+    font-size: 1rem;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .quiz-history-list {
+    &__item {
+      padding: 1.25rem;
+    }
+
+    &__item-score {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    &__item-score-circle {
+      width: 80px;
+      height: 80px;
+    }
+  }
+}

@@ -274,7 +274,9 @@ export const createTechScene = (
   tick();
 
   const dispose = () => {
-    frameId && window.cancelAnimationFrame(frameId);
+    if (frameId) {
+      window.cancelAnimationFrame(frameId);
+    }
     canvas.removeEventListener("click", handleClick);
     resizeObserver.disconnect();
     controls.dispose();

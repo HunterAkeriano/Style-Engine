@@ -117,10 +117,23 @@ export function createSavesRouter(env: Env) {
     }
     const model = modelForCategory(category)
     const { name, payload } = parsed.data
-    const duplicateCheck = await model.findOne({ where: { userId: req.userId, payload } })
-    if (duplicateCheck) {
-      return sendApiError(res, 409, 'Already saved')
+
+    const normalizedPayload = normalizePayload(category, payload)
+    const payloadHash = stableStringify(normalizedPayload)
+
+    const userItems = await model.findAll({
+      where: { userId: req.userId },
+      attributes: ['id', 'payload']
+    })
+
+    for (const item of userItems) {
+      const itemNormalized = normalizePayload(category, item.payload as any)
+      const itemHash = stableStringify(itemNormalized)
+      if (payloadHash === itemHash) {
+        return sendApiError(res, 409, 'Already saved')
+      }
     }
+
     const created = await model.create({
       userId: req.userId,
       name,

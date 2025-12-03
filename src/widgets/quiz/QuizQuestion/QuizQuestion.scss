@@ -1,0 +1,79 @@
+@import '@/app/styles/variables.scss';
+
+.quiz-question {
+  background: $color-bg-secondary;
+  border-radius: 16px;
+  padding: 2rem;
+
+  &__text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: $color-text-primary;
+    line-height: 1.4;
+  }
+
+  &__code {
+    background: $color-bg-primary;
+    border: 1px solid $color-border;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+
+    code {
+      color: $color-text-primary;
+    }
+  }
+
+  &__answers {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__answer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: $color-bg-primary;
+    border: 2px solid $color-border;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+
+    &:hover {
+      border-color: $color-primary;
+      transform: translateX(4px);
+    }
+
+    &_selected {
+      border-color: $color-primary;
+      background: color-var-alpha(primary, 0.1);
+    }
+  }
+
+  &__answer-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: $color-primary;
+    color: white;
+    border-radius: 50%;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  &__answer-text {
+    flex: 1;
+    font-size: 1rem;
+    color: $color-text-primary;
+  }
+}

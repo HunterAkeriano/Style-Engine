@@ -50,6 +50,10 @@
               {{ t('NAV.DOCS') }}
             </NavLink>
 
+            <NavLink to="/quiz" class-name="footer__link">
+              {{ t('NAV.QUIZ') }}
+            </NavLink>
+
             <NavLink to="/privacy-policy" class-name="footer__link">
               {{ t('PRIVACY.NAV') }}
             </NavLink>

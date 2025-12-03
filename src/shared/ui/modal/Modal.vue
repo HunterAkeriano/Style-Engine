@@ -72,6 +72,7 @@ interface Props {
   confirmVariant?: 'primary' | 'secondary' | 'ghost' | 'outline'
   confirmDisabled?: boolean
   buttonSize?: 'sm' | 'md' | 'lg'
+  lockScroll?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -85,7 +86,8 @@ const props = withDefaults(defineProps<Props>(), {
   cancelText: 'Cancel',
   confirmVariant: 'primary',
   confirmDisabled: false,
-  buttonSize: 'md'
+  buttonSize: 'md',
+  lockScroll: true
 })
 
 const emit = defineEmits<{
@@ -117,11 +119,13 @@ watch(
   () => props.visible,
   async (isVisible) => {
     await nextTick()
-    const target = document.body
-    if (isVisible) {
-      disableBodyScroll(target, { reserveScrollBarGap: true })
-    } else {
-      clearAllBodyScrollLocks()
+    if (props.lockScroll) {
+      const target = document.body
+      if (isVisible) {
+        disableBodyScroll(target, { reserveScrollBarGap: true })
+      } else {
+        clearAllBodyScrollLocks()
+      }
     }
   }
 )

@@ -1,0 +1,65 @@
+@import '@/app/styles/variables.scss';
+
+.quiz-support {
+  text-align: center;
+  background: $color-bg-secondary;
+  padding: 3rem 2rem;
+  border-radius: 16px;
+  border: 1px solid $color-border;
+
+  &__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $color-text-primary;
+    margin: 0 0 1rem 0;
+  }
+
+  &__description {
+    font-size: 1.125rem;
+    color: $color-text-secondary;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto 2rem;
+    max-width: 600px;
+    text-align: left;
+  }
+
+  &__item {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 0.875rem;
+    color: $color-text-primary;
+    font-size: 1.0625rem;
+
+    &::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: $color-primary;
+      font-weight: 700;
+    }
+  }
+
+  &__button {
+    font-size: 1.125rem;
+    padding: 1rem 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .quiz-support {
+    padding: 1.5rem;
+
+    &__title {
+      font-size: 1.75rem;
+    }
+  }
+}

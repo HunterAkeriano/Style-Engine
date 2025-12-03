@@ -1,0 +1,51 @@
+@import '@/app/styles/variables.scss';
+
+.quiz-settings-form {
+  max-width: 600px;
+
+  &__loading {
+    text-align: center;
+    padding: 3rem;
+    color: $color-text-secondary;
+    font-size: 1.125rem;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    font-weight: 600;
+    color: $color-text-primary;
+    font-size: 1rem;
+  }
+
+  &__input {
+    padding: 0.75rem;
+    background: $color-bg-primary;
+    border: 1px solid $color-border;
+    border-radius: 8px;
+    color: $color-text-primary;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+  }
+
+  &__hint {
+    font-size: 0.875rem;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}

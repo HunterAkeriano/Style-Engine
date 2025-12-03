@@ -143,6 +143,52 @@ export function setupSwagger(app: Express) {
                 description: 'Дата сохранения'
               }
             }
+          },
+          QuizQuestion: {
+            type: 'object',
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              questionText: { type: 'string' },
+              codeSnippet: { type: 'string', nullable: true },
+              answers: { type: 'array', items: { type: 'string' } },
+              category: { type: 'string', enum: ['css', 'scss', 'stylus'] },
+              difficulty: { type: 'string', enum: ['easy', 'medium', 'hard'] },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' }
+            }
+          },
+          QuizQuestionAdmin: {
+            allOf: [
+              { $ref: '#/components/schemas/QuizQuestion' },
+              {
+                type: 'object',
+                properties: {
+                  correctAnswerIndex: { type: 'integer' },
+                  explanation: { type: 'string', nullable: true }
+                }
+              }
+            ]
+          },
+          QuizSettings: {
+            type: 'object',
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              questionsPerTest: { type: 'integer', minimum: 5, maximum: 100 },
+              timePerQuestion: { type: 'integer', minimum: 10, maximum: 300 }
+            }
+          },
+          QuizResult: {
+            type: 'object',
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              userId: { type: 'string', format: 'uuid', nullable: true },
+              username: { type: 'string' },
+              category: { type: 'string', enum: ['css', 'scss', 'stylus', 'mix'] },
+              score: { type: 'integer' },
+              totalQuestions: { type: 'integer' },
+              timeTaken: { type: 'integer' },
+              createdAt: { type: 'string', format: 'date-time' }
+            }
           }
         }
       },
@@ -166,6 +212,10 @@ export function setupSwagger(app: Express) {
         {
           name: 'Health',
           description: 'Проверка состояния API'
+        },
+        {
+          name: 'Quiz',
+          description: 'CSS/SCSS/Stylus тесты'
         }
       ]
     },

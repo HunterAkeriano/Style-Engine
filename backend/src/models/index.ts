@@ -10,6 +10,9 @@ import {
 
 type SubscriptionTier = 'free' | 'pro' | 'premium'
 type SavedStatus = 'private' | 'pending' | 'approved'
+type QuizCategory = 'css' | 'scss' | 'stylus'
+type QuizDifficulty = 'easy' | 'medium' | 'hard'
+type QuizResultCategory = 'css' | 'scss' | 'stylus' | 'mix'
 
 export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<string>
@@ -105,6 +108,50 @@ export class SavedFavicon extends Model<InferAttributes<SavedFavicon>, InferCrea
   declare createdAt: CreationOptional<Date>
 }
 
+export class QuizQuestion extends Model<InferAttributes<QuizQuestion>, InferCreationAttributes<QuizQuestion>> {
+  declare id: CreationOptional<string>
+  declare questionText: string
+  declare codeSnippet: string | null
+  declare answers: string[]
+  declare correctAnswerIndex: number
+  declare explanation: string | null
+  declare category: CreationOptional<QuizCategory>
+  declare difficulty: CreationOptional<QuizDifficulty>
+  declare createdAt: CreationOptional<Date>
+  declare updatedAt: CreationOptional<Date>
+}
+
+export class QuizSettings extends Model<InferAttributes<QuizSettings>, InferCreationAttributes<QuizSettings>> {
+  declare id: CreationOptional<string>
+  declare questionsPerTest: CreationOptional<number>
+  declare timePerQuestion: CreationOptional<number>
+  declare createdAt: CreationOptional<Date>
+  declare updatedAt: CreationOptional<Date>
+}
+
+export class QuizResult extends Model<InferAttributes<QuizResult>, InferCreationAttributes<QuizResult>> {
+  declare id: CreationOptional<string>
+  declare userId: ForeignKey<User['id']> | null
+  declare user?: User | null
+  declare username: string | null
+  declare category: QuizResultCategory
+  declare score: number
+  declare totalQuestions: number
+  declare timeTaken: number
+  declare createdAt: CreationOptional<Date>
+}
+
+export class QuizAttempt extends Model<InferAttributes<QuizAttempt>, InferCreationAttributes<QuizAttempt>> {
+  declare id: CreationOptional<string>
+  declare userId: ForeignKey<User['id']> | null
+  declare user?: User | null
+  declare ipAddress: string | null
+  declare attemptDate: CreationOptional<Date>
+  declare attemptsCount: CreationOptional<number>
+  declare createdAt: CreationOptional<Date>
+  declare updatedAt: CreationOptional<Date>
+}
+
 export interface Models {
   User: typeof User
   RefreshToken: typeof RefreshToken
@@ -114,6 +161,10 @@ export interface Models {
   SavedAnimation: typeof SavedAnimation
   SavedClipPath: typeof SavedClipPath
   SavedFavicon: typeof SavedFavicon
+  QuizQuestion: typeof QuizQuestion
+  QuizSettings: typeof QuizSettings
+  QuizResult: typeof QuizResult
+  QuizAttempt: typeof QuizAttempt
 }
 
 export function initModels(sequelize: Sequelize): Models {
@@ -368,6 +419,92 @@ export function initModels(sequelize: Sequelize): Models {
   User.hasMany(PasswordReset, { foreignKey: 'userId', as: 'passwordResets' })
   PasswordReset.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 
+  // Quiz models initialization
+  QuizQuestion.init(
+    {
+      id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+      questionText: { type: DataTypes.TEXT, allowNull: false, field: 'question_text' },
+      codeSnippet: { type: DataTypes.TEXT, allowNull: true, field: 'code_snippet' },
+      answers: { type: DataTypes.JSONB, allowNull: false },
+      correctAnswerIndex: { type: DataTypes.INTEGER, allowNull: false, field: 'correct_answer_index' },
+      explanation: { type: DataTypes.TEXT, allowNull: true },
+      category: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'css' },
+      difficulty: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'medium' },
+      createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
+      updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' }
+    },
+    {
+      sequelize,
+      tableName: 'quiz_questions',
+      underscored: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at'
+    }
+  )
+
+  QuizSettings.init(
+    {
+      id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+      questionsPerTest: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 20, field: 'questions_per_test' },
+      timePerQuestion: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 60, field: 'time_per_question' },
+      createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
+      updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' }
+    },
+    {
+      sequelize,
+      tableName: 'quiz_settings',
+      underscored: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at'
+    }
+  )
+
+  QuizResult.init(
+    {
+      id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+      userId: { type: DataTypes.UUID, allowNull: true, field: 'user_id' },
+      username: { type: DataTypes.TEXT, allowNull: true },
+      category: { type: DataTypes.TEXT, allowNull: false },
+      score: { type: DataTypes.INTEGER, allowNull: false },
+      totalQuestions: { type: DataTypes.INTEGER, allowNull: false, field: 'total_questions' },
+      timeTaken: { type: DataTypes.INTEGER, allowNull: false, field: 'time_taken' },
+      createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' }
+    },
+    {
+      sequelize,
+      tableName: 'quiz_results',
+      underscored: true,
+      updatedAt: false,
+      createdAt: 'created_at'
+    }
+  )
+
+  QuizAttempt.init(
+    {
+      id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+      userId: { type: DataTypes.UUID, allowNull: true, field: 'user_id' },
+      ipAddress: { type: DataTypes.TEXT, allowNull: true, field: 'ip_address' },
+      attemptDate: { type: DataTypes.DATEONLY, allowNull: false, defaultValue: DataTypes.NOW, field: 'attempt_date' },
+      attemptsCount: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1, field: 'attempts_count' },
+      createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
+      updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' }
+    },
+    {
+      sequelize,
+      tableName: 'quiz_attempts',
+      underscored: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at'
+    }
+  )
+
+  // Quiz relationships
+  User.hasMany(QuizResult, { foreignKey: 'userId', as: 'quizResults' })
+  QuizResult.belongsTo(User, { foreignKey: 'userId', as: 'user' })
+
+  User.hasMany(QuizAttempt, { foreignKey: 'userId', as: 'quizAttempts' })
+  QuizAttempt.belongsTo(User, { foreignKey: 'userId', as: 'user' })
+
   return {
     User,
     RefreshToken,
@@ -376,6 +513,10 @@ export function initModels(sequelize: Sequelize): Models {
     SavedShadow,
     SavedAnimation,
     SavedClipPath,
-    SavedFavicon
+    SavedFavicon,
+    QuizQuestion,
+    QuizSettings,
+    QuizResult,
+    QuizAttempt
   }
 }

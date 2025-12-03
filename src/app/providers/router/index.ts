@@ -82,6 +82,64 @@ const mainLayoutChildren: RouteRecordRaw[] = [
         name: 'profile-favicons',
         component: () => import('@/pages/profile/saved/SavedFaviconsPage.vue'),
         meta: { requiresAuth: true }
+      },
+      {
+        path: 'quiz-history',
+        name: 'profile-quiz-history',
+        component: () => import('@/pages/quiz/quiz-history-page/QuizHistoryPage.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
+  }
+]
+
+const quizLayoutRoutes: RouteRecordRaw[] = [
+  {
+    path: 'quiz',
+    component: DocsLayout,
+    meta: {},
+    children: [
+      {
+        path: '',
+        name: 'quiz-start',
+        component: () => import('@/pages/quiz/quiz-start-page/QuizStartPage.vue'),
+        meta: {
+          titleKey: 'META.QUIZ',
+          descriptionKey: 'META_DESCRIPTION.QUIZ',
+          breadcrumbKey: 'BREADCRUMBS.QUIZ'
+        }
+      },
+      {
+        path: 'test',
+        name: 'quiz-test',
+        component: () => import('@/pages/quiz/quiz-test-page/QuizTestPage.vue'),
+        meta: {
+          titleKey: 'META.QUIZ',
+          descriptionKey: 'META_DESCRIPTION.QUIZ',
+          breadcrumbKey: 'BREADCRUMBS.QUIZ_TEST'
+        }
+      },
+      {
+        path: 'leaderboard',
+        name: 'quiz-leaderboard',
+        component: () => import('@/pages/quiz/quiz-leaderboard-page/QuizLeaderboardPage.vue'),
+        meta: {
+          titleKey: 'META.QUIZ_LEADERBOARD',
+          descriptionKey: 'META_DESCRIPTION.QUIZ_LEADERBOARD',
+          breadcrumbKey: 'BREADCRUMBS.QUIZ_LEADERBOARD'
+        }
+      },
+      {
+        path: 'manage',
+        name: 'quiz-manage',
+        component: () => import('@/pages/quiz/quiz-management-page/QuizManagementPage.vue'),
+        meta: {
+          titleKey: 'META.QUIZ_MANAGE',
+          descriptionKey: 'META_DESCRIPTION.QUIZ_MANAGE',
+          requiresAuth: true,
+          requiresAdmin: true,
+          breadcrumbKey: 'BREADCRUMBS.QUIZ_MANAGE'
+        }
       }
     ]
   }
@@ -228,6 +286,7 @@ const authLayoutRoutes: RouteRecordRaw[] = [
 const baseRoutes: RouteRecordRaw[] = [
   { path: '', component: () => import('@/app/layouts/main-layout/MainLayout.vue'), children: mainLayoutChildren },
   ...generatorLayoutRoutes,
+  ...quizLayoutRoutes,
   ...authLayoutRoutes,
   {
     path: 'moderation',

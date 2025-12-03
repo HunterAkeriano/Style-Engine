@@ -9,9 +9,15 @@
         </div>
 
         <nav class="header__nav">
-          <NavLink :to="`/${locale}/docs`" class-name="header__nav-link">
-            {{ t('NAV.DOCS') }}
-          </NavLink>
+          <DropdownMenu :title="t('NAV.DOCS')">
+            <NavLink :to="`/${locale}/docs`" class-name="header__nav-link">
+              {{ t('NAV.DOCS') }}
+            </NavLink>
+
+            <NavLink :to="`/${locale}/quiz`" class-name="header__nav-link">
+              {{ t('NAV.QUIZ') }}
+            </NavLink>
+          </DropdownMenu>
 
           <DropdownMenu :title="t('NAV.FUNCTIONS')">
             <NavLink :to="`/${locale}/gradient`" class-name="header__nav-link">
@@ -74,6 +80,10 @@
       <nav class="header__mobile-nav">
         <NavLink :to="`/${locale}/docs`" class-name="header__mobile-link" @click="closeMobileMenu">
           {{ t('NAV.DOCS') }}
+        </NavLink>
+
+        <NavLink :to="`/${locale}/quiz`" class-name="header__mobile-link" @click="closeMobileMenu">
+          {{ t('NAV.QUIZ') }}
         </NavLink>
 
         <NavLink :to="`/${locale}/gradient`" class-name="header__mobile-link" @click="closeMobileMenu">

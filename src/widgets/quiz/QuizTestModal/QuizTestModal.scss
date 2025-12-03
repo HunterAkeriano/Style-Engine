@@ -1,0 +1,157 @@
+@import '@/app/styles/variables.scss';
+
+.quiz-test-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: $color-text-primary;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  &__title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $color-text-primary;
+    margin-bottom: 1rem;
+  }
+
+  &__description {
+    font-size: 1rem;
+    color: $color-text-secondary;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  &__categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  &__category {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem 1rem;
+    background: $color-bg-secondary;
+    border: 2px solid $color-border;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: $color-primary;
+      transform: translateY(-2px);
+    }
+
+    &_active {
+      border-color: $color-primary;
+      background: $color-primary-alpha-10;
+    }
+  }
+
+  &__category-icon {
+    font-size: 2.5rem;
+  }
+
+  &__category-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: $color-text-primary;
+    text-align: center;
+  }
+
+  &__info {
+    background: $color-bg-secondary;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  &__info-item {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem 0;
+    font-size: 1rem;
+    color: $color-text-primary;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid $color-border;
+    }
+
+    strong {
+      color: $color-text-secondary;
+      font-weight: 600;
+      min-width: 140px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+
+  &__button {
+    width: 100%;
+  }
+
+  &__loading {
+    text-align: center;
+    padding: 4rem 2rem;
+    font-size: 1.125rem;
+    color: $color-text-secondary;
+  }
+
+  &__error {
+    text-align: center;
+    padding: 2rem;
+
+    p {
+      color: #ef4444;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  &__test {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .quiz-test-modal {
+    &__title {
+      font-size: 1.5rem;
+    }
+
+    &__categories {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    &__actions {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
+
+    &__info-item {
+      flex-direction: column;
+      gap: 0.25rem;
+
+      strong {
+        min-width: auto;
+      }
+    }
+  }
+}

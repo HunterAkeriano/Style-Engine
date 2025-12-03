@@ -43,6 +43,25 @@ app.use('/uploads', express.static('uploads'))
 app.use('/api', createApiRouter(env))
 setupSwagger(app)
 
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Unhandled error:', err)
+
+  if (res.headersSent) {
+    return next(err)
+  }
+
+  const status = err.status || err.statusCode || 500
+  const message = err.message || 'Internal server error'
+
+  res.status(status).json({
+    error: {
+      status,
+      message,
+      ...(env.NODE_ENV !== 'production' && { details: err.stack })
+    }
+  })
+})
+
 const port = Number(env.PORT) || 4000
 app.listen(port, () => {
   console.log(`API listening on http://localhost:${port}`)

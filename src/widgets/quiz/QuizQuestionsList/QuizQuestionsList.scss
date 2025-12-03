@@ -1,0 +1,102 @@
+@import '@/app/styles/variables.scss';
+
+.quiz-questions-list {
+  &__loading,
+  &__empty {
+    text-align: center;
+    padding: 3rem;
+    color: $color-text-secondary;
+    font-size: 1.125rem;
+  }
+
+  &__items {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  &__item {
+    background: $color-bg-primary;
+    border: 1px solid $color-border;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: $color-primary;
+    }
+  }
+
+  &__item-header {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  &__item-category,
+  &__item-difficulty {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  &__item-category {
+    background: color-var-alpha(primary, 0.1);
+    color: $color-primary;
+  }
+
+  &__item-difficulty {
+    background: color-var-alpha(secondary, 0.1);
+    color: $color-secondary;
+  }
+
+  &__item-text {
+    font-size: 1rem;
+    color: $color-text-primary;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  &__item-info {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    color: $color-text-secondary;
+  }
+
+  &__item-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  &__item-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &_edit {
+      background: $color-primary;
+      color: white;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+
+    &_delete {
+      background: $color-error;
+      color: white;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+}

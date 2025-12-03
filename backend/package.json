@@ -11,7 +11,8 @@
     "vercel-build": "echo \"backend: skipping vercel-build\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "swagger": "node dist/swagger-export.js",
-    "migrate": "ts-node src/scripts/migrate.ts"
+    "migrate": "ts-node src/scripts/migrate.ts",
+    "seed:quiz": "ts-node src/scripts/seed-quiz.ts"
   },
   "dependencies": {
     "@types/multer": "^2.0.0",
