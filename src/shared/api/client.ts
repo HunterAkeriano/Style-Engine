@@ -28,6 +28,23 @@ export interface ApiError {
   data?: unknown
 }
 
+interface RetriableRequestConfig extends AxiosRequestConfig {
+  _retry?: boolean
+}
+
+const isRetriableConfig = (config: unknown): config is RetriableRequestConfig =>
+  typeof config === 'object' && config !== null
+
+const extractMessage = (data: unknown): string | undefined => {
+  if (typeof data === 'object' && data !== null && 'message' in data) {
+    const message = (data as Record<string, unknown>).message
+    if (typeof message === 'string') {
+      return message
+    }
+  }
+  return undefined
+}
+
 export class ApiClient {
   private instance: AxiosInstance
   private refreshPromise: Promise<string | null> | null = null
@@ -54,8 +71,8 @@ export class ApiClient {
         const status = error.response?.status
         const originalRequest = error.config
 
-        if (status === 401 && originalRequest && !(originalRequest as any)._retry) {
-          ;(originalRequest as any)._retry = true
+        if (status === 401 && isRetriableConfig(originalRequest) && !originalRequest._retry) {
+          originalRequest._retry = true
           const refreshed = await this.tryRefreshToken()
           if (refreshed) {
             const headers = (originalRequest.headers || {}) as AxiosRequestHeaders
@@ -66,7 +83,7 @@ export class ApiClient {
         }
 
         const apiError: ApiError = {
-          message: (error.response?.data as any)?.message || error.message,
+          message: extractMessage(error.response?.data) || error.message,
           status,
           data: error.response?.data
         }

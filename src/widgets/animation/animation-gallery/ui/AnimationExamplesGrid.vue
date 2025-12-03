@@ -133,7 +133,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, onBeforeUnmount, type ComputedRef } from 'vue'
+import { computed, ref, watch, onBeforeUnmount, isRef, type ComputedRef, type Component } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { NavLink, Select, Input, Icon } from '@/shared/ui'
@@ -151,7 +151,7 @@ interface ExampleItem {
   titleKey: string
   descriptionKey: string
   category: AnimationCategory
-  component?: any
+  component?: Component
   titleText?: string
   descriptionText?: string
   html?: string
@@ -169,11 +169,13 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-const searchQuery = ref<string>((route.query.search as string) ?? '')
+const searchQuery = ref<string>(typeof route.query.search === 'string' ? route.query.search : '')
 const debouncedSearchQuery = ref<string>(searchQuery.value)
 const isSearching = ref<boolean>(false)
-const selectedCategory = ref<string>((route.query.category as string) ?? 'all')
-const currentPage = ref(Number(route.query.page) > 0 ? Number(route.query.page) : 1)
+const selectedCategory = ref<string>(typeof route.query.category === 'string' ? route.query.category : 'all')
+const currentPage = ref(
+  typeof route.query.page === 'string' && Number(route.query.page) > 0 ? Number(route.query.page) : 1
+)
 const itemsPerPage = 12
 let debounceTimeout: ReturnType<typeof setTimeout> | null = null
 
@@ -189,7 +191,7 @@ const categoryOptions = computed<SelectOption[]>(() => [
 ])
 
 const normalizedExamples = computed<ExampleItem[]>(() =>
-  Array.isArray((props.examples as any).value) ? (props.examples as any).value : (props.examples as ExampleItem[])
+  isRef(props.examples) ? props.examples.value : props.examples
 )
 
 const totalCount = computed(() => normalizedExamples.value.length)

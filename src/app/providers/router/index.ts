@@ -327,7 +327,7 @@ const baseRoutes: RouteRecordRaw[] = [
         path: ':topic',
         name: 'docs-topic',
         component: () => import('@/pages/docs/ui/docs-topic-page/DocsTopicPage.vue'),
-        props: route => ({ topic: route.params.topic as any }),
+        props: route => ({ topic: String(route.params.topic ?? '') }),
         meta: {
           titleKey: 'META.DOCS',
           descriptionKey: 'META_DESCRIPTION.DOCS',

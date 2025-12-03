@@ -231,10 +231,10 @@ function removeGridItem(id: string) {
   gridItems.value = gridItems.value.filter(item => item.id !== id)
 }
 
-function updateItemProperty(id: string, property: string, value: any) {
+function updateItemProperty(id: string, property: keyof GridItem, value: GridItem[keyof GridItem]) {
   const item = gridItems.value.find(i => i.id === id)
   if (item) {
-    ;(item as any)[property] = value
+    ;(item as Record<keyof GridItem, GridItem[keyof GridItem]>)[property] = value
   }
 }
 

@@ -9,6 +9,7 @@ import fs from 'fs/promises'
 import path from 'path'
 import { sendApiError } from '../utils/apiError'
 import type { User } from '../models'
+import type { InferAttributes } from 'sequelize'
 
 const updateProfileSchema = z.object({
   name: z.string().min(1).max(120).optional(),
@@ -19,15 +20,17 @@ export function createProfileRouter(env: Env) {
   const router = Router()
   const { User } = getModels()
   const auth = createAuthMiddleware(env)
-  function attachSuperFlag(user: any) {
-    if (!user) return user
+
+  type UserAttributes = InferAttributes<User>
+
+  function attachSuperFlag(user: Omit<UserAttributes, 'passwordHash'>) {
     return { ...user, isSuperAdmin: isSuperAdminEmail(env, user.email) }
   }
 
   function toSafeUser(user: User | null) {
     if (!user) return null
-    const plain = user.get({ plain: true }) as any
-    delete plain.passwordHash
+    const { passwordHash: _passwordHash, ...plain } = user.get({ plain: true }) as UserAttributes
+    void _passwordHash
     return attachSuperFlag(plain)
   }
 

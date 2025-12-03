@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import { z } from "zod";
-import { Op } from "sequelize";
+import { Op, type InferAttributes, type WhereOptions } from "sequelize";
 import { getModels } from "../config/db";
 import type { Env } from "../config/env";
 import {
@@ -9,6 +9,7 @@ import {
   requireAdmin,
   type AuthRequest,
 } from "../middleware/auth";
+import type { QuizQuestion, QuizResult, User } from "../models";
 import { sendApiError } from "../utils/apiError";
 
 const quizCategoryEnum = z.enum(["css", "scss", "stylus"]);
@@ -48,6 +49,26 @@ const submitTestSchema = z.object({
   timeTaken: z.number().int().min(0),
   username: z.string().min(1).max(50).optional().nullable(),
 });
+
+type QuizQuestionAttributes = InferAttributes<QuizQuestion>;
+type QuizResultAttributes = InferAttributes<QuizResult>;
+type QuizUserAttributes = InferAttributes<User>;
+
+interface LocalizedQuestion {
+  id: string;
+  questionText: string;
+  codeSnippet: string | null;
+  answers: string[];
+  category: QuizQuestionAttributes["category"];
+  difficulty: QuizQuestionAttributes["difficulty"];
+  createdAt: Date;
+  updatedAt: Date;
+  correctAnswerIndex?: number;
+  explanation?: string | null;
+  answersUk?: string[] | null;
+  questionTextUk?: string | null;
+  explanationUk?: string | null;
+}
 
 function getPreferredLanguage(req: Request): "uk" | "en" {
   const header = (req.headers["accept-language"] || "").toString().toLowerCase();
@@ -136,10 +157,10 @@ async function incrementAttempt(
 }
 
 function localizeQuestion(
-  question: any,
+  question: QuizQuestionAttributes,
   lang: "en" | "uk",
   includeCorrect = false,
-) {
+): LocalizedQuestion {
   const useUk = lang === "uk" && !includeCorrect;
   const questionText = useUk
     ? question.questionTextUk || question.questionText
@@ -153,7 +174,7 @@ function localizeQuestion(
     ? question.explanationUk || question.explanation || null
     : question.explanation || null;
 
-  const base: any = {
+  const base: LocalizedQuestion = {
     id: question.id,
     questionText,
     codeSnippet: question.codeSnippet,
@@ -165,11 +186,14 @@ function localizeQuestion(
   };
 
   if (includeCorrect) {
-    base.correctAnswerIndex = question.correctAnswerIndex;
-    base.explanation = explanation;
-    base.answersUk = question.answersUk;
-    base.questionTextUk = question.questionTextUk;
-    base.explanationUk = question.explanationUk;
+    return {
+      ...base,
+      correctAnswerIndex: question.correctAnswerIndex,
+      explanation,
+      answersUk: question.answersUk,
+      questionTextUk: question.questionTextUk,
+      explanationUk: question.explanationUk,
+    };
   }
 
   return base;
@@ -639,7 +663,7 @@ export function createQuizRouter(env: Env) {
       const settings = await QuizSettings.findOne();
       const questionsPerTest = settings?.questionsPerTest || 20;
 
-      const whereClause: any = {};
+      const whereClause: WhereOptions<QuizQuestion> = {};
       if (category !== "mix") {
         whereClause.category = category;
       }
@@ -656,10 +680,9 @@ export function createQuizRouter(env: Env) {
 
       await incrementAttempt(userId, ipAddress);
 
-      const sanitizedQuestions = questions.map((q) => {
-        const plain = q.get({ plain: true }) as any;
-        return localizeQuestion(plain, lang, false);
-      });
+      const sanitizedQuestions = questions.map((q) =>
+        localizeQuestion(q.get({ plain: true }) as QuizQuestionAttributes, lang, false),
+      );
 
       res.json({
         questions: sanitizedQuestions,
@@ -887,7 +910,7 @@ export function createQuizRouter(env: Env) {
       const category = (req.query.category as string) || "all";
       const limit = Math.min(parseInt(req.query.limit as string) || 10, 100);
 
-      const whereClause: any = {};
+      const whereClause: WhereOptions<QuizResult> = {};
       if (category !== "all") {
         if (!["css", "scss", "stylus", "mix"].includes(category)) {
           return sendApiError(res, 400, "Invalid category");
@@ -916,7 +939,7 @@ export function createQuizRouter(env: Env) {
       });
 
       const leaderboard = results.map((r, index) => {
-        const plain = r.get({ plain: true }) as any;
+        const plain = r.get({ plain: true }) as QuizResultAttributes & { user?: QuizUserAttributes | null };
         return {
           rank: index + 1,
           username:

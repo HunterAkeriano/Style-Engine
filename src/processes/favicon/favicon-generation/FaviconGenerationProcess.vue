@@ -130,6 +130,48 @@ import { SubscriptionTier } from '@/shared/config/pricing'
 import { buildCreatorProfile } from '@/shared/lib/creator'
 import { onMounted } from 'vue'
 
+type ApiSaveError = {
+  status?: number
+  data?: { limit?: number }
+  message?: string
+}
+
+type FaviconPayload = {
+  backgroundColor?: string
+  padding?: number
+  borderRadius?: number
+  images?: Record<number, string>
+  svg?: string
+  htmlCode?: string
+  manifestJson?: string
+}
+
+type FaviconSavePayload = Required<Pick<FaviconPayload, 'backgroundColor' | 'padding' | 'borderRadius' | 'images'>> &
+  Pick<FaviconPayload, 'svg'> & {
+    htmlCode: string
+    manifestJson: string
+  }
+
+const isApiSaveError = (error: unknown): error is ApiSaveError =>
+  typeof error === 'object' && error !== null
+
+const isImagesRecord = (value: unknown): value is Record<number, string> => {
+  if (typeof value !== 'object' || value === null) return false
+  return Object.entries(value as Record<string, unknown>).every(
+    ([key, val]) => Number.isFinite(Number(key)) && typeof val === 'string'
+  )
+}
+
+const toFaviconPayload = (payload: Record<string, unknown>): FaviconPayload => ({
+  backgroundColor: typeof payload.backgroundColor === 'string' ? payload.backgroundColor : undefined,
+  padding: typeof payload.padding === 'number' ? payload.padding : undefined,
+  borderRadius: typeof payload.borderRadius === 'number' ? payload.borderRadius : undefined,
+  images: isImagesRecord(payload.images) ? payload.images : undefined,
+  svg: typeof payload.svg === 'string' ? payload.svg : undefined,
+  htmlCode: typeof payload.htmlCode === 'string' ? payload.htmlCode : undefined,
+  manifestJson: typeof payload.manifestJson === 'string' ? payload.manifestJson : undefined
+})
+
 const { t, locale } = useI18n()
 const toast = useToast()
 const route = useRoute()
@@ -429,7 +471,7 @@ async function confirmSave(name: string) {
     faviconImages[favicon.size] = favicon.dataUrl
   })
 
-  const payload = {
+  const payload: FaviconSavePayload = {
     backgroundColor: config.backgroundColor,
     padding: config.padding,
     borderRadius: config.borderRadius,
@@ -441,22 +483,22 @@ async function confirmSave(name: string) {
   try {
     await createSave('favicon', name || 'My Favicon', payload)
     toast.success(t('COMMON.SAVE_SUCCESS', { entity: entityLabel.value }))
-  } catch (error: any) {
-    if (error?.status === 403) {
+  } catch (error: unknown) {
+    if (isApiSaveError(error) && error.status === 403) {
       proQuota.value = {
         allowed: false,
-        limit: typeof error?.data?.limit === 'number' ? error.data.limit : 5,
+        limit: typeof error.data?.limit === 'number' ? error.data.limit : 5,
         used: proQuota.value?.used ?? 0,
         plan: SubscriptionTier.FREE
       }
       showProLimitModal.value = true
       return
     }
-    if (error?.status === 409) {
+    if (isApiSaveError(error) && error.status === 409) {
       toast.error(t('COMMON.ALREADY_SAVED', { entity: entityLabel.value }))
     } else {
       toast.error(
-        error?.message || t('COMMON.SAVE_ERROR', { entity: entityLabel.value })
+        (isApiSaveError(error) && error.message) || t('COMMON.SAVE_ERROR', { entity: entityLabel.value })
       )
     }
   } finally {
@@ -541,7 +583,7 @@ async function handleSavePreset(preset: FaviconPreset) {
     const htmlCode = generateFaviconHTML(favicons)
     const manifestJson = generateManifestJSON(favicons)
 
-    const payload: any = {
+    const payload: FaviconSavePayload = {
       backgroundColor: preset.backgroundColor,
       padding: preset.padding,
       borderRadius: preset.borderRadius,
@@ -574,22 +616,22 @@ async function handleSavePreset(preset: FaviconPreset) {
       name: preset.name
     })
     savedFaviconHashes.value.add(nameHash)
-  } catch (error: any) {
-    if (error?.status === 403) {
+  } catch (error: unknown) {
+    if (isApiSaveError(error) && error.status === 403) {
       proQuota.value = {
         allowed: false,
-        limit: typeof error?.data?.limit === 'number' ? error.data.limit : 5,
+        limit: typeof error.data?.limit === 'number' ? error.data.limit : 5,
         used: proQuota.value?.used ?? 0,
         plan: SubscriptionTier.FREE
       }
       showProLimitModal.value = true
       return
     }
-    if (error?.status === 409) {
+    if (isApiSaveError(error) && error.status === 409) {
       toast.error(t('COMMON.ALREADY_SAVED', { entity: entityLabel.value }))
     } else {
       toast.error(
-        error?.message || t('COMMON.SAVE_ERROR', { entity: entityLabel.value })
+        (isApiSaveError(error) && error.message) || t('COMMON.SAVE_ERROR', { entity: entityLabel.value })
       )
     }
   } finally {
@@ -636,27 +678,25 @@ async function loadUserSavedFavicons() {
   try {
     const items = await listSaves('favicon')
     items.forEach(item => {
-      if (item.payload) {
-        const payload = item.payload as any
+      const payload = toFaviconPayload(item.payload)
 
-        if (payload.svg) {
-          const hash = JSON.stringify({
-            backgroundColor: payload.backgroundColor,
-            padding: payload.padding,
-            borderRadius: payload.borderRadius,
-            key: payload.svg
-          })
-          savedFaviconHashes.value.add(hash)
-        }
-
-        const nameHash = JSON.stringify({
+      if (payload.svg) {
+        const hash = JSON.stringify({
           backgroundColor: payload.backgroundColor,
           padding: payload.padding,
           borderRadius: payload.borderRadius,
-          name: item.name
+          key: payload.svg
         })
-        savedFaviconHashes.value.add(nameHash)
+        savedFaviconHashes.value.add(hash)
       }
+
+      const nameHash = JSON.stringify({
+        backgroundColor: payload.backgroundColor,
+        padding: payload.padding,
+        borderRadius: payload.borderRadius,
+        name: item.name
+      })
+      savedFaviconHashes.value.add(nameHash)
     })
   } catch (error) {
     console.error('Failed to load user saved favicons:', error)
@@ -664,12 +704,7 @@ async function loadUserSavedFavicons() {
 }
 
 function savedToPreset(item: SavedItem): FaviconPreset {
-  const payload = item.payload as {
-    backgroundColor?: string
-    padding?: number
-    borderRadius?: number
-    images?: Record<number, string>
-  }
+  const payload = toFaviconPayload(item.payload)
 
   let svg = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="currentColor"/></svg>'
 

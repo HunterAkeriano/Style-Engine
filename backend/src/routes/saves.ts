@@ -1,6 +1,6 @@
-import { Router } from 'express'
+import { Router, type Request, type Response } from 'express'
 import { z } from 'zod'
-import { col, fn, literal, Op, where } from 'sequelize'
+import { col, fn, literal, Op, where, type InferAttributes, type WhereOptions } from 'sequelize'
 import { getModels } from '../config/db'
 import type { Env } from '../config/env'
 import { createAuthMiddleware, type AuthRequest } from '../middleware/auth'
@@ -16,6 +16,8 @@ const saveSchema = z.object({
 export type Category = 'gradient' | 'shadow' | 'animation' | 'clip-path' | 'favicon'
 
 type SavedModelClass = typeof SavedGradient | typeof SavedShadow | typeof SavedAnimation | typeof SavedClipPath | typeof SavedFavicon
+type SavedModelInstance = SavedGradient | SavedShadow | SavedAnimation | SavedClipPath | SavedFavicon
+type SavedAttributes = InferAttributes<SavedGradient>
 
 export function createSavesRouter(env: Env) {
   const router = Router()
@@ -33,9 +35,9 @@ export function createSavesRouter(env: Env) {
     return modelMap[category]
   }
 
-  function toPlainSaved(item: SavedGradient | SavedShadow | SavedAnimation | SavedClipPath | SavedFavicon) {
-    const plain = item.get({ plain: true }) as any
-    delete plain.user
+  function toPlainSaved(item: SavedModelInstance) {
+    const { user: _user, ...plain } = item.get({ plain: true }) as SavedAttributes
+    void _user
     return plain
   }
 
@@ -56,7 +58,7 @@ export function createSavesRouter(env: Env) {
     return null
   }
 
-  async function list(category: Category, req: AuthRequest, res: any) {
+  async function list(category: Category, req: AuthRequest, res: Response) {
     const model = modelForCategory(category)
     const items = await model.findAll({
       where: { userId: req.userId },
@@ -65,20 +67,24 @@ export function createSavesRouter(env: Env) {
     res.json({ items: items.map(toPlainSaved) })
   }
 
-  async function listPublic(category: Category, _req: any, res: any) {
+  async function listPublic(category: Category, _req: Request, res: Response) {
     const model = modelForCategory(category)
 
-    const whereConditions: any = { status: 'approved' }
-    if (category !== 'clip-path') {
-      whereConditions[Op.and] = [
-        {
-          [Op.or]: [
-            { '$user.email$': null },
-            where(fn('LOWER', col('user.email')), { [Op.ne]: env.SUPER_ADMIN_EMAIL.toLowerCase() })
-          ]
-        }
-      ]
-    }
+    const baseConditions: WhereOptions = { status: 'approved' }
+    const whereConditions: WhereOptions =
+      category !== 'clip-path'
+        ? {
+            ...baseConditions,
+            [Op.and]: [
+              {
+                [Op.or]: [
+                  { '$user.email$': null },
+                  where(fn('LOWER', col('user.email')), { [Op.ne]: env.SUPER_ADMIN_EMAIL.toLowerCase() })
+                ]
+              }
+            ]
+          }
+        : baseConditions
 
     const items = await model.findAll({
       where: whereConditions,
@@ -92,14 +98,12 @@ export function createSavesRouter(env: Env) {
     })
 
     const mapped = items.map((item) => {
-      const plain = item.get({ plain: true }) as any
-      const owner = plain.user as User | undefined
-      delete plain.user
+      const { user, ...plain } = item.get({ plain: true }) as SavedAttributes & { user?: User | null }
       return {
         ...plain,
-        ownerName: owner?.name ?? null,
-        ownerEmail: owner?.email ?? null,
-        ownerAvatar: owner?.avatarUrl ?? null
+        ownerName: user?.name ?? null,
+        ownerEmail: user?.email ?? null,
+        ownerAvatar: user?.avatarUrl ?? null
       }
     })
 
@@ -127,7 +131,7 @@ export function createSavesRouter(env: Env) {
     })
 
     for (const item of userItems) {
-      const itemNormalized = normalizePayload(category, item.payload as any)
+      const itemNormalized = normalizePayload(category, item.payload)
       const itemHash = stableStringify(itemNormalized)
       if (payloadHash === itemHash) {
         return sendApiError(res, 409, 'Already saved')
@@ -161,7 +165,7 @@ export function createSavesRouter(env: Env) {
       return sendApiError(res, 404, 'Item not found or already published')
     }
 
-    const normalizedPayload = normalizePayload(category, item.payload as any)
+    const normalizedPayload = normalizePayload(category, item.payload)
     const payloadHash = stableStringify(normalizedPayload)
 
     // Check for duplicates in approved or pending items
@@ -171,7 +175,7 @@ export function createSavesRouter(env: Env) {
     })
 
     for (const publicItem of allPublicItems) {
-      const publicNormalized = normalizePayload(category, publicItem.payload as any)
+      const publicNormalized = normalizePayload(category, publicItem.payload)
       const publicHash = stableStringify(publicNormalized)
 
       if (payloadHash === publicHash) {

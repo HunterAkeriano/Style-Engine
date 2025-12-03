@@ -2,6 +2,7 @@ import 'dotenv/config'
 import { readFileSync, readdirSync } from 'fs'
 import { join } from 'path'
 import { loadEnv } from '../config/env'
+import { QueryTypes } from 'sequelize'
 import { initDb } from '../config/db'
 
 const env = loadEnv()
@@ -17,8 +18,11 @@ async function runMigrations() {
       )
     `)
 
-    const [result] = await sequelize.query('SELECT version FROM schema_migrations ORDER BY version')
-    const executedMigrations = new Set((result as any[]).map((row) => row.version))
+    const result = await sequelize.query<{ version: string }>(
+      'SELECT version FROM schema_migrations ORDER BY version',
+      { type: QueryTypes.SELECT }
+    )
+    const executedMigrations = new Set(result.map(row => row.version))
 
     const migrationsDir = join(__dirname, '../db/migrations')
     const files = readdirSync(migrationsDir)

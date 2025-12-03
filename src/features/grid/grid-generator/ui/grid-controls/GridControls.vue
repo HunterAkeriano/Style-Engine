@@ -190,7 +190,7 @@ interface Emits {
   (e: 'update:custom-rows', value: string): void
   (e: 'add-item'): void
   (e: 'remove-item', id: string): void
-  (e: 'update-item-property', id: string, property: string, value: any): void
+  (e: 'update-item-property', id: string, property: keyof GridItem, value: GridItem[keyof GridItem]): void
 }
 
 defineProps<Props>()

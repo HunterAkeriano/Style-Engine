@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import crypto from 'crypto'
 import { z } from 'zod'
-import { Op } from 'sequelize'
+import { Op, type InferAttributes } from 'sequelize'
 import { getModels } from '../config/db'
 import type { Env } from '../config/env'
 import type { PasswordReset, User } from '../models'
@@ -38,22 +38,24 @@ const changePasswordSchema = z.object({
   newPassword: strongPassword
 })
 
+type UserAttributes = InferAttributes<User>
+type SafeUser = Omit<UserAttributes, 'passwordHash'> & { isSuperAdmin: boolean }
+
 export function createAuthRouter(env: Env) {
   const router = Router()
   const { User, RefreshToken, PasswordReset } = getModels()
 
   PasswordReset.sync().catch((err) => console.error('Failed to ensure password_resets table', err))
 
-  function attachSuperFlag(user: any) {
+  function attachSuperFlag(user: Omit<UserAttributes, 'passwordHash'>): SafeUser {
     if (!user) return user
     return { ...user, isSuperAdmin: isSuperAdminEmail(env, user.email) }
   }
 
-  function toSafeUser(user: User | null) {
+  function toSafeUser(user: User | null): SafeUser | null {
     if (!user) return null
-    const plain = user.get({ plain: true }) as any
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { passwordHash: _ignoredPassword, ...rest } = plain
+    const { passwordHash: _ignoredPassword, ...rest } = user.get({ plain: true }) as UserAttributes
+    void _ignoredPassword
     return attachSuperFlag(rest)
   }
 
