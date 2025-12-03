@@ -362,7 +362,7 @@ export function createAuthRouter(env: Env) {
     }
 
     const token = crypto.randomBytes(24).toString('hex')
-    const tokenHash = await bcrypt.hash(token, 10)
+    const tokenHash = hashResetToken(token)
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 
     await PasswordReset.create({
@@ -393,30 +393,22 @@ export function createAuthRouter(env: Env) {
     }
     const { token, password } = parsed.data
 
-    const resets = await PasswordReset.findAll({
+    const tokenHash = hashResetToken(token)
+    const reset = await PasswordReset.findOne({
       where: {
+        tokenHash,
         used: false,
         expiresAt: { [Op.gt]: new Date() }
       },
-      include: [{ model: User, as: 'user', attributes: ['id', 'email'] }],
-      order: [['createdAt', 'DESC']]
+      include: [{ model: User, as: 'user', attributes: ['id', 'email'] }]
     })
-
-    let matched: PasswordReset | null = null
-    for (const reset of resets) {
-      if (await bcrypt.compare(token, reset.tokenHash)) {
-        matched = reset
-        break
-      }
-    }
-
-    if (!matched || !matched.user) {
+    if (!reset || !reset.user) {
       return sendApiError(res, 400, 'Invalid or expired token')
     }
 
     const newHash = await bcrypt.hash(password, 10)
-    await matched.user.update({ passwordHash: newHash, updatedAt: new Date() })
-    await matched.update({ used: true })
+    await reset.user.update({ passwordHash: newHash, updatedAt: new Date() })
+    await reset.update({ used: true })
 
     res.json({ ok: true })
   })
@@ -454,6 +446,10 @@ export function createAuthRouter(env: Env) {
   })
 
   return router
+}
+
+function hashResetToken(token: string) {
+  return crypto.createHash('sha256').update(token).digest('hex')
 }
 
 function buildResetEmail(resetLink: string) {

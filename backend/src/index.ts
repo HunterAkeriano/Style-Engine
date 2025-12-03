@@ -15,7 +15,9 @@ const { sequelize } = initDb(env)
 sequelize
   .authenticate()
   .then(async () => {
-    await sequelize.sync()
+    if (env.NODE_ENV !== 'production') {
+      await sequelize.sync()
+    }
     await ensureSuperAdmin(env)
   })
   .catch((err: unknown) => {

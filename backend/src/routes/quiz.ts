@@ -306,6 +306,8 @@ export function createQuizRouter(env: Env) {
     }
   }
 
+  void ensureSpecialUserTopScores();
+
   /**
    * @swagger
    * /api/quiz/questions:
@@ -662,17 +664,12 @@ export function createQuizRouter(env: Env) {
 
       const settings = await QuizSettings.findOne();
       const questionsPerTest = settings?.questionsPerTest || 20;
-
       const whereClause: WhereOptions<QuizQuestion> = {};
       if (category !== "mix") {
         whereClause.category = category;
       }
 
-      const questions = await QuizQuestion.findAll({
-        where: whereClause,
-        order: QuizQuestion.sequelize!.random(),
-        limit: questionsPerTest,
-      });
+      const questions = await selectRandomQuestions(QuizQuestion, whereClause, questionsPerTest);
 
       if (questions.length === 0) {
         return sendApiError(res, 404, "No questions available");
@@ -918,8 +915,6 @@ export function createQuizRouter(env: Env) {
         whereClause.category = category;
       }
 
-      await ensureSpecialUserTopScores();
-
       const results = await QuizResult.findAll({
         where: whereClause,
         order: [
@@ -990,4 +985,39 @@ export function createQuizRouter(env: Env) {
   });
 
   return router;
+}
+
+async function selectRandomQuestions(
+  QuizQuestionModel: ReturnType<typeof getModels>["QuizQuestion"],
+  whereClause: WhereOptions<QuizQuestion>,
+  limit: number,
+) {
+  const rows = await QuizQuestionModel.findAll({
+    where: whereClause,
+    attributes: ["id"],
+    raw: true,
+  });
+
+  if (!rows.length) return [];
+
+  const ids = rows.map((row: { id: string }) => row.id);
+  const chosenIds = pickRandom(ids, Math.min(limit, ids.length));
+
+  const questions = await QuizQuestionModel.findAll({
+    where: { id: { [Op.in]: chosenIds } },
+  });
+
+  const map = new Map(questions.map((q) => [q.id, q]));
+  return chosenIds
+    .map((id) => map.get(id))
+    .filter((q): q is typeof questions[number] => Boolean(q));
+}
+
+function pickRandom<T>(items: T[], count: number): T[] {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr.slice(0, count);
 }

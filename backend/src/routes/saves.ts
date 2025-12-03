@@ -1,4 +1,5 @@
 import { Router, type Request, type Response } from 'express'
+import crypto from 'crypto'
 import { z } from 'zod'
 import { col, fn, literal, Op, where, type InferAttributes, type WhereOptions } from 'sequelize'
 import { getModels } from '../config/db'
@@ -36,8 +37,9 @@ export function createSavesRouter(env: Env) {
   }
 
   function toPlainSaved(item: SavedModelInstance) {
-    const { user: _user, ...plain } = item.get({ plain: true }) as SavedAttributes
+    const { user: _user, payloadHash: _payloadHash, ...plain } = item.get({ plain: true }) as SavedAttributes
     void _user
+    void _payloadHash
     return plain
   }
 
@@ -122,26 +124,19 @@ export function createSavesRouter(env: Env) {
     const model = modelForCategory(category)
     const { name, payload } = parsed.data
 
-    const normalizedPayload = normalizePayload(category, payload)
-    const payloadHash = stableStringify(normalizedPayload)
-
-    const userItems = await model.findAll({
-      where: { userId: req.userId },
-      attributes: ['id', 'payload']
+    const payloadHash = computePayloadHash(category, payload)
+    const existing = await model.findOne({
+      where: { userId: req.userId, payloadHash }
     })
-
-    for (const item of userItems) {
-      const itemNormalized = normalizePayload(category, item.payload)
-      const itemHash = stableStringify(itemNormalized)
-      if (payloadHash === itemHash) {
-        return sendApiError(res, 409, 'Already saved')
-      }
+    if (existing) {
+      return sendApiError(res, 409, 'Already saved')
     }
 
     const created = await model.create({
       userId: req.userId,
       name,
       payload,
+      payloadHash,
       status: 'private'
     })
     res.status(201).json({ item: toPlainSaved(created) })
@@ -165,26 +160,22 @@ export function createSavesRouter(env: Env) {
       return sendApiError(res, 404, 'Item not found or already published')
     }
 
-    const normalizedPayload = normalizePayload(category, item.payload)
-    const payloadHash = stableStringify(normalizedPayload)
-
-    // Check for duplicates in approved or pending items
-    const allPublicItems = await model.findAll({
-      where: { status: { [Op.in]: ['approved', 'pending'] } },
-      attributes: ['payload']
-    })
-
-    for (const publicItem of allPublicItems) {
-      const publicNormalized = normalizePayload(category, publicItem.payload)
-      const publicHash = stableStringify(publicNormalized)
-
-      if (payloadHash === publicHash) {
-        return sendApiError(res, 409, 'This item already exists in public collection')
-      }
+    const payloadHash = item.payloadHash || computePayloadHash(category, item.payload)
+    if (!item.payloadHash) {
+      await item.update({ payloadHash })
     }
 
-    // Update status to pending
-    await item.update({ status: 'pending' })
+    const duplicate = await model.findOne({
+      where: {
+        status: { [Op.in]: ['approved', 'pending'] },
+        payloadHash
+      }
+    })
+    if (duplicate) {
+      return sendApiError(res, 409, 'This item already exists in public collection')
+    }
+
+    await item.update({ status: 'pending', payloadHash })
     res.json({ item: toPlainSaved(item) })
   }
 
@@ -835,4 +826,10 @@ export function createSavesRouter(env: Env) {
   router.delete('/favicons/:id', auth, (req, res) => remove('favicon', req, res))
 
   return router
+}
+
+function computePayloadHash(category: Category, payload: Record<string, unknown>) {
+  const normalized = normalizePayload(category, payload)
+  const serialized = stableStringify(normalized)
+  return crypto.createHash('md5').update(serialized).digest('hex')
 }

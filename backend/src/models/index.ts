@@ -53,6 +53,7 @@ export class SavedGradient extends Model<InferAttributes<SavedGradient>, InferCr
   declare userId: ForeignKey<User['id']> | null
   declare user?: User | null
   declare name: string
+  declare payloadHash: string | null
   declare payload: Record<string, unknown>
   declare status: CreationOptional<SavedStatus>
   declare isFeatured: CreationOptional<boolean>
@@ -65,6 +66,7 @@ export class SavedShadow extends Model<InferAttributes<SavedShadow>, InferCreati
   declare userId: ForeignKey<User['id']> | null
   declare user?: User | null
   declare name: string
+  declare payloadHash: string | null
   declare payload: Record<string, unknown>
   declare status: CreationOptional<SavedStatus>
   declare isFeatured: CreationOptional<boolean>
@@ -77,6 +79,7 @@ export class SavedAnimation extends Model<InferAttributes<SavedAnimation>, Infer
   declare userId: ForeignKey<User['id']> | null
   declare user?: User | null
   declare name: string
+  declare payloadHash: string | null
   declare payload: Record<string, unknown>
   declare status: CreationOptional<SavedStatus>
   declare isFeatured: CreationOptional<boolean>
@@ -89,6 +92,7 @@ export class SavedClipPath extends Model<InferAttributes<SavedClipPath>, InferCr
   declare userId: ForeignKey<User['id']> | null
   declare user?: User | null
   declare name: string
+  declare payloadHash: string | null
   declare payload: Record<string, unknown>
   declare status: CreationOptional<SavedStatus>
   declare isFeatured: CreationOptional<boolean>
@@ -101,6 +105,7 @@ export class SavedFavicon extends Model<InferAttributes<SavedFavicon>, InferCrea
   declare userId: ForeignKey<User['id']> | null
   declare user?: User | null
   declare name: string
+  declare payloadHash: string | null
   declare payload: Record<string, unknown>
   declare status: CreationOptional<SavedStatus>
   declare isFeatured: CreationOptional<boolean>
@@ -339,6 +344,7 @@ export function initModels(sequelize: Sequelize): Models {
       id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
       userId: { type: DataTypes.UUID, allowNull: true, field: 'user_id' },
       name: { type: DataTypes.TEXT, allowNull: false },
+      payloadHash: { type: DataTypes.TEXT, allowNull: true, field: 'payload_hash' },
       payload: { type: DataTypes.JSONB, allowNull: false },
       status: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'private' },
       isFeatured: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false, field: 'is_featured' },
@@ -353,6 +359,7 @@ export function initModels(sequelize: Sequelize): Models {
       id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
       userId: { type: DataTypes.UUID, allowNull: true, field: 'user_id' },
       name: { type: DataTypes.TEXT, allowNull: false },
+      payloadHash: { type: DataTypes.TEXT, allowNull: true, field: 'payload_hash' },
       payload: { type: DataTypes.JSONB, allowNull: false },
       status: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'private' },
       isFeatured: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false, field: 'is_featured' },
@@ -367,6 +374,7 @@ export function initModels(sequelize: Sequelize): Models {
       id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
       userId: { type: DataTypes.UUID, allowNull: true, field: 'user_id' },
       name: { type: DataTypes.TEXT, allowNull: false },
+      payloadHash: { type: DataTypes.TEXT, allowNull: true, field: 'payload_hash' },
       payload: { type: DataTypes.JSONB, allowNull: false },
       status: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'private' },
       isFeatured: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false, field: 'is_featured' },
@@ -381,6 +389,7 @@ export function initModels(sequelize: Sequelize): Models {
       id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
       userId: { type: DataTypes.UUID, allowNull: true, field: 'user_id' },
       name: { type: DataTypes.TEXT, allowNull: false },
+      payloadHash: { type: DataTypes.TEXT, allowNull: true, field: 'payload_hash' },
       payload: { type: DataTypes.JSONB, allowNull: false },
       status: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'private' },
       isFeatured: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false, field: 'is_featured' },
@@ -395,6 +404,7 @@ export function initModels(sequelize: Sequelize): Models {
       id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
       userId: { type: DataTypes.UUID, allowNull: true, field: 'user_id' },
       name: { type: DataTypes.TEXT, allowNull: false },
+      payloadHash: { type: DataTypes.TEXT, allowNull: true, field: 'payload_hash' },
       payload: { type: DataTypes.JSONB, allowNull: false },
       status: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'private' },
       isFeatured: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false, field: 'is_featured' },
