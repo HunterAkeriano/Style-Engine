@@ -1,110 +1,150 @@
 <template>
   <div class="quiz-start-page">
+    <div class="quiz-start-page__background">
+      <span class="quiz-start-page__beam quiz-start-page__beam_left"></span>
+      <span class="quiz-start-page__beam quiz-start-page__beam_right"></span>
+      <span class="quiz-start-page__grid-lines"></span>
+    </div>
+
     <div class="container">
       <Breadcrumbs />
 
       <section class="quiz-start-page__hero">
+        <div class="quiz-start-page__hero-badge">
+          {{ t("QUIZ.HERO_BADGE") }}
+        </div>
         <h1 class="quiz-start-page__title">{{ t("QUIZ.HERO_TITLE") }}</h1>
         <p class="quiz-start-page__subtitle">{{ t("QUIZ.HERO_SUBTITLE") }}</p>
 
         <div class="quiz-start-page__hero-content">
-          <div class="quiz-start-page__importance">
-            <h2 class="quiz-start-page__importance-title">
-              {{ t("QUIZ.WHY_TESTING_TITLE") }}
-            </h2>
-            <ul class="quiz-start-page__importance-list">
-              <li class="quiz-start-page__importance-item">
-                {{ t("QUIZ.WHY_TESTING_REASONS.REASON1") }}
-              </li>
-              <li class="quiz-start-page__importance-item">
-                {{ t("QUIZ.WHY_TESTING_REASONS.REASON2") }}
-              </li>
-              <li class="quiz-start-page__importance-item">
-                {{ t("QUIZ.WHY_TESTING_REASONS.REASON3") }}
-              </li>
-              <li class="quiz-start-page__importance-item">
-                {{ t("QUIZ.WHY_TESTING_REASONS.REASON4") }}
-              </li>
-            </ul>
+          <div class="quiz-start-page__stats">
+            <div class="quiz-start-page__stat-card">
+              <div class="quiz-start-page__stat-value">{{ t("QUIZ.STATS_QUESTIONS") }}</div>
+              <div class="quiz-start-page__stat-label">{{ t("QUIZ.STATS_QUESTIONS_LABEL") }}</div>
+            </div>
+            <div class="quiz-start-page__stat-card">
+              <div class="quiz-start-page__stat-value">{{ t("QUIZ.STATS_CATEGORIES") }}</div>
+              <div class="quiz-start-page__stat-label">{{ t("QUIZ.STATS_CATEGORIES_LABEL") }}</div>
+            </div>
+            <div class="quiz-start-page__stat-card">
+              <div class="quiz-start-page__stat-value">{{ t("QUIZ.STATS_TIME") }}</div>
+              <div class="quiz-start-page__stat-label">{{ t("QUIZ.STATS_TIME_LABEL") }}</div>
+            </div>
           </div>
 
           <div
             v-if="limitInfo && !limitInfo.allowed"
             class="quiz-start-page__limit-warning"
           >
-            <p>{{ t("QUIZ.LIMIT_REACHED", { limit: limitInfo.limit }) }}</p>
-            <p v-if="!authStore.isAuthenticated">
-              {{ t("QUIZ.LOGIN_TO_GET_MORE") }}
-            </p>
-            <p v-else-if="authStore.userPlan === 'free'">
-              {{ t("QUIZ.UPGRADE_TO_GET_MORE") }}
-            </p>
+            <div class="quiz-start-page__limit-icon">⚠</div>
+            <div class="quiz-start-page__limit-content">
+              <p class="quiz-start-page__limit-text">
+                {{ t("QUIZ.LIMIT_REACHED", { limit: limitInfo.limit }) }}
+              </p>
+              <p v-if="!authStore.isAuthenticated" class="quiz-start-page__limit-action">
+                {{ t("QUIZ.LOGIN_TO_GET_MORE") }}
+              </p>
+              <p v-else-if="authStore.userPlan === 'free'" class="quiz-start-page__limit-action">
+                {{ t("QUIZ.UPGRADE_TO_GET_MORE") }}
+              </p>
+            </div>
           </div>
 
-        <div
-          v-if="limitInfo && limitInfo.allowed"
-          class="quiz-start-page__limit-info"
-        >
-          {{ attemptsText }}
-        </div>
+          <div
+            v-if="limitInfo && limitInfo.allowed"
+            class="quiz-start-page__limit-info"
+          >
+            <div class="quiz-start-page__limit-icon-success">✓</div>
+            <span>{{ attemptsText }}</span>
+          </div>
 
           <Button
             class="quiz-start-page__start-button"
             :disabled="!limitInfo?.allowed"
             @click="showModal = true"
           >
-            {{ t("QUIZ.START_TEST") }}
+            <span class="quiz-start-page__button-text">{{ t("QUIZ.START_TEST") }}</span>
+            <span class="quiz-start-page__button-icon">→</span>
           </Button>
         </div>
       </section>
 
-      <QuizLeaderboardSection
-        :title="t('QUIZ.LEADERBOARD_TITLE')"
-        :rows="leaderboardRows"
-        :loading="loadingLeaderboard"
-        :category-options="categoryOptions"
-        :selected-category="selectedCategory"
-        :page-size="pageSize"
-        :page-size-options="pageSizeOptions"
-        :current-page="currentPage"
-        :total-pages="totalPages"
-        :total-rows="leaderboard.length"
-        :display-from="displayFrom"
-        :display-to="displayTo"
-        :row-key="rowKey"
-        :empty-text="t('QUIZ.NO_RESULTS')"
-        :loading-text="t('QUIZ.LOADING')"
-        @change-category="handleCategoryChange"
-        @page-size-change="handlePageSizeChange"
-        @page-change="goToPage"
-      />
+      <section class="quiz-start-page__features">
+        <div class="quiz-start-page__features-header">
+          <span class="quiz-start-page__features-tag">{{ t("QUIZ.FEATURES_TAG") }}</span>
+          <h2 class="quiz-start-page__features-title">{{ t("QUIZ.FEATURES_TITLE") }}</h2>
+        </div>
+        <div class="quiz-start-page__features-grid">
+          <div class="quiz-start-page__feature-card">
+            <div class="quiz-start-page__feature-icon">⚡</div>
+            <h3 class="quiz-start-page__feature-title">{{ t("QUIZ.FEATURE_1_TITLE") }}</h3>
+            <p class="quiz-start-page__feature-description">{{ t("QUIZ.FEATURE_1_DESC") }}</p>
+          </div>
+          <div class="quiz-start-page__feature-card">
+            <div class="quiz-start-page__feature-icon">🎯</div>
+            <h3 class="quiz-start-page__feature-title">{{ t("QUIZ.FEATURE_2_TITLE") }}</h3>
+            <p class="quiz-start-page__feature-description">{{ t("QUIZ.FEATURE_2_DESC") }}</p>
+          </div>
+          <div class="quiz-start-page__feature-card">
+            <div class="quiz-start-page__feature-icon">📊</div>
+            <h3 class="quiz-start-page__feature-title">{{ t("QUIZ.FEATURE_3_TITLE") }}</h3>
+            <p class="quiz-start-page__feature-description">{{ t("QUIZ.FEATURE_3_DESC") }}</p>
+          </div>
+          <div class="quiz-start-page__feature-card">
+            <div class="quiz-start-page__feature-icon">🏆</div>
+            <h3 class="quiz-start-page__feature-title">{{ t("QUIZ.FEATURE_4_TITLE") }}</h3>
+            <p class="quiz-start-page__feature-description">{{ t("QUIZ.FEATURE_4_DESC") }}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="quiz-start-page__leaderboard">
+        <div class="quiz-start-page__leaderboard-header">
+          <div>
+            <span class="quiz-start-page__leaderboard-tag">{{ t("QUIZ.LEADERBOARD_TAG") }}</span>
+            <h2 class="quiz-start-page__section-title">
+              {{ t("QUIZ.LEADERBOARD_TITLE") }}
+            </h2>
+          </div>
+        </div>
+        <QuizLeaderboardSection
+          :title="t('QUIZ.LEADERBOARD_TITLE')"
+          :rows="leaderboardRows"
+          :loading="loadingLeaderboard"
+          :category-options="categoryOptions"
+          :selected-category="selectedCategory"
+          :page-size="pageSize"
+          :page-size-options="pageSizeOptions"
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          :total-rows="leaderboard.length"
+          :display-from="displayFrom"
+          :display-to="displayTo"
+          :row-key="rowKey"
+          :empty-text="t('QUIZ.NO_RESULTS')"
+          :loading-text="t('QUIZ.LOADING')"
+          @change-category="handleCategoryChange"
+          @page-size-change="handlePageSizeChange"
+          @page-change="goToPage"
+        />
+      </section>
 
       <section class="quiz-start-page__support">
-        <h2 class="quiz-start-page__section-title">
-          {{ t("QUIZ.SUPPORT_TITLE") }}
-        </h2>
-        <p class="quiz-start-page__support-description">
-          {{ t("QUIZ.SUPPORT_DESCRIPTION") }}
-        </p>
-
-        <ul class="quiz-start-page__support-list">
-          <li class="quiz-start-page__support-item">
-            {{ t("QUIZ.SUPPORT_REASONS.REASON1") }}
-          </li>
-          <li class="quiz-start-page__support-item">
-            {{ t("QUIZ.SUPPORT_REASONS.REASON2") }}
-          </li>
-          <li class="quiz-start-page__support-item">
-            {{ t("QUIZ.SUPPORT_REASONS.REASON3") }}
-          </li>
-        </ul>
-
-        <Button
-          class="quiz-start-page__support-button"
-          @click="openContactWidget"
-        >
-          {{ t("QUIZ.CONTACT_US") }}
-        </Button>
+        <div class="quiz-start-page__support-content">
+          <span class="quiz-start-page__support-tag">{{ t("QUIZ.SUPPORT_TAG") }}</span>
+          <h2 class="quiz-start-page__section-title">
+            {{ t("QUIZ.SUPPORT_TITLE") }}
+          </h2>
+          <p class="quiz-start-page__support-description">
+            {{ t("QUIZ.SUPPORT_DESCRIPTION") }}
+          </p>
+          <Button
+            class="quiz-start-page__support-button"
+            @click="openContactWidget"
+          >
+            {{ t("QUIZ.CONTACT_US") }}
+          </Button>
+        </div>
       </section>
     </div>
 
