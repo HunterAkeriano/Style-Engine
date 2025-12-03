@@ -939,15 +939,22 @@ export default {
       LIST_DELETE: 'Delete',
       FORM_TITLE_EDIT: 'Edit Question',
       FORM_TITLE_ADD: 'Add Question',
+      FORM_LANG_EN: 'English version',
+      FORM_LANG_UK: 'Ukrainian version',
       FORM_QUESTION_LABEL: 'Question Text *',
+      FORM_QUESTION_LABEL_EN: 'Question Text (EN) *',
+      FORM_QUESTION_LABEL_UK: 'Question Text (UK)',
       FORM_QUESTION_PLACEHOLDER: 'Enter the question...',
       FORM_SNIPPET_LABEL: 'Code Snippet (optional)',
       FORM_SNIPPET_PLACEHOLDER: 'Enter code snippet...',
       FORM_ANSWERS_LABEL: 'Answers * (2-6 answers)',
+      FORM_ANSWERS_LABEL_EN: 'Answers (EN) *',
+      FORM_ANSWERS_LABEL_UK: 'Answers (UK) *',
       FORM_ANSWER_PLACEHOLDER: 'Answer text...',
       FORM_ADD_ANSWER: 'Add Answer',
       FORM_EXPLANATION_LABEL: 'Explanation (optional)',
       FORM_EXPLANATION_PLACEHOLDER: 'Explain the correct answer...',
+      FORM_EXPLANATION_LABEL_UK: 'Explanation (UK, optional)',
       FORM_CATEGORY_LABEL: 'Category *',
       FORM_CATEGORY_CSS: 'CSS',
       FORM_CATEGORY_SCSS: 'SCSS',
@@ -966,6 +973,16 @@ export default {
       SETTINGS_TIME_LABEL: 'Time Per Question (10-300 seconds)',
       SETTINGS_TIME_HINT: 'Time limit for each question in seconds',
       SETTINGS_SAVE: 'Save Settings'
+    },
+    RESULTS: {
+      TITLE: 'Test Completed!',
+      CORRECT: '{score} / {total} correct answers',
+      CATEGORY: 'Category',
+      TIME: 'Time Taken',
+      DETAILED: 'Detailed Results',
+      CORRECT_SHORT: '✓ Correct',
+      INCORRECT_SHORT: '✗ Incorrect',
+      RETRY: 'Try Again'
     }
   }
 }

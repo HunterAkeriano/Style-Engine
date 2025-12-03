@@ -5,8 +5,10 @@ export type QuizResultCategory = 'css' | 'scss' | 'stylus' | 'mix'
 export interface QuizQuestion {
   id: string
   questionText: string
+  questionTextUk?: string | null
   codeSnippet?: string | null
   answers: string[]
+  answersUk?: string[] | null
   category: QuizCategory
   difficulty: QuizDifficulty
   createdAt: string
@@ -16,6 +18,7 @@ export interface QuizQuestion {
 export interface QuizQuestionAdmin extends QuizQuestion {
   correctAnswerIndex: number
   explanation?: string | null
+  explanationUk?: string | null
 }
 
 export interface QuizSettings {

@@ -10,14 +10,130 @@
     @update:visible="handleVisibleChange"
   >
     <form class="quiz-question-form__form" @submit.prevent="handleSubmit">
-      <Textarea
-        v-model="formData.questionText"
-        class="quiz-question-form__field"
-        :label="t('QUIZ.MANAGE.FORM_QUESTION_LABEL')"
-        :placeholder="t('QUIZ.MANAGE.FORM_QUESTION_PLACEHOLDER')"
-        required
-        :rows="3"
-      />
+      <div class="quiz-question-form__block">
+        <p class="quiz-question-form__lang">{{ t('QUIZ.MANAGE.FORM_LANG_EN') }}</p>
+        <Textarea
+          v-model="formData.questionText"
+          class="quiz-question-form__field"
+          :label="t('QUIZ.MANAGE.FORM_QUESTION_LABEL_EN')"
+          :placeholder="t('QUIZ.MANAGE.FORM_QUESTION_PLACEHOLDER')"
+          required
+          :rows="3"
+        />
+
+        <div class="quiz-question-form__field">
+          <label class="quiz-question-form__label">{{ t('QUIZ.MANAGE.FORM_ANSWERS_LABEL_EN') }}</label>
+          <div class="quiz-question-form__answers">
+            <div
+              v-for="(_, index) in formData.answers"
+              :key="`en-${index}`"
+              class="quiz-question-form__answer"
+            >
+              <Input
+                v-model="formData.answers[index]"
+                :placeholder="t('QUIZ.MANAGE.FORM_ANSWER_PLACEHOLDER')"
+                class="quiz-question-form__input"
+                required
+              />
+              <label class="quiz-question-form__radio-label">
+                <input
+                  v-model="formData.correctAnswerIndex"
+                  type="radio"
+                  :value="index"
+                  class="quiz-question-form__radio"
+                  required
+                />
+                {{ t('QUIZ.MANAGE.FORM_CORRECT') }}
+              </label>
+              <Button
+                v-if="formData.answers.length > 2"
+                type="button"
+                size="sm"
+                variant="ghost"
+                class="quiz-question-form__remove"
+                @click="removeAnswer('en', index)"
+              >
+                ×
+              </Button>
+            </div>
+          </div>
+          <Button
+            v-if="formData.answers.length < 6"
+            type="button"
+            variant="secondary"
+            size="sm"
+            class="quiz-question-form__add-answer"
+            @click="addAnswer('en')"
+          >
+            {{ t('QUIZ.MANAGE.FORM_ADD_ANSWER') }}
+          </Button>
+        </div>
+
+        <Textarea
+          v-model="formData.explanation"
+          class="quiz-question-form__field"
+          :label="t('QUIZ.MANAGE.FORM_EXPLANATION_LABEL')"
+          :placeholder="t('QUIZ.MANAGE.FORM_EXPLANATION_PLACEHOLDER')"
+          :rows="3"
+        />
+      </div>
+
+      <div class="quiz-question-form__block">
+        <p class="quiz-question-form__lang">{{ t('QUIZ.MANAGE.FORM_LANG_UK') }}</p>
+        <Textarea
+          v-model="formData.questionTextUk"
+          class="quiz-question-form__field"
+          :label="t('QUIZ.MANAGE.FORM_QUESTION_LABEL_UK')"
+          :placeholder="t('QUIZ.MANAGE.FORM_QUESTION_PLACEHOLDER')"
+          :rows="3"
+        />
+
+        <div class="quiz-question-form__field">
+          <label class="quiz-question-form__label">{{ t('QUIZ.MANAGE.FORM_ANSWERS_LABEL_UK') }}</label>
+          <div class="quiz-question-form__answers">
+            <div
+              v-for="(_, index) in formData.answersUk"
+              :key="`uk-${index}`"
+              class="quiz-question-form__answer"
+            >
+              <Input
+                v-model="formData.answersUk[index]"
+                :placeholder="t('QUIZ.MANAGE.FORM_ANSWER_PLACEHOLDER')"
+                class="quiz-question-form__input"
+                required
+              />
+              <Button
+                v-if="formData.answersUk.length > 2"
+                type="button"
+                size="sm"
+                variant="ghost"
+                class="quiz-question-form__remove"
+                @click="removeAnswer('uk', index)"
+              >
+                ×
+              </Button>
+            </div>
+          </div>
+          <Button
+            v-if="formData.answersUk.length < 6"
+            type="button"
+            variant="secondary"
+            size="sm"
+            class="quiz-question-form__add-answer"
+            @click="addAnswer('uk')"
+          >
+            {{ t('QUIZ.MANAGE.FORM_ADD_ANSWER') }}
+          </Button>
+        </div>
+
+        <Textarea
+          v-model="formData.explanationUk"
+          class="quiz-question-form__field"
+          :label="t('QUIZ.MANAGE.FORM_EXPLANATION_LABEL_UK')"
+          :placeholder="t('QUIZ.MANAGE.FORM_EXPLANATION_PLACEHOLDER')"
+          :rows="3"
+        />
+      </div>
 
       <Textarea
         v-model="formData.codeSnippet"
@@ -25,62 +141,6 @@
         :label="t('QUIZ.MANAGE.FORM_SNIPPET_LABEL')"
         :placeholder="t('QUIZ.MANAGE.FORM_SNIPPET_PLACEHOLDER')"
         :rows="6"
-      />
-
-      <div class="quiz-question-form__field">
-        <label class="quiz-question-form__label">{{ t('QUIZ.MANAGE.FORM_ANSWERS_LABEL') }}</label>
-        <div class="quiz-question-form__answers">
-          <div
-            v-for="(_, index) in formData.answers"
-            :key="index"
-            class="quiz-question-form__answer"
-          >
-            <Input
-              v-model="formData.answers[index]"
-              :placeholder="t('QUIZ.MANAGE.FORM_ANSWER_PLACEHOLDER')"
-              class="quiz-question-form__input"
-              required
-            />
-            <label class="quiz-question-form__radio-label">
-              <input
-                v-model="formData.correctAnswerIndex"
-                type="radio"
-                :value="index"
-                class="quiz-question-form__radio"
-                required
-              />
-              {{ t('QUIZ.MANAGE.FORM_CORRECT') }}
-            </label>
-            <Button
-              v-if="formData.answers.length > 2"
-              type="button"
-              size="sm"
-              variant="ghost"
-              class="quiz-question-form__remove"
-              @click="removeAnswer(index)"
-            >
-              ×
-            </Button>
-          </div>
-        </div>
-        <Button
-          v-if="formData.answers.length < 6"
-          type="button"
-          variant="secondary"
-          size="sm"
-          class="quiz-question-form__add-answer"
-          @click="addAnswer"
-        >
-          {{ t('QUIZ.MANAGE.FORM_ADD_ANSWER') }}
-        </Button>
-      </div>
-
-      <Textarea
-        v-model="formData.explanation"
-        class="quiz-question-form__field"
-        :label="t('QUIZ.MANAGE.FORM_EXPLANATION_LABEL')"
-        :placeholder="t('QUIZ.MANAGE.FORM_EXPLANATION_PLACEHOLDER')"
-        :rows="3"
       />
 
       <div class="quiz-question-form__row">
@@ -135,10 +195,13 @@ const { t } = useI18n()
 
 const formData = ref({
   questionText: '',
+  questionTextUk: '',
   codeSnippet: '',
   answers: ['', ''],
+  answersUk: ['', ''],
   correctAnswerIndex: 0,
   explanation: '',
+  explanationUk: '',
   category: 'css' as 'css' | 'scss' | 'stylus',
   difficulty: 'medium' as 'easy' | 'medium' | 'hard'
 })
@@ -170,37 +233,45 @@ function hydrateForm() {
   if (props.question) {
     formData.value = {
       questionText: props.question.questionText,
+      questionTextUk: props.question.questionTextUk || '',
       codeSnippet: props.question.codeSnippet || '',
       answers: [...props.question.answers],
+      answersUk: props.question.answersUk && props.question.answersUk.length ? [...props.question.answersUk] : [...props.question.answers],
       correctAnswerIndex: props.question.correctAnswerIndex,
       explanation: props.question.explanation || '',
+      explanationUk: props.question.explanationUk || '',
       category: props.question.category,
       difficulty: props.question.difficulty
     }
   } else {
     formData.value = {
       questionText: '',
+      questionTextUk: '',
       codeSnippet: '',
       answers: ['', ''],
+      answersUk: ['', ''],
       correctAnswerIndex: 0,
       explanation: '',
+      explanationUk: '',
       category: 'css',
       difficulty: 'medium'
     }
   }
 }
 
-function addAnswer() {
-  if (formData.value.answers.length < 6) {
-    formData.value.answers.push('')
+function addAnswer(locale: 'en' | 'uk') {
+  const target = locale === 'en' ? formData.value.answers : formData.value.answersUk
+  if (target.length < 6) {
+    target.push('')
   }
 }
 
-function removeAnswer(index: number) {
-  if (formData.value.answers.length > 2) {
-    formData.value.answers.splice(index, 1)
-    if (formData.value.correctAnswerIndex >= formData.value.answers.length) {
-      formData.value.correctAnswerIndex = formData.value.answers.length - 1
+function removeAnswer(locale: 'en' | 'uk', index: number) {
+  const target = locale === 'en' ? formData.value.answers : formData.value.answersUk
+  if (target.length > 2) {
+    target.splice(index, 1)
+    if (locale === 'en' && formData.value.correctAnswerIndex >= target.length) {
+      formData.value.correctAnswerIndex = target.length - 1
     }
   }
 }

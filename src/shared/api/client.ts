@@ -73,6 +73,16 @@ export class ApiClient {
         return Promise.reject(apiError)
       }
     )
+
+    this.instance.interceptors.request.use((config) => {
+      const headers = (config.headers || {}) as Record<string, string>
+      const storedLocale = (typeof window !== 'undefined' && localStorage.getItem('locale')) || ''
+      const navLocale = typeof navigator !== 'undefined' ? navigator.language : 'en'
+      const locale = (storedLocale || navLocale || 'en').toString().toLowerCase().startsWith('uk') ? 'uk' : 'en'
+      headers['Accept-Language'] = locale
+      config.headers = headers as AxiosRequestHeaders
+      return config
+    })
   }
 
   setAuthToken(token: string | null) {

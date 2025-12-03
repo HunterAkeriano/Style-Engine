@@ -111,10 +111,13 @@ export class SavedFavicon extends Model<InferAttributes<SavedFavicon>, InferCrea
 export class QuizQuestion extends Model<InferAttributes<QuizQuestion>, InferCreationAttributes<QuizQuestion>> {
   declare id: CreationOptional<string>
   declare questionText: string
+  declare questionTextUk: string | null
   declare codeSnippet: string | null
   declare answers: string[]
+  declare answersUk: string[] | null
   declare correctAnswerIndex: number
   declare explanation: string | null
+  declare explanationUk: string | null
   declare category: CreationOptional<QuizCategory>
   declare difficulty: CreationOptional<QuizDifficulty>
   declare createdAt: CreationOptional<Date>
@@ -424,10 +427,13 @@ export function initModels(sequelize: Sequelize): Models {
     {
       id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
       questionText: { type: DataTypes.TEXT, allowNull: false, field: 'question_text' },
+      questionTextUk: { type: DataTypes.TEXT, allowNull: true, field: 'question_text_uk' },
       codeSnippet: { type: DataTypes.TEXT, allowNull: true, field: 'code_snippet' },
       answers: { type: DataTypes.JSONB, allowNull: false },
+      answersUk: { type: DataTypes.JSONB, allowNull: true, field: 'answers_uk' },
       correctAnswerIndex: { type: DataTypes.INTEGER, allowNull: false, field: 'correct_answer_index' },
       explanation: { type: DataTypes.TEXT, allowNull: true },
+      explanationUk: { type: DataTypes.TEXT, allowNull: true, field: 'explanation_uk' },
       category: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'css' },
       difficulty: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'medium' },
       createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },

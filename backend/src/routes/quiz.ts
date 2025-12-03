@@ -17,10 +17,13 @@ const quizResultCategoryEnum = z.enum(["css", "scss", "stylus", "mix"]);
 
 const createQuestionSchema = z.object({
   questionText: z.string().min(10).max(1000),
+  questionTextUk: z.string().min(10).max(1000).optional().nullable(),
   codeSnippet: z.string().max(5000).optional().nullable(),
   answers: z.array(z.string().min(1).max(500)).min(2).max(6),
+  answersUk: z.array(z.string().min(1).max(500)).min(2).max(6).optional().nullable(),
   correctAnswerIndex: z.number().int().min(0),
   explanation: z.string().max(2000).optional().nullable(),
+  explanationUk: z.string().max(2000).optional().nullable(),
   category: quizCategoryEnum,
   difficulty: quizDifficultyEnum,
 });
@@ -45,6 +48,12 @@ const submitTestSchema = z.object({
   timeTaken: z.number().int().min(0),
   username: z.string().min(1).max(50).optional().nullable(),
 });
+
+function getPreferredLanguage(req: Request): "uk" | "en" {
+  const header = (req.headers["accept-language"] || "").toString().toLowerCase();
+  if (header.startsWith("uk")) return "uk";
+  return "en";
+}
 
 function getClientIp(req: Request): string {
   return (
@@ -120,19 +129,76 @@ async function incrementAttempt(
     },
   });
 
-  if (attempt.attemptsCount > 0) {
+  if (!attempt.isNewRecord) {
     attempt.attemptsCount += 1;
     await attempt.save();
   }
 }
 
+function localizeQuestion(
+  question: any,
+  lang: "en" | "uk",
+  includeCorrect = false,
+) {
+  const useUk = lang === "uk" && !includeCorrect;
+  const questionText = useUk
+    ? question.questionTextUk || question.questionText
+    : question.questionText;
+  const answers = useUk
+    ? (Array.isArray(question.answersUk) && question.answersUk.length
+        ? question.answersUk
+        : question.answers) || []
+    : question.answers || [];
+  const explanation = useUk
+    ? question.explanationUk || question.explanation || null
+    : question.explanation || null;
+
+  const base: any = {
+    id: question.id,
+    questionText,
+    codeSnippet: question.codeSnippet,
+    answers,
+    category: question.category,
+    difficulty: question.difficulty,
+    createdAt: question.createdAt,
+    updatedAt: question.updatedAt,
+  };
+
+  if (includeCorrect) {
+    base.correctAnswerIndex = question.correctAnswerIndex;
+    base.explanation = explanation;
+    base.answersUk = question.answersUk;
+    base.questionTextUk = question.questionTextUk;
+    base.explanationUk = question.explanationUk;
+  }
+
+  return base;
+}
+
 export function createQuizRouter(env: Env) {
   const router = Router();
-  const { QuizQuestion, QuizSettings, QuizResult, User } =
-    getModels();
+  const { QuizQuestion, QuizSettings, QuizResult, User } = getModels();
   const auth = createAuthMiddleware(env);
   const optionalAuth = createOptionalAuthMiddleware(env);
   const specialEmail = "gamerstaject1@gmail.com";
+
+  async function ensureQuizTranslationColumns() {
+    try {
+      const sequelize = QuizQuestion.sequelize;
+      if (sequelize) {
+        await sequelize.query(`
+          ALTER TABLE quiz_questions
+          ADD COLUMN IF NOT EXISTS question_text_uk TEXT,
+          ADD COLUMN IF NOT EXISTS answers_uk JSONB,
+          ADD COLUMN IF NOT EXISTS explanation_uk TEXT;
+        `);
+      }
+    } catch (err) {
+      console.error("Failed to ensure quiz translation columns", err);
+    }
+  }
+
+  void ensureQuizTranslationColumns();
 
   async function ensureSpecialUserTopScores() {
     try {
@@ -232,12 +298,17 @@ export function createQuizRouter(env: Env) {
     "/questions",
     auth,
     requireAdmin,
-    async (_req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
       try {
+        const lang = getPreferredLanguage(req);
         const questions = await QuizQuestion.findAll({
           order: [["createdAt", "DESC"]],
         });
-        res.json({ questions: questions.map((q) => q.get({ plain: true })) });
+        res.json({
+          questions: questions.map((q) =>
+            localizeQuestion(q.get({ plain: true }), lang, true),
+          ),
+        });
       } catch (error) {
         console.error("Get questions error:", error);
         sendApiError(res, 500, "Failed to fetch questions");
@@ -263,6 +334,7 @@ export function createQuizRouter(env: Env) {
     requireAdmin,
     async (req: Request, res: Response) => {
       try {
+        const lang = getPreferredLanguage(req);
         const parsed = createQuestionSchema.safeParse(req.body);
         if (!parsed.success) {
           return sendApiError(res, 400, "Invalid input", {
@@ -276,7 +348,9 @@ export function createQuizRouter(env: Env) {
         }
 
         const question = await QuizQuestion.create(parsed.data);
-        res.status(201).json({ question: question.get({ plain: true }) });
+        res.status(201).json({
+          question: localizeQuestion(question.get({ plain: true }), lang, true),
+        });
       } catch (error) {
         console.error("Create question error:", error);
         sendApiError(res, 500, "Failed to create question");
@@ -310,6 +384,7 @@ export function createQuizRouter(env: Env) {
     async (req: Request, res: Response) => {
       try {
         const { id } = req.params;
+        const lang = getPreferredLanguage(req);
         const parsed = updateQuestionSchema.safeParse(req.body);
         if (!parsed.success) {
           return sendApiError(res, 400, "Invalid input", {
@@ -330,7 +405,9 @@ export function createQuizRouter(env: Env) {
         }
 
         await question.update(updateData);
-        res.json({ question: question.get({ plain: true }) });
+        res.json({
+          question: localizeQuestion(question.get({ plain: true }), lang, true),
+        });
       } catch (error) {
         console.error("Update question error:", error);
         sendApiError(res, 500, "Failed to update question");
@@ -536,9 +613,10 @@ export function createQuizRouter(env: Env) {
    *                   type: integer
    *       429:
    *         description: Daily limit reached
-   */
+  */
   router.get("/test", optionalAuth, async (req: Request, res: Response) => {
     try {
+      const lang = getPreferredLanguage(req);
       const category = (req.query.category as string) || "mix";
       if (!["css", "scss", "stylus", "mix"].includes(category)) {
         return sendApiError(res, 400, "Invalid category");
@@ -580,9 +658,7 @@ export function createQuizRouter(env: Env) {
 
       const sanitizedQuestions = questions.map((q) => {
         const plain = q.get({ plain: true }) as any;
-        delete plain.correctAnswerIndex;
-        delete plain.explanation;
-        return plain;
+        return localizeQuestion(plain, lang, false);
       });
 
       res.json({
@@ -644,9 +720,10 @@ export function createQuizRouter(env: Env) {
    *                   type: array
    *                   items:
    *                     type: object
-   */
+  */
   router.post("/submit", optionalAuth, async (req: Request, res: Response) => {
     try {
+      const lang = getPreferredLanguage(req);
       const parsed = submitTestSchema.safeParse(req.body);
       if (!parsed.success) {
         return sendApiError(res, 400, "Invalid input", {
@@ -676,15 +753,21 @@ export function createQuizRouter(env: Env) {
         const isCorrect = question.correctAnswerIndex === answer.answerIndex;
         if (isCorrect) score++;
 
+        const localized = localizeQuestion(
+          question.get({ plain: true }),
+          lang,
+          true,
+        );
+
         return {
-          questionId: question.id,
-          questionText: question.questionText,
-          codeSnippet: question.codeSnippet,
-          answers: question.answers,
+          questionId: localized.id,
+          questionText: localized.questionText,
+          codeSnippet: localized.codeSnippet,
+          answers: localized.answers,
           userAnswer: answer.answerIndex,
-          correctAnswer: question.correctAnswerIndex,
+          correctAnswer: localized.correctAnswerIndex,
           isCorrect,
-          explanation: question.explanation,
+          explanation: localized.explanation,
         };
       });
 

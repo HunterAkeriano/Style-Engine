@@ -1,31 +1,31 @@
 <template>
   <div class="quiz-results">
     <div class="quiz-results__summary">
-      <h1 class="quiz-results__title">Test Completed!</h1>
+      <h1 class="quiz-results__title">{{ t('QUIZ.RESULTS.TITLE') }}</h1>
 
       <div class="quiz-results__score">
         <div class="quiz-results__score-circle">
           <span class="quiz-results__score-value">{{ percentage }}%</span>
         </div>
         <p class="quiz-results__score-text">
-          {{ result.score }} / {{ result.totalQuestions }} correct
+          {{ t('QUIZ.RESULTS.CORRECT', { score: result.score, total: result.totalQuestions }) }}
         </p>
       </div>
 
       <div class="quiz-results__stats">
         <div class="quiz-results__stat">
-          <span class="quiz-results__stat-label">Category</span>
+          <span class="quiz-results__stat-label">{{ t('QUIZ.RESULTS.CATEGORY') }}</span>
           <span class="quiz-results__stat-value">{{ result.category.toUpperCase() }}</span>
         </div>
         <div class="quiz-results__stat">
-          <span class="quiz-results__stat-label">Time Taken</span>
+          <span class="quiz-results__stat-label">{{ t('QUIZ.RESULTS.TIME') }}</span>
           <span class="quiz-results__stat-value">{{ formattedTime }}</span>
         </div>
       </div>
     </div>
 
     <div class="quiz-results__detailed">
-      <h2 class="quiz-results__detailed-title">Detailed Results</h2>
+      <h2 class="quiz-results__detailed-title">{{ t('QUIZ.RESULTS.DETAILED') }}</h2>
 
       <div
         v-for="(item, index) in detailedResults"
@@ -39,7 +39,7 @@
         <div class="quiz-results__item-header">
           <span class="quiz-results__item-number">{{ index + 1 }}</span>
           <span class="quiz-results__item-status">
-            {{ item.isCorrect ? '✓ Correct' : '✗ Incorrect' }}
+            {{ item.isCorrect ? t('QUIZ.RESULTS.CORRECT_SHORT') : t('QUIZ.RESULTS.INCORRECT_SHORT') }}
           </span>
         </div>
 
@@ -53,8 +53,8 @@
             :key="answerIndex"
             class="quiz-results__item-answer"
             :class="{
-              'quiz-results__item-answer_correct': answerIndex === item.correctAnswer,
-              'quiz-results__item-answer_wrong': answerIndex === item.userAnswer && !item.isCorrect
+              'quiz-results__item-answer_wrong': answerIndex === item.userAnswer && !item.isCorrect,
+              'quiz-results__item-answer_correct': answerIndex === item.userAnswer && item.isCorrect
             }"
           >
             <span class="quiz-results__item-answer-letter">
@@ -62,16 +62,10 @@
             </span>
             <span class="quiz-results__item-answer-text">{{ answer }}</span>
             <span
-              v-if="answerIndex === item.correctAnswer"
+              v-if="answerIndex === item.userAnswer"
               class="quiz-results__item-answer-icon"
             >
-              ✓
-            </span>
-            <span
-              v-if="answerIndex === item.userAnswer && !item.isCorrect"
-              class="quiz-results__item-answer-icon"
-            >
-              ✗
+              {{ item.isCorrect ? '✓' : '✗' }}
             </span>
           </div>
         </div>
@@ -83,7 +77,7 @@
     </div>
 
     <div class="quiz-results__actions">
-      <Button @click="$emit('retry')">Try Again</Button>
+      <Button @click="$emit('retry')">{{ t('QUIZ.RESULTS.RETRY') }}</Button>
     </div>
   </div>
 </template>
@@ -92,6 +86,7 @@
 import { computed } from 'vue'
 import type { QuizResult, QuizDetailedResult } from '@/shared/types/quiz'
 import Button from '@/shared/ui/Button/Button.vue'
+import { useI18n } from 'vue-i18n'
 import './QuizResults.scss'
 
 const props = defineProps<{
@@ -102,6 +97,8 @@ const props = defineProps<{
 defineEmits<{
   retry: []
 }>()
+
+const { t } = useI18n()
 
 const percentage = computed(() => {
   return Math.round((props.result.score / props.result.totalQuestions) * 100)

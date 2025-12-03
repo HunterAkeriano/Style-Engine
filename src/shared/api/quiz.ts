@@ -62,10 +62,13 @@ export async function getAllQuestions(): Promise<QuizQuestionAdmin[]> {
 
 export async function createQuestion(data: {
   questionText: string
+  questionTextUk?: string | null
   codeSnippet?: string | null
   answers: string[]
+  answersUk?: string[] | null
   correctAnswerIndex: number
   explanation?: string | null
+  explanationUk?: string | null
   category: 'css' | 'scss' | 'stylus'
   difficulty: 'easy' | 'medium' | 'hard'
 }): Promise<QuizQuestionAdmin> {
@@ -77,10 +80,13 @@ export async function updateQuestion(
   id: string,
   data: Partial<{
     questionText: string
+    questionTextUk?: string | null
     codeSnippet?: string | null
     answers: string[]
+    answersUk?: string[] | null
     correctAnswerIndex: number
     explanation?: string | null
+    explanationUk?: string | null
     category: 'css' | 'scss' | 'stylus'
     difficulty: 'easy' | 'medium' | 'hard'
   }>

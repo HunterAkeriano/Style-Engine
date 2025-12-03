@@ -954,15 +954,22 @@ export default {
       LIST_DELETE: 'Видалити',
       FORM_TITLE_EDIT: 'Редагувати питання',
       FORM_TITLE_ADD: 'Додати питання',
+      FORM_LANG_EN: 'Англійська версія',
+      FORM_LANG_UK: 'Українська версія',
       FORM_QUESTION_LABEL: 'Текст питання *',
+      FORM_QUESTION_LABEL_EN: 'Текст питання (EN) *',
+      FORM_QUESTION_LABEL_UK: 'Текст питання (UK)',
       FORM_QUESTION_PLACEHOLDER: 'Введіть питання...',
       FORM_SNIPPET_LABEL: 'Фрагмент коду (опційно)',
       FORM_SNIPPET_PLACEHOLDER: 'Введіть код...',
       FORM_ANSWERS_LABEL: 'Відповіді * (2-6 відповідей)',
+      FORM_ANSWERS_LABEL_EN: 'Відповіді (EN) *',
+      FORM_ANSWERS_LABEL_UK: 'Відповіді (UK) *',
       FORM_ANSWER_PLACEHOLDER: 'Текст відповіді...',
       FORM_ADD_ANSWER: 'Додати відповідь',
       FORM_EXPLANATION_LABEL: 'Пояснення (опційно)',
       FORM_EXPLANATION_PLACEHOLDER: 'Поясніть правильну відповідь...',
+      FORM_EXPLANATION_LABEL_UK: 'Пояснення (UK, опційно)',
       FORM_CATEGORY_LABEL: 'Категорія *',
       FORM_CATEGORY_CSS: 'CSS',
       FORM_CATEGORY_SCSS: 'SCSS',
@@ -981,6 +988,16 @@ export default {
       SETTINGS_TIME_LABEL: 'Час на питання (10-300 секунд)',
       SETTINGS_TIME_HINT: 'Ліміт часу на одне питання в секундах',
       SETTINGS_SAVE: 'Зберегти налаштування'
+    },
+    RESULTS: {
+      TITLE: 'Тест завершено!',
+      CORRECT: '{score} з {total} правильних',
+      CATEGORY: 'Категорія',
+      TIME: 'Витрачений час',
+      DETAILED: 'Детальні результати',
+      CORRECT_SHORT: '✓ Правильно',
+      INCORRECT_SHORT: '✗ Неправильно',
+      RETRY: 'Спробувати ще раз'
     }
   }
 }

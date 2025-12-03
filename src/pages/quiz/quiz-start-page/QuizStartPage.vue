@@ -216,7 +216,6 @@ async function loadLeaderboard() {
 }
 
 async function handleTestCompleted() {
-  showModal.value = false;
   try {
     limitInfo.value = await checkQuizLimit();
     await loadLeaderboard();
