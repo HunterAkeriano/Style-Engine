@@ -16,6 +16,8 @@ const ssgPublicRoutes = [
   '/docs/gradients',
   '/docs/shadows',
   '/docs/animations',
+  '/quiz',
+  '/quiz/leaderboard',
   '/gradient',
   '/shadow',
   '/animation',

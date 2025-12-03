@@ -938,7 +938,31 @@ export function createQuizRouter(env: Env) {
         ],
       });
 
-      const leaderboard = results.map((r, index) => {
+      const normalizeIdentifier = (value: string | null | undefined) =>
+        (value ?? "").trim().toLowerCase();
+
+      const seen = new Set<string>();
+      const uniqueResults = results.filter((result) => {
+        const plain = result.get({ plain: true }) as QuizResultAttributes & {
+          user?: QuizUserAttributes | null;
+          userId?: string | null;
+        };
+        const userKey =
+          plain.userId ||
+          plain.user?.id ||
+          normalizeIdentifier(plain.user?.email) ||
+          normalizeIdentifier(plain.username) ||
+          `guest-${plain.id}`;
+        const key = `${userKey}:${plain.category}`;
+
+        if (seen.has(key)) {
+          return false;
+        }
+        seen.add(key);
+        return true;
+      });
+
+      const leaderboard = uniqueResults.map((r, index) => {
         const plain = r.get({ plain: true }) as QuizResultAttributes & { user?: QuizUserAttributes | null };
         return {
           rank: index + 1,
