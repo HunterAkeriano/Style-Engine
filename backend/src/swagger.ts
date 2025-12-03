@@ -219,7 +219,7 @@ export function setupSwagger(app: Express) {
         }
       ]
     },
-    apis: ['./src/routes/*.ts']
+    apis: ['./dist/routes/*.js', './src/interfaces/http/controllers/*.ts']
   }
 
   const swaggerSpec = swaggerJsdoc(options)

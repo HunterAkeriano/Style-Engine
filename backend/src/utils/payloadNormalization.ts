@@ -1,4 +1,4 @@
-import type { Category } from '../routes/saves'
+import type { Category } from '../domain/saves/types'
 
 interface NormalizedColor {
   color: string
