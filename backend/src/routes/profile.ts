@@ -22,6 +22,24 @@ export function createProfileRouter(env: Env) {
   const auth = createAuthMiddleware(env)
 
   type UserAttributes = InferAttributes<User>
+  type SafeUser = ReturnType<typeof attachSuperFlag>
+
+  const profileCache = new Map<string, { user: SafeUser; expiresAt: number }>()
+  const PROFILE_TTL_MS = 60_000
+
+  function getCachedProfile(userId: string) {
+    const cached = profileCache.get(userId)
+    if (!cached) return null
+    if (cached.expiresAt < Date.now()) {
+      profileCache.delete(userId)
+      return null
+    }
+    return cached.user
+  }
+
+  function setCachedProfile(userId: string, user: SafeUser) {
+    profileCache.set(userId, { user, expiresAt: Date.now() + PROFILE_TTL_MS })
+  }
 
   function attachSuperFlag(user: Omit<UserAttributes, 'passwordHash'>) {
     return { ...user, isSuperAdmin: isSuperAdminEmail(env, user.email) }
@@ -49,6 +67,13 @@ export function createProfileRouter(env: Env) {
    *         description: Пользователь не найден
    */
   router.get('/', auth, async (req: AuthRequest, res) => {
+    if (req.userId) {
+      const cached = getCachedProfile(req.userId)
+      if (cached) {
+        return res.json({ user: cached })
+      }
+    }
+
     const user = await User.findByPk(req.userId, {
       attributes: [
         'id',
@@ -65,6 +90,7 @@ export function createProfileRouter(env: Env) {
     })
     const safeUser = toSafeUser(user)
     if (!safeUser) return sendApiError(res, 404, 'User not found')
+    if (req.userId) setCachedProfile(req.userId, safeUser)
     res.json({ user: safeUser })
   })
 
@@ -109,7 +135,9 @@ export function createProfileRouter(env: Env) {
       avatarUrl: avatarUrl ?? user.avatarUrl,
       updatedAt: new Date()
     })
-    res.json({ user: toSafeUser(user) })
+    const safe = toSafeUser(user)
+    if (req.userId && safe) setCachedProfile(req.userId, safe)
+    res.json({ user: safe })
   })
 
   /**
@@ -159,7 +187,9 @@ export function createProfileRouter(env: Env) {
       }
     }
 
-    res.json({ user: toSafeUser(user), avatarUrl })
+    const safe = toSafeUser(user)
+    if (req.userId && safe) setCachedProfile(req.userId, safe)
+    res.json({ user: safe, avatarUrl })
   })
 
   return router

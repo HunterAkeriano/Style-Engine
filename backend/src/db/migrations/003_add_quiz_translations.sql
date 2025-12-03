@@ -1,4 +1,0 @@
-ALTER TABLE quiz_questions
-ADD COLUMN IF NOT EXISTS question_text_uk TEXT,
-ADD COLUMN IF NOT EXISTS answers_uk JSONB,
-ADD COLUMN IF NOT EXISTS explanation_uk TEXT;

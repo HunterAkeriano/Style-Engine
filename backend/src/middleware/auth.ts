@@ -14,6 +14,24 @@ export interface AuthRequest extends Request {
   }
 }
 
+type CachedAuthUser = NonNullable<AuthRequest['authUser']>
+const AUTH_CACHE_TTL_MS = 60_000
+const authCache = new Map<string, { data: CachedAuthUser; expiresAt: number }>()
+
+function getCachedAuthUser(userId: string): CachedAuthUser | null {
+  const cached = authCache.get(userId)
+  if (!cached) return null
+  if (cached.expiresAt < Date.now()) {
+    authCache.delete(userId)
+    return null
+  }
+  return cached.data
+}
+
+function setCachedAuthUser(user: CachedAuthUser) {
+  authCache.set(user.id, { data: user, expiresAt: Date.now() + AUTH_CACHE_TTL_MS })
+}
+
 export function createAuthMiddleware(env: Env) {
   return async function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
     const header = req.headers.authorization
@@ -26,6 +44,12 @@ export function createAuthMiddleware(env: Env) {
     }
     try {
       const payload = jwt.verify(token, env.JWT_SECRET) as { sub: string }
+      const cached = getCachedAuthUser(payload.sub)
+      if (cached) {
+        req.userId = cached.id
+        req.authUser = cached
+        return next()
+      }
       const { User } = getModels()
       const user = await User.findByPk(payload.sub, {
         attributes: ['id', 'isAdmin', 'isPayment', 'subscriptionTier']
@@ -42,6 +66,7 @@ export function createAuthMiddleware(env: Env) {
         isPayment: Boolean(plain.isPayment),
         subscriptionTier: (plain.subscriptionTier as 'free' | 'pro' | 'premium') ?? 'free'
       }
+      setCachedAuthUser(req.authUser)
       next()
     } catch {
       sendApiError(res, 401, 'Invalid or expired token')
@@ -61,6 +86,12 @@ export function createOptionalAuthMiddleware(env: Env) {
     }
     try {
       const payload = jwt.verify(token, env.JWT_SECRET) as { sub: string }
+      const cached = getCachedAuthUser(payload.sub)
+      if (cached) {
+        req.userId = cached.id
+        req.authUser = cached
+        return next()
+      }
       const { User } = getModels()
       const user = await User.findByPk(payload.sub, {
         attributes: ['id', 'isAdmin', 'isPayment', 'subscriptionTier']
@@ -74,6 +105,7 @@ export function createOptionalAuthMiddleware(env: Env) {
           isPayment: Boolean(plain.isPayment),
           subscriptionTier: (plain.subscriptionTier as 'free' | 'pro' | 'premium') ?? 'free'
         }
+        setCachedAuthUser(req.authUser)
       }
     } catch {
     }
