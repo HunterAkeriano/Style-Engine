@@ -9,42 +9,43 @@
         class="modal"
         @click.self="handleBackdropClick"
       >
-        <div class="modal__backdrop"></div>
-        <div ref="cardRef" class="modal__card" :class="modalClass">
-          <button v-if="closable" type="button" aria-label="Close" class="modal__close" @click="handleClose">
-            ×
-          </button>
-          <div v-if="$slots.header || title" class="modal__header">
-            <slot name="header">
-              <h2 class="modal__title">{{ title }}</h2>
-              <p v-if="subtitle" class="modal__subtitle">{{ subtitle }}</p>
-            </slot>
-          </div>
-          <div class="modal__body">
-            <slot></slot>
-          </div>
-          <div v-if="$slots.footer || showActions" class="modal__footer">
-            <slot name="footer">
-              <div class="modal__actions">
-                <Button
-                  v-if="showCancel"
-                  :size="buttonSize"
-                  variant="ghost"
-                  @click="handleClose"
-                >
-                  {{ cancelText }}
-                </Button>
-                <Button
-                  v-if="showConfirm"
-                  :variant="confirmVariant"
-                  :size="buttonSize"
-                  :disabled="confirmDisabled"
-                  @click="handleConfirm"
-                >
-                  {{ confirmText }}
-                </Button>
-              </div>
-            </slot>
+        <div :class="modalClass" class="modal__content">
+          <div ref="cardRef" class="modal__card">
+            <button v-if="closable" type="button" aria-label="Close" class="modal__close" @click="handleClose">
+              ×
+            </button>
+            <div v-if="$slots.header || title" class="modal__header">
+              <slot name="header">
+                <h2 class="modal__title">{{ title }}</h2>
+                <p v-if="subtitle" class="modal__subtitle">{{ subtitle }}</p>
+              </slot>
+            </div>
+            <div class="modal__body">
+              <slot></slot>
+            </div>
+            <div v-if="$slots.footer || showActions" class="modal__footer">
+              <slot name="footer">
+                <div class="modal__actions">
+                  <Button
+                      v-if="showCancel"
+                      :size="buttonSize"
+                      variant="ghost"
+                      @click="handleClose"
+                  >
+                    {{ cancelText }}
+                  </Button>
+                  <Button
+                      v-if="showConfirm"
+                      :variant="confirmVariant"
+                      :size="buttonSize"
+                      :disabled="confirmDisabled"
+                      @click="handleConfirm"
+                  >
+                    {{ confirmText }}
+                  </Button>
+                </div>
+              </slot>
+            </div>
           </div>
         </div>
       </div>

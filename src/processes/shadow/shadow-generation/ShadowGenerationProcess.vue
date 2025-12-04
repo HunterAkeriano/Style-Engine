@@ -66,7 +66,6 @@
       :visible="showSaveModal"
       @close="closeSaveModal"
     >
-      <div :style="currentSavePreviewStyle" class="shadow-generation__save-preview" />
       <Input v-model="saveName" :label="t('COMMON.NAME')" />
       <template #footer>
         <div class="modal__actions">
