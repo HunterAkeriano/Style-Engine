@@ -62,7 +62,7 @@ export class QuizService {
 
         if (existing) {
           let changed = false
-          if (existing.score < bestScore) {
+          if (existing.score !== bestScore) {
             existing.score = bestScore
             changed = true
           }
