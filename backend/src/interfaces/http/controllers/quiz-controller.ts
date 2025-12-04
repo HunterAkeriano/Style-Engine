@@ -36,7 +36,15 @@ const submitTestSchema = z.object({
   answers: z
     .array(
       z.object({
-        questionId: z.string().uuid(),
+        questionId: z.string().min(1).refine(
+          (id) => {
+            // Accept UUIDs or simple alphanumeric strings
+            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+            const simpleIdRegex = /^[a-z0-9]+$/i
+            return uuidRegex.test(id) || simpleIdRegex.test(id)
+          },
+          { message: 'Invalid question ID format' }
+        ),
         answerIndex: z.number().int().min(0)
       })
     )
@@ -194,7 +202,8 @@ export class QuizController implements HttpController {
     router.get('/leaderboard', async (req: Request, res: Response) => {
       try {
         const category = (req.query.category as string) || 'all'
-        const limit = parseInt((req.query.limit as string) || '10')
+        const limitParam = parseInt((req.query.limit as string) || '10')
+        const limit = isNaN(limitParam) ? 10 : limitParam
         const leaderboard = await this.service.leaderboard(category, limit)
         res.json({ leaderboard })
       } catch (err: any) {

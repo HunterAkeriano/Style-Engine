@@ -14,10 +14,10 @@ export interface ApiErrorOptions {
 }
 
 export function sendApiError(res: Response, status: number, message: string, options?: ApiErrorOptions) {
-  const payload: ApiErrorPayload = { status, message }
+  const payload: any = { message }
   if (options?.code) payload.code = options.code
   if (options?.details !== undefined) payload.details = options.details
-  return res.status(status).json({ error: payload })
+  return res.status(status).json(payload)
 }
 
 export function toApiError(status: number, message: string, options?: ApiErrorOptions) {

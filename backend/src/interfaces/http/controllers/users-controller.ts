@@ -71,7 +71,8 @@ export class UsersController implements HttpController {
     const allowedTiers: readonly Tier[] = ['all', 'free', 'pro', 'premium']
     const allowedSortFields: readonly SortField[] = ['name', 'email', 'createdat', 'subscriptiontier']
     const page = Math.max(1, parseInt(req.query.page ?? '') || 1)
-    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit ?? '') || 20))
+    const limitParam = parseInt(req.query.limit ?? '')
+    const limit = Math.min(100, Math.max(1, isNaN(limitParam) ? 20 : limitParam))
     const tier = (req.query.tier ?? 'all').toLowerCase()
     const sortBy = (req.query.sortBy ?? 'createdAt').toLowerCase()
     const sortOrder = (req.query.sortOrder ?? 'desc').toLowerCase()

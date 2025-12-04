@@ -13,9 +13,21 @@ export class ModerationController implements HttpController {
 
   private readonly auth = createAuthMiddleware(this.env)
   private readonly service: ModerationService
+  private readonly validCategories: readonly Category[] = ['gradient', 'shadow', 'animation', 'clip-path', 'favicon']
 
   constructor(private readonly env: Env, models: Models) {
     this.service = new ModerationService(new SavedItemRepository(models, env))
+  }
+
+  private isValidCategory(category: string): category is Category {
+    return (this.validCategories as readonly string[]).includes(category)
+  }
+
+  private isValidId(id: string): boolean {
+    if (!id || id.trim().length === 0) return false
+    if (id.includes('..') || id.includes('\0') || id.includes('%00')) return false
+    if (id === 'null' || id === 'undefined') return false
+    return true
   }
 
   register(router: Router) {
@@ -40,7 +52,13 @@ export class ModerationController implements HttpController {
     })
 
     router.post('/:category/:id/approve', this.auth, requireAdmin, async (req: AuthRequest, res) => {
-      const category = req.params.category as Category
+      const category = req.params.category
+      if (!this.isValidCategory(category)) {
+        return sendApiError(res, 400, 'Invalid category')
+      }
+      if (!this.isValidId(req.params.id)) {
+        return sendApiError(res, 400, 'Invalid item ID')
+      }
       try {
         const item = await this.service.approve(category, req.params.id)
         res.json({ item })
@@ -51,9 +69,15 @@ export class ModerationController implements HttpController {
     })
 
     router.put('/:category/:id', this.auth, requireAdmin, async (req: AuthRequest, res) => {
-      const category = req.params.category as Category
+      const category = req.params.category
+      if (!this.isValidCategory(category)) {
+        return sendApiError(res, 400, 'Invalid category')
+      }
+      if (!this.isValidId(req.params.id)) {
+        return sendApiError(res, 400, 'Invalid item ID')
+      }
       const { name } = req.body
-      if (!name || typeof name !== 'string') {
+      if (!name || typeof name !== 'string' || name.trim().length === 0) {
         return sendApiError(res, 400, 'Name is required')
       }
       try {
@@ -66,7 +90,13 @@ export class ModerationController implements HttpController {
     })
 
     router.delete('/:category/:id', this.auth, requireAdmin, async (req: AuthRequest, res) => {
-      const category = req.params.category as Category
+      const category = req.params.category
+      if (!this.isValidCategory(category)) {
+        return sendApiError(res, 400, 'Invalid category')
+      }
+      if (!this.isValidId(req.params.id)) {
+        return sendApiError(res, 400, 'Invalid item ID')
+      }
       try {
         await this.service.remove(category, req.params.id)
         res.json({ success: true })

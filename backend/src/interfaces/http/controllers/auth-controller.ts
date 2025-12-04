@@ -25,6 +25,11 @@ const credentialsSchema = z.object({
   name: z.string().min(1).max(120).optional()
 })
 
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1)
+})
+
 const forgotSchema = z.object({
   email: z.string().email()
 })
@@ -76,7 +81,7 @@ export class AuthController implements HttpController {
     })
 
     router.post('/login', async (req, res) => {
-      const parsed = credentialsSchema.omit({ name: true }).safeParse(req.body)
+      const parsed = loginSchema.safeParse(req.body)
       if (!parsed.success) {
         return sendApiError(res, 400, 'Invalid payload', { details: parsed.error.issues })
       }
