@@ -9,7 +9,7 @@
         </div>
 
         <nav class="header__nav">
-          <DropdownMenu :title="t('NAV.DOCS')">
+          <DropdownMenu :title="t('NAV.DOCS')" is-first id="docs-dropdown" >
             <NavLink :to="`/${locale}/docs`" class-name="header__nav-link">
               {{ t('NAV.DOCS') }}
             </NavLink>
@@ -19,7 +19,7 @@
             </NavLink>
           </DropdownMenu>
 
-          <DropdownMenu :title="t('NAV.FUNCTIONS')">
+          <DropdownMenu id="functions-dropdown" :title="t('NAV.FUNCTIONS')">
             <NavLink :to="`/${locale}/gradient`" class-name="header__nav-link">
               {{ t('NAV.GRADIENTS') }}
             </NavLink>
@@ -139,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, provide, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock-upgrade'
@@ -155,6 +155,15 @@ const authStore = useAuthStore()
 const { t, locale } = useI18n()
 const isMobileMenuOpen = ref(false)
 const mobileMenuRef = ref<HTMLElement | null>(null)
+
+const activeDropdownId = ref<string | null>(null)
+
+function setActiveDropdown(id: string | null) {
+  activeDropdownId.value = id
+}
+
+provide('activeDropdownId', activeDropdownId)
+provide('setActiveDropdown', setActiveDropdown)
 
 function toggleMobileMenu() {
   isMobileMenuOpen.value = !isMobileMenuOpen.value

@@ -1,5 +1,6 @@
 <template>
   <div
+      :class="{'dropdown-menu_first': props.isFirst}"
     class="dropdown-menu"
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
@@ -30,14 +31,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, inject, ref, type Ref } from "vue";
 import { Icon } from "@/shared/ui";
 
-defineProps<{
+const props = defineProps<{
   title: string;
+  id: string;
+  isFirst?: boolean;
 }>();
 
-const isOpen = ref(false);
+const activeDropdownId = inject<Ref<string | null>>('activeDropdownId', ref(null));
+const setActiveDropdown = inject<(id: string | null) => void>('setActiveDropdown', () => {});
+
+const isOpen = computed(() => activeDropdownId.value === props.id);
 let closeTimeout: NodeJS.Timeout | null = null;
 
 function handleMouseEnter() {
@@ -45,19 +51,21 @@ function handleMouseEnter() {
     clearTimeout(closeTimeout);
     closeTimeout = null;
   }
-  isOpen.value = true;
+  setActiveDropdown(props.id);
 }
 
 function handleMouseLeave() {
   closeTimeout = setTimeout(() => {
-    isOpen.value = false;
+    if (activeDropdownId.value === props.id) {
+      setActiveDropdown(null);
+    }
   }, 200);
 }
 
 function handleContentClick(event: MouseEvent) {
   const target = event.target as HTMLElement;
   if (target.tagName === "A" || target.closest("a")) {
-    isOpen.value = false;
+    setActiveDropdown(null);
     if (closeTimeout) {
       clearTimeout(closeTimeout);
       closeTimeout = null;

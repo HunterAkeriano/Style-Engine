@@ -92,6 +92,14 @@
       }
     }
   }
+
+  &_first {
+    .dropdown-menu__content {
+      display: flex;
+      flex-direction: column;
+      min-width: 120px;
+    }
+  }
 }
 
 .dropdown-fade-enter-active,
