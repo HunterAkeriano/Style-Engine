@@ -167,10 +167,12 @@ export class QuizController implements HttpController {
       try {
         const authReq = req as AuthRequest
         const lang = this.getPreferredLanguage(req)
+        const ipAddress = this.getClientIp(req)
         const result = await this.service.submitTest({
           ...parsed.data,
           userId: authReq.userId || null,
-          lang
+          lang,
+          ipAddress
         })
         res.json(result)
       } catch (err: any) {

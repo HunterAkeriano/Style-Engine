@@ -9,6 +9,10 @@ type UserAttrs = ReturnType<User['get']>
 
 export class QuizService {
   private readonly specialEmail = 'gamerstaject1@gmail.com'
+  private readonly activeTests = new Map<
+    string,
+    { expiresAt: number; payload: { questions: any[]; timePerQuestion: number; totalQuestions: number } }
+  >()
 
   constructor(private readonly env: Env, private readonly models: Models) {
     void this.ensureQuizTranslationColumns()
@@ -96,14 +100,10 @@ export class QuizService {
   }
 
   private localizeQuestion(question: any, lang: 'en' | 'uk', includeCorrect = false) {
-    const useUk = lang === 'uk' && !includeCorrect
-    const questionText = useUk ? question.questionTextUk || question.questionText : question.questionText
-    const answers = useUk
-      ? (Array.isArray((question as any).answersUk) && (question as any).answersUk.length
-          ? (question as any).answersUk
-          : question.answers) || []
-      : question.answers || []
-    const explanation = useUk ? (question as any).explanationUk || question.explanation || null : question.explanation || null
+    const useUk = lang === 'uk'
+    const questionText = useUk ? question.questionTextUk : question.questionText
+    const answers = useUk ? ((question as any).answersUk || []) : question.answers || []
+    const explanation = useUk ? (question as any).explanationUk || null : question.explanation || null
 
     const base: any = {
       id: question.id,
@@ -168,6 +168,47 @@ export class QuizService {
     }
   }
 
+  private normalizeCacheKey(category: string, lang: 'en' | 'uk', userId: string | null, ipAddress: string | null) {
+    const normalizedIp = ipAddress || 'unknown'
+    const userKey = userId ? `user:${userId}` : `ip:${normalizedIp}`
+    return `${userKey}|${category}|${lang}`
+  }
+
+  private cleanupExpiredTests(now: number = Date.now()) {
+    for (const [key, entry] of this.activeTests.entries()) {
+      if (entry.expiresAt <= now) this.activeTests.delete(key)
+    }
+  }
+
+  private clearCachedTest(category: string, lang: 'en' | 'uk', userId: string | null, ipAddress: string | null) {
+    const key = this.normalizeCacheKey(category, lang, userId, ipAddress)
+    this.activeTests.delete(key)
+  }
+
+  private cacheTest(
+    category: string,
+    lang: 'en' | 'uk',
+    userId: string | null,
+    ipAddress: string | null,
+    payload: { questions: any[]; timePerQuestion: number; totalQuestions: number },
+    ttlMs: number
+  ) {
+    const expiresAt = Date.now() + Math.max(ttlMs, 5 * 60 * 1000)
+    const key = this.normalizeCacheKey(category, lang, userId, ipAddress)
+    this.activeTests.set(key, { expiresAt, payload })
+  }
+
+  private getCachedTest(category: string, lang: 'en' | 'uk', userId: string | null, ipAddress: string | null) {
+    const now = Date.now()
+    this.cleanupExpiredTests(now)
+    const key = this.normalizeCacheKey(category, lang, userId, ipAddress)
+    const cached = this.activeTests.get(key)
+    if (cached && cached.expiresAt > now) {
+      return cached.payload
+    }
+    return null
+  }
+
   async listQuestions(lang: 'en' | 'uk') {
     const questions = await this.models.QuizQuestion.findAll({ order: [['createdAt', 'DESC']] })
     return questions.map((q) => this.localizeQuestion(q.get({ plain: true }) as any, lang, true))
@@ -215,6 +256,10 @@ export class QuizService {
     if (!['css', 'scss', 'stylus', 'mix'].includes(category)) {
       throw toApiError(400, 'Invalid category')
     }
+
+    const cached = this.getCachedTest(category, lang, userId, ip)
+    if (cached) return cached
+
     const limitInfo = await this.checkAttemptLimit(userId, ip)
     if (!limitInfo.allowed) {
       throw toApiError(429, 'Daily attempt limit reached', { details: { limit: limitInfo.limit, resetAt: limitInfo.resetAt } })
@@ -224,13 +269,22 @@ export class QuizService {
     const questionsPerTest = (settings as any)?.questionsPerTest || 20
     const whereClause: WhereOptions<QuizQuestion> = {}
     if (category !== 'mix') (whereClause as any).category = category
+    if (lang === 'uk') {
+      ;(whereClause as any).questionTextUk = { [Op.ne]: null }
+      ;(whereClause as any).answersUk = { [Op.ne]: null }
+    }
 
     const questions = await this.selectRandomQuestions(this.models.QuizQuestion, whereClause, questionsPerTest)
     if (questions.length === 0) throw toApiError(404, 'No questions available')
 
     await this.incrementAttempt(userId, ip)
     const sanitized = questions.map((q) => this.localizeQuestion(q.get({ plain: true }) as any, lang, false))
-    return { questions: sanitized, timePerQuestion: (settings as any)?.timePerQuestion || 60, totalQuestions: sanitized.length }
+    const timePerQuestion = (settings as any)?.timePerQuestion || 60
+    const totalQuestions = sanitized.length
+    const payload = { questions: sanitized, timePerQuestion, totalQuestions }
+    const ttlMs = timePerQuestion * Math.max(totalQuestions, questionsPerTest) * 1000
+    this.cacheTest(category, lang, userId, ip, payload, ttlMs)
+    return payload
   }
 
   async submitTest(payload: {
@@ -240,6 +294,7 @@ export class QuizService {
     username?: string | null
     userId: string | null
     lang: 'en' | 'uk'
+    ipAddress?: string | null
   }) {
     const { QuizQuestion, QuizResult, User } = this.models
     const questionIds = payload.answers.map((a) => a.questionId)
@@ -280,6 +335,8 @@ export class QuizService {
       totalQuestions: payload.answers.length,
       timeTaken: payload.timeTaken
     })
+
+    this.clearCachedTest(payload.category, payload.lang, payload.userId, payload.ipAddress ?? null)
 
     return { result: result.get({ plain: true }), detailedResults: detailedResults.filter((r) => r !== null) }
   }
