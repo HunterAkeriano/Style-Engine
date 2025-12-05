@@ -123,6 +123,7 @@ import {
 import { normalizePayload, stableStringify, formatGradient, formatBoxShadow, formatClipPath, copyToClipboard, buildGradientValue } from '@/shared/lib'
 import { createFaviconZip, downloadBlob } from '@/shared/lib/favicon'
 import type { GeneratedFavicon } from '@/shared/types/favicon'
+import type { GradientType } from '@/shared/types'
 
 const props = defineProps<{
   category: SaveCategory
@@ -233,12 +234,17 @@ function toLocaleDate(value: string) {
   return new Date(value).toLocaleDateString()
 }
 
+const allowedGradientTypes: GradientType[] = ['linear', 'radial', 'conic']
+function normalizeGradientType(value: unknown): GradientType {
+  return allowedGradientTypes.includes(value as GradientType) ? (value as GradientType) : 'linear'
+}
+
 function getPreviewStyle(item: SavedItem) {
   const payload = item.payload as Record<string, any>
   if (props.category === 'gradient') {
     const colors = Array.isArray(payload.colors) ? payload.colors : []
     const angle = typeof payload.angle === 'number' ? payload.angle : 90
-    const type = typeof payload.type === 'string' ? payload.type : 'linear'
+    const type = normalizeGradientType(payload.type)
     return {
       background: buildGradientValue(type, angle, colors, {
         shape: payload.shape,
@@ -305,7 +311,7 @@ function generateCSS(item: SavedItem): string {
   if (props.category === 'gradient') {
     const colors = Array.isArray(payload.colors) ? payload.colors : []
     const angle = typeof payload.angle === 'number' ? payload.angle : 90
-    const type = payload.type || 'linear'
+    const type = normalizeGradientType(payload.type)
     return formatGradient(type, angle, colors, 'css', {
       shape: payload.shape,
       extent: payload.extent,

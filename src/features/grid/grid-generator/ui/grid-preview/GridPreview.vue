@@ -39,7 +39,7 @@ const emit = defineEmits<{
 const containerRef = ref<HTMLElement | null>(null)
 const draggingId = ref<string | null>(null)
 const dragSpans = ref<{ cols: number; rows: number }>({ cols: 1, rows: 1 })
-const lastMove = ref<number | null>(null)
+const lastMove = ref<string | null>(null)
 const activePointer = ref<number | null>(null)
 
 function getItemStyle(item: GridItem) {
@@ -84,7 +84,7 @@ function handlePointerDown(event: PointerEvent, item: GridItem) {
   containerRef.value?.setPointerCapture?.(event.pointerId)
 }
 
-function handlePointerUp(event: PointerEvent) {
+function handlePointerUp() {
   if (activePointer.value !== null) {
     containerRef.value?.releasePointerCapture?.(activePointer.value)
   }

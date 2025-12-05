@@ -211,6 +211,20 @@ const proQuota = ref<SaveQuotaResult | null>(null)
 const savedGradientHashes = ref<Set<string>>(new Set())
 const proSaveLimit = getUserLimit(SubscriptionTier.PRO, 'savedTemplates')
 
+type NormalizedGradientPayload = {
+  type?: GradientType
+  angle?: number
+  colors?: GradientColor[]
+  shape?: 'circle' | 'ellipse'
+  extent?: GradientExtent
+  center?: GradientCenter
+  repeating?: boolean
+  layers?: Array<{
+    colors?: GradientColor[]
+    angle?: number
+  }>
+}
+
 function getUserTier(): SubscriptionTier | undefined {
   return resolveSubscriptionTier(
     authStore.user?.subscriptionTier ?? (authStore.userPlan as string | undefined)
@@ -568,8 +582,8 @@ function getNextColorId() {
 }
 
 function clampPercent(value: number | undefined) {
-  if (!Number.isFinite(value)) return 50
-  return Math.min(100, Math.max(0, value))
+  const numeric = typeof value === 'number' && Number.isFinite(value) ? value : 50
+  return Math.min(100, Math.max(0, numeric))
 }
 
 function clampCenter(value?: GradientCenter | null): GradientCenter {
@@ -620,9 +634,9 @@ function normalizePresetId(value: unknown): string | null {
 }
 
 function mapCommunityPreset(item: SavedItem): GradientPreset | null {
-  const normalized = normalizePayload('gradient', item.payload ?? {})
+  const normalized = normalizePayload('gradient', item.payload ?? {}) as NormalizedGradientPayload
   const colors = Array.isArray(normalized.colors)
-    ? (normalized.colors as GradientColor[]).map((color, index) => ({
+    ? normalized.colors.map((color, index) => ({
         id: color.id ?? `${index + 1}`,
         color: color.color,
         position: color.position
@@ -633,13 +647,13 @@ function mapCommunityPreset(item: SavedItem): GradientPreset | null {
   return {
     id: `community-${item.id}`,
     name: item.name,
-    type: normalizeGradientType((normalized as any).type),
-    angle: Number.isFinite(normalized.angle as number) ? Number(normalized.angle) : 90,
+    type: normalizeGradientType(normalized.type),
+    angle: Number.isFinite(normalized.angle) ? Number(normalized.angle) : 90,
     colors,
     shape: normalized.shape === 'ellipse' ? 'ellipse' : 'circle',
-    extent: normalizeExtent((normalized as any).extent),
-    center: clampCenter((normalized as any).center as GradientCenter),
-    repeating: Boolean((normalized as any).repeating),
+    extent: normalizeExtent(normalized.extent),
+    center: clampCenter(normalized.center),
+    repeating: Boolean(normalized.repeating),
     owner: buildCreatorProfile(item)
   }
 }
