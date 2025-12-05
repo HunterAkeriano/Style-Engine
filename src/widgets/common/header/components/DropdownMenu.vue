@@ -1,6 +1,6 @@
 <template>
   <div
-      :class="{'dropdown-menu_first': props.isFirst}"
+    :class="{ 'dropdown-menu_first': props.isFirst }"
     class="dropdown-menu"
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
@@ -40,8 +40,14 @@ const props = defineProps<{
   isFirst?: boolean;
 }>();
 
-const activeDropdownId = inject<Ref<string | null>>('activeDropdownId', ref(null));
-const setActiveDropdown = inject<(id: string | null) => void>('setActiveDropdown', () => {});
+const activeDropdownId = inject<Ref<string | null>>(
+  "activeDropdownId",
+  ref(null),
+);
+const setActiveDropdown = inject<(id: string | null) => void>(
+  "setActiveDropdown",
+  () => {},
+);
 
 const isOpen = computed(() => activeDropdownId.value === props.id);
 let closeTimeout: NodeJS.Timeout | null = null;

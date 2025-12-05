@@ -62,6 +62,13 @@
     &.router-link-active {
       color: $color-primary;
       background: $color-primary-alpha-10;
+      width: 100%;
+      text-align: center;
+
+      @media (max-width: $breakpoint-md) {
+        width: unset;
+        text-align: left;
+      }
     }
   }
 
