@@ -15,19 +15,29 @@
         class="grid-presets__card"
         @click="emit('apply', preset)"
       >
-        <div class="grid-presets__preview" :style="getPreviewContainerStyle(preset)">
-          <div
-            v-for="(item, index) in preset.items"
-            :key="index"
-            :style="getPreviewItemStyle(preset, item)"
-            class="grid-presets__preview-item"
-          />
+        <div class="grid-presets__preview">
+          <div class="grid-presets__preview-grid" :style="getPreviewContainerStyle(preset)">
+            <div
+              v-for="(item, index) in preset.items"
+              :key="index"
+              :style="getPreviewItemStyle(preset, item)"
+              class="grid-presets__preview-item"
+            />
+          </div>
+          <div class="grid-presets__meta">
+            <span class="grid-presets__badge">{{ preset.columns }}×{{ preset.rows }}</span>
+            <span class="grid-presets__pill">{{ preset.columnTemplate === 'auto' ? 'auto' : preset.columnTemplate === 'equal' ? 'fr' : 'custom' }}</span>
+            <span class="grid-presets__pill">{{ (preset.columnGap ?? preset.gap) }}px / {{ (preset.rowGap ?? preset.gap) }}px</span>
+          </div>
         </div>
 
         <div class="grid-presets__card-bottom">
-          <h3 class="grid-presets__card-title">{{ preset.name }}</h3>
-          <span class="grid-presets__badge">
-            {{ preset.columns }}×{{ preset.rows }}
+          <div>
+            <h3 class="grid-presets__card-title">{{ preset.name }}</h3>
+            <p class="grid-presets__card-subtitle">{{ preset.subtitle }}</p>
+          </div>
+          <span class="grid-presets__badge grid-presets__badge_accent">
+            {{ preset.type }}
           </span>
         </div>
       </article>
@@ -58,7 +68,9 @@ function getPreviewContainerStyle(preset: GridPreset) {
     gridTemplateColumns: resolveGridTemplate(preset.columnTemplate, preset.columns, preset.customColumns),
     gridTemplateRows: resolveGridTemplate(preset.rowTemplate, preset.rows, preset.customRows),
     columnGap: `${preset.columnGap ?? preset.gap}px`,
-    rowGap: `${preset.rowGap ?? preset.gap}px`
+    rowGap: `${preset.rowGap ?? preset.gap}px`,
+    alignItems: preset.alignItems ?? 'stretch',
+    justifyItems: preset.justifyItems ?? 'stretch'
   }
 }
 

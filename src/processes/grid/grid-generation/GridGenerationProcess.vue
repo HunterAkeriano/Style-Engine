@@ -81,10 +81,6 @@
       />
     </div>
 
-    <div class="grid-generation-process__presets">
-      <GridPresets :presets="GRID_PRESETS" @apply="applyPreset" />
-    </div>
-
     <Modal
       :title="t('COMMON.PRO_EXPORT_TITLE')"
       :subtitle="t('COMMON.PRO_EXPORT_MESSAGE')"
@@ -108,10 +104,10 @@ import { Modal } from '@/shared/ui'
 import CodeExport from '@/shared/ui/code-export/CodeExport.vue'
 import { SubscriptionTier } from '@/shared/config/pricing'
 import { resolveSubscriptionTier } from '@/shared/lib/save-quota'
-import { GridControls, GridPreview, GridPresets } from '@/features/grid'
+import { GridControls, GridPreview } from '@/features/grid'
 import type { GridItem } from '@/shared/types/grid'
 import type { SelectOption } from '@/shared/ui'
-import { GRID_PRESETS, resolveGridTemplate, type GridPreset } from './grid-presets'
+import { resolveGridTemplate } from './grid-presets'
 
 const { t, locale } = useI18n()
 const router = useRouter()
@@ -350,34 +346,6 @@ function generateHTML(): string {
 
   html += '</div>'
   return html
-}
-
-function applyPreset(preset: GridPreset) {
-  columns.value = preset.columns
-  rows.value = preset.rows
-  columnGap.value = preset.columnGap ?? preset.gap
-  rowGap.value = preset.rowGap ?? preset.gap
-  columnTemplate.value = preset.columnTemplate
-  rowTemplate.value = preset.rowTemplate
-  customColumns.value = preset.customColumns
-  customRows.value = preset.customRows
-  autoFlow.value = preset.autoFlow ?? 'row'
-  justifyItems.value = preset.justifyItems ?? 'stretch'
-  alignItems.value = preset.alignItems ?? 'stretch'
-  justifyContent.value = preset.justifyContent ?? 'start'
-  alignContent.value = preset.alignContent ?? 'start'
-
-  gridItems.value = preset.items.map((item, index) => ({
-    id: `${index + 1}`,
-    label: item.label,
-    columnStart: item.columnStart,
-    columnEnd: item.columnEnd,
-    rowStart: item.rowStart,
-    rowEnd: item.rowEnd,
-    backgroundColor: item.backgroundColor
-  }))
-
-  itemIdCounter = gridItems.value.length
 }
 
 function handleExportUpgrade() {

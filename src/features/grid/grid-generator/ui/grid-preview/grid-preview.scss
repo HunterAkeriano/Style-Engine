@@ -40,5 +40,12 @@
       transform: translateY(-2px);
       box-shadow: 0 12px 28px $color-text-primary-alpha-05;
     }
+
+    &_dragging {
+      cursor: grabbing;
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 14px 32px $color-text-primary-alpha-05;
+      opacity: 0.95;
+    }
   }
 }

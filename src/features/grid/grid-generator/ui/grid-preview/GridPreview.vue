@@ -11,10 +11,9 @@
         v-for="item in items"
         :key="item.id"
         :style="getItemStyle(item)"
-        class="grid-preview__item"
+        :class="['grid-preview__item', { 'grid-preview__item_dragging': draggingId === item.id }]"
         draggable="false"
         @pointerdown="(e) => handlePointerDown(e, item)"
-        @pointermove="(e) => handlePointerMove(e, item)"
       >
         {{ item.label }}
       </div>
@@ -41,13 +40,14 @@ const containerRef = ref<HTMLElement | null>(null)
 const draggingId = ref<string | null>(null)
 const dragSpans = ref<{ cols: number; rows: number }>({ cols: 1, rows: 1 })
 const lastMove = ref<number | null>(null)
+const activePointer = ref<number | null>(null)
 
 function getItemStyle(item: GridItem) {
   return {
     gridColumn: `${item.columnStart} / ${item.columnEnd}`,
     gridRow: `${item.rowStart} / ${item.rowEnd}`,
     backgroundColor: item.backgroundColor,
-    cursor: 'grab'
+    cursor: draggingId.value === item.id ? 'grabbing' : 'grab'
   }
 }
 
@@ -74,30 +74,35 @@ function findTrackIndex(sizes: number[], position: number, gap: number): number 
 }
 
 function handlePointerDown(event: PointerEvent, item: GridItem) {
+  event.preventDefault()
+  activePointer.value = event.pointerId
   draggingId.value = item.id
   dragSpans.value = {
     cols: Math.max(1, item.columnEnd - item.columnStart),
     rows: Math.max(1, item.rowEnd - item.rowStart)
   }
-  ;(event.target as HTMLElement).setPointerCapture?.(event.pointerId)
+  containerRef.value?.setPointerCapture?.(event.pointerId)
 }
 
 function handlePointerUp(event: PointerEvent) {
-  if (draggingId.value) {
-    ;(event.target as HTMLElement).releasePointerCapture?.(event.pointerId)
+  if (activePointer.value !== null) {
+    containerRef.value?.releasePointerCapture?.(activePointer.value)
   }
   draggingId.value = null
   lastMove.value = null
+  activePointer.value = null
 }
 
-function handlePointerMove(event: PointerEvent, item: GridItem) {
-  if (!draggingId.value || draggingId.value !== item.id) return
+function handlePointerMoveGlobal(event: PointerEvent) {
+  if (!draggingId.value || activePointer.value !== event.pointerId) return
+  const item = props.items.find(i => i.id === draggingId.value)
+  if (!item) return
   const container = containerRef.value
   if (!container) return
 
   const rect = container.getBoundingClientRect()
-  const x = event.clientX - rect.left
-  const y = event.clientY - rect.top
+  const x = Math.min(Math.max(0, event.clientX - rect.left), rect.width)
+  const y = Math.min(Math.max(0, event.clientY - rect.top), rect.height)
 
   const style = getComputedStyle(container)
   const colTemplate = style.gridTemplateColumns
@@ -132,10 +137,12 @@ function handlePointerMove(event: PointerEvent, item: GridItem) {
 
 onMounted(() => {
   window.addEventListener('pointerup', handlePointerUp)
+  window.addEventListener('pointermove', handlePointerMoveGlobal)
 })
 
 onUnmounted(() => {
   window.removeEventListener('pointerup', handlePointerUp)
+  window.removeEventListener('pointermove', handlePointerMoveGlobal)
 })
 </script>
 
