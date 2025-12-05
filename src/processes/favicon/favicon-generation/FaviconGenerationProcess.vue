@@ -14,6 +14,9 @@
       <FaviconPreview
         :has-image="!!config.sourceImage"
         :generated-favicons="generatedFaviconsDataUrls"
+        :background-color="config.backgroundColor"
+        :padding="config.padding"
+        :border-radius="config.borderRadius"
       />
     </div>
 
@@ -199,6 +202,11 @@ const proQuota = ref<SaveQuotaResult | null>(null)
 const publicFavicons = ref<FaviconPreset[]>([])
 const savingPresetId = ref<string | null>(null)
 const savedFaviconHashes = ref<Set<string>>(new Set())
+const GENERATION_DEBOUNCE_MS = 32
+
+let generationTimeout: ReturnType<typeof setTimeout> | null = null
+let generationInProgress = false
+let generationQueued = false
 
 const generatedFaviconsDataUrls = computed(() => {
   const result: Record<number, string> = {}
@@ -261,16 +269,14 @@ async function generateAllFavicons() {
   if (!sourceImageElement.value) return
 
   try {
-    const favicons: GeneratedFavicon[] = []
-
-    for (const faviconSize of FAVICON_SIZES) {
-      const favicon = await generateFaviconFromImage(
-        sourceImageElement.value,
+    const image = sourceImageElement.value
+    const favicons = await Promise.all(
+      FAVICON_SIZES.map(faviconSize => generateFaviconFromImage(
+        image,
         faviconSize.size,
         config
-      )
-      favicons.push(favicon)
-    }
+      ))
+    )
 
     generatedFavicons.value = favicons
   } catch (error) {
@@ -732,13 +738,41 @@ onMounted(() => {
   loadUserSavedFavicons()
 })
 
+const runQueuedGeneration = async () => {
+  if (!sourceImageElement.value) return
+
+  if (generationInProgress) {
+    generationQueued = true
+    return
+  }
+
+  generationTimeout = null
+  generationInProgress = true
+
+  try {
+    await generateAllFavicons()
+  } finally {
+    generationInProgress = false
+    if (generationQueued) {
+      generationQueued = false
+      runQueuedGeneration()
+    }
+  }
+}
+
+const scheduleFaviconGeneration = () => {
+  if (!sourceImageElement.value) return
+
+  if (generationTimeout) {
+    clearTimeout(generationTimeout)
+  }
+
+  generationTimeout = setTimeout(runQueuedGeneration, GENERATION_DEBOUNCE_MS)
+}
+
 watch(
   () => [config.backgroundColor, config.padding, config.borderRadius],
-  async () => {
-    if (sourceImageElement.value) {
-      await generateAllFavicons()
-    }
-  },
+  () => scheduleFaviconGeneration(),
   { deep: true }
 )
 </script>

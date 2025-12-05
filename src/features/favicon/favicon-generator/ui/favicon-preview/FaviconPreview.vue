@@ -23,12 +23,18 @@
           class="favicon-preview__item-preview"
           :style="{ width: getPreviewSize(faviconSize.size), height: getPreviewSize(faviconSize.size) }"
         >
-          <img
-            v-if="generatedFavicons[faviconSize.size]"
-            :src="generatedFavicons[faviconSize.size]"
-            :alt="`${faviconSize.name} preview`"
-            class="favicon-preview__item-image"
-          />
+          <div
+            class="favicon-preview__item-frame"
+            :style="getFrameStyle(faviconSize.size)"
+          >
+            <img
+              v-if="generatedFavicons[faviconSize.size]"
+              :src="generatedFavicons[faviconSize.size]"
+              :alt="`${faviconSize.name} preview`"
+              class="favicon-preview__item-image"
+              :style="getImageStyle(faviconSize.size)"
+            />
+          </div>
         </div>
         <p class="favicon-preview__item-purpose">{{ faviconSize.purpose }}</p>
       </div>
@@ -44,9 +50,12 @@ import { FAVICON_SIZES } from '@/shared/types/favicon'
 interface Props {
   hasImage: boolean
   generatedFavicons: Record<number, string>
+  backgroundColor: string
+  padding: number
+  borderRadius: number
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 const { t } = useI18n()
 
 const faviconSizes = computed(() => FAVICON_SIZES)
@@ -60,6 +69,36 @@ function getPreviewSize(size: number): string {
     return '96px'
   } else {
     return '128px'
+  }
+}
+
+function getPreviewMetrics(size: number) {
+  const previewSize = parseInt(getPreviewSize(size))
+  const paddingPx = Math.max(0, Math.round((previewSize * props.padding) / 100))
+  const innerSize = Math.max(previewSize - paddingPx * 2, 0)
+  const radiusPx = Math.max(0, Math.round((innerSize * props.borderRadius) / 100))
+
+  return {
+    paddingPx,
+    radiusPx,
+    previewSize
+  }
+}
+
+function getFrameStyle(size: number) {
+  const { paddingPx, radiusPx, previewSize } = getPreviewMetrics(size)
+
+  return {
+    '--live-preview-bg': props.backgroundColor === 'transparent' ? 'transparent' : props.backgroundColor,
+    padding: `${paddingPx}px`,
+    borderRadius: `${Math.min(previewSize / 2, radiusPx + Math.min(paddingPx, 12))}px`
+  }
+}
+
+function getImageStyle(size: number) {
+  const { radiusPx } = getPreviewMetrics(size)
+  return {
+    borderRadius: `${radiusPx}px`
   }
 }
 </script>
