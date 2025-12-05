@@ -91,6 +91,11 @@
         color: var(--accent-primary);
       }
     }
+
+    :deep(.header__nav-link.router-link-active) {
+      width: 100%;
+      text-align: center;
+    }
   }
 
   &_first {
