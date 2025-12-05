@@ -5,16 +5,78 @@
   flex-direction: column;
   gap: $space-lg;
 
-  &__group {
+  &__panel {
+    display: flex;
+    flex-direction: column;
+    gap: $space-lg;
+    padding: $space-lg;
+    background: linear-gradient(145deg, $surface-panel-1, $surface-panel-2);
+    border: 1px solid $panel-border;
+    border-radius: $border-radius-xl;
+    box-shadow: $shadow-md;
+  }
+
+  &__section {
+    display: grid;
+    gap: $space-md;
+
+    &_split {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+  }
+
+  &__field {
     display: flex;
     flex-direction: column;
     gap: $space-sm;
+
+    &_hint {
+      justify-content: flex-end;
+    }
   }
 
   &__label {
     font-size: $font-size-sm;
-    font-weight: 500;
-    color: var(--text-secondary);
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+  }
+
+  &__subfield {
+    margin-top: $space-xs;
+  }
+
+  &__hint {
+    margin: 0;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-md;
+    flex-wrap: wrap;
+  }
+
+  &__eyebrow {
+    margin: 0;
+    font-size: $font-size-xs;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: $color-text-secondary;
+  }
+
+  &__title {
+    margin: 2px 0 0 0;
+    font-size: $font-size-lg;
+    color: $color-text-primary;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
   }
 
   &__items {
@@ -24,10 +86,17 @@
   }
 
   &__item-card {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: $border-radius-md;
+    background: $color-bg-primary;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-lg;
     padding: $space-md;
+    box-shadow: 0 12px 28px $color-text-primary-alpha-05;
+    transition: border-color $transition-fast, transform $transition-fast;
+
+    &:hover {
+      border-color: $color-border-hover;
+      transform: translateY(-2px);
+    }
   }
 
   &__item-header {
@@ -35,8 +104,33 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: $space-md;
-    font-weight: 600;
-    color: var(--text-primary);
+    color: $color-text-primary;
+  }
+
+  &__item-meta {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  &__item-name {
+    font-weight: $font-weight-semibold;
+  }
+
+  &__pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: $border-radius-full;
+    background: $color-bg-tertiary;
+    color: $color-text-secondary;
+    font-size: $font-size-xs;
+  }
+
+  &__item-actions {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
   }
 
   &__item-fields {
@@ -46,18 +140,41 @@
   }
 
   &__item-row {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    align-items: center;
-    gap: $space-sm;
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
 
     label {
       font-size: $font-size-xs;
-      color: var(--text-secondary);
+      color: $color-text-secondary;
+    }
+
+    &_inline {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: $space-sm;
     }
 
     &_color {
-      grid-template-columns: 140px 1fr;
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: $space-sm;
+      align-items: center;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  &__mini-field {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+
+    label {
+      font-size: $font-size-xs;
+      color: $color-text-secondary;
     }
   }
 
@@ -65,12 +182,13 @@
     display: flex;
     gap: $space-sm;
     align-items: center;
+    flex-wrap: wrap;
   }
 
   &__color-picker {
-    width: 40px;
-    height: 40px;
-    border: 1px solid var(--border-color);
+    width: 44px;
+    height: 44px;
+    border: 1px solid $color-border;
     border-radius: $border-radius-sm;
     cursor: pointer;
     background: transparent;

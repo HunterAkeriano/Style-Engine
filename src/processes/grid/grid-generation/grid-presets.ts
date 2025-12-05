@@ -6,10 +6,17 @@ export interface GridPreset {
   columns: number
   rows: number
   gap: number
+  columnGap?: number
+  rowGap?: number
   columnTemplate: string
   rowTemplate: string
   customColumns: string
   customRows: string
+  autoFlow?: string
+  justifyItems?: string
+  alignItems?: string
+  justifyContent?: string
+  alignContent?: string
   items: Omit<GridItem, 'id'>[]
 }
 

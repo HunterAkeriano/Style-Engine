@@ -57,7 +57,8 @@ function getPreviewContainerStyle(preset: GridPreset) {
     display: 'grid',
     gridTemplateColumns: resolveGridTemplate(preset.columnTemplate, preset.columns, preset.customColumns),
     gridTemplateRows: resolveGridTemplate(preset.rowTemplate, preset.rows, preset.customRows),
-    gap: `${preset.gap}px`
+    columnGap: `${preset.columnGap ?? preset.gap}px`,
+    rowGap: `${preset.rowGap ?? preset.gap}px`
   }
 }
 

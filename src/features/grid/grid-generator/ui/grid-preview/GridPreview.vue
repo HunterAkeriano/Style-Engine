@@ -1,11 +1,20 @@
 <template>
   <div class="grid-preview">
-    <div :style="gridContainerStyle" class="grid-preview__container">
+    <div
+      ref="containerRef"
+      :style="gridContainerStyle"
+      class="grid-preview__container"
+      @pointerup="handlePointerUp"
+      @pointerleave="handlePointerUp"
+    >
       <div
         v-for="item in items"
         :key="item.id"
         :style="getItemStyle(item)"
         class="grid-preview__item"
+        draggable="false"
+        @pointerdown="(e) => handlePointerDown(e, item)"
+        @pointermove="(e) => handlePointerMove(e, item)"
       >
         {{ item.label }}
       </div>
@@ -14,24 +23,120 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { GridItem } from '@/shared/types/grid'
 
 interface Props {
   gridStyle: Record<string, string>
   items: GridItem[]
+  columns: number
+  rows: number
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits<{
+  (e: 'move-item', payload: { id: string; columnStart: number; columnEnd: number; rowStart: number; rowEnd: number }): void
+}>()
+const containerRef = ref<HTMLElement | null>(null)
+const draggingId = ref<string | null>(null)
+const dragSpans = ref<{ cols: number; rows: number }>({ cols: 1, rows: 1 })
+const lastMove = ref<number | null>(null)
 
 function getItemStyle(item: GridItem) {
   return {
     gridColumn: `${item.columnStart} / ${item.columnEnd}`,
     gridRow: `${item.rowStart} / ${item.rowEnd}`,
-    backgroundColor: item.backgroundColor
+    backgroundColor: item.backgroundColor,
+    cursor: 'grab'
   }
 }
 
-const gridContainerStyle = props.gridStyle
+const gridContainerStyle = computed(() => props.gridStyle)
+
+function parseTrackSizes(template: string): number[] {
+  return template
+    .split(' ')
+    .map(part => Number.parseFloat(part))
+    .filter(size => Number.isFinite(size))
+}
+
+function findTrackIndex(sizes: number[], position: number, gap: number): number {
+  let acc = 0
+  for (let i = 0; i < sizes.length; i++) {
+    const start = acc
+    const end = acc + sizes[i]
+    if (position >= start && position <= end) {
+      return i
+    }
+    acc += sizes[i] + gap
+  }
+  return sizes.length - 1
+}
+
+function handlePointerDown(event: PointerEvent, item: GridItem) {
+  draggingId.value = item.id
+  dragSpans.value = {
+    cols: Math.max(1, item.columnEnd - item.columnStart),
+    rows: Math.max(1, item.rowEnd - item.rowStart)
+  }
+  ;(event.target as HTMLElement).setPointerCapture?.(event.pointerId)
+}
+
+function handlePointerUp(event: PointerEvent) {
+  if (draggingId.value) {
+    ;(event.target as HTMLElement).releasePointerCapture?.(event.pointerId)
+  }
+  draggingId.value = null
+  lastMove.value = null
+}
+
+function handlePointerMove(event: PointerEvent, item: GridItem) {
+  if (!draggingId.value || draggingId.value !== item.id) return
+  const container = containerRef.value
+  if (!container) return
+
+  const rect = container.getBoundingClientRect()
+  const x = event.clientX - rect.left
+  const y = event.clientY - rect.top
+
+  const style = getComputedStyle(container)
+  const colTemplate = style.gridTemplateColumns
+  const rowTemplate = style.gridTemplateRows
+  const colGap = Number.parseFloat(style.columnGap || '0') || 0
+  const rowGap = Number.parseFloat(style.rowGap || '0') || 0
+
+  const colSizes = parseTrackSizes(colTemplate)
+  const rowSizes = parseTrackSizes(rowTemplate)
+  if (!colSizes.length || !rowSizes.length) return
+
+  const colIdx = findTrackIndex(colSizes, x, colGap)
+  const rowIdx = findTrackIndex(rowSizes, y, rowGap)
+
+  const spanCols = dragSpans.value.cols
+  const spanRows = dragSpans.value.rows
+  const startCol = Math.max(1, Math.min(props.columns - spanCols + 1, colIdx + 1))
+  const startRow = Math.max(1, Math.min(props.rows - spanRows + 1, rowIdx + 1))
+  const payload = {
+    id: item.id,
+    columnStart: startCol,
+    columnEnd: startCol + spanCols,
+    rowStart: startRow,
+    rowEnd: startRow + spanRows
+  }
+
+  const hash = `${payload.id}-${payload.columnStart}-${payload.rowStart}`
+  if (lastMove.value === hash) return
+  lastMove.value = hash
+  emit('move-item', payload)
+}
+
+onMounted(() => {
+  window.addEventListener('pointerup', handlePointerUp)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('pointerup', handlePointerUp)
+})
 </script>
 
 <style lang="scss" scoped src="./grid-preview.scss"></style>

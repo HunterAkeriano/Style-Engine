@@ -4,19 +4,31 @@
       <GridControls
         :columns="columns"
         :rows="rows"
-        :gap="gap"
+        :column-gap="columnGap"
+        :row-gap="rowGap"
         :column-template="columnTemplate"
         :row-template="rowTemplate"
         :custom-columns="customColumns"
         :custom-rows="customRows"
+        :auto-flow="autoFlow"
+        :justify-items="justifyItems"
+        :align-items="alignItems"
+        :justify-content="justifyContent"
+        :align-content="alignContent"
         :items="gridItems"
         @update:columns="columns = $event"
         @update:rows="rows = $event"
-        @update:gap="gap = $event"
+        @update:column-gap="columnGap = $event"
+        @update:row-gap="rowGap = $event"
         @update:column-template="columnTemplate = $event"
         @update:row-template="rowTemplate = $event"
         @update:custom-columns="customColumns = $event"
         @update:custom-rows="customRows = $event"
+        @update:auto-flow="autoFlow = $event"
+        @update:justify-items="justifyItems = $event"
+        @update:align-items="alignItems = $event"
+        @update:justify-content="justifyContent = $event"
+        @update:align-content="alignContent = $event"
         @add-item="addGridItem"
         @remove-item="removeGridItem"
         @update-item-property="updateItemProperty"
@@ -34,7 +46,13 @@
         :style="gridFloatingStyle"
         class="grid-generation-process__preview-inner"
       >
-        <GridPreview :grid-style="gridContainerStyle" :items="gridItems" />
+        <GridPreview
+          :grid-style="gridContainerStyle"
+          :items="gridItems"
+          :columns="columns"
+          :rows="rows"
+          @move-item="moveGridItem"
+        />
       </div>
     </div>
 
@@ -101,11 +119,17 @@ const authStore = useAuthStore()
 
 const columns = ref(3)
 const rows = ref(3)
-const gap = ref(16)
+const columnGap = ref(16)
+const rowGap = ref(16)
 const columnTemplate = ref('equal')
 const rowTemplate = ref('equal')
 const customColumns = ref('1fr 1fr 1fr')
 const customRows = ref('1fr 1fr 1fr')
+const autoFlow = ref('row')
+const justifyItems = ref('stretch')
+const alignItems = ref('stretch')
+const justifyContent = ref('start')
+const alignContent = ref('start')
 
 const gridItems = ref<GridItem[]>([
   {
@@ -187,7 +211,13 @@ const gridContainerStyle = computed(() => ({
   display: 'grid',
   gridTemplateColumns: resolveGridTemplate(columnTemplate.value, columns.value, customColumns.value),
   gridTemplateRows: resolveGridTemplate(rowTemplate.value, rows.value, customRows.value),
-  gap: `${gap.value}px`
+  columnGap: `${columnGap.value}px`,
+  rowGap: `${rowGap.value}px`,
+  justifyItems: justifyItems.value,
+  alignItems: alignItems.value,
+  justifyContent: justifyContent.value,
+  alignContent: alignContent.value,
+  gridAutoFlow: autoFlow.value
 }))
 
 function findFreeCell(): { column: number; row: number } {
@@ -238,6 +268,15 @@ function updateItemProperty(id: string, property: keyof GridItem, value: GridIte
   }
 }
 
+function moveGridItem(payload: { id: string; columnStart: number; columnEnd: number; rowStart: number; rowEnd: number }) {
+  const item = gridItems.value.find(i => i.id === payload.id)
+  if (!item) return
+  item.columnStart = payload.columnStart
+  item.columnEnd = payload.columnEnd
+  item.rowStart = payload.rowStart
+  item.rowEnd = payload.rowEnd
+}
+
 function getHTMLCode(): string {
   return generateHTML()
 }
@@ -264,7 +303,13 @@ function generateCSS(format: string): string {
   css += `${indent}display${useColon ? ':' : ''} grid${useSemicolon ? ';' : ''}\n`
   css += `${indent}grid-template-columns${useColon ? ':' : ''} ${style.gridTemplateColumns}${useSemicolon ? ';' : ''}\n`
   css += `${indent}grid-template-rows${useColon ? ':' : ''} ${style.gridTemplateRows}${useSemicolon ? ';' : ''}\n`
-  css += `${indent}gap${useColon ? ':' : ''} ${gap.value}px${useSemicolon ? ';' : ''}\n`
+  css += `${indent}column-gap${useColon ? ':' : ''} ${columnGap.value}px${useSemicolon ? ';' : ''}\n`
+  css += `${indent}row-gap${useColon ? ':' : ''} ${rowGap.value}px${useSemicolon ? ';' : ''}\n`
+  css += `${indent}grid-auto-flow${useColon ? ':' : ''} ${autoFlow.value}${useSemicolon ? ';' : ''}\n`
+  css += `${indent}justify-items${useColon ? ':' : ''} ${justifyItems.value}${useSemicolon ? ';' : ''}\n`
+  css += `${indent}align-items${useColon ? ':' : ''} ${alignItems.value}${useSemicolon ? ';' : ''}\n`
+  css += `${indent}justify-content${useColon ? ':' : ''} ${justifyContent.value}${useSemicolon ? ';' : ''}\n`
+  css += `${indent}align-content${useColon ? ':' : ''} ${alignContent.value}${useSemicolon ? ';' : ''}\n`
   if (useBraces) css += '}\n\n'
   else css += '\n'
 
@@ -282,7 +327,18 @@ function generateCSS(format: string): string {
 
 function generateInlineCSS(): string {
   const style = gridContainerStyle.value
-  return `display: grid; grid-template-columns: ${style.gridTemplateColumns}; grid-template-rows: ${style.gridTemplateRows}; gap: ${gap.value}px;`
+  return [
+    'display: grid',
+    `grid-template-columns: ${style.gridTemplateColumns}`,
+    `grid-template-rows: ${style.gridTemplateRows}`,
+    `column-gap: ${columnGap.value}px`,
+    `row-gap: ${rowGap.value}px`,
+    `grid-auto-flow: ${autoFlow.value}`,
+    `justify-items: ${justifyItems.value}`,
+    `align-items: ${alignItems.value}`,
+    `justify-content: ${justifyContent.value}`,
+    `align-content: ${alignContent.value}`
+  ].join('; ') + ';'
 }
 
 function generateHTML(): string {
@@ -299,11 +355,17 @@ function generateHTML(): string {
 function applyPreset(preset: GridPreset) {
   columns.value = preset.columns
   rows.value = preset.rows
-  gap.value = preset.gap
+  columnGap.value = preset.columnGap ?? preset.gap
+  rowGap.value = preset.rowGap ?? preset.gap
   columnTemplate.value = preset.columnTemplate
   rowTemplate.value = preset.rowTemplate
   customColumns.value = preset.customColumns
   customRows.value = preset.customRows
+  autoFlow.value = preset.autoFlow ?? 'row'
+  justifyItems.value = preset.justifyItems ?? 'stretch'
+  alignItems.value = preset.alignItems ?? 'stretch'
+  justifyContent.value = preset.justifyContent ?? 'start'
+  alignContent.value = preset.alignContent ?? 'start'
 
   gridItems.value = preset.items.map((item, index) => ({
     id: `${index + 1}`,
