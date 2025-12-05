@@ -365,7 +365,14 @@ export class QuizService {
         ['createdAt', 'DESC']
       ],
       limit,
-      include: [{ model: this.models.User, as: 'user', attributes: ['id', 'name', 'email', 'avatarUrl'], required: false }]
+      include: [
+        {
+          model: this.models.User,
+          as: 'user',
+          attributes: ['id', 'name', 'email', 'avatarUrl', 'subscriptionTier'],
+          required: false
+        }
+      ]
     })
 
     const normalizeIdentifier = (value: string | null | undefined) => (value ?? '').trim().toLowerCase()
@@ -391,6 +398,7 @@ export class QuizService {
         username: plain.username || plain.user?.name || plain.user?.email || 'Anonymous',
         email: plain.user?.email || null,
         avatarUrl: plain.user?.avatarUrl || null,
+        subscriptionTier: plain.user?.subscriptionTier || 'free',
         score: (plain as any).score,
         totalQuestions: (plain as any).totalQuestions,
         percentage: Math.round(((plain as any).score / (plain as any).totalQuestions) * 100),

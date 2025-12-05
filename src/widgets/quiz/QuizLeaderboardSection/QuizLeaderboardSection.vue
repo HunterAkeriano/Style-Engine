@@ -56,9 +56,18 @@
                 getInitials(row.username)
               }}</span>
             </div>
-            <span class="quiz-leaderboard-section__username">{{
-              row.username
-            }}</span>
+            <div class="quiz-leaderboard-section__user-meta">
+              <div class="quiz-leaderboard-section__username-wrap">
+                <Icon
+                  v-if="isPaid(row.subscriptionTier)"
+                  :size="16"
+                  :class="['quiz-leaderboard-section__crown', { 'quiz-leaderboard-section__crown_premium': row.subscriptionTier === 'premium' }]"
+                  name="icon-crown"
+                />
+                <span class="quiz-leaderboard-section__username">{{ row.username }}</span>
+              </div>
+              <span v-if="row.email" class="quiz-leaderboard-section__email">{{ row.email }}</span>
+            </div>
           </div>
         </template>
 
@@ -86,6 +95,7 @@ import Table from "@/shared/ui/table/Table.vue";
 import type { SelectOption } from "@/shared/ui/Select/types";
 import type { TableColumn, RowData } from "@/shared/ui/table/Table.vue";
 import type { QuizResultCategory } from "@/shared/types/quiz";
+import { Icon } from "@/shared/ui";
 
 interface Props {
   title: string;
@@ -190,6 +200,10 @@ function getInitials(name: string) {
 
 function categoryLabel(category: string) {
   return t(`QUIZ.CATEGORIES.${category.toUpperCase()}`);
+}
+
+function isPaid(tier?: string) {
+  return tier && tier !== "free";
 }
 </script>
 

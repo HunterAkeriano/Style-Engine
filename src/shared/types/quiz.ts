@@ -79,6 +79,7 @@ export interface QuizLeaderboardEntry {
   username: string
   email?: string
   avatarUrl?: string | null
+  subscriptionTier?: 'free' | 'pro' | 'premium'
   score: number
   totalQuestions: number
   percentage: number

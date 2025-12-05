@@ -91,8 +91,37 @@
     font-size: 0.875rem;
   }
 
+  &__user-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__username-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
   &__username {
     font-weight: 600;
+    color: $color-text-primary;
+  }
+
+  &__email {
+    font-size: 0.875rem;
+    color: $color-text-secondary;
+    word-break: break-word;
+  }
+
+  &__crown {
+    color: $color-primary;
+
+    &_premium {
+      color: #22c55e;
+      filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.5));
+    }
   }
 
   &__pagination {

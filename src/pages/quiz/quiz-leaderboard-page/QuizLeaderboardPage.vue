@@ -44,7 +44,15 @@
           {{ entry.rank }}
         </div>
         <div class="quiz-leaderboard__cell quiz-leaderboard__cell_username">
-          {{ entry.username }}
+          <div class="quiz-leaderboard__user">
+            <Icon
+              v-if="isPaid(entry.subscriptionTier)"
+              :size="16"
+              :class="['quiz-leaderboard__crown', { 'quiz-leaderboard__crown_premium': entry.subscriptionTier === 'premium' }]"
+              name="icon-crown"
+            />
+            <span>{{ entry.username }}</span>
+          </div>
         </div>
         <div class="quiz-leaderboard__cell">
           {{ entry.score }}/{{ entry.totalQuestions }} ({{ entry.percentage }}%)
@@ -67,6 +75,7 @@
 import { ref, onMounted } from 'vue'
 import { getQuizLeaderboard } from '@/shared/api/quiz'
 import type { QuizLeaderboardEntry, QuizResultCategory } from '@/shared/types/quiz'
+import { Icon } from '@/shared/ui'
 
 const loading = ref(true)
 const leaderboard = ref<QuizLeaderboardEntry[]>([])
@@ -95,6 +104,10 @@ function formatTime(seconds: number): string {
 
 function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString()
+}
+
+function isPaid(tier?: string) {
+  return tier && tier !== 'free'
 }
 </script>
 
