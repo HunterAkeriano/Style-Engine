@@ -120,7 +120,7 @@ import {
   type SavedItem,
   type SaveCategory
 } from '@/shared/api/saves'
-import { normalizePayload, stableStringify, formatGradient, formatBoxShadow, formatClipPath, copyToClipboard } from '@/shared/lib'
+import { normalizePayload, stableStringify, formatGradient, formatBoxShadow, formatClipPath, copyToClipboard, buildGradientValue } from '@/shared/lib'
 import { createFaviconZip, downloadBlob } from '@/shared/lib/favicon'
 import type { GeneratedFavicon } from '@/shared/types/favicon'
 
@@ -236,20 +236,16 @@ function toLocaleDate(value: string) {
 function getPreviewStyle(item: SavedItem) {
   const payload = item.payload as Record<string, any>
   if (props.category === 'gradient') {
-    const colors = Array.isArray(payload.colors)
-      ? payload.colors
-      : []
-    const stops = colors
-      .map((c: any) => `${c.color ?? '#000'} ${c.position ?? 0}%`)
-      .join(', ')
+    const colors = Array.isArray(payload.colors) ? payload.colors : []
     const angle = typeof payload.angle === 'number' ? payload.angle : 90
-    switch (payload.type) {
-      case 'radial':
-        return { background: `radial-gradient(circle, ${stops})` }
-      case 'conic':
-        return { background: `conic-gradient(from ${angle}deg, ${stops})` }
-      default:
-        return { background: `linear-gradient(${angle}deg, ${stops})` }
+    const type = typeof payload.type === 'string' ? payload.type : 'linear'
+    return {
+      background: buildGradientValue(type, angle, colors, {
+        shape: payload.shape,
+        extent: payload.extent,
+        center: payload.center,
+        repeating: payload.repeating
+      })
     }
   }
   if (props.category === 'shadow') {
@@ -310,7 +306,12 @@ function generateCSS(item: SavedItem): string {
     const colors = Array.isArray(payload.colors) ? payload.colors : []
     const angle = typeof payload.angle === 'number' ? payload.angle : 90
     const type = payload.type || 'linear'
-    return formatGradient(type, angle, colors, 'css')
+    return formatGradient(type, angle, colors, 'css', {
+      shape: payload.shape,
+      extent: payload.extent,
+      center: payload.center,
+      repeating: payload.repeating
+    })
   }
 
   if (props.category === 'shadow') {

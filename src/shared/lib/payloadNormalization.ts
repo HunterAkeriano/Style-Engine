@@ -28,18 +28,37 @@ const normalizeNumber = (value: unknown) => {
   return 0
 }
 
+const clampPercent = (value: number) => Math.min(100, Math.max(0, value))
+
 function normalizeGradientPayload(payload: Record<string, unknown>) {
   const colors = Array.isArray(payload.colors) ? payload.colors : []
   const normalizedColors: NormalizedColor[] = colors
     .map((color: any) => ({
       color: normalizeColorString(color?.color),
-      position: normalizeNumber(color?.position)
+      position: clampPercent(normalizeNumber(color?.position))
     }))
     .sort((a, b) => a.position - b.position)
+
+  const extentCandidates = ['closest-side', 'farthest-side', 'closest-corner', 'farthest-corner']
+  const extent = extentCandidates.includes(payload.extent as string)
+    ? (payload.extent as string)
+    : 'farthest-corner'
+  const angleValue = payload.angle === undefined ? 90 : normalizeNumber(payload.angle)
+  const angle = Math.min(360, Math.max(0, angleValue))
+  const centerPayload = (payload.center ?? {}) as Record<string, unknown>
+  const center = {
+    x: clampPercent(normalizeNumber(centerPayload.x ?? 50)),
+    y: clampPercent(normalizeNumber(centerPayload.y ?? 50))
+  }
+
   return {
     type: typeof payload.type === 'string' ? payload.type : 'linear',
-    angle: normalizeNumber(payload.angle),
-    colors: normalizedColors
+    angle,
+    colors: normalizedColors,
+    shape: payload.shape === 'ellipse' ? 'ellipse' : 'circle',
+    extent,
+    center,
+    repeating: Boolean(payload.repeating)
   }
 }
 

@@ -1,4 +1,4 @@
-export default {
+﻿export default {
   NAV: {
     GRADIENTS: 'Градієнти',
     SHADOWS: 'Тіні',
@@ -100,13 +100,28 @@ export default {
   },
   GRADIENT: {
     TITLE: 'Генератор градієнтів',
-    SUBTITLE: 'Створюйте красиві CSS‑градієнти з живим превʼю',
+    SUBTITLE: 'Створюй плавні CSS-градієнти з живим превʼю',
     BACK_TO_HOME: 'Повернутися на головну',
     TYPE: 'Тип градієнта',
     TYPE_LINEAR: 'Лінійний',
     TYPE_RADIAL: 'Радіальний',
-    TYPE_CONIC: 'Конічний',
+    TYPE_CONIC: 'Конусний',
     ANGLE: 'Кут',
+    ANGLE_PRESETS: 'Швидкі кути',
+    REPEATING: 'Повторення градієнта',
+    SHAPE: 'Форма',
+    SHAPE_CIRCLE: 'Коло',
+    SHAPE_ELLIPSE: 'Еліпс',
+    EXTENT: 'Охоплення',
+    EXTENT_CLOSEST_SIDE: 'Ближній бік',
+    EXTENT_FARTHEST_SIDE: 'Дальній бік',
+    EXTENT_CLOSEST_CORNER: 'Ближній кут',
+    EXTENT_FARTHEST_CORNER: 'Дальній кут',
+    CENTER_X: 'Горизонтальний центр',
+    CENTER_Y: 'Вертикальний центр',
+    CENTER_HINT: 'Перемісти фокус, щоб задати, де починається градієнт.',
+    REVERSE_COLORS: 'Розвернути стопи',
+    DISTRIBUTE_COLORS: 'Рівні відступи',
     COLORS: 'Кольори',
     CUSTOM_GRADIENT: 'Кастомний градієнт',
     ADD_COLOR: 'Додати колір',
@@ -117,7 +132,7 @@ export default {
     SAVE: 'Зберегти',
     PRESETS_TAG: 'Фірмова підбірка',
     PRESETS_TITLE: 'Готові градієнти',
-    PRESETS_SUBTITLE: 'Підгледьте ці кіношні мікси та одразу додавайте в генератор'
+    PRESETS_SUBTITLE: 'Підхоплюй ці мікси й одразу змінюй під свої задачі'
   },
   SHADOW: {
     EYEBROW: 'Лабораторія тіней',

@@ -5,12 +5,22 @@
         :type="type"
         :angle="angle"
         :colors="colors"
+        :shape="shape"
+        :extent="extent"
+        :center="center"
+        :repeating="isRepeating"
         @update:type="setType"
         @update:angle="setAngle"
         @add-color="addColor"
         @remove-color="removeColor"
         @update-color="updateColor"
         @update-color-position="updateColorPosition"
+        @update:shape="setShape"
+        @update:extent="setExtent"
+        @update:center="setCenter"
+        @update:repeating="setRepeating"
+        @reverse-colors="reverseColors"
+        @distribute-colors="distributeColors"
       />
     </div>
 
@@ -125,8 +135,15 @@ import { useI18n } from 'vue-i18n'
 import { useToast } from '@/shared/lib/toast'
 import { useRoute, useRouter } from 'vue-router'
 import type { GradientPreset } from './gradient-presets'
-import type { GradientType, GradientColor } from '@/shared/types'
-import { formatGradient, type CSSFormat, copyToClipboard, smoothScrollToTop } from '@/shared/lib'
+import type { GradientCenter, GradientColor, GradientExtent, GradientType } from '@/shared/types'
+import {
+  buildGradientValue,
+  formatGradient,
+  type CSSFormat,
+  copyToClipboard,
+  smoothScrollToTop,
+  normalizePayload
+} from '@/shared/lib'
 import { GradientPreview, GradientControls, GradientPresets } from '@/features/gradient'
 import { GRADIENT_PRESETS } from './gradient-presets'
 import {
@@ -150,6 +167,10 @@ const colors = ref<GradientColor[]>([
   { id: '1', color: '#667eea', position: 0 },
   { id: '2', color: '#764ba2', position: 100 }
 ])
+const shape = ref<'circle' | 'ellipse'>('circle')
+const extent = ref<GradientExtent>('farthest-corner')
+const center = ref<GradientCenter>({ x: 50, y: 50 })
+const isRepeating = ref(false)
 let colorIdCounter = colors.value.length
 const communityPresets = ref<GradientPreset[]>([])
 const gradientPresets = GRADIENT_PRESETS
@@ -212,34 +233,34 @@ const isExportAllowed = computed(() => {
 const currentSavePreviewStyle = computed(() => {
   const context = saveContext.value
   if (!context) return {}
-  const payload = context.payload as { type?: GradientType; angle?: number; colors?: GradientColor[] }
-  const colors = Array.isArray(payload.colors) ? payload.colors : []
+  const payload = context.payload as {
+    type?: GradientType
+    angle?: number
+    colors?: GradientColor[]
+    shape?: 'circle' | 'ellipse'
+    extent?: GradientExtent
+    center?: GradientCenter
+    repeating?: boolean
+  }
+  const payloadColors = Array.isArray(payload.colors) ? payload.colors : []
   if (!payload.type) return {}
   return {
-    background: buildGradient(payload.type, payload.angle ?? 90, colors)
+    background: buildGradient(payload.type, payload.angle ?? 90, payloadColors, {
+      shape: payload.shape,
+      extent: payload.extent,
+      center: payload.center,
+      repeating: payload.repeating
+    })
   }
 })
 
 const gradientStyle = computed(() => {
-  let gradient = ''
-
-  switch (type.value) {
-    case 'linear':
-      gradient = `linear-gradient(${angle.value}deg, ${colors.value
-        .map(c => `${c.color} ${c.position}%`)
-        .join(', ')})`
-      break
-    case 'radial':
-      gradient = `radial-gradient(circle, ${colors.value
-        .map(c => `${c.color} ${c.position}%`)
-        .join(', ')})`
-      break
-    case 'conic':
-      gradient = `conic-gradient(from ${angle.value}deg, ${colors.value
-        .map(c => `${c.color} ${c.position}%`)
-        .join(', ')})`
-      break
-  }
+  const gradient = buildGradientValue(type.value, angle.value, colors.value, {
+    shape: shape.value,
+    extent: extent.value,
+    center: center.value,
+    repeating: isRepeating.value
+  })
 
   return { background: gradient }
 })
@@ -250,6 +271,22 @@ function setType(newType: GradientType) {
 
 function setAngle(newAngle: number) {
   angle.value = newAngle
+}
+
+function setShape(newShape: 'circle' | 'ellipse') {
+  shape.value = newShape
+}
+
+function setExtent(newExtent: GradientExtent) {
+  extent.value = newExtent
+}
+
+function setCenter(newCenter: GradientCenter) {
+  center.value = clampCenter(newCenter)
+}
+
+function setRepeating(value: boolean) {
+  isRepeating.value = value
 }
 
 function addColor() {
@@ -285,8 +322,37 @@ function updateColorPosition(id: string, position: number) {
   }
 }
 
+function reverseColors() {
+  const mirrored = [...colors.value].reverse().map(color => ({
+    ...color,
+    position: clampPercent(100 - color.position)
+  }))
+  colors.value = mirrored.sort((a, b) => a.position - b.position)
+}
+
+function distributeColors() {
+  if (colors.value.length < 2) return
+  const sorted = [...colors.value].sort((a, b) => a.position - b.position)
+  const step = 100 / Math.max(1, sorted.length - 1)
+  colors.value = sorted.map((color, index) => ({
+    ...color,
+    position: Math.round(index * step)
+  }))
+}
+
 function getCode(format: string | number): string {
-  return formatGradient(type.value, angle.value, colors.value, String(format) as CSSFormat)
+  return formatGradient(
+    type.value,
+    angle.value,
+    colors.value,
+    String(format) as CSSFormat,
+    {
+      shape: shape.value,
+      extent: extent.value,
+      center: center.value,
+      repeating: isRepeating.value
+    }
+  )
 }
 
 function applyPreset(preset: GradientPreset) {
@@ -295,29 +361,40 @@ function applyPreset(preset: GradientPreset) {
   smoothScrollToTop()
 }
 
-function buildGradient(type: GradientType, angle: number, colors: GradientColor[]) {
-  const colorStops = colors.map(c => `${c.color} ${c.position}%`).join(', ')
-  switch (type) {
-    case 'radial':
-      return `radial-gradient(circle, ${colorStops})`
-    case 'conic':
-      return `conic-gradient(from ${angle}deg, ${colorStops})`
-    default:
-      return `linear-gradient(${angle}deg, ${colorStops})`
-  }
-}
-
-function presetHash(preset: GradientPreset) {
-  return JSON.stringify({
-    type: preset.type,
-    angle: preset.angle,
-    colors: preset.colors
+function buildGradient(
+  type: GradientType,
+  angle: number,
+  gradientColors: GradientColor[],
+  options?: { shape?: 'circle' | 'ellipse'; extent?: GradientExtent; center?: GradientCenter; repeating?: boolean }
+) {
+  return buildGradientValue(type, angle, gradientColors, {
+    shape: options?.shape,
+    extent: options?.extent ? normalizeExtent(options.extent) : undefined,
+    center: options?.center,
+    repeating: options?.repeating
   })
 }
 
+function presetHash(preset: GradientPreset) {
+  const normalized = normalizePayload('gradient', {
+    type: preset.type,
+    angle: preset.angle,
+    colors: preset.colors,
+    shape: preset.shape ?? 'circle',
+    extent: preset.extent ?? 'farthest-corner',
+    center: preset.center ?? { x: 50, y: 50 },
+    repeating: Boolean(preset.repeating)
+  })
+  return JSON.stringify(normalized)
+}
+
 function setPresetState(preset: GradientPreset) {
-  type.value = preset.type
-  angle.value = preset.angle
+  type.value = normalizeGradientType(preset.type)
+  angle.value = Number.isFinite(preset.angle) ? preset.angle : 90
+  shape.value = preset.shape ?? 'circle'
+  extent.value = preset.extent ?? 'farthest-corner'
+  center.value = clampCenter(preset.center)
+  isRepeating.value = Boolean(preset.repeating)
 
   const sortedColors = [...preset.colors].sort((a, b) => a.position - b.position)
   colorIdCounter = sortedColors.length
@@ -332,7 +409,12 @@ function setPresetState(preset: GradientPreset) {
 }
 
 async function copyPreset(preset: GradientPreset) {
-  const code = formatGradient(preset.type, preset.angle, preset.colors, 'css')
+  const code = formatGradient(preset.type, preset.angle, preset.colors, 'css', {
+    shape: preset.shape,
+    extent: preset.extent,
+    center: clampCenter(preset.center),
+    repeating: preset.repeating
+  })
   const ok = await copyToClipboard(code)
   toast[ok ? 'success' : 'error'](ok ? t('COMMON.COPIED_TO_CLIPBOARD') : t('COMMON.COPY_FAILED'))
 }
@@ -354,12 +436,20 @@ async function handleSaveCurrentGradient() {
       name: t('GRADIENT.CUSTOM_GRADIENT'),
       type: type.value,
       angle: angle.value,
-      colors: currentColors
+      colors: currentColors,
+      shape: shape.value,
+      extent: extent.value,
+      center: center.value,
+      repeating: isRepeating.value
     } as GradientPreset,
     payload: {
       type: type.value,
       angle: angle.value,
-      colors: currentColors
+      colors: currentColors,
+      shape: shape.value,
+      extent: extent.value,
+      center: center.value,
+      repeating: isRepeating.value
     },
     defaultName: t('GRADIENT.CUSTOM_GRADIENT')
   }
@@ -378,7 +468,11 @@ async function handleSavePreset(preset: GradientPreset) {
     payload: {
       type: preset.type,
       angle: preset.angle,
-      colors: preset.colors
+      colors: preset.colors,
+      shape: preset.shape ?? 'circle',
+      extent: preset.extent ?? 'farthest-corner',
+      center: clampCenter(preset.center),
+      repeating: Boolean(preset.repeating)
     },
     defaultName: preset.name
   }
@@ -408,7 +502,7 @@ async function confirmSavePreset(name: string) {
   try {
     await createSave('gradient', finalName, context.payload)
     toast.success(t('COMMON.SAVE_SUCCESS', { entity: entityLabel.value }))
-    savedGradientHashes.value.add(JSON.stringify(context.payload))
+    savedGradientHashes.value.add(JSON.stringify(normalizePayload('gradient', context.payload)))
   } catch (error: any) {
     if (error?.status === 403) {
       proQuota.value = {
@@ -473,6 +567,29 @@ function getNextColorId() {
   return `${colorIdCounter}`
 }
 
+function clampPercent(value: number | undefined) {
+  if (!Number.isFinite(value)) return 50
+  return Math.min(100, Math.max(0, value))
+}
+
+function clampCenter(value?: GradientCenter | null): GradientCenter {
+  const base = value ?? { x: 50, y: 50 }
+  return {
+    x: clampPercent(base.x),
+    y: clampPercent(base.y)
+  }
+}
+
+const allowedGradientTypes: GradientType[] = ['linear', 'radial', 'conic']
+function normalizeGradientType(value: unknown): GradientType {
+  return allowedGradientTypes.includes(value as GradientType) ? (value as GradientType) : 'linear'
+}
+
+function normalizeExtent(value: unknown): GradientExtent {
+  const extents: GradientExtent[] = ['closest-side', 'farthest-side', 'closest-corner', 'farthest-corner']
+  return extents.includes(value as GradientExtent) ? (value as GradientExtent) : 'farthest-corner'
+}
+
 function updatePresetQuery(presetId: string | null) {
   const nextQuery = { ...route.query }
 
@@ -503,32 +620,26 @@ function normalizePresetId(value: unknown): string | null {
 }
 
 function mapCommunityPreset(item: SavedItem): GradientPreset | null {
-  const payload: any = item.payload || {}
-  if (!payload || typeof payload !== 'object') return null
-  if (!payload.type || !payload.colors) return null
-
-  const colors = Array.isArray(payload.colors)
-    ? payload.colors
-        .map((color: any, index: number) => {
-          if (!color?.color) return null
-          return {
-            id: color.id ?? `${index + 1}`,
-            color: color.color,
-            position: Number.isFinite(color.position) ? Number(color.position) : index * (100 / Math.max(1, payload.colors.length - 1))
-          } as GradientColor
-        })
-        .filter(Boolean)
+  const normalized = normalizePayload('gradient', item.payload ?? {})
+  const colors = Array.isArray(normalized.colors)
+    ? (normalized.colors as GradientColor[]).map((color, index) => ({
+        id: color.id ?? `${index + 1}`,
+        color: color.color,
+        position: color.position
+      }))
     : []
-
   if (!colors.length) return null
 
   return {
     id: `community-${item.id}`,
     name: item.name,
-    type: payload.type as GradientType,
-    angle: Number.isFinite(payload.angle) ? Number(payload.angle) : 90,
-    colors
-    ,
+    type: normalizeGradientType((normalized as any).type),
+    angle: Number.isFinite(normalized.angle as number) ? Number(normalized.angle) : 90,
+    colors,
+    shape: normalized.shape === 'ellipse' ? 'ellipse' : 'circle',
+    extent: normalizeExtent((normalized as any).extent),
+    center: clampCenter((normalized as any).center as GradientCenter),
+    repeating: Boolean((normalized as any).repeating),
     owner: buildCreatorProfile(item)
   }
 }
@@ -553,7 +664,9 @@ async function loadSavedGradients() {
 
   try {
     const saved = await listSaves('gradient')
-    savedGradientHashes.value = new Set(saved.map(item => JSON.stringify(item.payload)))
+    savedGradientHashes.value = new Set(
+      saved.map(item => JSON.stringify(normalizePayload('gradient', item.payload ?? {})))
+    )
   } catch (error) {
     console.warn('Failed to load saved gradients', error)
   }

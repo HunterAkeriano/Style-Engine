@@ -1,4 +1,10 @@
-import type { GradientColor, GradientType, CreatorProfile } from '@/shared/types'
+import type {
+  CreatorProfile,
+  GradientCenter,
+  GradientColor,
+  GradientExtent,
+  GradientType
+} from '@/shared/types'
 
 export interface GradientPreset {
   id: string
@@ -6,6 +12,10 @@ export interface GradientPreset {
   type: GradientType
   angle: number
   colors: GradientColor[]
+  shape?: 'circle' | 'ellipse'
+  extent?: GradientExtent
+  center?: GradientCenter
+  repeating?: boolean
   owner?: CreatorProfile
 }
 
@@ -49,6 +59,7 @@ export const GRADIENT_PRESETS: GradientPreset[] = [
     name: 'Hologram Flow',
     type: 'conic',
     angle: 230,
+    center: { x: 50, y: 45 },
     colors: [
       { id: 'c1', color: '#4158d0', position: 0 },
       { id: 'c2', color: '#c850c0', position: 35 },
@@ -61,6 +72,9 @@ export const GRADIENT_PRESETS: GradientPreset[] = [
     name: 'Mojito Lime',
     type: 'radial',
     angle: 90,
+    shape: 'ellipse',
+    extent: 'closest-side',
+    center: { x: 50, y: 45 },
     colors: [
       { id: 'c1', color: '#0fd850', position: 0 },
       { id: 'c2', color: '#f9f047', position: 58 },
@@ -131,6 +145,9 @@ export const GRADIENT_PRESETS: GradientPreset[] = [
     name: 'Velvet Night',
     type: 'radial',
     angle: 90,
+    shape: 'ellipse',
+    extent: 'farthest-corner',
+    center: { x: 48, y: 52 },
     colors: [
       { id: 'c1', color: '#141e30', position: 0 },
       { id: 'c2', color: '#243b55', position: 45 },
@@ -154,6 +171,7 @@ export const GRADIENT_PRESETS: GradientPreset[] = [
     name: 'Tropical Punch',
     type: 'conic',
     angle: 260,
+    center: { x: 52, y: 48 },
     colors: [
       { id: 'c1', color: '#f05454', position: 0 },
       { id: 'c2', color: '#ffac81', position: 25 },
@@ -365,6 +383,8 @@ export const GRADIENT_PRESETS: GradientPreset[] = [
     name: 'Line Night',
     type: 'radial',
     angle: 90,
+    extent: 'farthest-corner',
+    center: { x: 50, y: 42 },
     colors: [
       { id: 'c1', color: '#09203f', position: 0 },
       { id: 'c2', color: '#537895', position: 45 },

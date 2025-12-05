@@ -67,7 +67,7 @@
 import { toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { GradientPreset } from '@/processes/gradient/gradient-generation/gradient-presets'
-import type { GradientType } from '@/shared/types'
+import { buildGradientValue } from '@/shared/lib'
 import { Button } from '@/shared/ui'
 import {
   getCreatorAvatarStyle as computeCreatorAvatarStyle,
@@ -95,25 +95,14 @@ const isPresetSaved = (preset: GradientPreset) => (isSaved?.value && isSaved.val
 
 function getStyle(preset: GradientPreset) {
   return {
-    background: buildGradient(preset.type, preset.angle, preset.colors)
+    background: buildGradientValue(preset.type, preset.angle, preset.colors, {
+      shape: preset.shape,
+      extent: preset.extent,
+      center: preset.center,
+      repeating: preset.repeating
+    })
   }
 }
-
-function buildGradient(type: GradientType, angle: number, colors: Array<{ color: string; position: number }>) {
-  const colorStops = colors.map(c => `${c.color} ${c.position}%`).join(', ')
-
-  switch (type) {
-    case 'linear':
-      return `linear-gradient(${angle}deg, ${colorStops})`
-    case 'radial':
-      return `radial-gradient(circle, ${colorStops})`
-    case 'conic':
-      return `conic-gradient(from ${angle}deg, ${colorStops})`
-    default:
-      return `linear-gradient(90deg, ${colorStops})`
-  }
-}
-
 </script>
 
 <style lang="scss" scoped src="./gradient-presets.scss"></style>

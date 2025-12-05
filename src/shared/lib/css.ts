@@ -1,29 +1,55 @@
 export type CSSFormat = 'css' | 'scss' | 'sass' | 'stylus' | 'tailwind' | 'inline'
 
+export type GradientExtent = 'closest-side' | 'farthest-side' | 'closest-corner' | 'farthest-corner'
+
+export interface GradientCenter {
+  x: number
+  y: number
+}
+
+export interface GradientOptions {
+  shape?: 'circle' | 'ellipse'
+  extent?: GradientExtent
+  center?: GradientCenter
+  repeating?: boolean
+}
+
+const clampPercent = (value: unknown, fallback = 50) => {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return fallback
+  return Math.min(100, Math.max(0, value))
+}
+
+export function buildGradientValue(
+  type: 'linear' | 'radial' | 'conic',
+  angle: number,
+  colors: Array<{ color: string; position: number }>,
+  options: GradientOptions = {}
+): string {
+  const colorStops = colors.map(c => `${c.color} ${c.position}%`).join(', ')
+  const center = options.center
+    ? `${clampPercent(options.center.x)}% ${clampPercent(options.center.y)}%`
+    : '50% 50%'
+  const isRepeating = options.repeating ?? false
+  const prefix = isRepeating ? 'repeating-' : ''
+
+  switch (type) {
+    case 'radial':
+      return `${prefix}radial-gradient(${options.shape ?? 'circle'} ${options.extent ?? 'farthest-corner'} at ${center}, ${colorStops})`
+    case 'conic':
+      return `${prefix}conic-gradient(from ${angle}deg at ${center}, ${colorStops})`
+    default:
+      return `${prefix}linear-gradient(${angle}deg, ${colorStops})`
+  }
+}
+
 export function formatGradient(
   type: 'linear' | 'radial' | 'conic',
   angle: number,
   colors: Array<{ color: string; position: number }>,
-  format: CSSFormat = 'css'
+  format: CSSFormat = 'css',
+  options: GradientOptions = {}
 ): string {
-  const colorStops = colors
-    .map(c => `${c.color} ${c.position}%`)
-    .join(', ')
-
-  let gradient = ''
-
-  switch (type) {
-    case 'linear':
-      gradient = `linear-gradient(${angle}deg, ${colorStops})`
-      break
-    case 'radial':
-      gradient = `radial-gradient(circle, ${colorStops})`
-      break
-    case 'conic':
-      gradient = `conic-gradient(from ${angle}deg, ${colorStops})`
-      break
-  }
-
+  const gradient = buildGradientValue(type, angle, colors, options)
   return formatCSSProperty('background', gradient, format)
 }
 

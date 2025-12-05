@@ -14,10 +14,37 @@
     gap: $space-sm;
   }
 
+  &__row {
+    gap: $space-md;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: $space-md;
+    align-items: end;
+  }
+
+  &__stack {
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+  }
+
   &__label {
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
     color: $color-text-primary;
+
+    &_muted {
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
   }
 
   &__range {
@@ -55,6 +82,23 @@
         transform: scale(1.2);
       }
     }
+  }
+
+  &__angle-presets {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-xs;
+  }
+
+  &__chip {
+    min-width: 52px;
+    justify-content: center;
   }
 
   &__colors {
@@ -109,5 +153,57 @@
   &__remove {
     align-self: stretch;
     padding: $space-sm;
+  }
+
+  &__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-sm;
+    padding: $space-xs $space-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-lg;
+    background: $color-bg-primary;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+
+    &:hover {
+      border-color: $color-border-hover;
+      box-shadow: 0 10px 20px $color-text-primary-alpha-05;
+    }
+  }
+
+  &__toggle-input {
+    accent-color: $color-primary;
+  }
+
+  &__toggle-label {
+    font-size: $font-size-sm;
+    color: $color-text-primary;
+  }
+
+  &__label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-sm;
+    flex-wrap: wrap;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+  }
+
+  &__hint {
+    grid-column: span 2;
+    margin: 0;
+    font-size: $font-size-xs;
+    color: $color-text-secondary;
+
+    @media (max-width: 768px) {
+      grid-column: span 1;
+    }
   }
 }
