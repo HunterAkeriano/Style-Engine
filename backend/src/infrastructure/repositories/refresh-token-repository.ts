@@ -1,4 +1,4 @@
-import { Op, type Attributes, type InferCreationAttributes } from 'sequelize'
+import { Op, type InferCreationAttributes } from 'sequelize'
 import type { Models, RefreshToken } from '../../models'
 
 export class RefreshTokenRepository {

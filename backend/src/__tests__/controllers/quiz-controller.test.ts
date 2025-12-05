@@ -846,11 +846,6 @@ describe('QuizController', () => {
     });
 
     it('should handle XSS in username', async () => {
-      const xssSubmission = {
-        ...validQuestion,
-        username: '<script>alert("XSS")</script>'
-      };
-
       mockQuizService.submitTest = jest.fn().mockResolvedValue({ score: 100 });
 
       const response = await supertest(app)

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { normalizePayload, stableStringify } from '../../utils/payloadNormalization';
 
 describe('payloadNormalization', () => {
@@ -35,9 +34,9 @@ describe('payloadNormalization', () => {
           ]
         };
 
-        const result = normalizePayload('gradient', payload);
+        const result = normalizePayload('gradient', payload) as any;
 
-        expect(result.colors).toEqual([
+        expect((result as any).colors).toEqual([
           { color: '#ff0000', position: 0 },
           { color: '#0000ff', position: 50 },
           { color: '#00ff00', position: 100 }
@@ -67,7 +66,7 @@ describe('payloadNormalization', () => {
           colors: [{ color: '#FFFFFF', position: 0 }]
         };
         const result = normalizePayload('gradient', payload);
-        expect(result.colors[0].color).toBe('#ffffff');
+        expect((result as any).colors[0].color).toBe('#ffffff');
       });
 
       it('should trim color strings', () => {
@@ -75,19 +74,19 @@ describe('payloadNormalization', () => {
           colors: [{ color: '  #FF0000  ', position: 0 }]
         };
         const result = normalizePayload('gradient', payload);
-        expect(result.colors[0].color).toBe('#ff0000');
+        expect((result as any).colors[0].color).toBe('#ff0000');
       });
 
       it('should handle empty colors array', () => {
         const payload = { colors: [] };
         const result = normalizePayload('gradient', payload);
-        expect(result.colors).toEqual([]);
+        expect((result as any).colors).toEqual([]);
       });
 
       it('should handle missing colors field', () => {
         const payload = {};
         const result = normalizePayload('gradient', payload);
-        expect(result.colors).toEqual([]);
+        expect((result as any).colors).toEqual([]);
       });
 
       it('should handle invalid color objects', () => {
@@ -95,7 +94,7 @@ describe('payloadNormalization', () => {
           colors: [{ invalid: 'data' }, null, undefined]
         };
         const result = normalizePayload('gradient', payload);
-        expect(result.colors[0]).toEqual({ color: '', position: 0 });
+        expect((result as any).colors[0]).toEqual({ color: '', position: 0 });
       });
     });
 
@@ -145,10 +144,10 @@ describe('payloadNormalization', () => {
 
         const result = normalizePayload('shadow', payload);
 
-        expect(result.layers[0].x).toBe(10);
-        expect(result.layers[0].y).toBe(20);
-        expect(result.layers[0].blur).toBe(30);
-        expect(result.layers[0].spread).toBe(5);
+        expect((result as any).layers[0].x).toBe(10);
+        expect((result as any).layers[0].y).toBe(20);
+        expect((result as any).layers[0].blur).toBe(30);
+        expect((result as any).layers[0].spread).toBe(5);
       });
 
       it('should convert inset to boolean', () => {
@@ -156,19 +155,19 @@ describe('payloadNormalization', () => {
           layers: [{ inset: true, x: 0, y: 0, blur: 0, spread: 0, color: '#000' }]
         };
         const result1 = normalizePayload('shadow', payload1);
-        expect(result1.layers[0].inset).toBe(true);
+        expect((result1 as any).layers[0].inset).toBe(true);
 
         const payload2 = {
           layers: [{ inset: false, x: 0, y: 0, blur: 0, spread: 0, color: '#000' }]
         };
         const result2 = normalizePayload('shadow', payload2);
-        expect(result2.layers[0].inset).toBe(false);
+        expect((result2 as any).layers[0].inset).toBe(false);
 
         const payload3 = {
           layers: [{ inset: 1, x: 0, y: 0, blur: 0, spread: 0, color: '#000' }]
         };
         const result3 = normalizePayload('shadow', payload3);
-        expect(result3.layers[0].inset).toBe(true);
+        expect((result3 as any).layers[0].inset).toBe(true);
       });
 
       it('should default color to #000 if empty', () => {
@@ -178,7 +177,7 @@ describe('payloadNormalization', () => {
 
         const result = normalizePayload('shadow', payload);
 
-        expect(result.layers[0].color).toBe('#000');
+        expect((result as any).layers[0].color).toBe('#000');
       });
 
       it('should normalize color to lowercase', () => {
@@ -188,19 +187,19 @@ describe('payloadNormalization', () => {
 
         const result = normalizePayload('shadow', payload);
 
-        expect(result.layers[0].color).toBe('#ff0000');
+        expect((result as any).layers[0].color).toBe('#ff0000');
       });
 
       it('should handle empty layers array', () => {
         const payload = { layers: [] };
         const result = normalizePayload('shadow', payload);
-        expect(result.layers).toEqual([]);
+        expect((result as any).layers).toEqual([]);
       });
 
       it('should handle missing layers field', () => {
         const payload = {};
         const result = normalizePayload('shadow', payload);
-        expect(result.layers).toEqual([]);
+        expect((result as any).layers).toEqual([]);
       });
 
       it('should sort layers consistently', () => {
@@ -213,7 +212,7 @@ describe('payloadNormalization', () => {
 
         const result = normalizePayload('shadow', payload);
 
-        expect(result.layers.length).toBe(2);
+        expect((result as any).layers.length).toBe(2);
       });
 
       it('should handle invalid number values', () => {
@@ -230,10 +229,10 @@ describe('payloadNormalization', () => {
 
         const result = normalizePayload('shadow', payload);
 
-        expect(result.layers[0].x).toBe(0);
-        expect(result.layers[0].y).toBe(0);
-        expect(result.layers[0].blur).toBe(0);
-        expect(result.layers[0].spread).toBe(0);
+        expect((result as any).layers[0].x).toBe(0);
+        expect((result as any).layers[0].y).toBe(0);
+        expect((result as any).layers[0].blur).toBe(0);
+        expect((result as any).layers[0].spread).toBe(0);
       });
     });
 
@@ -307,7 +306,7 @@ describe('payloadNormalization', () => {
 
         const result = normalizePayload('clip-path', payload);
 
-        expect(result.layers[0]).toEqual({
+        expect((result as any).layers[0]).toEqual({
           id: 'layer1',
           type: 'polygon',
           visible: true,
@@ -334,9 +333,9 @@ describe('payloadNormalization', () => {
 
         const result = normalizePayload('clip-path', payload);
 
-        expect(result.layers[0].points[0].id).toBe('p1');
-        expect(result.layers[0].points[1].id).toBe('p2');
-        expect(result.layers[0].points[2].id).toBe('p3');
+        expect((result as any).layers[0].points[0].id).toBe('p1');
+        expect((result as any).layers[0].points[1].id).toBe('p2');
+        expect((result as any).layers[0].points[2].id).toBe('p3');
       });
 
       it('should normalize circle layer', () => {
@@ -353,7 +352,7 @@ describe('payloadNormalization', () => {
 
         const result = normalizePayload('clip-path', payload);
 
-        expect(result.layers[0]).toEqual({
+        expect((result as any).layers[0]).toEqual({
           id: 'circle1',
           type: 'circle',
           visible: true,
@@ -376,7 +375,7 @@ describe('payloadNormalization', () => {
 
         const result = normalizePayload('clip-path', payload);
 
-        expect(result.layers[0]).toEqual({
+        expect((result as any).layers[0]).toEqual({
           id: 'ellipse1',
           type: 'ellipse',
           visible: true,
@@ -405,7 +404,7 @@ describe('payloadNormalization', () => {
 
         const result = normalizePayload('clip-path', payload);
 
-        expect(result.layers[0]).toEqual({
+        expect((result as any).layers[0]).toEqual({
           id: 'inset1',
           type: 'inset',
           visible: true,
@@ -426,7 +425,7 @@ describe('payloadNormalization', () => {
 
         const result = normalizePayload('clip-path', payload);
 
-        expect(result.layers[0].type).toBe('polygon');
+        expect((result as any).layers[0].type).toBe('polygon');
       });
 
       it('should convert visible to boolean', () => {
@@ -440,9 +439,9 @@ describe('payloadNormalization', () => {
 
         const result = normalizePayload('clip-path', payload);
 
-        expect(result.layers[0].visible).toBe(true);
-        expect(result.layers[1].visible).toBe(false);
-        expect(result.layers[2].visible).toBe(true);
+        expect((result as any).layers[0].visible).toBe(true);
+        expect((result as any).layers[1].visible).toBe(false);
+        expect((result as any).layers[2].visible).toBe(true);
       });
 
       it('should sort layers by id', () => {
@@ -456,21 +455,21 @@ describe('payloadNormalization', () => {
 
         const result = normalizePayload('clip-path', payload);
 
-        expect(result.layers[0].id).toBe('layer1');
-        expect(result.layers[1].id).toBe('layer2');
-        expect(result.layers[2].id).toBe('layer3');
+        expect((result as any).layers[0].id).toBe('layer1');
+        expect((result as any).layers[1].id).toBe('layer2');
+        expect((result as any).layers[2].id).toBe('layer3');
       });
 
       it('should handle empty layers array', () => {
         const payload = { layers: [] };
         const result = normalizePayload('clip-path', payload);
-        expect(result.layers).toEqual([]);
+        expect((result as any).layers).toEqual([]);
       });
 
       it('should handle missing layers field', () => {
         const payload = {};
         const result = normalizePayload('clip-path', payload);
-        expect(result.layers).toEqual([]);
+        expect((result as any).layers).toEqual([]);
       });
 
       it('should handle invalid point values', () => {
@@ -487,8 +486,8 @@ describe('payloadNormalization', () => {
 
         const result = normalizePayload('clip-path', payload);
 
-        expect(result.layers[0].points[0].x).toBe(0);
-        expect(result.layers[0].points[0].y).toBe(0);
+        expect((result as any).layers[0].points[0].x).toBe(0);
+        expect((result as any).layers[0].points[0].y).toBe(0);
       });
     });
 

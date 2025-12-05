@@ -107,10 +107,6 @@ describe('PasswordResetRepository', () => {
     });
 
     it('should return null if token is expired', async () => {
-      const expiredReset = {
-        ...mockPasswordReset,
-        expiresAt: new Date(Date.now() - 3600000)
-      };
       mockPasswordResetModel.findOne.mockResolvedValue(null);
 
       const result = await passwordResetRepository.findValid('hashed-token', new Date());
@@ -119,10 +115,6 @@ describe('PasswordResetRepository', () => {
     });
 
     it('should return null if token is already used', async () => {
-      const usedReset = {
-        ...mockPasswordReset,
-        used: true
-      };
       mockPasswordResetModel.findOne.mockResolvedValue(null);
 
       const result = await passwordResetRepository.findValid('hashed-token', new Date());

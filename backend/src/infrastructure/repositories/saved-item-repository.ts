@@ -5,8 +5,7 @@ import type {
   SavedClipPath,
   SavedFavicon,
   SavedGradient,
-  SavedShadow,
-  User
+  SavedShadow
 } from '../../models'
 import type { Category } from '../../domain/saves/types'
 

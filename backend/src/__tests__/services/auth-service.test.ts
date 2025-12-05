@@ -93,7 +93,7 @@ describe('AuthService', () => {
     } as any);
 
     // Setup user mock - make sure get() returns the user data
-    mockUser.get = jest.fn((options?: { plain: boolean }) => ({
+    mockUser.get = jest.fn(() => ({
       id: mockUser.id,
       email: mockUser.email,
       passwordHash: mockUser.passwordHash,
@@ -122,7 +122,7 @@ describe('AuthService', () => {
       const adminUser = {
         ...mockUser,
         email: 'admin@example.com',
-        get: jest.fn((options?: { plain: boolean }) => ({
+        get: jest.fn(() => ({
           id: mockUser.id,
           email: 'admin@example.com',
           passwordHash: mockUser.passwordHash,

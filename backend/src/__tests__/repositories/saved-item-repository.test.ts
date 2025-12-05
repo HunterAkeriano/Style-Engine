@@ -1,10 +1,9 @@
 import { SavedItemRepository } from '../../infrastructure/repositories/saved-item-repository';
-import type { Models } from '../../models';
 import { Op, col, fn, literal, where } from 'sequelize';
 
 describe('SavedItemRepository', () => {
   let savedItemRepository: SavedItemRepository;
-  let mockModels: jest.Mocked<Models>;
+  let mockModels: any;
   let mockEnv: { SUPER_ADMIN_EMAIL: string };
 
   const mockUser = {
@@ -30,12 +29,12 @@ describe('SavedItemRepository', () => {
       SUPER_ADMIN_EMAIL: 'admin@example.com'
     };
 
-    const createMockModel = (): any => ({
-      count: jest.fn(),
-      findAll: jest.fn(),
-      create: jest.fn(),
-      findOne: jest.fn(),
-      destroy: jest.fn()
+    const createMockModel = () => ({
+      count: jest.fn() as jest.MockedFunction<any>,
+      findAll: jest.fn() as jest.MockedFunction<any>,
+      create: jest.fn() as jest.MockedFunction<any>,
+      findOne: jest.fn() as jest.MockedFunction<any>,
+      destroy: jest.fn() as jest.MockedFunction<any>
     });
 
     mockModels = {
@@ -330,7 +329,7 @@ describe('SavedItemRepository', () => {
       const payload = { userId: 'user-123', data: { x: 10, y: 10 }, status: 'pending' };
       mockModels.SavedShadow.create.mockResolvedValue(payload);
 
-      const result = await savedItemRepository.create('shadow', payload);
+      await savedItemRepository.create('shadow', payload);
 
       expect(mockModels.SavedShadow.create).toHaveBeenCalledWith(payload);
     });
@@ -339,7 +338,7 @@ describe('SavedItemRepository', () => {
       const payload = { userId: 'user-123', data: { duration: 1000 }, status: 'pending' };
       mockModels.SavedAnimation.create.mockResolvedValue(payload);
 
-      const result = await savedItemRepository.create('animation', payload);
+      await savedItemRepository.create('animation', payload);
 
       expect(mockModels.SavedAnimation.create).toHaveBeenCalledWith(payload);
     });
@@ -348,7 +347,7 @@ describe('SavedItemRepository', () => {
       const payload = { userId: 'user-123', data: { path: 'M0 0' }, status: 'pending' };
       mockModels.SavedClipPath.create.mockResolvedValue(payload);
 
-      const result = await savedItemRepository.create('clip-path', payload);
+      await savedItemRepository.create('clip-path', payload);
 
       expect(mockModels.SavedClipPath.create).toHaveBeenCalledWith(payload);
     });
@@ -357,7 +356,7 @@ describe('SavedItemRepository', () => {
       const payload = { userId: 'user-123', data: { size: 32 }, status: 'pending' };
       mockModels.SavedFavicon.create.mockResolvedValue(payload);
 
-      const result = await savedItemRepository.create('favicon', payload);
+      await savedItemRepository.create('favicon', payload);
 
       expect(mockModels.SavedFavicon.create).toHaveBeenCalledWith(payload);
     });
@@ -378,7 +377,7 @@ describe('SavedItemRepository', () => {
     it('should find one item by multiple criteria', async () => {
       mockModels.SavedShadow.findOne.mockResolvedValue({ id: 'shadow-123', userId: 'user-123' });
 
-      const result = await savedItemRepository.findOne('shadow', {
+      await savedItemRepository.findOne('shadow', {
         id: 'shadow-123',
         userId: 'user-123'
       });

@@ -6,7 +6,7 @@ import { Container } from '../core/container'
 import type { Env } from '../config/env'
 import { setupSwagger } from '../swagger'
 import { ApiRouter } from '../interfaces/http/api-router'
-import { ApiError, isApiError } from '../core/errors/api-error'
+import { isApiError } from '../core/errors/api-error'
 
 export class HttpApplication {
   private readonly app: Express

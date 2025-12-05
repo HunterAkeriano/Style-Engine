@@ -38,6 +38,7 @@ export default {
   HOME: {
     TITLE: 'Style Engine',
     SUBTITLE: 'CSS‑лабораторія з градієнтами, тінями та анімаціями з живим превʼю і експортом коду',
+    QUIZ_BUTTON: 'CSS Квіз',
     GRADIENT_BUTTON: 'Генератор градієнтів',
     SHADOW_BUTTON: 'Генератор тіней',
     ANIMATION_BUTTON: 'Генератор анімацій',

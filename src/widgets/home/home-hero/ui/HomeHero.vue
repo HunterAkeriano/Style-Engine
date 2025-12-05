@@ -11,7 +11,11 @@
       </p>
 
       <div class="home-hero__actions">
-        <NavLink to="/gradient" class-name="home-hero__button home-hero__button_primary">
+        <NavLink to="/quiz" class-name="home-hero__button home-hero__button_primary">
+          {{ t('HOME.QUIZ_BUTTON') }}
+        </NavLink>
+
+        <NavLink to="/gradient" class-name="home-hero__button home-hero__button_secondary">
           {{ t('HOME.GRADIENT_BUTTON') }}
         </NavLink>
 

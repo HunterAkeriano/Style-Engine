@@ -38,6 +38,7 @@ export default {
   HOME: {
     TITLE: 'Style Engine',
     SUBTITLE: 'CSS gradient, shadow, and animation generator with live preview and code export',
+    QUIZ_BUTTON: 'CSS Quiz',
     GRADIENT_BUTTON: 'Gradient Generator',
     SHADOW_BUTTON: 'Shadow Generator',
     ANIMATION_BUTTON: 'Animation Generator',

@@ -3,7 +3,6 @@ import type { Env } from '../../config/env'
 import type { Models, QuizQuestion, QuizResult, User } from '../../models'
 import { toApiError } from '../../utils/apiError'
 
-type QuestionAttrs = ReturnType<QuizQuestion['get']>
 type ResultAttrs = ReturnType<QuizResult['get']>
 type UserAttrs = ReturnType<User['get']>
 
