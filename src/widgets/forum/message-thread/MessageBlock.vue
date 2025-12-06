@@ -234,14 +234,13 @@ function handleInlineCancel() {
 </script>
 
 <style scoped lang="scss">
-@import '@/app/styles/variables';
+@import "@/app/styles/variables";
 
 .forum-message {
-  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 14px;
-  background: color-var-alpha('color-bg-secondary', 0.65);
-  border-color: color-var-alpha('panel-border', 0.3);
+  background: color-var-alpha("color-bg-secondary", 0.65);
+  border-color: color-var-alpha("panel-border", 0.3);
   margin-bottom: 12px;
 
   &__header {
@@ -254,10 +253,10 @@ function handleInlineCancel() {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: color-var-alpha('color-bg-secondary', 0.5);
+    background: color-var-alpha("color-bg-secondary", 0.5);
     display: grid;
     place-items: center;
-    color: color-var('color-text-secondary');
+    color: color-var("color-text-secondary");
     font-weight: 700;
     overflow: hidden;
 
@@ -284,18 +283,18 @@ function handleInlineCancel() {
   &__role {
     padding: 4px 8px;
     border-radius: 999px;
-    background: color-var-alpha('color-warning', 0.15);
-    color: color-var('color-warning');
+    background: color-var-alpha("color-warning", 0.15);
+    color: color-var("color-warning");
     font-size: 12px;
   }
 
   &__timestamps {
     font-size: 13px;
-    color: color-var-alpha('color-text-secondary', 0.8);
+    color: color-var-alpha("color-text-secondary", 0.8);
   }
 
   &__edited {
-    color: color-var-alpha('color-text-secondary', 0.7);
+    color: color-var-alpha("color-text-secondary", 0.7);
   }
 
   &__body {
@@ -318,8 +317,8 @@ function handleInlineCancel() {
   &__attachment {
     border-radius: 12px;
     overflow: hidden;
-    border: 1px solid color-var-alpha('panel-border', 0.25);
-    background: color-var-alpha('color-bg-secondary', 0.45);
+    border: 1px solid color-var-alpha("panel-border", 0.25);
+    background: color-var-alpha("color-bg-secondary", 0.45);
     height: 140px;
 
     img,
@@ -353,7 +352,6 @@ function handleInlineCancel() {
   &__replies {
     margin-top: 12px;
   }
-
 }
 
 .forum-message__inline-reply {
@@ -364,11 +362,15 @@ function handleInlineCancel() {
     bottom: auto;
     margin-top: 0;
     border-radius: $border-radius-2xl;
-    box-shadow: 0 10px 30px color-var-alpha('color-text-primary', 0.08);
+    box-shadow: 0 10px 30px color-var-alpha("color-text-primary", 0.08);
     padding: $space-xl;
     background:
-      linear-gradient(135deg, color-var-alpha('color-bg-secondary', 0.92), color-var-alpha('color-bg-primary', 0.9)),
-      color-var-alpha('color-bg-secondary', 0.5);
+      linear-gradient(
+        135deg,
+        color-var-alpha("color-bg-secondary", 0.92),
+        color-var-alpha("color-bg-primary", 0.9)
+      ),
+      color-var-alpha("color-bg-secondary", 0.5);
   }
 
   .forum-reply__pill {
@@ -382,17 +384,14 @@ function handleInlineCancel() {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: color-var-alpha('color-text-secondary', 0.7);
+  color: color-var-alpha("color-text-secondary", 0.7);
 }
 
 .forum-message__crown_pro {
-  color: color-var('color-primary');
+  color: color-var("color-primary");
 }
 
 .forum-message__crown_premium {
-  color: color-var('color-success');
-  box-shadow:
-    0 0 0 2px color-var-alpha('color-success', 0.4),
-    0 0 6px color-var-alpha('color-success', 0.6);
+  color: color-var("color-success");
 }
 </style>
