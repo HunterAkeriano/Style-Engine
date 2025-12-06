@@ -2,6 +2,17 @@ import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import type { Express } from 'express'
 
+const createErrorResponse = (description: string) => ({
+  description,
+  content: {
+    'application/json': {
+      schema: {
+        $ref: '#/components/schemas/Error'
+      }
+    }
+  }
+})
+
 export function setupSwagger(app: Express) {
   const options: swaggerJsdoc.Options = {
     definition: {
