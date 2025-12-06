@@ -65,10 +65,19 @@ function findTrackIndex(sizes: number[], position: number, gap: number): number 
   for (let i = 0; i < sizes.length; i++) {
     const start = acc
     const end = acc + sizes[i]
-    if (position >= start && position <= end) {
+    const gapEnd = end + gap
+
+    // If we are before the current track, stick to the previous one to avoid jumps in gaps
+    if (position < start) {
+      return Math.max(0, i - 1)
+    }
+
+    // Treat the gap as part of the current track so the element does not jump to the last column
+    if (position <= gapEnd) {
       return i
     }
-    acc += sizes[i] + gap
+
+    acc = gapEnd
   }
   return sizes.length - 1
 }
@@ -101,14 +110,21 @@ function handlePointerMoveGlobal(event: PointerEvent) {
   if (!container) return
 
   const rect = container.getBoundingClientRect()
-  const x = Math.min(Math.max(0, event.clientX - rect.left), rect.width)
-  const y = Math.min(Math.max(0, event.clientY - rect.top), rect.height)
 
   const style = getComputedStyle(container)
   const colTemplate = style.gridTemplateColumns
   const rowTemplate = style.gridTemplateRows
   const colGap = Number.parseFloat(style.columnGap || '0') || 0
   const rowGap = Number.parseFloat(style.rowGap || '0') || 0
+  const paddingLeft = Number.parseFloat(style.paddingLeft || '0') || 0
+  const paddingRight = Number.parseFloat(style.paddingRight || '0') || 0
+  const paddingTop = Number.parseFloat(style.paddingTop || '0') || 0
+  const paddingBottom = Number.parseFloat(style.paddingBottom || '0') || 0
+
+  const availableWidth = Math.max(0, rect.width - paddingLeft - paddingRight)
+  const availableHeight = Math.max(0, rect.height - paddingTop - paddingBottom)
+  const x = Math.min(Math.max(0, event.clientX - rect.left - paddingLeft), availableWidth)
+  const y = Math.min(Math.max(0, event.clientY - rect.top - paddingTop), availableHeight)
 
   const colSizes = parseTrackSizes(colTemplate)
   const rowSizes = parseTrackSizes(rowTemplate)
