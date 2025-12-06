@@ -35,6 +35,7 @@ describe('Auth Middleware', () => {
       isSuperAdmin: false,
       isPayment: true,
       subscriptionTier: 'pro',
+      email: 'user@example.com',
       get: jest.fn()
     };
 
@@ -121,11 +122,12 @@ describe('Auth Middleware', () => {
 
       expect(jwt.verify).toHaveBeenCalledWith('valid-token', mockEnv.JWT_SECRET);
       expect(mockUserModel.findByPk).toHaveBeenCalledWith('user-123', {
-        attributes: ['id', 'isAdmin', 'isSuperAdmin', 'isPayment', 'subscriptionTier']
+        attributes: ['id', 'email', 'isAdmin', 'isSuperAdmin', 'isPayment', 'subscriptionTier']
       });
       expect(mockReq.userId).toBe('user-123');
       expect(mockReq.authUser).toEqual({
         id: 'user-123',
+        role: 'user',
         isAdmin: false,
         isSuperAdmin: false,
         isPayment: true,
@@ -308,6 +310,7 @@ describe('Auth Middleware', () => {
       expect(mockReq.userId).toBe('user-123');
       expect(mockReq.authUser).toEqual({
         id: 'user-123',
+        role: 'user',
         isAdmin: false,
         isSuperAdmin: false,
         isPayment: true,
@@ -342,6 +345,7 @@ describe('Auth Middleware', () => {
     it('should return 403 if user is not admin', () => {
       mockReq.authUser = {
         id: 'user-123',
+        role: 'user',
         isAdmin: false,
         isSuperAdmin: false,
         isPayment: true,
@@ -357,6 +361,7 @@ describe('Auth Middleware', () => {
     it('should call next if user is admin', () => {
       mockReq.authUser = {
         id: 'admin-123',
+        role: 'moderator',
         isAdmin: true,
         isSuperAdmin: false,
         isPayment: true,

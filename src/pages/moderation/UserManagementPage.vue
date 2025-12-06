@@ -35,27 +35,32 @@
         hoverable
         sticky-header
       >
-      <template #cell-subscriptionTier="{ value }">
-        <span class="user-management-page__badge" :class="`user-management-page__badge_${value}`">
-          {{ t(`MODERATION.UNIT.${(value as string).toUpperCase()}`) }}
-        </span>
-      </template>
-      <template #cell-createdAt="{ value }">
-        {{ formatDate(value as string) }}
-      </template>
-      <template #cell-actions="{ row }">
-        <Button size="sm" variant="ghost" @click="openEdit(row as unknown as PublicUser)">
-          {{ t('MODERATION.EDIT') }}
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          class="user-management-page__delete"
-          @click="confirmDelete(row as unknown as PublicUser)"
-        >
-          {{ t('MODERATION.DELETE') }}
-        </Button>
-      </template>
+        <template #cell-subscriptionTier="{ value }">
+          <span class="user-management-page__badge" :class="`user-management-page__badge_${value}`">
+            {{ t(`MODERATION.UNIT.${(value as string).toUpperCase()}`) }}
+          </span>
+        </template>
+        <template #cell-role="{ value }">
+          <span class="user-management-page__badge user-management-page__badge_role">
+            {{ formatRole(value as UserRole) }}
+          </span>
+        </template>
+        <template #cell-createdAt="{ value }">
+          {{ formatDate(value as string) }}
+        </template>
+        <template #cell-actions="{ row }">
+          <Button size="sm" variant="ghost" @click="openEdit(row as unknown as PublicUser)">
+            {{ t('MODERATION.EDIT') }}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            class="user-management-page__delete"
+            @click="confirmDelete(row as unknown as PublicUser)"
+          >
+            {{ t('MODERATION.DELETE') }}
+          </Button>
+        </template>
       </Table>
     </div>
 
@@ -94,6 +99,11 @@
           :label="t('MODERATION.USERS_TABLE.PLAN')"
         />
         <Select
+          v-model="form.role"
+          :options="roleOptions"
+          :label="t('MODERATION.USER_ROLE_LABEL')"
+        />
+        <Select
           v-if="form.subscriptionTier !== 'free'"
           v-model="form.subscriptionDuration"
           :options="durationOptions"
@@ -117,7 +127,7 @@ import { useI18n } from 'vue-i18n'
 import { z } from 'zod'
 import { Button, Input, Modal, Select, Table, type TableColumn } from '@/shared/ui'
 import { useToast } from '@/shared/lib/toast'
-import { getModerationUsers, updateUser, deleteUser, type PublicUser } from '@/shared/api/users'
+import { getModerationUsers, updateUser, deleteUser, type PublicUser, type UserRole } from '@/shared/api/users'
 import type { UsersParams } from '@/shared/api/users'
 import { Breadcrumbs } from '@/widgets/common'
 
@@ -148,7 +158,8 @@ const form = reactive({
   email: '',
   password: '',
   subscriptionTier: 'free' as TierFilter,
-  subscriptionDuration: 'month' as 'month' | 'forever' | 'free'
+  subscriptionDuration: 'month' as 'month' | 'forever' | 'free',
+  role: 'user' as UserRole
 })
 const formErrors = ref<Record<string, string>>({})
 
@@ -164,7 +175,8 @@ const userEditSchema = z.object({
     .optional(),
   password: z.string().min(8, { message: t('VALIDATION.PASSWORD_MIN') }).optional(),
   subscriptionTier: z.enum(['free', 'pro', 'premium']),
-  subscriptionDuration: z.enum(['month', 'forever', 'free'])
+  subscriptionDuration: z.enum(['month', 'forever', 'free']),
+  role: z.enum(['user', 'moderator', 'super_admin'])
 })
 
 const tierOptions = computed(() => [
@@ -179,9 +191,16 @@ const durationOptions = computed(() => [
   { value: 'forever', label: t('MODERATION.USER_MODAL_DURATION_FOREVER') }
 ])
 
+const roleOptions = computed(() => [
+  { value: 'user', label: t('MODERATION.USER_ROLE_USER') },
+  { value: 'moderator', label: t('MODERATION.USER_ROLE_MODERATOR') },
+  { value: 'super_admin', label: t('MODERATION.USER_ROLE_SUPER_ADMIN') }
+])
+
 const columns = computed<TableColumn[]>(() => [
   { key: 'email', label: t('MODERATION.USERS_TABLE.EMAIL'), sortable: true },
   { key: 'name', label: t('MODERATION.USERS_TABLE.NAME'), sortable: true },
+  { key: 'role', label: t('MODERATION.USER_ROLE_LABEL'), sortable: false },
   { key: 'subscriptionTier', label: t('MODERATION.USERS_TABLE.PLAN'), sortable: true },
   { key: 'createdAt', label: t('MODERATION.USERS_TABLE.CREATED'), sortable: true },
   { key: 'actions', label: t('MODERATION.USERS_TABLE.ACTIONS') }
@@ -189,6 +208,15 @@ const columns = computed<TableColumn[]>(() => [
 
 function formatDate(value: string) {
   return new Date(value).toLocaleString()
+}
+
+function formatRole(value?: UserRole) {
+  const map: Record<UserRole, string> = {
+    user: t('MODERATION.USER_ROLE_USER'),
+    moderator: t('MODERATION.USER_ROLE_MODERATOR'),
+    super_admin: t('MODERATION.USER_ROLE_SUPER_ADMIN')
+  }
+  return map[(value ?? 'user') as UserRole]
 }
 
 async function loadUsers() {
@@ -218,6 +246,7 @@ function openEdit(user: PublicUser) {
   form.subscriptionTier = user.subscriptionTier
   form.subscriptionDuration = user.subscriptionTier === 'free' ? 'free' : 'month'
   form.password = ''
+  form.role = (user.role as UserRole) || (user.isSuperAdmin ? 'super_admin' : user.isAdmin ? 'moderator' : 'user')
   isModalOpen.value = true
 }
 
@@ -243,7 +272,8 @@ async function submitEdit() {
     name: trimmedName || undefined,
     password: form.password || undefined,
     subscriptionTier: form.subscriptionTier,
-    subscriptionDuration: form.subscriptionTier === 'free' ? 'free' : form.subscriptionDuration
+    subscriptionDuration: form.subscriptionTier === 'free' ? 'free' : form.subscriptionDuration,
+    role: form.role
   })
 
   if (!parsed.success) {
@@ -263,7 +293,8 @@ async function submitEdit() {
     const payload: Record<string, unknown> = {
       email: parsed.data.email,
       subscriptionTier: parsed.data.subscriptionTier,
-      subscriptionDuration: parsed.data.subscriptionDuration
+      subscriptionDuration: parsed.data.subscriptionDuration,
+      role: parsed.data.role
     }
     if (parsed.data.name) {
       payload.name = parsed.data.name
@@ -419,6 +450,12 @@ onMounted(loadUsers)
   &__badge_premium {
     background: color-var-alpha('color-accent', 0.16);
     color: $color-accent;
+  }
+
+  &__badge_role {
+    background: color-var-alpha('surface-panel-1', 0.7);
+    color: $color-text-primary;
+    border: 1px solid color-var-alpha('panel-border', 0.35);
   }
 
   &__delete {

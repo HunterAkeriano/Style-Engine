@@ -4,6 +4,7 @@ import type { Env } from '../../config/env'
 import { UserRepository } from '../../infrastructure/repositories/user-repository'
 import type { Models, User } from '../../models'
 import { toApiError } from '../../utils/apiError'
+import { resolveUserRole, roleToFlags, type UserRole } from '../../utils/roles'
 
 type Tier = 'all' | 'free' | 'pro' | 'premium'
 type SortField = 'name' | 'email' | 'createdat' | 'subscriptiontier'
@@ -33,7 +34,8 @@ export class UserService {
   private serializeUser(user: User) {
     const { passwordHash: _ignored, ...rest } = user.get({ plain: true }) as any
     void _ignored
-    return rest
+    const roleData = resolveUserRole(this.env, rest)
+    return { ...rest, ...roleData }
   }
 
   async fetchUsers(options: UsersQueryOptions) {
@@ -55,7 +57,17 @@ export class UserService {
 
     const ordered = await this.models.User.findAll({
       where: whereClause,
-      attributes: ['id', 'email', 'name', 'avatarUrl', 'subscriptionTier', 'subscriptionExpiresAt', 'createdAt'],
+      attributes: [
+        'id',
+        'email',
+        'name',
+        'avatarUrl',
+        'subscriptionTier',
+        'subscriptionExpiresAt',
+        'createdAt',
+        'isAdmin',
+        'isSuperAdmin'
+      ],
       order: [
         [
           literal(
@@ -81,13 +93,17 @@ export class UserService {
     }
   }
 
-  async updateUser(id: string, payload: {
-    email?: string
-    name?: string | null
-    subscriptionTier?: 'free' | 'pro' | 'premium'
-    subscriptionDuration?: 'month' | 'forever'
-    password?: string
-  }) {
+  async updateUser(
+    id: string,
+    payload: {
+      email?: string
+      name?: string | null
+      subscriptionTier?: 'free' | 'pro' | 'premium'
+      subscriptionDuration?: 'month' | 'forever'
+      password?: string
+      role?: UserRole
+    }
+  ) {
     const user = await this.users.findById(id)
     if (!user) throw toApiError(404, 'User not found')
 
@@ -110,6 +126,16 @@ export class UserService {
 
     if (payload.password) {
       updates.passwordHash = await bcrypt.hash(payload.password, 10)
+    }
+
+    if (payload.role !== undefined) {
+      const allowedRoles: UserRole[] = ['user', 'moderator', 'super_admin']
+      if (!allowedRoles.includes(payload.role)) {
+        throw toApiError(400, 'Invalid role')
+      }
+      const flags = roleToFlags(payload.role)
+      updates.isAdmin = flags.isAdmin
+      updates.isSuperAdmin = flags.isSuperAdmin
     }
 
     if (!Object.keys(updates).length) {

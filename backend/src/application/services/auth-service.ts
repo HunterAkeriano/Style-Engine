@@ -3,14 +3,14 @@ import crypto from 'crypto'
 import { type InferAttributes } from 'sequelize'
 import type { Env } from '../../config/env'
 import type { User } from '../../models'
-import { isSuperAdminEmail } from '../../config/super-admin'
 import { TokenService } from './token-service'
 import { UserRepository } from '../../infrastructure/repositories/user-repository'
 import { RefreshTokenRepository } from '../../infrastructure/repositories/refresh-token-repository'
 import { PasswordResetRepository } from '../../infrastructure/repositories/password-reset-repository'
 import { toApiError } from '../../utils/apiError'
+import { resolveUserRole, type UserRole } from '../../utils/roles'
 
-export type SafeUser = Omit<InferAttributes<User>, 'passwordHash'> & { isSuperAdmin: boolean }
+export type SafeUser = Omit<InferAttributes<User>, 'passwordHash'> & { isSuperAdmin: boolean; role: UserRole; isAdmin: boolean }
 
 export class AuthService {
   constructor(
@@ -22,7 +22,8 @@ export class AuthService {
   ) {}
 
   private attachSuperFlag(user: Omit<InferAttributes<User>, 'passwordHash'>): SafeUser {
-    return { ...user, isSuperAdmin: isSuperAdminEmail(this.env, user.email) }
+    const roleData = resolveUserRole(this.env, { email: user.email, isAdmin: user.isAdmin, isSuperAdmin: user.isSuperAdmin })
+    return { ...user, ...roleData }
   }
 
   toSafeUser(user: User | null): SafeUser | null {
@@ -66,6 +67,7 @@ export class AuthService {
       'createdAt',
       'isPayment',
       'isAdmin',
+      'isSuperAdmin',
       'subscriptionTier',
       'subscriptionExpiresAt'
     ])
@@ -101,6 +103,7 @@ export class AuthService {
       'subscriptionExpiresAt',
       'isPayment',
       'isAdmin',
+      'isSuperAdmin',
       'createdAt'
     ])
     if (!user) throw toApiError(401, 'Invalid refresh token')

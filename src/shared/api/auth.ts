@@ -2,6 +2,7 @@ import type { LoginFormData, RegisterFormData } from '@/shared/lib/validation/au
 import { AUTH_TOKEN_KEY } from './constants'
 import { useApi } from './client'
 import { setCookie, removeCookie, getCookie } from '@/shared/lib/cookies'
+import type { UserRole } from './users'
 
 const api = useApi()
 
@@ -16,6 +17,7 @@ export interface User {
   isPayment?: boolean
   isAdmin?: boolean
   isSuperAdmin?: boolean
+  role?: UserRole
 }
 
 export interface AuthResponse {

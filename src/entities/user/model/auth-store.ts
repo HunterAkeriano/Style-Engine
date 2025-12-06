@@ -14,7 +14,12 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => user.value !== null)
   const userPlan = computed(() => (user.value?.isPayment ? 'pro' : user.value?.plan || 'free'))
-  const isAdmin = computed(() => Boolean(user.value?.isAdmin))
+  const isAdmin = computed(() => {
+    const role = user.value?.role
+    if (role === 'moderator' || role === 'super_admin') return true
+    return Boolean(user.value?.isAdmin)
+  })
+  const isSuperAdmin = computed(() => user.value?.role === 'super_admin' || Boolean(user.value?.isSuperAdmin))
   const isPaid = computed(() => {
     const tier = user.value?.subscriptionTier
     const plan = user.value?.plan
@@ -139,6 +144,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     userPlan,
     isAdmin,
+    isSuperAdmin,
     isPaid,
     setUser,
     setError,

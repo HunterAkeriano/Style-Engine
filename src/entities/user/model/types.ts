@@ -1,3 +1,5 @@
+export type UserRole = 'user' | 'moderator' | 'super_admin'
+
 export interface User {
   id: string
   email: string
@@ -8,6 +10,7 @@ export interface User {
   isPayment?: boolean
   isAdmin?: boolean
   isSuperAdmin?: boolean
+  role?: UserRole
   subscriptionExpiresAt?: string | null
   createdAt: string
   updatedAt?: string

@@ -916,6 +916,10 @@ export default {
       CREATED: 'Created',
       ACTIONS: 'Actions'
     },
+    USER_ROLE_LABEL: 'User role',
+    USER_ROLE_USER: 'Regular user',
+    USER_ROLE_MODERATOR: 'Moderator',
+    USER_ROLE_SUPER_ADMIN: 'Super admin',
     UNIT: {
       FREE: 'Free',
       PRO: 'Pro',

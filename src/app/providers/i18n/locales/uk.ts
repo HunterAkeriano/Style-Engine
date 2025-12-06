@@ -928,6 +928,10 @@
       CREATED: 'Створено',
       ACTIONS: 'Дії'
     },
+    USER_ROLE_LABEL: 'Роль користувача',
+    USER_ROLE_USER: 'Звичайний',
+    USER_ROLE_MODERATOR: 'Модератор',
+    USER_ROLE_SUPER_ADMIN: 'Супер-адмін',
     UNIT: {
       FREE: 'Free',
       PRO: 'Pro',

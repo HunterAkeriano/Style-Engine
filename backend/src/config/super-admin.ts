@@ -13,6 +13,7 @@ export async function ensureSuperAdmin(env: Env) {
     await existing.update({
       passwordHash,
       isAdmin: true,
+      isSuperAdmin: true,
       isPayment: true,
       subscriptionTier: 'pro'
     })
@@ -23,6 +24,7 @@ export async function ensureSuperAdmin(env: Env) {
     email,
     passwordHash,
     isAdmin: true,
+    isSuperAdmin: true,
     isPayment: true,
     subscriptionTier: 'pro'
   })

@@ -94,6 +94,11 @@ export function setupSwagger(app: Express) {
                 type: 'boolean',
                 description: 'Отметка супер-админа (email из env)'
               },
+              role: {
+                type: 'string',
+                enum: ['user', 'moderator', 'super_admin'],
+                description: 'Роль пользователя'
+              },
               createdAt: {
                 type: 'string',
                 format: 'date-time',

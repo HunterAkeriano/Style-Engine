@@ -3,11 +3,13 @@ import jwt from 'jsonwebtoken'
 import type { Env } from '../config/env'
 import { getModels } from '../config/db'
 import { sendApiError } from '../utils/apiError'
+import { resolveUserRole, type UserRole } from '../utils/roles'
 
 export interface AuthRequest extends Request {
   userId?: string
   authUser?: {
     id: string
+    role: UserRole
     isAdmin: boolean
     isSuperAdmin: boolean
     isPayment: boolean
@@ -53,18 +55,20 @@ export function createAuthMiddleware(env: Env) {
       }
       const { User } = getModels()
       const user = await User.findByPk(payload.sub, {
-        attributes: ['id', 'isAdmin', 'isSuperAdmin', 'isPayment', 'subscriptionTier']
+        attributes: ['id', 'email', 'isAdmin', 'isSuperAdmin', 'isPayment', 'subscriptionTier']
       })
       if (!user) {
         return sendApiError(res, 401, 'User not found')
       }
 
       const plain = user.get()
+      const roleData = resolveUserRole(env, { email: plain.email, isAdmin: plain.isAdmin, isSuperAdmin: plain.isSuperAdmin })
       req.userId = plain.id
       req.authUser = {
         id: plain.id,
-        isAdmin: Boolean(plain.isAdmin),
-        isSuperAdmin: Boolean(plain.isSuperAdmin),
+        role: roleData.role,
+        isAdmin: roleData.isAdmin,
+        isSuperAdmin: roleData.isSuperAdmin,
         isPayment: Boolean(plain.isPayment),
         subscriptionTier: (plain.subscriptionTier as 'free' | 'pro' | 'premium') ?? 'free'
       }
@@ -96,15 +100,17 @@ export function createOptionalAuthMiddleware(env: Env) {
       }
       const { User } = getModels()
       const user = await User.findByPk(payload.sub, {
-        attributes: ['id', 'isAdmin', 'isSuperAdmin', 'isPayment', 'subscriptionTier']
+        attributes: ['id', 'email', 'isAdmin', 'isSuperAdmin', 'isPayment', 'subscriptionTier']
       })
       if (user) {
         const plain = user.get()
+        const roleData = resolveUserRole(env, { email: plain.email, isAdmin: plain.isAdmin, isSuperAdmin: plain.isSuperAdmin })
         req.userId = plain.id
         req.authUser = {
           id: plain.id,
-          isAdmin: Boolean(plain.isAdmin),
-          isSuperAdmin: Boolean(plain.isSuperAdmin),
+          role: roleData.role,
+          isAdmin: roleData.isAdmin,
+          isSuperAdmin: roleData.isSuperAdmin,
           isPayment: Boolean(plain.isPayment),
           subscriptionTier: (plain.subscriptionTier as 'free' | 'pro' | 'premium') ?? 'free'
         }

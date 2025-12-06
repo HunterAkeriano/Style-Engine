@@ -2,6 +2,8 @@ import { useApi } from './client'
 
 const api = useApi()
 
+export type UserRole = 'user' | 'moderator' | 'super_admin'
+
 export interface PublicUser {
   id: string
   email: string
@@ -12,6 +14,8 @@ export interface PublicUser {
   createdAt: string
   isPayment?: boolean
   isAdmin?: boolean
+  isSuperAdmin?: boolean
+  role?: UserRole
 }
 
 export interface UsersResponse {
@@ -65,6 +69,7 @@ interface UpdateUserPayload {
   password?: string
   subscriptionTier?: 'free' | 'pro' | 'premium'
   subscriptionDuration?: 'month' | 'forever' | 'free'
+  role?: UserRole
 }
 
 export async function updateUser(id: string, payload: UpdateUserPayload) {

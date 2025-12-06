@@ -151,8 +151,8 @@ const subscriptionUntil = computed(() => {
 
 const hasChanges = computed(() => formData.name !== originalName.value)
 
-const isAdmin = computed(() => Boolean(user.value?.isAdmin))
-const isSuperAdmin = computed(() => Boolean(user.value?.isSuperAdmin))
+const isAdmin = computed(() => user.value?.role === 'moderator' || user.value?.role === 'super_admin' || Boolean(user.value?.isAdmin))
+const isSuperAdmin = computed(() => user.value?.role === 'super_admin' || Boolean(user.value?.isSuperAdmin))
 
 const isPaidUser = computed(() => user.value?.subscriptionTier === 'pro' || user.value?.subscriptionTier === 'premium')
 

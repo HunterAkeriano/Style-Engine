@@ -1,13 +1,13 @@
 import fs from 'fs/promises'
 import path from 'path'
 import type { Env } from '../../config/env'
-import { isSuperAdminEmail } from '../../config/super-admin'
 import type { User } from '../../models'
 import { UserRepository } from '../../infrastructure/repositories/user-repository'
 import { toApiError } from '../../utils/apiError'
 import type { InferAttributes } from 'sequelize'
+import { resolveUserRole, type UserRole } from '../../utils/roles'
 
-type SafeUser = Omit<InferAttributes<User>, 'passwordHash'> & { isSuperAdmin: boolean }
+type SafeUser = Omit<InferAttributes<User>, 'passwordHash'> & { isSuperAdmin: boolean; role: UserRole; isAdmin: boolean }
 
 export class ProfileService {
   private readonly cache = new Map<string, { user: SafeUser; expiresAt: number }>()
@@ -16,7 +16,8 @@ export class ProfileService {
   constructor(private readonly env: Env, private readonly users: UserRepository) {}
 
   private attachSuperFlag(user: Omit<InferAttributes<User>, 'passwordHash'>) {
-    return { ...user, isSuperAdmin: isSuperAdminEmail(this.env, user.email) }
+    const roleData = resolveUserRole(this.env, { email: user.email, isAdmin: user.isAdmin, isSuperAdmin: user.isSuperAdmin })
+    return { ...user, ...roleData }
   }
 
   private toSafeUser(user: User | null) {
@@ -54,6 +55,7 @@ export class ProfileService {
       'isPayment',
       'subscriptionTier',
       'isAdmin',
+      'isSuperAdmin',
       'subscriptionExpiresAt'
     ])
     const safe = this.toSafeUser(user)
