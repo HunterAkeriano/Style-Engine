@@ -40,7 +40,7 @@
           :initial-attachments="topic.attachments"
           :submit-label="t('FORUM.TOPIC.SAVE_TOPIC')"
           :cancel-label="t('FORUM.TOPIC.CANCEL_EDIT')"
-          :allow-video="Boolean(authStore.user?.isAdmin)"
+          allow-video
           @submit="saveTopicEdit"
           @cancel="cancelTopicEdit"
         />
@@ -73,7 +73,7 @@
         :placeholder="replyPlaceholder"
         :send-label="t('FORUM.TOPIC.SEND')"
         :can-reply="canReply"
-        :allow-video="Boolean(authStore.user?.isAdmin)"
+        :allow-video="true"
         :sending="sendingReply"
         :replying-to="replyingTo"
         @submit="sendReply"
@@ -118,7 +118,10 @@ const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 const toast = useToast();
-const checkForumNotifications = inject<(() => void) | null>('checkForumNotifications', null);
+const checkForumNotifications = inject<(() => void) | null>(
+  "checkForumNotifications",
+  null,
+);
 
 const topic = ref<ForumTopic | null>(null);
 const messages = ref<ForumMessage[]>([]);
@@ -188,8 +191,8 @@ const replyFormConfig = computed(() => ({
   placeholder: replyPlaceholder.value,
   sendLabel: t("FORUM.TOPIC.SEND"),
   cancelLabel: t("FORUM.TOPIC.CANCEL_REPLY"),
-  allowVideo: Boolean(authStore.user?.isAdmin),
-  sending: sendingReply.value
+  allowVideo: true,
+  sending: sendingReply.value,
 }));
 
 function goBack() {
@@ -257,12 +260,11 @@ async function saveTopicEdit(payload: {
         finalAttachments.push({ type: item.type, url: item.url });
       }
     }
-    const updated = await updateForumTopic(topic.value.id, {
+    topic.value = await updateForumTopic(topic.value.id, {
       title: payload.title.trim(),
       description: payload.description.trim(),
       attachments: finalAttachments,
     });
-    topic.value = updated;
     editingTopic.value = false;
     toast.success(t("FORUM.TOPIC.TOPIC_UPDATED"));
   } catch (err: any) {
@@ -327,11 +329,9 @@ async function handleEditSubmit(payload: { id: string; content: string }) {
 async function onStatusChange(status: ForumStatus) {
   if (!topic.value) return;
   try {
-    const updated = await changeForumTopicStatus(topic.value.id, status);
-    topic.value = updated;
+    topic.value = await changeForumTopicStatus(topic.value.id, status);
     toast.success(t("FORUM.TOPIC.STATUS_UPDATED"));
 
-    // Re-check notifications when topic status changes
     if (checkForumNotifications) {
       checkForumNotifications();
     }

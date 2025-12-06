@@ -41,7 +41,10 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 20px;
-    flex-wrap: wrap;
+
+    @media (max-width: $breakpoint-md) {
+      flex-wrap: wrap;
+    }
   }
 
   &__title {
@@ -57,11 +60,25 @@
   }
 
   &__header-actions {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: fit-content;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
     justify-content: flex-end;
+
+    .select:nth-of-type(1) {
+      min-width: 120px;
+    }
+
+    .select:nth-of-type(2) {
+      min-width: 180px;
+    }
+
+    button {
+      grid-column: 1/-1;
+    }
   }
 
   &__create {
@@ -168,6 +185,8 @@
   &__avatar {
     width: 36px;
     height: 36px;
+    min-width: 36px;
+    min-height: 36px;
     border-radius: 50%;
     background: color-var-alpha('color-bg-secondary', 0.4);
     display: grid;

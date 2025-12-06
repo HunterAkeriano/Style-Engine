@@ -205,7 +205,7 @@ export class ForumController implements HttpController {
 
         const attachments = this.filterAttachments(
           parsed.data.attachments ?? [],
-          Boolean(req.authUser?.isAdmin),
+          true,
         );
 
         try {
