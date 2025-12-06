@@ -91,4 +91,15 @@ export class ForumRepository {
   createMessage(payload: InferCreationAttributes<ForumMessage>) {
     return this.models.ForumMessage.create(payload)
   }
+
+  findUserOpenTopics(userId: string) {
+    return this.models.ForumTopic.findAll({
+      where: {
+        userId,
+        status: ['open', 'in_review']
+      },
+      attributes: ['id', 'status'],
+      order: [['lastActivityAt', 'DESC']]
+    })
+  }
 }

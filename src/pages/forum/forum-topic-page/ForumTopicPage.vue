@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { Breadcrumbs } from "@/widgets/common";
@@ -118,6 +118,7 @@ const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 const toast = useToast();
+const checkForumNotifications = inject<(() => void) | null>('checkForumNotifications', null);
 
 const topic = ref<ForumTopic | null>(null);
 const messages = ref<ForumMessage[]>([]);
@@ -329,6 +330,11 @@ async function onStatusChange(status: ForumStatus) {
     const updated = await changeForumTopicStatus(topic.value.id, status);
     topic.value = updated;
     toast.success(t("FORUM.TOPIC.STATUS_UPDATED"));
+
+    // Re-check notifications when topic status changes
+    if (checkForumNotifications) {
+      checkForumNotifications();
+    }
   } catch (err: any) {
     toast.error(err?.message || t("FORUM.TOPIC.STATUS_ERROR"));
   }

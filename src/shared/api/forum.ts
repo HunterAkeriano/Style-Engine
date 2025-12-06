@@ -164,3 +164,36 @@ export function openForumStream(topicId: string, handlers: {
 
   return () => socket.close()
 }
+
+export interface TopicNotification {
+  topicId: string
+  topicTitle: string
+  message: string
+  author: { name: string | null }
+}
+
+export function openNotificationStream(userId: string, handlers: {
+  onTopicReply?: (notification: TopicNotification) => void
+  onError?: (error: any) => void
+}) {
+  const wsBase = API_BASE.startsWith('https') ? API_BASE.replace('https', 'wss') : API_BASE.replace('http', 'ws')
+  const socket = new WebSocket(`${wsBase}/forum/ws?userId=${encodeURIComponent(userId)}`)
+
+  socket.onmessage = (event) => {
+    try {
+      const payload = JSON.parse(event.data)
+      if (payload.event === 'topic-reply') handlers.onTopicReply?.(payload.data)
+    } catch (err) {
+      handlers.onError?.(err)
+    }
+  }
+
+  socket.onerror = (err) => handlers.onError?.(err)
+
+  return () => socket.close()
+}
+
+export async function getUserOpenTopics(): Promise<{ topics: Array<{ id: string; status: ForumStatus }> }> {
+  const response = await api.get<{ topics: Array<{ id: string; status: ForumStatus }> }>('/forum/my-topics/open')
+  return response.data
+}

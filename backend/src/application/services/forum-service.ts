@@ -279,4 +279,12 @@ export class ForumService {
     } as Partial<Attributes<ForumTopic>>)
     return this.serializeTopic(topic)
   }
+
+  async getUserOpenTopics(userId: string) {
+    const topics = await this.repo.findUserOpenTopics(userId)
+    return topics.map((topic) => ({
+      id: topic.id,
+      status: topic.status
+    }))
+  }
 }

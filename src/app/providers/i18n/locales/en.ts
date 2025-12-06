@@ -588,7 +588,9 @@ export default {
       STATUS_UPDATED: 'Status updated',
       STATUS_ERROR: 'Failed to update status.',
       REPLY_ERROR: 'Failed to send reply.',
-      UPLOAD_ERROR: 'Failed to upload file.'
+      UPLOAD_ERROR: 'Failed to upload file.',
+      NOTIFICATION_REPLY: 'New reply in your topic',
+      NOTIFICATION_REPLY_FROM: '{author} replied to "{title}"'
     }
   },
   META: {

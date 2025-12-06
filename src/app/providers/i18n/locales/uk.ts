@@ -598,7 +598,9 @@
       STATUS_UPDATED: 'Статус змінено',
       STATUS_ERROR: 'Не вдалося оновити статус.',
       REPLY_ERROR: 'Не вдалося надіслати відповідь.',
-      UPLOAD_ERROR: 'Не вдалося завантажити файл.'
+      UPLOAD_ERROR: 'Не вдалося завантажити файл.',
+      NOTIFICATION_REPLY: 'Нова відповідь у вашій темі',
+      NOTIFICATION_REPLY_FROM: '{author} відповів у темі "{title}"'
     }
   },
   META: {
