@@ -102,7 +102,7 @@
     radial-gradient(circle at 85% 25%, color-var-alpha('color-accent', 0.14), transparent 35%),
     color-var-alpha('color-bg-secondary', 0.5);
   box-shadow:
-    0 20px 70px rgba(0, 0, 0, 0.25),
+    0 20px 70px color-var-alpha('color-text-primary', 0.22),
     inset 0 1px 0 color-var-alpha('panel-border', 0.4);
   overflow: hidden;
   isolation: isolate;
@@ -211,7 +211,7 @@
   border: 1px solid color-var-alpha('panel-border', 0.35);
   border-radius: $border-radius-3xl;
   box-shadow:
-    0 16px 48px rgba(0, 0, 0, 0.2),
+    0 16px 48px color-var-alpha('color-text-primary', 0.2),
     inset 0 1px 0 color-var-alpha('panel-border', 0.4);
   position: relative;
   overflow: hidden;

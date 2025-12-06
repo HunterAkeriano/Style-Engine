@@ -12,7 +12,7 @@
     radial-gradient(circle at 88% 22%, color-var-alpha('color-accent', 0.1), transparent 35%),
     color-var-alpha('color-bg-secondary', 0.6);
   box-shadow:
-    0 20px 70px rgba(0, 0, 0, 0.25),
+    0 20px 70px color-var-alpha('color-text-primary', 0.22),
     inset 0 1px 0 color-var-alpha('panel-border', 0.5);
   overflow: hidden;
   isolation: isolate;

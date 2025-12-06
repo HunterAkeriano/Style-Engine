@@ -1,3 +1,5 @@
+@import '@/app/styles/variables';
+
 .forum-topic {
   &__attachments {
     margin-top: 8px;
@@ -13,8 +15,8 @@
   &__attachment {
     border-radius: 12px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid color-var-alpha('panel-border', 0.35);
+    background: color-var-alpha('color-bg-secondary', 0.45);
     height: 160px;
     position: relative;
 
@@ -30,8 +32,8 @@
     position: absolute;
     bottom: 8px;
     right: 8px;
-    background: rgba(0, 0, 0, 0.5);
-    color: #fff;
+    background: color-var-alpha('color-text-primary', 0.18);
+    color: color-var('color-bg-primary');
     border: 0;
     padding: 6px 10px;
     border-radius: 10px;

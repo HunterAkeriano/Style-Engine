@@ -99,7 +99,7 @@
   border: 1px solid color-var-alpha('panel-border', 0.35);
   border-radius: $border-radius-3xl;
   box-shadow:
-    0 16px 48px rgba(0, 0, 0, 0.2),
+    0 16px 48px color-var-alpha('color-text-primary', 0.2),
     inset 0 1px 0 color-var-alpha('panel-border', 0.4);
   position: relative;
   overflow: hidden;

@@ -141,11 +141,14 @@ function saveEdit() {
 </script>
 
 <style scoped lang="scss">
+@import '@/app/styles/variables';
+
 .forum-message {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 14px;
-  background: rgba(255, 255, 255, 0.02);
+  background: color-var-alpha('color-bg-secondary', 0.65);
+  border-color: color-var-alpha('panel-border', 0.3);
   margin-bottom: 12px;
 
   &__header {
@@ -158,10 +161,10 @@ function saveEdit() {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
+    background: color-var-alpha('color-bg-secondary', 0.5);
     display: grid;
     place-items: center;
-    color: #cbd5ff;
+    color: color-var('color-text-secondary');
     font-weight: 700;
     overflow: hidden;
 
@@ -188,18 +191,18 @@ function saveEdit() {
   &__role {
     padding: 4px 8px;
     border-radius: 999px;
-    background: rgba(255, 214, 102, 0.15);
-    color: #ffd666;
+    background: color-var-alpha('color-warning', 0.15);
+    color: color-var('color-warning');
     font-size: 12px;
   }
 
   &__timestamps {
     font-size: 13px;
-    color: rgba(230, 230, 240, 0.7);
+    color: color-var-alpha('color-text-secondary', 0.8);
   }
 
   &__edited {
-    color: #9fa8ff;
+    color: color-var-alpha('color-text-secondary', 0.7);
   }
 
   &__body {
@@ -209,7 +212,7 @@ function saveEdit() {
   &__text {
     margin: 0;
     white-space: pre-wrap;
-    color: #ffffff;
+    color: $color-text-primary;
   }
 
   &__attachments {
@@ -222,8 +225,8 @@ function saveEdit() {
   &__attachment {
     border-radius: 12px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid color-var-alpha('panel-border', 0.25);
+    background: color-var-alpha('color-bg-secondary', 0.45);
     height: 140px;
 
     img,
