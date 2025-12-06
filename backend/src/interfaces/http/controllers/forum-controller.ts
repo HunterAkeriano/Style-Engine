@@ -58,7 +58,7 @@ export class ForumController implements HttpController {
     private readonly env: Env,
     models: Models,
   ) {
-    this.service = new ForumService(new ForumRepository(models));
+    this.service = new ForumService(new ForumRepository(models), env.API_URL);
   }
 
   register(router: Router) {
@@ -286,7 +286,7 @@ export class ForumController implements HttpController {
           return sendApiError(res, 400, "No file uploaded");
         }
         const topicId = (req.query.topicId as string) || "temp";
-        const url = `/uploads/forum/${topicId}/${req.file.filename}`;
+        const url = `${this.env.API_URL}/uploads/forum/${topicId}/${req.file.filename}`;
         res.status(201).json({ url });
       },
     );
