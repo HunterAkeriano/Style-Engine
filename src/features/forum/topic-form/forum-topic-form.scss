@@ -1,32 +1,87 @@
+@import '@/app/styles/variables';
+
 .forum-topic-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: $space-2xl;
 
   &__attachments {
-    border: 1px dashed var(--border-primary);
-    border-radius: 16px;
-    padding: 16px;
-    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed color-var-alpha('panel-border', 0.4);
+    border-radius: $border-radius-2xl;
+    padding: $space-2xl;
+    background:
+      linear-gradient(135deg, color-var-alpha('color-bg-tertiary', 0.7), color-var-alpha('color-bg-secondary', 0.5)),
+      radial-gradient(circle at 25% 25%, color-var-alpha('color-primary', 0.05), transparent 40%);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    transition:
+      border-color $transition-base,
+      background-color $transition-base,
+      transform $transition-base,
+      box-shadow $transition-base;
+
+    @media (max-width: $breakpoint-md) {
+      padding: $space-xl;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      padding: 2px;
+      background: linear-gradient(135deg, $color-primary-alpha-12, color-var-alpha('color-accent', 0.1));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity $transition-base;
+      z-index: -1;
+    }
+
+    &:hover {
+      border-color: color-var-alpha('color-primary', 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px color-var-alpha('color-primary', 0.1);
+
+      &::before {
+        opacity: 0.6;
+      }
+    }
   }
 
   &__attachments-header {
     display: flex;
     justify-content: space-between;
-    gap: 16px;
+    gap: $space-xl;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-start;
+    margin-bottom: $space-md;
+  }
+
+  &__attachments-info {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  &__attachments-title {
+    margin: 0 0 $space-xs;
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
   }
 
   &__hint {
     margin: 0;
-    color: var(--text-secondary);
-    font-size: 14px;
+    color: $color-text-secondary;
+    font-size: $font-size-sm;
+    line-height: 1.6;
   }
 
   &__buttons {
     display: flex;
-    gap: 12px;
+    gap: $space-md;
     align-items: center;
     flex-wrap: wrap;
   }
@@ -37,43 +92,91 @@
 
   &__youtube {
     display: flex;
-    gap: 8px;
+    gap: $space-sm;
     align-items: center;
+    flex-wrap: wrap;
   }
 
   &__youtube-input {
-    width: 240px;
+    min-width: 280px;
+    flex: 1;
   }
 
   &__attachment-grid {
-    margin-top: 12px;
+    margin-top: $space-xl;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: $space-lg;
+
+    @media (max-width: $breakpoint-md) {
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: $space-md;
+    }
   }
 
   &__attachment {
-    border: 1px solid var(--border-primary);
-    border-radius: 12px;
+    border: 1px solid color-var-alpha('panel-border', 0.3);
+    border-radius: $border-radius-xl;
     overflow: hidden;
-    background: var(--bg-secondary);
+    background: $surface-panel-1;
+    position: relative;
+    transition:
+      transform $transition-base,
+      box-shadow $transition-base,
+      border-color $transition-base;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, $color-primary-alpha-14, color-var-alpha('color-accent', 0.12));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity $transition-base;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    &:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow:
+        0 12px 32px color-var-alpha('color-primary', 0.15),
+        0 0 0 1px color-var-alpha('color-primary', 0.08);
+      border-color: $color-primary;
+
+      &::before {
+        opacity: 1;
+      }
+    }
   }
 
   &__attachment-preview {
     position: relative;
-    padding-bottom: 60%;
+    padding-bottom: 65%;
     overflow: hidden;
-    background: var(--bg-tertiary);
+    background:
+      linear-gradient(135deg, color-var-alpha('color-bg-tertiary', 0.8), color-var-alpha('color-bg-secondary', 0.6)),
+      radial-gradient(circle at 30% 30%, color-var-alpha('color-primary', 0.08), transparent 50%);
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
   &__attachment-video {
-    font-size: 12px;
-    color: var(--text-secondary);
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    color: $color-warning;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
+    padding: $space-sm $space-md;
+    border-radius: $border-radius-lg;
+    background: color-var-alpha('color-warning', 0.12);
+    border: 1px solid color-var-alpha('color-warning', 0.2);
+    box-shadow: 0 2px 8px color-var-alpha('color-warning', 0.1);
   }
 
   img {
@@ -82,21 +185,69 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform $transition-base;
+  }
+
+  &__attachment:hover img {
+    transform: scale(1.08);
   }
 
   &__remove {
     width: 100%;
-    padding: 10px 12px;
+    padding: $space-md $space-lg;
     border: 0;
     background: transparent;
-    color: var(--danger);
+    color: $color-error;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: $font-weight-bold;
+    font-size: $font-size-sm;
+    position: relative;
+    overflow: hidden;
+    transition:
+      background-color $transition-base,
+      color $transition-base,
+      transform $transition-base;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: color-var-alpha('color-error', 0.08);
+      opacity: 0;
+      transition: opacity $transition-base;
+    }
+
+    span {
+      position: relative;
+      z-index: 1;
+    }
+
+    &:hover {
+      background: color-var-alpha('color-error', 0.12);
+      color: $color-error;
+
+      &::before {
+        opacity: 1;
+      }
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
   }
 
   &__actions {
     display: flex;
-    gap: 12px;
+    gap: $space-lg;
     justify-content: flex-end;
+    margin-top: $space-2xl;
+    padding-top: $space-2xl;
+    border-top: 1px solid color-var-alpha('panel-border', 0.2);
+
+    @media (max-width: $breakpoint-md) {
+      flex-direction: column-reverse;
+      align-items: stretch;
+      gap: $space-md;
+    }
   }
 }

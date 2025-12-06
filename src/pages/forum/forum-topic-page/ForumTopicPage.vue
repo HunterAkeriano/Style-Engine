@@ -1,6 +1,13 @@
 <template>
   <div class="forum-topic">
-    <Breadcrumbs />
+    <div class="forum-topic__background">
+      <span class="forum-topic__beam forum-topic__beam_left"></span>
+      <span class="forum-topic__beam forum-topic__beam_right"></span>
+      <span class="forum-topic__grid-lines"></span>
+    </div>
+
+    <div class="forum-topic__container">
+      <Breadcrumbs />
 
     <ForumTopicHeader
       :topic="topic"
@@ -9,6 +16,7 @@
       :can-edit="canEditTopic"
       :is-editing="editingTopic"
       :is-admin="Boolean(authStore.user?.isAdmin)"
+      :is-super-admin="Boolean(authStore.user?.isSuperAdmin)"
       @back="goBack"
       @edit="startTopicEdit"
       @cancel-edit="cancelTopicEdit"
@@ -34,20 +42,6 @@
       />
     </Card>
 
-    <ForumReplyForm
-      :title="t('FORUM.TOPIC.REPLY_TITLE')"
-      :hint="t('FORUM.TOPIC.REPLY_HINT')"
-      :total-label="t('FORUM.TOPIC.TOTAL', { count: messages.length })"
-      :placeholder="replyPlaceholder"
-      :send-label="t('FORUM.TOPIC.SEND')"
-      :can-reply="canReply"
-      :allow-video="Boolean(authStore.user?.isAdmin)"
-      :sending="sendingReply"
-      :replying-to="replyingTo"
-      @submit="sendReply"
-      @cancel-reply="clearReply"
-    />
-
     <ForumMessagesBoard
       :messages="threadedMessages"
       :loading="loading"
@@ -62,6 +56,21 @@
       @reply="setReplyTarget"
       @edit="handleEditSubmit"
     />
+
+      <ForumReplyForm
+          :title="t('FORUM.TOPIC.REPLY_TITLE')"
+          :hint="t('FORUM.TOPIC.REPLY_HINT')"
+          :total-label="t('FORUM.TOPIC.TOTAL', { count: messages.length })"
+          :placeholder="replyPlaceholder"
+          :send-label="t('FORUM.TOPIC.SEND')"
+          :can-reply="canReply"
+          :allow-video="Boolean(authStore.user?.isAdmin)"
+          :sending="sendingReply"
+          :replying-to="replyingTo"
+          @submit="sendReply"
+          @cancel-reply="clearReply"
+      />
+    </div>
   </div>
 </template>
 

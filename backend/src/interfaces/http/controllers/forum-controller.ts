@@ -3,7 +3,7 @@ import { z } from 'zod'
 import type { Env } from '../../../config/env'
 import type { HttpController } from '../api-router'
 import type { Models } from '../../../models'
-import { createAuthMiddleware, requireAdmin, type AuthRequest } from '../../../middleware/auth'
+import { createAuthMiddleware, requireSuperAdmin, type AuthRequest } from '../../../middleware/auth'
 import { ForumRepository } from '../../../infrastructure/repositories/forum-repository'
 import { ForumService, type ForumAttachment } from '../../../application/services/forum-service'
 import { sendApiError } from '../../../utils/apiError'
@@ -110,13 +110,13 @@ export class ForumController implements HttpController {
       }
     })
 
-    router.patch('/topics/:id/status', this.auth, requireAdmin, async (req: AuthRequest, res) => {
+    router.patch('/topics/:id/status', this.auth, requireSuperAdmin, async (req: AuthRequest, res) => {
       const parsed = statusSchema.safeParse(req.body)
       if (!parsed.success) {
         return sendApiError(res, 400, 'Invalid status', { details: parsed.error.issues })
       }
       try {
-        const topic = await this.service.updateStatus(req.params.id, parsed.data.status, Boolean(req.authUser?.isAdmin))
+        const topic = await this.service.updateStatus(req.params.id, parsed.data.status, Boolean(req.authUser?.isSuperAdmin))
         broadcastForumEvent(req.params.id, 'status', topic)
         res.json({ topic })
       } catch (err: any) {

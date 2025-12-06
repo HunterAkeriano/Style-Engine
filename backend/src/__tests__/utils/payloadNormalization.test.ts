@@ -18,10 +18,14 @@ describe('payloadNormalization', () => {
         expect(result).toEqual({
           type: 'linear',
           angle: 90,
+          center: { x: 50, y: 50 },
           colors: [
             { color: '#ff0000', position: 0 },
             { color: '#00ff00', position: 100 }
-          ]
+          ],
+          extent: 'farthest-corner',
+          repeating: false,
+          shape: 'circle'
         });
       });
 

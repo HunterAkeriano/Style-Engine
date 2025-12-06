@@ -1,87 +1,337 @@
+@import '@/app/styles/variables';
+
 .forum-reply {
+  position: sticky;
+  bottom: $space-lg;
+  z-index: 100;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: $space-lg;
+  padding: $space-2xl;
+  margin-top: $space-3xl;
+  border: 1px solid color-var-alpha('panel-border', 0.4);
+  border-radius: $border-radius-3xl;
+  background:
+    linear-gradient(135deg, color-var-alpha('color-bg-secondary', 0.95), color-var-alpha('color-bg-primary', 0.92)),
+    radial-gradient(circle at 18% 25%, color-var-alpha('color-primary', 0.1), transparent 45%),
+    radial-gradient(circle at 82% 30%, color-var-alpha('color-accent', 0.08), transparent 40%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    0 16px 60px rgba(0, 0, 0, 0.35),
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 color-var-alpha('panel-border', 0.6),
+    inset 0 -1px 0 color-var-alpha('panel-border', 0.2);
+  overflow: hidden;
+  isolation: isolate;
+  opacity: 0;
+  transform: translate3d(0, 30px, 0);
+  animation: replyFormEntrance 900ms cubic-bezier(0.25, 0.9, 0.35, 1) 400ms forwards;
 
-  &__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+  @media (max-width: $breakpoint-md) {
+    bottom: $space-md;
+    padding: $space-xl $space-lg;
+    gap: $space-md;
+    margin-top: $space-2xl;
   }
 
-  &__hint {
-    margin: 2px 0 0;
-    color: var(--text-secondary);
-    font-size: 14px;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-var-alpha('color-primary', 0.5),
+      color-var-alpha('color-accent', 0.4),
+      transparent
+    );
+    opacity: 0.8;
   }
 
-  &__pill {
-    padding: 6px 12px;
-    background: var(--bg-tertiary);
-    border-radius: 999px;
-    font-weight: 600;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 100%, color-var-alpha('color-primary', 0.06), transparent 60%);
+    opacity: 0.6;
+    z-index: -1;
+    pointer-events: none;
   }
 
-  &__replying {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 12px;
-    border-radius: 12px;
-    background: var(--bg-tertiary);
-    color: var(--text-secondary);
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.forum-reply__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-lg;
+  flex-wrap: wrap;
+
+  h3 {
+    margin: 0;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    background: linear-gradient(
+      165deg,
+      $color-text-primary 0%,
+      color-var-alpha('color-text-primary', 0.85) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.forum-reply__hint {
+  margin: $space-xs 0 0;
+  color: color-var-alpha('color-text-secondary', 0.9);
+  font-size: $font-size-sm;
+  line-height: 1.5;
+}
+
+.forum-reply__pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-sm $space-lg;
+  background: linear-gradient(135deg, color-var-alpha('color-primary', 0.15), color-var-alpha('color-accent', 0.12));
+  border: 1px solid color-var-alpha('color-primary', 0.25);
+  border-radius: $border-radius-full;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-sm;
+  color: $color-primary;
+  box-shadow: 0 4px 16px color-var-alpha('color-primary', 0.12);
+  position: relative;
+  overflow: hidden;
+  transition: transform $transition-base;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, color-var-alpha('color-primary', 0.25), transparent);
+    opacity: 0;
+    transition: opacity $transition-base;
   }
 
-  &__actions {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
+  &:hover {
+    transform: translateY(-2px);
 
-  &__inputs {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  &__file-input {
-    display: none;
-  }
-
-  &__youtube {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  &__youtube-input {
-    width: 240px;
-  }
-
-  &__attachment-chips {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  &__chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background: var(--bg-tertiary);
-    border-radius: 999px;
-    font-size: 14px;
-
-    button {
-      border: 0;
-      background: transparent;
-      color: var(--danger);
-      cursor: pointer;
+    &::after {
+      opacity: 1;
     }
+  }
+}
+
+.forum-reply__replying {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  padding: $space-md $space-lg;
+  border-radius: $border-radius-xl;
+  background: color-var-alpha('color-bg-tertiary', 0.6);
+  border: 1px solid color-var-alpha('panel-border', 0.3);
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  position: relative;
+  overflow: hidden;
+  animation: slideIn 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, $color-primary, $color-accent);
+    opacity: 0.7;
+  }
+
+  span {
+    flex: 1;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.forum-reply__actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-lg;
+  flex-wrap: wrap;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.forum-reply__inputs {
+  display: flex;
+  gap: $space-md;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.forum-reply__file-input {
+  display: none;
+}
+
+.forum-reply__youtube {
+  display: flex;
+  gap: $space-sm;
+  align-items: center;
+  flex-wrap: wrap;
+
+  @media (max-width: $breakpoint-md) {
+    width: 100%;
+  }
+}
+
+.forum-reply__youtube-input {
+  min-width: 260px;
+  flex: 1;
+
+  @media (max-width: $breakpoint-md) {
+    min-width: 100%;
+  }
+}
+
+.forum-reply__attachment-chips {
+  display: flex;
+  gap: $space-sm;
+  flex-wrap: wrap;
+  padding: $space-md;
+  border-radius: $border-radius-xl;
+  background: color-var-alpha('color-bg-tertiary', 0.4);
+  border: 1px solid color-var-alpha('panel-border', 0.25);
+  animation: fadeIn 500ms ease-out;
+}
+
+.forum-reply__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-sm $space-md;
+  background: linear-gradient(135deg, color-var-alpha('color-bg-secondary', 0.9), color-var-alpha('color-bg-primary', 0.8));
+  border: 1px solid color-var-alpha('panel-border', 0.35);
+  border-radius: $border-radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform $transition-base,
+    border-color $transition-base,
+    box-shadow $transition-base;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, color-var-alpha('color-primary', 0.2), color-var-alpha('color-accent', 0.15));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity $transition-base;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: color-var-alpha('color-primary', 0.4);
+    box-shadow: 0 4px 16px color-var-alpha('color-primary', 0.15);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  span {
+    color: $color-text-primary;
+  }
+
+  button {
+    border: 0;
+    background: transparent;
+    color: $color-error;
+    cursor: pointer;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    padding: $space-xs $space-sm;
+    border-radius: $border-radius-md;
+    transition:
+      background-color $transition-base,
+      color $transition-base,
+      transform $transition-base;
+
+    &:hover {
+      background: color-var-alpha('color-error', 0.12);
+      filter: brightness(1.15);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+@keyframes replyFormEntrance {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forum-reply,
+  .forum-reply__replying,
+  .forum-reply__attachment-chips {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .forum-reply__pill,
+  .forum-reply__chip,
+  .forum-reply__chip button {
+    transition: none !important;
   }
 }

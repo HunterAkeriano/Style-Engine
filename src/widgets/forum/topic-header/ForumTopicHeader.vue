@@ -18,7 +18,7 @@
       </div>
       <div class="forum-topic__controls">
         <Select
-          v-if="isAdmin"
+          v-if="isSuperAdmin"
           v-model="localStatus"
           :options="statusOptions"
           size="md"
@@ -59,6 +59,7 @@ const props = defineProps<{
   canEdit: boolean
   isEditing: boolean
   isAdmin: boolean
+  isSuperAdmin: boolean
 }>()
 
 const emit = defineEmits<{

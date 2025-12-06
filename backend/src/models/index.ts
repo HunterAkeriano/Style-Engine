@@ -26,6 +26,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
   declare subscriptionTier: CreationOptional<SubscriptionTier>
   declare subscriptionExpiresAt: Date | null
   declare isAdmin: CreationOptional<boolean>
+  declare isSuperAdmin: CreationOptional<boolean>
   declare createdAt: CreationOptional<Date>
   declare updatedAt: CreationOptional<Date>
 }
@@ -258,6 +259,12 @@ export function initModels(sequelize: Sequelize): Models {
         allowNull: false,
         defaultValue: false,
         field: 'is_admin'
+      },
+      isSuperAdmin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+        field: 'is_super_admin'
       },
       createdAt: {
         type: DataTypes.DATE,

@@ -32,6 +32,7 @@ describe('Auth Middleware', () => {
     mockUser = {
       id: 'user-123',
       isAdmin: false,
+      isSuperAdmin: false,
       isPayment: true,
       subscriptionTier: 'pro',
       get: jest.fn()
@@ -120,12 +121,13 @@ describe('Auth Middleware', () => {
 
       expect(jwt.verify).toHaveBeenCalledWith('valid-token', mockEnv.JWT_SECRET);
       expect(mockUserModel.findByPk).toHaveBeenCalledWith('user-123', {
-        attributes: ['id', 'isAdmin', 'isPayment', 'subscriptionTier']
+        attributes: ['id', 'isAdmin', 'isSuperAdmin', 'isPayment', 'subscriptionTier']
       });
       expect(mockReq.userId).toBe('user-123');
       expect(mockReq.authUser).toEqual({
         id: 'user-123',
         isAdmin: false,
+        isSuperAdmin: false,
         isPayment: true,
         subscriptionTier: 'pro'
       });
@@ -307,6 +309,7 @@ describe('Auth Middleware', () => {
       expect(mockReq.authUser).toEqual({
         id: 'user-123',
         isAdmin: false,
+        isSuperAdmin: false,
         isPayment: true,
         subscriptionTier: 'pro'
       });
@@ -340,6 +343,7 @@ describe('Auth Middleware', () => {
       mockReq.authUser = {
         id: 'user-123',
         isAdmin: false,
+        isSuperAdmin: false,
         isPayment: true,
         subscriptionTier: 'pro'
       };
@@ -354,6 +358,7 @@ describe('Auth Middleware', () => {
       mockReq.authUser = {
         id: 'admin-123',
         isAdmin: true,
+        isSuperAdmin: false,
         isPayment: true,
         subscriptionTier: 'premium'
       };

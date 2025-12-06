@@ -1,24 +1,32 @@
 <template>
   <div class="forum-create">
-    <Breadcrumbs />
+    <div class="forum-create__background">
+      <span class="forum-create__beam forum-create__beam_left"></span>
+      <span class="forum-create__beam forum-create__beam_right"></span>
+      <span class="forum-create__grid-lines"></span>
+    </div>
 
-    <section class="forum-create__hero">
-      <div class="forum-create__eyebrow">{{ t('FORUM.CREATE.TAG') }}</div>
-      <h1 class="forum-create__title">{{ t('FORUM.CREATE.TITLE') }}</h1>
-      <p class="forum-create__subtitle">{{ t('FORUM.CREATE.SUBTITLE') }}</p>
-    </section>
+    <div class="forum-create__container">
+      <Breadcrumbs />
 
-    <Card variant="bordered" class="forum-create__card">
-      <ForumTopicForm
-        ref="formRef"
-        :submit-label="isSubmitting ? t('FORUM.CREATE.SAVING') : t('FORUM.CREATE.SUBMIT')"
-        :cancel-label="t('FORUM.CREATE.CANCEL')"
-        :allow-video="true"
-        :disabled="isSubmitting"
-        @cancel="goBack"
-        @submit="handleSubmit"
-      />
-    </Card>
+      <section class="forum-create__hero">
+        <div class="forum-create__eyebrow">{{ t('FORUM.CREATE.TAG') }}</div>
+        <h1 class="forum-create__title">{{ t('FORUM.CREATE.TITLE') }}</h1>
+        <p class="forum-create__subtitle">{{ t('FORUM.CREATE.SUBTITLE') }}</p>
+      </section>
+
+      <Card variant="bordered" class="forum-create__card">
+        <ForumTopicForm
+          ref="formRef"
+          :submit-label="isSubmitting ? t('FORUM.CREATE.SAVING') : t('FORUM.CREATE.SUBMIT')"
+          :cancel-label="t('FORUM.CREATE.CANCEL')"
+          :allow-video="true"
+          :disabled="isSubmitting"
+          @cancel="goBack"
+          @submit="handleSubmit"
+        />
+      </Card>
+    </div>
   </div>
 </template>
 

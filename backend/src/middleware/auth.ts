@@ -9,6 +9,7 @@ export interface AuthRequest extends Request {
   authUser?: {
     id: string
     isAdmin: boolean
+    isSuperAdmin: boolean
     isPayment: boolean
     subscriptionTier: 'free' | 'pro' | 'premium'
   }
@@ -52,7 +53,7 @@ export function createAuthMiddleware(env: Env) {
       }
       const { User } = getModels()
       const user = await User.findByPk(payload.sub, {
-        attributes: ['id', 'isAdmin', 'isPayment', 'subscriptionTier']
+        attributes: ['id', 'isAdmin', 'isSuperAdmin', 'isPayment', 'subscriptionTier']
       })
       if (!user) {
         return sendApiError(res, 401, 'User not found')
@@ -63,6 +64,7 @@ export function createAuthMiddleware(env: Env) {
       req.authUser = {
         id: plain.id,
         isAdmin: Boolean(plain.isAdmin),
+        isSuperAdmin: Boolean(plain.isSuperAdmin),
         isPayment: Boolean(plain.isPayment),
         subscriptionTier: (plain.subscriptionTier as 'free' | 'pro' | 'premium') ?? 'free'
       }
@@ -94,7 +96,7 @@ export function createOptionalAuthMiddleware(env: Env) {
       }
       const { User } = getModels()
       const user = await User.findByPk(payload.sub, {
-        attributes: ['id', 'isAdmin', 'isPayment', 'subscriptionTier']
+        attributes: ['id', 'isAdmin', 'isSuperAdmin', 'isPayment', 'subscriptionTier']
       })
       if (user) {
         const plain = user.get()
@@ -102,6 +104,7 @@ export function createOptionalAuthMiddleware(env: Env) {
         req.authUser = {
           id: plain.id,
           isAdmin: Boolean(plain.isAdmin),
+          isSuperAdmin: Boolean(plain.isSuperAdmin),
           isPayment: Boolean(plain.isPayment),
           subscriptionTier: (plain.subscriptionTier as 'free' | 'pro' | 'premium') ?? 'free'
         }
@@ -116,6 +119,13 @@ export function createOptionalAuthMiddleware(env: Env) {
 export function requireAdmin(req: AuthRequest, res: Response, next: NextFunction) {
   if (!req.authUser?.isAdmin) {
     return sendApiError(res, 403, 'Admin access required')
+  }
+  next()
+}
+
+export function requireSuperAdmin(req: AuthRequest, res: Response, next: NextFunction) {
+  if (!req.authUser?.isSuperAdmin) {
+    return sendApiError(res, 403, 'Super admin access required')
   }
   next()
 }
