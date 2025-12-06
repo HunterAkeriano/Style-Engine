@@ -10,18 +10,22 @@
 
         <nav class="header__nav">
           <DropdownMenu :title="t('NAV.DOCS')" is-first id="docs-dropdown" >
-            <NavLink :to="`/${locale}/docs`" class-name="header__nav-link">
-              {{ t('NAV.DOCS') }}
-            </NavLink>
+          <NavLink :to="`/${locale}/docs`" class-name="header__nav-link">
+            {{ t('NAV.DOCS') }}
+          </NavLink>
 
-            <NavLink :to="`/${locale}/quiz`" class-name="header__nav-link">
-              {{ t('NAV.QUIZ') }}
-            </NavLink>
-          </DropdownMenu>
+          <NavLink :to="`/${locale}/quiz`" class-name="header__nav-link">
+            {{ t('NAV.QUIZ') }}
+          </NavLink>
 
-          <DropdownMenu id="functions-dropdown" :title="t('NAV.FUNCTIONS')">
-            <NavLink :to="`/${locale}/gradient`" class-name="header__nav-link">
-              {{ t('NAV.GRADIENTS') }}
+          <NavLink :to="`/${locale}/forum`" class-name="header__nav-link">
+            {{ t('NAV.FORUM') }}
+          </NavLink>
+        </DropdownMenu>
+
+        <DropdownMenu id="functions-dropdown" :title="t('NAV.FUNCTIONS')">
+          <NavLink :to="`/${locale}/gradient`" class-name="header__nav-link">
+            {{ t('NAV.GRADIENTS') }}
             </NavLink>
 
             <NavLink :to="`/${locale}/shadow`" class-name="header__nav-link">
@@ -84,6 +88,10 @@
 
         <NavLink :to="`/${locale}/quiz`" class-name="header__mobile-link" @click="closeMobileMenu">
           {{ t('NAV.QUIZ') }}
+        </NavLink>
+
+        <NavLink :to="`/${locale}/forum`" class-name="header__mobile-link" @click="closeMobileMenu">
+          {{ t('NAV.FORUM') }}
         </NavLink>
 
         <NavLink :to="`/${locale}/gradient`" class-name="header__mobile-link" @click="closeMobileMenu">

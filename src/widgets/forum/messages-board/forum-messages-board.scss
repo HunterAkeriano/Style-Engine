@@ -1,0 +1,30 @@
+.forum-topic {
+  &__card {
+    padding: 16px;
+  }
+
+  &__messages-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  &__messages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__message {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 8px;
+  }
+
+  &__empty {
+    padding: 20px;
+    text-align: center;
+    color: rgba(230, 230, 240, 0.7);
+  }
+}

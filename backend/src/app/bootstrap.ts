@@ -11,6 +11,8 @@ import { SavesController } from '../interfaces/http/controllers/saves-controller
 import { ModerationController } from '../interfaces/http/controllers/moderation-controller'
 import { UsersController } from '../interfaces/http/controllers/users-controller'
 import { QuizController } from '../interfaces/http/controllers/quiz-controller'
+import { initForumWs } from '../interfaces/ws/forum-ws'
+import { ForumController } from '../interfaces/http/controllers/forum-controller'
 
 /**
  * Application bootstrapper responsible for wiring dependencies
@@ -45,12 +47,14 @@ export async function bootstrap() {
       new SavesController(env, models),
       new ModerationController(env, models),
       new UsersController(env, models),
-      new QuizController(env, models)
+      new QuizController(env, models),
+      new ForumController(env, models)
     ]
     return new ApiRouter(env, controllers)
   })
 
   const app = new HttpApplication(env, container)
   app.configure()
-  app.listen()
+  const server = app.listen()
+  initForumWs(server)
 }

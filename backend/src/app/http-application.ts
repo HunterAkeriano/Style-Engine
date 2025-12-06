@@ -1,4 +1,5 @@
 import express, { type Express } from 'express'
+import type { Server } from 'http'
 import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
@@ -66,10 +67,11 @@ export class HttpApplication {
     })
   }
 
-  listen() {
+  listen(): Server {
     const port = Number(this.env.PORT) || 4000
-    this.app.listen(port, () => {
+    const server = this.app.listen(port, () => {
       console.log(`API listening on http://localhost:${port}`)
     })
+    return server
   }
 }

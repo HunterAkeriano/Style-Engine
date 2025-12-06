@@ -1,0 +1,10 @@
+.forum-topic {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 0 80px;
+
+  &__card {
+    padding: 16px;
+  }
+}

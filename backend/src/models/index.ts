@@ -13,6 +13,8 @@ type SavedStatus = 'private' | 'pending' | 'approved'
 type QuizCategory = 'css' | 'scss' | 'stylus'
 type QuizDifficulty = 'easy' | 'medium' | 'hard'
 type QuizResultCategory = 'css' | 'scss' | 'stylus' | 'mix'
+type ForumStatus = 'open' | 'in_review' | 'closed'
+type Attachment = { type: 'image' | 'youtube'; url: string }
 
 export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<string>
@@ -160,6 +162,36 @@ export class QuizAttempt extends Model<InferAttributes<QuizAttempt>, InferCreati
   declare updatedAt: CreationOptional<Date>
 }
 
+export class ForumTopic extends Model<InferAttributes<ForumTopic>, InferCreationAttributes<ForumTopic>> {
+  declare id: CreationOptional<string>
+  declare userId: ForeignKey<User['id']>
+  declare user?: User
+  declare title: string
+  declare description: string
+  declare status: CreationOptional<ForumStatus>
+  declare attachments: Attachment[]
+  declare messagesCount: CreationOptional<number>
+  declare lastActivityAt: CreationOptional<Date>
+  declare createdAt: CreationOptional<Date>
+  declare updatedAt: CreationOptional<Date>
+}
+
+export class ForumMessage extends Model<InferAttributes<ForumMessage>, InferCreationAttributes<ForumMessage>> {
+  declare id: CreationOptional<string>
+  declare topicId: ForeignKey<ForumTopic['id']>
+  declare topic?: ForumTopic
+  declare userId: ForeignKey<User['id']>
+  declare user?: User
+  declare parentId: ForeignKey<ForumMessage['id']> | null
+  declare parent?: ForumMessage | null
+  declare content: string
+  declare attachments: Attachment[]
+  declare editedAt: Date | null
+  declare editedBy: string | null
+  declare createdAt: CreationOptional<Date>
+  declare updatedAt: CreationOptional<Date>
+}
+
 export interface Models {
   User: typeof User
   RefreshToken: typeof RefreshToken
@@ -173,6 +205,8 @@ export interface Models {
   QuizSettings: typeof QuizSettings
   QuizResult: typeof QuizResult
   QuizAttempt: typeof QuizAttempt
+  ForumTopic: typeof ForumTopic
+  ForumMessage: typeof ForumMessage
 }
 
 export function initModels(sequelize: Sequelize): Models {
@@ -514,12 +548,63 @@ export function initModels(sequelize: Sequelize): Models {
     }
   )
 
+  ForumTopic.init(
+    {
+      id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+      userId: { type: DataTypes.UUID, allowNull: false, field: 'user_id' },
+      title: { type: DataTypes.TEXT, allowNull: false },
+      description: { type: DataTypes.TEXT, allowNull: false },
+      status: { type: DataTypes.TEXT, allowNull: false, defaultValue: 'open' },
+      attachments: { type: DataTypes.JSONB, allowNull: false, defaultValue: [] },
+      messagesCount: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0, field: 'messages_count' },
+      lastActivityAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'last_activity_at' },
+      createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
+      updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' }
+    },
+    {
+      sequelize,
+      tableName: 'forum_topics',
+      underscored: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at'
+    }
+  )
+
+  ForumMessage.init(
+    {
+      id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+      topicId: { type: DataTypes.UUID, allowNull: false, field: 'topic_id' },
+      userId: { type: DataTypes.UUID, allowNull: false, field: 'user_id' },
+      parentId: { type: DataTypes.UUID, allowNull: true, field: 'parent_id' },
+      content: { type: DataTypes.TEXT, allowNull: false },
+      attachments: { type: DataTypes.JSONB, allowNull: false, defaultValue: [] },
+      editedAt: { type: DataTypes.DATE, allowNull: true, field: 'edited_at' },
+      editedBy: { type: DataTypes.TEXT, allowNull: true, field: 'edited_by' },
+      createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
+      updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' }
+    },
+    {
+      sequelize,
+      tableName: 'forum_messages',
+      underscored: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at'
+    }
+  )
+
   // Quiz relationships
   User.hasMany(QuizResult, { foreignKey: 'userId', as: 'quizResults' })
   QuizResult.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 
   User.hasMany(QuizAttempt, { foreignKey: 'userId', as: 'quizAttempts' })
   QuizAttempt.belongsTo(User, { foreignKey: 'userId', as: 'user' })
+
+  ForumTopic.belongsTo(User, { foreignKey: 'userId', as: 'user' })
+  ForumTopic.hasMany(ForumMessage, { foreignKey: 'topicId', as: 'messages' })
+  ForumMessage.belongsTo(ForumTopic, { foreignKey: 'topicId', as: 'topic' })
+  ForumMessage.belongsTo(User, { foreignKey: 'userId', as: 'user' })
+  ForumMessage.belongsTo(ForumMessage, { foreignKey: 'parentId', as: 'parent' })
+  ForumMessage.hasMany(ForumMessage, { foreignKey: 'parentId', as: 'replies' })
 
   return {
     User,
@@ -533,6 +618,8 @@ export function initModels(sequelize: Sequelize): Models {
     QuizQuestion,
     QuizSettings,
     QuizResult,
-    QuizAttempt
+    QuizAttempt,
+    ForumTopic,
+    ForumMessage
   }
 }

@@ -36,6 +36,37 @@ const mainLayoutChildren: RouteRecordRaw[] = [
     },
   },
   {
+    path: "forum",
+    name: "forum",
+    component: () => import("@/pages/forum/forum-list-page/ForumListPage.vue"),
+    meta: {
+      titleKey: "META.FORUM",
+      descriptionKey: "META_DESCRIPTION.FORUM",
+      breadcrumbKey: "BREADCRUMBS.FORUM",
+    },
+  },
+  {
+    path: "forum/create",
+    name: "forum-create",
+    component: () => import("@/pages/forum/forum-create-page/ForumCreatePage.vue"),
+    meta: {
+      titleKey: "META.FORUM_CREATE",
+      descriptionKey: "META_DESCRIPTION.FORUM_CREATE",
+      breadcrumbKey: "BREADCRUMBS.FORUM_CREATE",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "forum/:id",
+    name: "forum-topic",
+    component: () => import("@/pages/forum/forum-topic-page/ForumTopicPage.vue"),
+    meta: {
+      titleKey: "META.FORUM_TOPIC",
+      descriptionKey: "META_DESCRIPTION.FORUM_TOPIC",
+      breadcrumbKey: "BREADCRUMBS.FORUM_TOPIC",
+    },
+  },
+  {
     path: "privacy-policy",
     name: "privacy-policy",
     component: () => import("@/pages/policy/PrivacyPolicyPage.vue"),

@@ -1,0 +1,223 @@
+.forum-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 0 80px;
+  color: var(--text-primary, #e6e6f0);
+
+  &__hero {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(78, 92, 255, 0.14), rgba(140, 71, 255, 0.12));
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 14px 60px rgba(0, 0, 0, 0.35);
+  }
+
+  &__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    width: fit-content;
+    background: rgba(255, 255, 255, 0.06);
+    color: #9fa8ff;
+    font-size: 13px;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    font-size: 32px;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  &__subtitle {
+    margin: 8px 0 0;
+    max-width: 720px;
+    color: rgba(230, 230, 240, 0.76);
+  }
+
+  &__header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  &__create {
+    white-space: nowrap;
+  }
+
+  &__card {
+    padding: 16px;
+  }
+
+  &__table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 4px 16px;
+    color: rgba(230, 230, 240, 0.76);
+  }
+
+  &__hint {
+    font-size: 14px;
+  }
+
+  &__counter {
+    font-size: 14px;
+    color: rgba(230, 230, 240, 0.9);
+    padding: 6px 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  &__topic {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__topic-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #ffffff;
+  }
+
+  &__topic-desc {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(230, 230, 240, 0.72);
+    max-width: 640px;
+  }
+
+  &__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: capitalize;
+    &::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    &_open {
+      color: #65d9a5;
+      background: rgba(101, 217, 165, 0.12);
+    }
+    &_in_review {
+      color: #ffd666;
+      background: rgba(255, 214, 102, 0.12);
+    }
+    &_closed {
+      color: #ff7b7b;
+      background: rgba(255, 123, 123, 0.12);
+    }
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  &__owner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    display: grid;
+    place-items: center;
+    color: #c9d2ff;
+    font-weight: 700;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__owner-name {
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  &__owner-role {
+    font-size: 12px;
+    color: #9fa8ff;
+  }
+
+  &__pagination {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-end;
+  }
+
+  &__page-info {
+    color: rgba(230, 230, 240, 0.8);
+    font-size: 14px;
+  }
+
+  &__modal-text {
+    color: rgba(230, 230, 240, 0.8);
+    margin: 8px 0 0;
+  }
+
+  @media (max-width: 768px) {
+    padding: 12px 0 60px;
+
+    &__hero {
+      padding: 16px;
+    }
+
+    &__header {
+      flex-direction: column;
+    }
+
+    &__header-actions {
+      width: 100%;
+      justify-content: flex-start;
+    }
+
+    &__card {
+      padding: 12px;
+    }
+  }
+}
