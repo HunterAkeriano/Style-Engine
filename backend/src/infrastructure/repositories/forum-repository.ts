@@ -28,7 +28,13 @@ export class ForumRepository {
       col: 'id',
       limit: options.limit,
       offset: (options.page - 1) * options.limit,
-      include: [{ model: this.models.User, as: 'user', attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin'] }]
+      include: [
+        {
+          model: this.models.User,
+          as: 'user',
+          attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin', 'subscriptionTier']
+        }
+      ]
     })
   }
 
@@ -38,7 +44,13 @@ export class ForumRepository {
 
   findTopicById(id: string) {
     return this.models.ForumTopic.findByPk(id, {
-      include: [{ model: this.models.User, as: 'user', attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin'] }]
+      include: [
+        {
+          model: this.models.User,
+          as: 'user',
+          attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin', 'subscriptionTier']
+        }
+      ]
     })
   }
 
@@ -48,7 +60,13 @@ export class ForumRepository {
 
   findMessageById(id: string) {
     return this.models.ForumMessage.findByPk(id, {
-      include: [{ model: this.models.User, as: 'user', attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin'] }]
+      include: [
+        {
+          model: this.models.User,
+          as: 'user',
+          attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin', 'subscriptionTier']
+        }
+      ]
     })
   }
 
@@ -60,7 +78,11 @@ export class ForumRepository {
         ['id', 'ASC']
       ],
       include: [
-        { model: this.models.User, as: 'user', attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin'] },
+        {
+          model: this.models.User,
+          as: 'user',
+          attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin', 'subscriptionTier']
+        },
         { model: this.models.ForumMessage, as: 'parent', attributes: ['id', 'userId'] }
       ]
     })

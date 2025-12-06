@@ -193,6 +193,50 @@
     color: color-var-alpha('color-text-secondary', 0.8);
   }
 
+  &__owner-crown {
+    margin-top: 4px;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__owner-crown_pro {
+    color: color-var('color-primary');
+  }
+
+  &__owner-crown_premium {
+    color: color-var('color-success');
+    box-shadow: 0 0 0 2px color-var-alpha('color-success', 0.4), 0 0 6px color-var-alpha('color-success', 0.6);
+  }
+
+  &__owner-plan {
+    margin-top: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: $border-radius-full;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border: 1px solid color-var-alpha('panel-border', 0.3);
+    background: color-var-alpha('color-bg-secondary', 0.6);
+    color: color-var-alpha('color-text-secondary', 0.9);
+  }
+
+  &__owner-plan_pro {
+    background: color-var-alpha('color-primary', 0.12);
+    color: color-var('color-primary');
+  }
+
+  &__owner-plan_premium {
+    background: color-var-alpha('color-success', 0.2);
+    color: color-var('color-success');
+  }
+
   &__pagination {
     margin-top: 16px;
     display: flex;

@@ -23,6 +23,12 @@
           <span v-if="topic.owner" class="forum-topic__meta-item">
             {{ topic.owner.name || topic.owner.email }}
           </span>
+          <Icon
+            v-if="topic.owner && showOwnerCrown"
+            name="icon-crown"
+            class="forum-topic__meta-crown"
+            :class="`forum-topic__meta-crown_${ownerPlanClass}`"
+          />
         </div>
       </div>
       <div class="forum-topic__controls">
@@ -66,8 +72,9 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { Button, Select } from "@/shared/ui";
+import { Button, Icon, Select } from "@/shared/ui";
 import type { ForumStatus, ForumTopic } from "@/shared/api/forum";
+import { resolvePlanClass, type PlanTier } from "@/shared/lib/plans";
 
 const props = defineProps<{
   topic: ForumTopic | null;
@@ -111,6 +118,14 @@ function formatDate(value: string) {
     return value;
   }
 }
+
+const ownerPlanTier = computed<PlanTier>(() =>
+  (props.topic?.owner?.subscriptionTier ?? "free") as PlanTier,
+);
+const ownerPlanClass = computed(() =>
+  resolvePlanClass(ownerPlanTier.value),
+);
+const showOwnerCrown = computed(() => ownerPlanTier.value !== "free");
 </script>
 
 <style scoped lang="scss" src="./forum-topic-header.scss"></style>

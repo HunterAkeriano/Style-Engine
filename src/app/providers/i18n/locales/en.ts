@@ -498,6 +498,12 @@ export default {
       ACTIVITY: 'Last activity',
       AUTHOR: 'Author'
     },
+    PLAN_LABEL: 'Plan',
+    UNIT: {
+      FREE: 'Free',
+      PRO: 'Pro',
+      PREMIUM: 'Premium'
+    },
     STATUS: {
       ALL: 'All',
       OPEN: 'Open',

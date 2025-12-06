@@ -11,6 +11,7 @@ export interface ForumUser {
   email: string | null
   avatarUrl: string | null
   isAdmin?: boolean
+  subscriptionTier?: 'free' | 'pro' | 'premium'
 }
 
 export interface ForumTopic {

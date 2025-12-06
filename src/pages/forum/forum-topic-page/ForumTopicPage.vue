@@ -57,11 +57,16 @@
         :current-user-id="authStore.user?.id || ''"
         :is-admin="Boolean(authStore.user?.isAdmin)"
         :format-date="formatDate"
+        :reply-target-id="replyParentId"
+        :reply-form-config="replyFormConfig"
         @reply="setReplyTarget"
         @edit="handleEditSubmit"
+        @inline-reply-submit="sendReply"
+        @inline-reply-cancel="clearReply"
       />
 
       <ForumReplyForm
+        v-if="!replyParentId"
         :title="t('FORUM.TOPIC.REPLY_TITLE')"
         :hint="t('FORUM.TOPIC.REPLY_HINT')"
         :total-label="t('FORUM.TOPIC.TOTAL', { count: messages.length })"
@@ -175,6 +180,16 @@ const replyPlaceholder = computed(() => {
     return t("FORUM.TOPIC.REVIEW_REPLY");
   return t("FORUM.TOPIC.REPLY_PLACEHOLDER");
 });
+
+const replyFormConfig = computed(() => ({
+  title: t("FORUM.TOPIC.REPLY_TITLE"),
+  hint: t("FORUM.TOPIC.REPLY_HINT"),
+  placeholder: replyPlaceholder.value,
+  sendLabel: t("FORUM.TOPIC.SEND"),
+  cancelLabel: t("FORUM.TOPIC.CANCEL_REPLY"),
+  allowVideo: Boolean(authStore.user?.isAdmin),
+  sending: sendingReply.value
+}));
 
 function goBack() {
   router.push(`/${locale.value}/forum`);

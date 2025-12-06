@@ -118,7 +118,8 @@ export class ForumService {
             name: owner.name,
             email: owner.email,
             avatarUrl: owner.avatarUrl,
-            isAdmin: Boolean((owner as any).isAdmin)
+            isAdmin: Boolean((owner as any).isAdmin),
+            subscriptionTier: (owner as any).subscriptionTier ?? 'free'
           }
         : null
     }
@@ -129,13 +130,14 @@ export class ForumService {
     const author = user as ForumMessage['user'] | undefined
     return {
       ...rest,
-      author: author
+        author: author
         ? {
             id: author.id,
             name: author.name,
             email: author.email,
             avatarUrl: author.avatarUrl,
-            isAdmin: Boolean((author as any).isAdmin)
+            isAdmin: Boolean((author as any).isAdmin),
+            subscriptionTier: (author as any).subscriptionTier ?? 'free'
           }
         : null
     }

@@ -2,13 +2,25 @@
   <div class="forum-message" :style="{ marginLeft: `${depth * 18}px` }">
     <div class="forum-message__header">
       <div class="forum-message__avatar">
-        <img v-if="node.author?.avatarUrl" :src="node.author.avatarUrl" alt="" />
+        <img
+          v-if="node.author?.avatarUrl"
+          :src="node.author.avatarUrl"
+          alt=""
+        />
         <span v-else>{{ initials }}</span>
       </div>
       <div class="forum-message__meta">
         <div class="forum-message__author">
-          <span>{{ node.author?.name || node.author?.email || 'User' }}</span>
-          <span v-if="node.author?.isAdmin" class="forum-message__role">Admin</span>
+          <span>{{ node.author?.name || node.author?.email || "User" }}</span>
+          <span v-if="node.author?.isAdmin" class="forum-message__role"
+            >Admin</span
+          >
+          <Icon
+            v-if="showAuthorPlanIcon"
+            name="icon-crown"
+            class="forum-message__crown"
+            :class="`forum-message__crown_${authorPlanClass}`"
+          />
         </div>
         <div class="forum-message__timestamps">
           <span>{{ formatDate(node.createdAt) }}</span>
@@ -30,30 +42,65 @@
           class="forum-message__attachment"
         >
           <img v-if="item.type === 'image'" :src="item.url" :alt="item.url" />
-          <iframe v-else :src="item.url" title="YouTube" frameborder="0" allowfullscreen />
+          <iframe
+            v-else
+            :src="item.url"
+            title="YouTube"
+            frameborder="0"
+            allowfullscreen
+          />
         </div>
       </div>
     </div>
 
     <div class="forum-message__actions">
       <div class="forum-message__actions-row">
-        <Button v-if="canReply" size="sm" variant="ghost" @click="$emit('reply', node)">
-          {{ $t('FORUM.TOPIC.REPLY') }}
+        <Button
+          v-if="canReply"
+          size="sm"
+          variant="ghost"
+          @click="$emit('reply', node)"
+        >
+          {{ $t("FORUM.TOPIC.REPLY") }}
         </Button>
         <template v-if="canEditThis">
-          <Button v-if="!isEditing" size="sm" variant="ghost" @click="startEdit">
-            {{ $t('FORUM.TOPIC.EDIT') }}
+          <Button
+            v-if="!isEditing"
+            size="sm"
+            variant="ghost"
+            @click="startEdit"
+          >
+            {{ $t("FORUM.TOPIC.EDIT") }}
           </Button>
           <div v-else class="forum-message__edit-actions">
             <Button size="sm" variant="primary" @click="saveEdit">
-              {{ $t('FORUM.TOPIC.SAVE_EDIT') }}
+              {{ $t("FORUM.TOPIC.SAVE_EDIT") }}
             </Button>
             <Button size="sm" variant="ghost" @click="cancelEdit">
-              {{ $t('FORUM.TOPIC.CANCEL_REPLY') }}
+              {{ $t("FORUM.TOPIC.CANCEL_REPLY") }}
             </Button>
           </div>
         </template>
       </div>
+    </div>
+
+    <div v-if="showInlineReply" class="forum-message__inline-reply">
+      <ForumReplyForm
+        :title="replyConfig?.title ?? t('FORUM.TOPIC.REPLY_TITLE')"
+        :hint="replyConfig?.hint ?? t('FORUM.TOPIC.REPLY_HINT')"
+        :total-label="t('FORUM.TOPIC.TOTAL', { count: 1 })"
+        :placeholder="
+          replyConfig?.placeholder ?? t('FORUM.TOPIC.REPLY_PLACEHOLDER')
+        "
+        :send-label="replyConfig?.sendLabel ?? t('FORUM.TOPIC.SEND')"
+        :can-reply="canReply"
+        :allow-video="replyConfig?.allowVideo ?? false"
+        :sending="replyConfig?.sending ?? false"
+        :replying-to="node"
+        :cancel-reply-label="replyConfig?.cancelLabel"
+        @submit="handleInlineSubmit"
+        @cancel-reply="handleInlineCancel"
+      />
     </div>
 
     <div v-if="node.replies.length" class="forum-message__replies">
@@ -67,76 +114,122 @@
         :topic-status="topicStatus"
         :is-admin="isAdmin"
         :current-user-id="currentUserId"
+        :inline-reply-target-id="props.inlineReplyTargetId"
+        :inline-reply-form-config="replyConfig"
         @reply="$emit('reply', $event)"
         @edit="$emit('edit', $event)"
+        @inline-reply-submit="$emit('inline-reply-submit', $event)"
+        @inline-reply-cancel="$emit('inline-reply-cancel')"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { Button, Textarea } from '@/shared/ui'
-import type { ForumMessage } from '@/shared/api/forum'
+import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { Button, Icon, Textarea } from "@/shared/ui";
+import type { ForumMessage } from "@/shared/api/forum";
+import type { ForumAttachmentDraft } from "@/entities/forum";
+import ForumReplyForm from "@/features/forum/reply-form/ForumReplyForm.vue";
+import { resolvePlanClass, type PlanTier } from "@/shared/lib/plans";
 
-defineOptions({ name: 'MessageBlock' })
+defineOptions({ name: "MessageBlock" });
 
 interface MessageNode extends ForumMessage {
-  replies: MessageNode[]
+  replies: MessageNode[];
 }
 
 const props = defineProps<{
-  node: MessageNode
-  depth: number
-  canReply: boolean
-  formatDate: (value: string) => string
-  currentUserId: string
-  topicStatus: 'open' | 'in_review' | 'closed'
-  isAdmin: boolean
-}>()
+  node: MessageNode;
+  depth: number;
+  canReply: boolean;
+  formatDate: (value: string) => string;
+  currentUserId: string;
+  topicStatus: "open" | "in_review" | "closed";
+  isAdmin: boolean;
+  inlineReplyTargetId?: string | null;
+  inlineReplyFormConfig?: {
+    title: string;
+    hint: string;
+    placeholder: string;
+    sendLabel: string;
+    cancelLabel?: string;
+    allowVideo?: boolean;
+    sending: boolean;
+  } | null;
+}>();
 
 const emit = defineEmits<{
-  (e: 'reply', message: MessageNode): void
-  (e: 'edit', payload: { id: string; content: string }): void
-}>()
+  (e: "reply", message: MessageNode): void;
+  (e: "edit", payload: { id: string; content: string }): void;
+  (
+    e: "inline-reply-submit",
+    payload: { content: string; attachments: ForumAttachmentDraft[] },
+  ): void;
+  (e: "inline-reply-cancel"): void;
+}>();
 
-const { t } = useI18n()
-const isEditing = ref(false)
-const draft = ref(props.node.content)
+const { t } = useI18n();
+const isEditing = ref(false);
+const draft = ref(props.node.content);
 const canEditThis = computed(
-  () => props.isAdmin || (props.topicStatus === 'open' && props.currentUserId === props.node.userId)
-)
+  () =>
+    props.isAdmin ||
+    (props.topicStatus === "open" && props.currentUserId === props.node.userId),
+);
+
+const authorPlan = computed<PlanTier>(
+  () => (props.node.author?.subscriptionTier ?? "free") as PlanTier,
+);
+const authorPlanClass = computed(() => resolvePlanClass(authorPlan.value));
+const showAuthorPlanIcon = computed(() => authorPlan.value !== "free");
+
+const replyConfig = computed(() => props.inlineReplyFormConfig ?? null);
+const showInlineReply = computed(
+  () => props.inlineReplyTargetId === props.node.id,
+);
 
 watch(
   () => props.node.content,
   (val) => {
-    if (!isEditing.value) draft.value = val
-  }
-)
+    if (!isEditing.value) draft.value = val;
+  },
+);
 
 const initials = computed(() => {
-  const name = props.node.author?.name || props.node.author?.email || ''
-  return name.slice(0, 2).toUpperCase() || 'U'
-})
+  const name = props.node.author?.name || props.node.author?.email || "";
+  return name.slice(0, 2).toUpperCase() || "U";
+});
 
-const editedLabel = computed(() => t('FORUM.TOPIC.EDITED'))
+const editedLabel = computed(() => t("FORUM.TOPIC.EDITED"));
 
 function startEdit() {
-  if (!canEditThis.value) return
-  isEditing.value = true
-  draft.value = props.node.content
+  if (!canEditThis.value) return;
+  isEditing.value = true;
+  draft.value = props.node.content;
 }
 
 function cancelEdit() {
-  isEditing.value = false
-  draft.value = props.node.content
+  isEditing.value = false;
+  draft.value = props.node.content;
 }
 
 function saveEdit() {
-  if (!draft.value.trim()) return
-  emit('edit', { id: props.node.id, content: draft.value.trim() })
-  isEditing.value = false
+  if (!draft.value.trim()) return;
+  emit("edit", { id: props.node.id, content: draft.value.trim() });
+  isEditing.value = false;
+}
+
+function handleInlineSubmit(payload: {
+  content: string;
+  attachments: ForumAttachmentDraft[];
+}) {
+  emit("inline-reply-submit", payload);
+}
+
+function handleInlineCancel() {
+  emit("inline-reply-cancel");
 }
 </script>
 
@@ -260,5 +353,46 @@ function saveEdit() {
   &__replies {
     margin-top: 12px;
   }
+
+}
+
+.forum-message__inline-reply {
+  margin-top: 14px;
+
+  .forum-reply {
+    position: relative;
+    bottom: auto;
+    margin-top: 0;
+    border-radius: $border-radius-2xl;
+    box-shadow: 0 10px 30px color-var-alpha('color-text-primary', 0.08);
+    padding: $space-xl;
+    background:
+      linear-gradient(135deg, color-var-alpha('color-bg-secondary', 0.92), color-var-alpha('color-bg-primary', 0.9)),
+      color-var-alpha('color-bg-secondary', 0.5);
+  }
+
+  .forum-reply__pill {
+    display: none;
+  }
+}
+.forum-message__crown {
+  margin-left: 6px;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: color-var-alpha('color-text-secondary', 0.7);
+}
+
+.forum-message__crown_pro {
+  color: color-var('color-primary');
+}
+
+.forum-message__crown_premium {
+  color: color-var('color-success');
+  box-shadow:
+    0 0 0 2px color-var-alpha('color-success', 0.4),
+    0 0 6px color-var-alpha('color-success', 0.6);
 }
 </style>

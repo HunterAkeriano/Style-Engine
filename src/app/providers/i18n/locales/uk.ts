@@ -508,6 +508,12 @@
       ACTIVITY: 'Активність',
       AUTHOR: 'Автор'
     },
+    PLAN_LABEL: 'План',
+    UNIT: {
+      FREE: 'Free',
+      PRO: 'Pro',
+      PREMIUM: 'Premium'
+    },
     STATUS: {
       ALL: 'Усі',
       OPEN: 'Відкрита',
