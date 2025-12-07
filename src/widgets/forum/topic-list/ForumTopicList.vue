@@ -365,12 +365,10 @@ onMounted(() => {
   loadTopics();
   loadUserMutes();
 
-  // Update timer every second
   const interval = setInterval(() => {
     currentTime.value = Date.now();
   }, 1000);
 
-  // Cleanup on unmount
   return () => clearInterval(interval);
 });
 </script>
