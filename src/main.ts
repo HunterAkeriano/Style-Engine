@@ -4,6 +4,7 @@ import { createHead } from '@unhead/vue/server'
 import { toastPlugin } from '@/shared/lib/toast'
 import { App } from '@/app'
 import { clickOutside } from '@/shared/directives'
+import { applyZodErrorMap } from '@/shared/lib/zod-config'
 import { initI18n, routes, AVAILABLE_LOCALES, scrollBehavior, getLocaleFromPath, setLocale } from '@/app/providers'
 import { setupRouterGuards } from '@/app/providers/router/guards'
 
@@ -51,6 +52,7 @@ export const createApp = ViteSSG(
     const resolvedRoutePath = routePath ?? router.currentRoute.value.fullPath
     const initialLocale = getLocaleFromPath(resolvedRoutePath)
     const i18nInstance = initI18n(initialLocale)
+    applyZodErrorMap(i18nInstance.global.t)
     setLocale(initialLocale)
 
     app.use(pinia)

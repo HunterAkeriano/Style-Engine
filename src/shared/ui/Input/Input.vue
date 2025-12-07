@@ -1,5 +1,5 @@
 <template>
-  <div :class="['input', { input_error: error, input_disabled: disabled }]">
+  <div :class="['input', { input_error: mergedError, input_disabled: disabled }]">
     <label v-if="label" :for="inputId" class="input__label">
       {{ label }}
       <span v-if="required" class="input__required">*</span>
@@ -52,10 +52,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import Icon from '@/shared/ui/Icon/Icon.vue'
+import { useFormContext } from '@/shared/lib/form/zodForm'
 
 interface Props {
   modelValue: string | number
   type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
+  name?: string
   label?: string
   placeholder?: string
   error?: string
@@ -91,6 +93,9 @@ const inputId = ref(`input-${Math.random().toString(36).substr(2, 9)}`)
 const isPasswordVisible = ref(false)
 const isPassword = computed(() => props.type === 'password')
 const showToggle = computed(() => props.showPasswordToggle ?? isPassword.value)
+const form = useFormContext()
+const field = props.name && form ? form.registerField(props.name) : null
+
 const inputType = computed(() => {
   if (isPassword.value && isPasswordVisible.value) {
     return 'text'
@@ -99,11 +104,19 @@ const inputType = computed(() => {
 })
 
 const inputValue = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+  get: () => (field ? field.value.value : props.modelValue),
+  set: (value) => {
+    if (field) {
+      field.setValue(value)
+    }
+    emit('update:modelValue', value)
+  }
 })
 
+const mergedError = computed(() => props.error || field?.error.value || '')
+
 function handleBlur(event: FocusEvent) {
+  if (field) field.validate()
   emit('blur', event)
 }
 

@@ -16,10 +16,12 @@
     </div>
 
     <Textarea
-      v-model="content"
+      name="content"
+      v-model="contentModel"
       :rows="5"
       :disabled="!canReply || sending"
       :placeholder="placeholder"
+      :error="contentError"
     />
 
     <div class="forum-reply__actions">
@@ -58,7 +60,7 @@
         </div>
       </div>
       <Button
-        :disabled="!canReply || sending || !content.trim()"
+        :disabled="!canReply || sending"
         @click="submit"
       >
         {{ sending ? t("FORUM.TOPIC.SENDING") : sendLabel }}
@@ -81,6 +83,9 @@
         </button>
       </div>
     </div>
+    <p v-if="attachmentsError" class="forum-reply__error">
+      {{ attachmentsError }}
+    </p>
   </Card>
 </template>
 
@@ -90,6 +95,8 @@ import { useI18n } from "vue-i18n";
 import type { ForumAttachmentDraft } from "@/entities/forum";
 import type { ForumMessage } from "@/shared/api/forum";
 import { Button, Card, Input, Textarea } from "@/shared/ui";
+import { buildReplyFormSchema } from "@/entities/forum/lib/forum-validation";
+import { useZodForm } from "@/shared/lib/form/zodForm";
 
 const props = withDefaults(
   defineProps<{
@@ -125,17 +132,54 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const content = ref("");
-const attachments = ref<ForumAttachmentDraft[]>([]);
 const youtube = ref("");
 const fileInput = ref<HTMLInputElement | null>(null);
 const cancelReplyLabel = computed(
   () => props.cancelReplyLabel || t("FORUM.TOPIC.CANCEL_REPLY"),
 );
+const replySchema = computed(() =>
+  buildReplyFormSchema({
+    allowVideo: props.allowVideo,
+    maxAttachments: props.maxAttachments,
+    messages: {
+      contentMin: t("FORUM.TOPIC.REPLY_REQUIRED"),
+      contentMax: t("FORUM.TOPIC.REPLY_TOO_LONG"),
+      youtube: t("FORUM.TOPIC.YOUTUBE_INVALID"),
+      attachmentsLimit: t("FORUM.TOPIC.ATTACH_LIMIT", {
+        limit: props.maxAttachments,
+      }),
+      videoNotAllowed: t("FORUM.TOPIC.YOUTUBE_INVALID"),
+      titleMin: t("FORUM.TOPIC.REPLY_REQUIRED"),
+      titleMax: t("FORUM.TOPIC.REPLY_REQUIRED"),
+      descriptionMin: t("FORUM.TOPIC.REPLY_REQUIRED"),
+      descriptionMax: t("FORUM.TOPIC.REPLY_REQUIRED"),
+    },
+  }),
+);
+const form = useZodForm(replySchema, {
+  content: "",
+  attachments: [],
+});
+const contentModel = computed({
+  get: () => (form.values.content as string) || "",
+  set: (val: string) => form.setValue("content", val),
+});
+const attachments = computed<ForumAttachmentDraft[]>(() => form.values.attachments || []);
+const contentError = computed(() => form.errors.content || "");
+const attachmentsError = computed(() => form.errors.attachments || "");
 
 watch(
   () => props.replyingTo,
   () => emit("replying-to", props.replyingTo),
+);
+
+watch(
+  [() => form.values.content, () => form.values.attachments],
+  () => {
+    validateField("content");
+    validateField("attachments");
+  },
+  { deep: true },
 );
 
 const replyingToLabel = computed(() => {
@@ -151,12 +195,22 @@ const replyingToLabel = computed(() => {
 function addYoutube() {
   if (!youtube.value) return;
   const match = youtube.value.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{6,})/i);
-  if (!match) return;
-  if (attachments.value.length >= props.maxAttachments) return;
-  attachments.value.push({
+  if (!match) {
+    form.errors.attachments = t("FORUM.TOPIC.YOUTUBE_INVALID");
+    return;
+  }
+  const next = [...attachments.value];
+  next.push({
     type: "youtube",
     url: `https://www.youtube.com/embed/${match[1]}`,
   });
+  const parsed = replySchema.value.shape.attachments.safeParse(next);
+  if (!parsed.success) {
+    form.errors.attachments = parsed.error.issues[0]?.message || "";
+    return;
+  }
+  form.errors.attachments = "";
+  form.setValue("attachments", parsed.data);
   youtube.value = "";
 }
 
@@ -164,21 +218,25 @@ function onFiles(event: Event) {
   const target = event.target as HTMLInputElement;
   const files = target.files;
   if (!files || !files.length) return;
-  const remaining = props.maxAttachments - attachments.value.length;
-  if (remaining <= 0) {
-    target.value = "";
-    return;
-  }
-  const toUpload = Array.from(files).slice(0, remaining);
+  form.errors.attachments = "";
+  const toUpload = Array.from(files);
+  const next: ForumAttachmentDraft[] = [...attachments.value];
   for (const file of toUpload) {
-    attachments.value.push({
+    next.push({
       type: "image",
       file,
       preview: URL.createObjectURL(file),
       url: "",
     });
+    const parsed = replySchema.value.shape.attachments.safeParse(next);
+    if (!parsed.success) {
+      form.errors.attachments = parsed.error.issues[0]?.message || "";
+      break;
+    }
+    form.setValue("attachments", parsed.data);
   }
   target.value = "";
+  validateField("attachments");
 }
 
 function removeAttachment(index: number) {
@@ -188,16 +246,57 @@ function removeAttachment(index: number) {
 }
 
 function submit() {
-  emit("submit", {
-    content: content.value.trim(),
-    attachments: attachments.value,
-  });
-  content.value = "";
-  attachments.value = [];
+  form.errors.content = "";
+  form.errors.attachments = "";
+  const parsed = validateAll();
+  if (!parsed) return;
+
+  emit("submit", parsed);
+  form.setValue("content", "");
+  form.setValue("attachments", []);
   youtube.value = "";
 }
 
-defineExpose({ setContent: (value: string) => (content.value = value) });
+function validateField(field: "content" | "attachments") {
+  form.errors.content = "";
+  form.errors.attachments = "";
+  const parsed = replySchema.value.safeParse({
+    content: form.values.content,
+    attachments: form.values.attachments,
+  });
+  if (!parsed.success) {
+    if (field === "content") {
+      form.errors.content =
+        parsed.error.issues.find((i) => i.path[0] === "content")?.message || "";
+    }
+    if (field === "attachments") {
+      form.errors.attachments =
+        parsed.error.issues.find((i) => i.path[0] === "attachments")?.message ||
+        "";
+    }
+    return null;
+  }
+  if (field === "content") form.errors.content = "";
+  if (field === "attachments") form.errors.attachments = "";
+  return parsed.data;
+}
+
+function validateAll() {
+  const parsed = replySchema.value.safeParse({
+    content: form.values.content,
+    attachments: form.values.attachments,
+  });
+  if (!parsed.success) {
+    validateField("content");
+    validateField("attachments");
+    return null;
+  }
+  form.errors.content = "";
+  form.errors.attachments = "";
+  return parsed.data;
+}
+
+defineExpose({ setContent: (value: string) => form.setValue("content", value) });
 </script>
 
 <style scoped lang="scss" src="./forum-reply-form.scss"></style>

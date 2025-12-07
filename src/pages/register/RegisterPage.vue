@@ -16,7 +16,8 @@
 
         <form class="register-form" @submit.prevent="handleSubmit" novalidate>
           <Input
-            v-model="formData.email"
+            name="email"
+            v-model="emailModel"
             :label="t('AUTH.EMAIL')"
             :error="errors.email ? t(`VALIDATION.${errors.email}`) : ''"
             type="email"
@@ -25,7 +26,8 @@
           />
 
           <Input
-            v-model="formData.password"
+            name="password"
+            v-model="passwordModel"
             :label="t('AUTH.PASSWORD')"
             :error="errors.password ? t(`VALIDATION.${errors.password}`) : ''"
             type="password"
@@ -35,7 +37,8 @@
           />
 
           <Input
-            v-model="formData.name!"
+            name="name"
+            v-model="nameModel"
             :label="t('AUTH.NAME')"
             :error="errors.name ? t(`VALIDATION.${errors.name}`) : ''"
             type="text"
@@ -71,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/entities'
@@ -80,46 +83,51 @@ import { Input } from '@/shared/ui'
 import ThemeSwitcher from '@/shared/ui/theme-switcher/ThemeSwitcher.vue'
 import LanguageSwitcher from '@/features/common/language-switcher/ui/language-switcher/LanguageSwitcher.vue'
 import { registerSchema, type RegisterFormData } from '@/shared/lib/validation/auth'
+import { useZodForm } from '@/shared/lib/form/zodForm'
 
 const router = useRouter()
 const { t, locale } = useI18n()
 const authStore = useAuthStore()
 
-const formData = reactive<RegisterFormData>({
+const form = useZodForm(registerSchema, {
   email: '',
   password: '',
   name: ''
 })
-
-const errors = reactive<Partial<Record<keyof RegisterFormData, string>>>({})
+const emailModel = computed({
+  get: () => form.values.email as string,
+  set: (val: string) => form.setValue('email', val)
+})
+const passwordModel = computed({
+  get: () => form.values.password as string,
+  set: (val: string) => form.setValue('password', val)
+})
+const nameModel = computed({
+  get: () => (form.values.name as string) || '',
+  set: (val: string) => form.setValue('name', val)
+})
+const errors = form.errors
 const isSubmitting = ref(false)
 const serverError = ref('')
 
 function clearFieldError(field: keyof RegisterFormData) {
-  errors[field] = undefined
+  errors[field] = ''
   serverError.value = ''
 }
 
 async function handleSubmit() {
-  Object.keys(errors).forEach((key) => {
-    errors[key as keyof RegisterFormData] = undefined
-  })
+  errors.email = ''
+  errors.password = ''
+  errors.name = ''
   serverError.value = ''
 
-  const result = registerSchema.safeParse(formData)
-
-  if (!result.success) {
-    result.error.issues.forEach((issue) => {
-      const field = issue.path[0] as keyof RegisterFormData
-      errors[field] = issue.message
-    })
-    return
-  }
+  const result = form.validateAll()
+  if (!result) return
 
   isSubmitting.value = true
 
   try {
-    await authStore.register(formData.email, formData.password, formData.name!)
+    await authStore.register(result.email, result.password, result.name || '')
     if (authStore.error) {
       serverError.value = authStore.error
       return

@@ -213,6 +213,12 @@
   animation: fadeIn 500ms ease-out;
 }
 
+.forum-reply__error {
+  margin-top: $space-sm;
+  color: color-var('color-error');
+  font-size: $font-size-sm;
+}
+
 .forum-reply__chip {
   display: inline-flex;
   align-items: center;

@@ -16,7 +16,8 @@
 
         <form class="login-form" @submit.prevent="handleSubmit" novalidate>
           <Input
-            v-model="formData.email"
+            name="email"
+            v-model="emailModel"
             :label="t('AUTH.EMAIL')"
             :error="errors.email ? t(`VALIDATION.${errors.email}`) : ''"
             type="email"
@@ -25,7 +26,8 @@
           />
 
         <Input
-          v-model="formData.password"
+          name="password"
+          v-model="passwordModel"
           :label="t('AUTH.PASSWORD')"
           :error="errors.password ? t(`VALIDATION.${errors.password}`) : ''"
           type="password"
@@ -68,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/entities'
@@ -77,46 +79,46 @@ import { Input } from '@/shared/ui'
 import ThemeSwitcher from '@/shared/ui/theme-switcher/ThemeSwitcher.vue'
 import LanguageSwitcher from '@/features/common/language-switcher/ui/language-switcher/LanguageSwitcher.vue'
 import { loginSchema, type LoginFormData } from '@/shared/lib/validation/auth'
+import { useZodForm } from '@/shared/lib/form/zodForm'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 const { t, locale } = useI18n()
 
-const formData = reactive<LoginFormData>({
+const form = useZodForm(loginSchema, {
   email: '',
   password: ''
 })
-
-const errors = reactive<Partial<Record<keyof LoginFormData, string>>>({})
+const emailModel = computed({
+  get: () => form.values.email as string,
+  set: (val: string) => form.setValue('email', val)
+})
+const passwordModel = computed({
+  get: () => form.values.password as string,
+  set: (val: string) => form.setValue('password', val)
+})
+const errors = form.errors
 const isSubmitting = ref(false)
 const serverError = ref('')
 
 function clearFieldError(field: keyof LoginFormData) {
-  errors[field] = undefined
+  errors[field] = ''
   serverError.value = ''
 }
 
 async function handleSubmit() {
-  Object.keys(errors).forEach((key) => {
-    errors[key as keyof LoginFormData] = undefined
-  })
+  errors.email = ''
+  errors.password = ''
   serverError.value = ''
 
-  const result = loginSchema.safeParse(formData)
-
-  if (!result.success) {
-    result.error.issues.forEach((issue) => {
-      const field = issue.path[0] as keyof LoginFormData
-      errors[field] = issue.message
-    })
-    return
-  }
+  const result = form.validateAll()
+  if (!result) return
 
   isSubmitting.value = true
 
   try {
-    await authStore.login(formData.email, formData.password)
+    await authStore.login(result.email, result.password)
 
     if (authStore.error) {
       serverError.value =

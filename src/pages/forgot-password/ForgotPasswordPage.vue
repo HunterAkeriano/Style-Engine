@@ -15,7 +15,8 @@
 
       <form class="auth-shell__form" @submit.prevent="submit" novalidate>
         <Input
-          v-model="form.email"
+          name="email"
+          v-model="emailModel"
           :label="t('AUTH.EMAIL')"
           :error="errors.email ? t(`VALIDATION.${errors.email}`) : ''"
           type="email"
@@ -41,46 +42,46 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from '@/shared/lib/toast'
 import { authAPI } from '@/shared/api/auth'
-import { forgotPasswordSchema, type ForgotPasswordForm } from '@/shared/lib/validation/auth'
+import { forgotPasswordSchema } from '@/shared/lib/validation/auth'
 import { Input } from '@/shared/ui'
 import { StarfieldAnimation } from '@/shared/ui/StarfieldAnimation'
 import ThemeSwitcher from '@/shared/ui/theme-switcher/ThemeSwitcher.vue'
 import LanguageSwitcher from '@/features/common/language-switcher/ui/language-switcher/LanguageSwitcher.vue'
+import { useZodForm } from '@/shared/lib/form/zodForm'
 
 const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
-const form = reactive<ForgotPasswordForm>({ email: '' })
-const errors = reactive<{ email?: string }>({})
+const form = useZodForm(forgotPasswordSchema, { email: '' })
+const emailModel = computed({
+  get: () => form.values.email as string,
+  set: (val: string) => form.setValue('email', val)
+})
+const errors = form.errors
 const loading = ref(false)
 const serverMessage = ref('')
 const serverError = ref('')
 
 const prefillEmail = typeof route.query.email === 'string' ? route.query.email : ''
-if (prefillEmail) form.email = prefillEmail
+if (prefillEmail) form.setValue('email', prefillEmail)
 
 async function submit() {
   errors.email = ''
   serverMessage.value = ''
   serverError.value = ''
 
-  const result = forgotPasswordSchema.safeParse(form)
-  if (!result.success) {
-    result.error.issues.forEach((issue) => {
-      errors[issue.path[0] as 'email'] = issue.message
-    })
-    return
-  }
+  const result = form.validateAll()
+  if (!result) return
 
   loading.value = true
   try {
-    await authAPI.requestPasswordReset(form.email)
+    await authAPI.requestPasswordReset(result.email)
     serverMessage.value = t('AUTH.RESET_EMAIL_SENT')
     toast.success(serverMessage.value)
     setTimeout(() => {
