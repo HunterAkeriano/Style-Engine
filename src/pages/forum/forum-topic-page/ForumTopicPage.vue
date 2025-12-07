@@ -74,6 +74,7 @@
         :format-date="formatDate"
         :reply-target-id="replyParentId"
         :reply-form-config="replyFormConfig"
+        :muted-users="mutedUsers"
         @reply="setReplyTarget"
         @edit="handleEditSubmit"
         @inline-reply-submit="sendReply"
@@ -121,6 +122,7 @@ import {
   openForumStream,
   pinForumTopic,
   postForumMessage,
+  getUserMute,
   unpinForumTopic,
   updateForumTopic,
   uploadForumAttachment,
@@ -168,6 +170,7 @@ const pinningTopic = ref(false);
 const participants = ref<ForumUser[]>([]);
 const showMuteModal = ref(false);
 const selectedUser = ref<ForumUser | null>(null);
+const mutedUsers = ref<Record<string, boolean>>({});
 
 const statusLabels = computed<Record<ForumStatus, string>>(() => ({
   open: t("FORUM.STATUS.OPEN"),
@@ -237,6 +240,24 @@ const replyFormConfig = computed(() => ({
   sending: sendingReply.value,
 }));
 
+async function refreshMutedStatuses(usersList: ForumUser[]) {
+  const entries = usersList.map((user) => [
+    user.id,
+    Boolean((user as any).muted),
+  ]) as Array<[string, boolean]>;
+  mutedUsers.value = Object.fromEntries(entries);
+}
+
+async function refreshUserMute(userId: string) {
+  if (!canModerate.value) return;
+  try {
+    const status = await getUserMute(userId);
+    mutedUsers.value = { ...mutedUsers.value, [userId]: Boolean(status.muted) };
+  } catch (err) {
+    console.error("Failed to refresh mute", err);
+  }
+}
+
 function goBack() {
   router.push(`/${locale.value}/forum`);
 }
@@ -267,13 +288,14 @@ async function loadTopic() {
 
 async function loadParticipants() {
   try {
-    const { participants: participantsList } = await getTopicParticipants(
-      route.params.id as string,
-    );
-    participants.value = participantsList;
-  } catch (err: any) {
-    console.error("Failed to load participants:", err);
-  }
+  const { participants: participantsList } = await getTopicParticipants(
+    route.params.id as string,
+  );
+  participants.value = participantsList;
+  await refreshMutedStatuses(participantsList);
+} catch (err: any) {
+  console.error("Failed to load participants:", err);
+}
 }
 
 function handleMuteClick(user: ForumUser) {
@@ -288,6 +310,7 @@ async function handleMuteConfirm(payload: {
   if (!selectedUser.value || !topic.value) return;
   try {
     await muteUser(selectedUser.value.id, payload);
+    await refreshUserMute(selectedUser.value.id);
     toast.success(t("FORUM.USER_MUTED"));
     showMuteModal.value = false;
     selectedUser.value = null;

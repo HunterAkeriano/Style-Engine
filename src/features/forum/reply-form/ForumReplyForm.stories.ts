@@ -86,7 +86,6 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     replyingTo: null,
-    attachmentsError: '',
     sending: false
   }
 }
@@ -95,7 +94,6 @@ export const Replying: Story = {
   args: {
     replyingTo: baseMessage,
     cancelReplyLabel: 'Cancel',
-    attachmentsError: '',
     sending: false
   }
 }

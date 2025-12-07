@@ -445,6 +445,29 @@ export class ForumService {
     return { success: true };
   }
 
+  async unmuteUser(payload: {
+    userId: string;
+    actorId: string;
+    isModerator: boolean;
+  }) {
+    if (!payload.isModerator) {
+      throw toApiError(403, "Moderator or admin access required");
+    }
+    await this.repo.removeMute(payload.userId);
+    return { success: true };
+  }
+
+  async getActiveMute(userId: string) {
+    const mute = await this.repo.findActiveMute(userId);
+    if (!mute) return { muted: false };
+    return {
+      muted: true,
+      expiresAt: mute.expiresAt,
+      reason: mute.reason,
+      createdAt: mute.createdAt,
+    };
+  }
+
   async removeUserMessages(payload: {
     topicId: string;
     userId: string;
@@ -489,6 +512,7 @@ export class ForumService {
         isAdmin: Boolean(owner.isAdmin),
         isSuperAdmin: Boolean(owner.isSuperAdmin),
         subscriptionTier: owner.subscriptionTier ?? "free",
+        muted: false,
       });
     }
 
@@ -502,11 +526,19 @@ export class ForumService {
           isAdmin: Boolean(msg.user.isAdmin),
           isSuperAdmin: Boolean(msg.user.isSuperAdmin),
           subscriptionTier: msg.user.subscriptionTier ?? "free",
+          muted: false,
         });
       }
     });
 
-    return Array.from(participants.values());
+    const list = Array.from(participants.values());
+    const withMute = await Promise.all(
+      list.map(async (user) => {
+        const mute = await this.repo.findActiveMute(user.id);
+        return { ...user, muted: Boolean(mute) };
+      }),
+    );
+    return withMute;
   }
 
   async getUserActiveMutes(userId: string) {

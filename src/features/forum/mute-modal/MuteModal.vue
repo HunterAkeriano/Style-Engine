@@ -42,7 +42,10 @@ const { visible, userName } = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "confirm", payload: { durationMinutes: number | null; reason: string }): void;
+  (
+    e: "confirm",
+    payload: { durationMinutes: number | null; reason: string },
+  ): void;
   (e: "close"): void;
 }>();
 
@@ -59,6 +62,7 @@ const durationOptions = computed(() => [
   { value: 720, label: t("FORUM.DURATION_12_HOURS") },
   { value: 1440, label: t("FORUM.DURATION_1_DAY") },
   { value: 10080, label: t("FORUM.DURATION_1_WEEK") },
+  { value: 43200, label: t("FORUM.DURATION_1_MONTH") },
   { value: PERMANENT_VALUE, label: t("FORUM.DURATION_PERMANENT") },
 ]);
 

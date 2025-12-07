@@ -112,6 +112,18 @@
           @update:modelValue="(val) => form.setValue('role', val as UserRole)"
         />
         <Select
+          name="forumMute"
+          :model-value="muteOption"
+          :options="forumMuteOptions"
+          :label="t('MODERATION.USERS_MUTE_LABEL')"
+          :hint="activeMute?.muted && activeMute?.expiresAt ? t('MODERATION.USERS_MUTE_UNTIL', { date: formatDate(activeMute.expiresAt) }) : ''"
+          :disabled="muteLoading"
+          @update:modelValue="onMuteSelect"
+        />
+        <p v-if="muteOption === 'custom' && activeMute?.expiresAt" class="user-management-page__hint">
+          {{ t('MODERATION.USERS_MUTE_UNTIL', { date: formatDate(activeMute.expiresAt) }) }}
+        </p>
+        <Select
           v-if="formValues.subscriptionTier !== 'free'"
           name="subscriptionDuration"
           :model-value="formValues.subscriptionDuration"
@@ -142,11 +154,13 @@ import { z } from 'zod'
 import { Button, Input, Modal, Select, Table, type TableColumn } from '@/shared/ui'
 import { useToast } from '@/shared/lib/toast'
 import { getModerationUsers, updateUser, deleteUser, type PublicUser, type UserRole } from '@/shared/api/users'
+import { getUserMute, muteUser, unmuteUser } from '@/shared/api/forum'
 import type { UsersParams } from '@/shared/api/users'
 import { Breadcrumbs } from '@/widgets/common'
 import { useZodForm } from '@/shared/lib/form/zodForm'
 
 type TierFilter = 'all' | 'free' | 'pro' | 'premium'
+type MuteOption = 'none' | '15' | '30' | '60' | '180' | '720' | '1440' | '10080' | '43200' | 'permanent' | 'custom'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -168,6 +182,9 @@ const loadedCount = computed(() => users.value.length)
 const selectedUser = ref<PublicUser | null>(null)
 const isModalOpen = ref(false)
 const modalLoading = ref(false)
+const muteLoading = ref(false)
+const activeMute = ref<{ muted: boolean; expiresAt?: string | null; reason?: string | null } | null>(null)
+const muteOption = ref<MuteOption>('none')
 const userEditSchema = computed(() =>
   z.object({
     email: z
@@ -205,6 +222,9 @@ const form = useZodForm(userEditSchema, {
 })
 const formValues = form.values as UserEditForm
 const errors = form.errors
+const onMuteSelect = (val: string | number) => {
+  muteOption.value = val as MuteOption
+}
 
 const emailModel = computed({
   get: () => formValues.email || '',
@@ -236,6 +256,28 @@ const roleOptions = computed(() => [
   { value: 'moderator', label: t('MODERATION.USER_ROLE_MODERATOR') },
   { value: 'super_admin', label: t('MODERATION.USER_ROLE_SUPER_ADMIN') }
 ])
+
+const forumMuteOptions = computed(() => {
+  const base: { value: MuteOption; label: string }[] = [
+    { value: 'none', label: t('MODERATION.USERS_MUTE_NONE') },
+    { value: '15', label: t('FORUM.DURATION_15_MIN') },
+    { value: '30', label: t('FORUM.DURATION_30_MIN') },
+    { value: '60', label: t('FORUM.DURATION_1_HOUR') },
+    { value: '180', label: t('FORUM.DURATION_3_HOURS') },
+    { value: '720', label: t('FORUM.DURATION_12_HOURS') },
+    { value: '1440', label: t('FORUM.DURATION_1_DAY') },
+    { value: '10080', label: t('FORUM.DURATION_1_WEEK') },
+    { value: '43200', label: t('FORUM.DURATION_1_MONTH') },
+    { value: 'permanent', label: t('FORUM.DURATION_PERMANENT') }
+  ]
+  if (muteOption.value === 'custom' && activeMute.value?.expiresAt) {
+    base.push({
+      value: 'custom',
+      label: t('MODERATION.USERS_MUTE_CUSTOM', { date: formatDate(activeMute.value.expiresAt) })
+    })
+  }
+  return base
+})
 
 const columns = computed<TableColumn[]>(() => [
   { key: 'email', label: t('MODERATION.USERS_TABLE.EMAIL'), sortable: true },
@@ -306,6 +348,8 @@ async function loadUsers() {
 
 function openEdit(user: PublicUser) {
   clearFormErrors()
+  activeMute.value = null
+  muteOption.value = 'none'
   selectedUser.value = user
   form.setValue('name', user.name ?? '')
   form.setValue('email', user.email)
@@ -317,6 +361,7 @@ function openEdit(user: PublicUser) {
   )
   form.setValue('password', '')
   isModalOpen.value = true
+  void loadUserMute(user.id)
 }
 
 function closeModal() {
@@ -324,6 +369,8 @@ function closeModal() {
   isModalOpen.value = false
   selectedUser.value = null
   form.setValue('password', '')
+  activeMute.value = null
+  muteOption.value = 'none'
 }
 
 async function submitEdit() {
@@ -356,12 +403,83 @@ async function submitEdit() {
     }
     const updated = await updateUser(selectedUser.value.id, payload)
     users.value = users.value.map(user => (user.id === updated.id ? updated : user))
+
+    await applyMuteChange(selectedUser.value.id)
+
     toast.success(t('MODERATION.USER_UPDATE_SUCCESS'))
     closeModal()
   } catch (err: any) {
     toast.error(err?.message || t('MODERATION.USER_UPDATE_ERROR'))
   } finally {
     modalLoading.value = false
+  }
+}
+
+function optionToMinutes(option: MuteOption): number | null | undefined {
+  if (option === 'none') return undefined
+  if (option === 'permanent') return null
+  if (option === 'custom') return undefined
+  return parseInt(option, 10)
+}
+
+function resolveMuteOption(expiresAt?: string | null): MuteOption {
+  if (!expiresAt) return 'permanent'
+  const diffMinutes = Math.max(
+    0,
+    Math.round((new Date(expiresAt).getTime() - Date.now()) / 60000)
+  )
+  const known: Record<number, MuteOption> = {
+    15: '15',
+    30: '30',
+    60: '60',
+    180: '180',
+    720: '720',
+    1440: '1440',
+    10080: '10080',
+    43200: '43200'
+  }
+  const match = Object.keys(known)
+    .map(Number)
+    .find(value => Math.abs(value - diffMinutes) <= 5)
+  return match ? known[match] : 'custom'
+}
+
+async function loadUserMute(userId: string) {
+  muteLoading.value = true
+  try {
+    const status = await getUserMute(userId)
+    activeMute.value = status
+    if (!status.muted) {
+      muteOption.value = 'none'
+    } else {
+      muteOption.value = resolveMuteOption(status.expiresAt ?? null)
+    }
+  } catch (err: any) {
+    toast.error(err?.message || t('MODERATION.USER_UPDATE_ERROR'))
+    muteOption.value = 'none'
+  } finally {
+    muteLoading.value = false
+  }
+}
+
+async function applyMuteChange(userId: string) {
+  if (muteOption.value === 'custom') return
+  const desired = muteOption.value
+  const currentMuted = activeMute.value?.muted
+
+  if (desired === 'none') {
+    if (currentMuted) {
+      await unmuteUser(userId)
+    }
+    activeMute.value = { muted: false }
+    return
+  }
+
+  const duration = optionToMinutes(desired)
+  await muteUser(userId, { durationMinutes: duration ?? null })
+  activeMute.value = {
+    muted: true,
+    expiresAt: duration ? new Date(Date.now() + duration * 60 * 1000).toISOString() : null
   }
 }
 
@@ -512,6 +630,12 @@ onMounted(loadUsers)
 
   &__delete {
     color: $color-error;
+  }
+
+  &__hint {
+    margin: -$space-xs 0 $space-xs;
+    color: $color-text-secondary;
+    font-size: $font-size-sm;
   }
 
   &__form {

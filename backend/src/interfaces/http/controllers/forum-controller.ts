@@ -420,6 +420,48 @@ export class ForumController implements HttpController {
       },
     );
 
+    router.get(
+      "/mute/:userId",
+      this.auth,
+      requireModerator,
+      async (req: AuthRequest, res) => {
+        try {
+          const mute = await this.service.getActiveMute(req.params.userId);
+          res.json(mute);
+        } catch (err: any) {
+          if (err?.status)
+            return sendApiError(res, err.status, err.message, {
+              details: err.details,
+            });
+          return sendApiError(res, 500, "Failed to load mute status");
+        }
+      },
+    );
+
+    router.delete(
+      "/mute/:userId",
+      this.auth,
+      requireModerator,
+      async (req: AuthRequest, res) => {
+        try {
+          await this.service.unmuteUser({
+            userId: req.params.userId,
+            actorId: req.userId!,
+            isModerator: Boolean(
+              req.authUser?.isAdmin || req.authUser?.isSuperAdmin,
+            ),
+          });
+          res.json({ success: true });
+        } catch (err: any) {
+          if (err?.status)
+            return sendApiError(res, err.status, err.message, {
+              details: err.details,
+            });
+          return sendApiError(res, 500, "Failed to unmute user");
+        }
+      },
+    );
+
     router.delete(
       "/topics/:id/messages/:userId",
       this.auth,

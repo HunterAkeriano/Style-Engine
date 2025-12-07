@@ -13,6 +13,7 @@ export interface ForumUser {
   isAdmin?: boolean;
   isSuperAdmin?: boolean;
   subscriptionTier?: "free" | "pro" | "premium";
+  muted?: boolean;
 }
 
 export interface ForumMute {
@@ -302,6 +303,20 @@ export async function muteUser(
     `/forum/mute/${userId}`,
     payload,
   );
+  return response.data;
+}
+
+export async function getUserMute(
+  userId: string,
+): Promise<{ muted: boolean; expiresAt?: string | null; reason?: string | null; createdAt?: string }> {
+  const response = await api.get<{ muted: boolean; expiresAt?: string | null; reason?: string | null; createdAt?: string }>(
+    `/forum/mute/${userId}`,
+  );
+  return response.data;
+}
+
+export async function unmuteUser(userId: string): Promise<{ success: boolean }> {
+  const response = await api.delete<{ success: boolean }>(`/forum/mute/${userId}`);
   return response.data;
 }
 

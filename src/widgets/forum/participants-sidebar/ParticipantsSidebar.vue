@@ -44,6 +44,9 @@
             <div v-else-if="participant.isSuperAdmin" class="participant__role">
               {{ t("FORUM.SUPER_ADMIN") }}
             </div>
+            <div v-if="participant.muted" class="participant__muted">
+              {{ t("FORUM.MUTED_BADGE") }}
+            </div>
           </div>
         </div>
 

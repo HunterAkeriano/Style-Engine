@@ -19,6 +19,9 @@
           <span v-if="node.author?.isAdmin" class="forum-message__role"
             >Admin</span
           >
+          <span v-if="isMuted" class="forum-message__muted">
+            {{ t("FORUM.MUTED_BADGE") }}
+          </span>
           <Icon
             v-if="showAuthorPlanIcon"
             name="icon-crown"
@@ -131,6 +134,7 @@
         :topic-status="topicStatus"
         :is-admin="isAdmin"
         :current-user-id="currentUserId"
+        :muted-users="mutedUsers"
         :inline-reply-target-id="props.inlineReplyTargetId"
         :inline-reply-form-config="replyConfig"
         :parent-author="node.author?.name || node.author?.email || 'User'"
@@ -179,6 +183,7 @@ const props = defineProps<{
   } | null;
   parentAuthor?: string | null;
   parentId?: string | null;
+  mutedUsers?: Record<string, boolean>;
 }>();
 
 const emit = defineEmits<{
@@ -205,6 +210,11 @@ const authorPlan = computed<PlanTier>(
 );
 const authorPlanClass = computed(() => resolvePlanClass(authorPlan.value));
 const showAuthorPlanIcon = computed(() => authorPlan.value !== "free");
+const isMuted = computed(() => {
+  const authorId = props.node.userId || props.node.author?.id || "";
+  if (!authorId || !props.mutedUsers) return false;
+  return Boolean(props.mutedUsers[authorId]);
+});
 
 const replyConfig = computed(() => props.inlineReplyFormConfig ?? null);
 const showInlineReply = computed(
@@ -349,6 +359,15 @@ function scrollToParent() {
     border-radius: 999px;
     background: color-var-alpha("color-primary", 0.12);
     color: color-var("color-primary");
+    font-size: $font-size-xs;
+    letter-spacing: 0.02em;
+  }
+
+  &__muted {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: color-var-alpha("panel-border", 0.35);
+    color: color-var-alpha("color-text-secondary", 0.9);
     font-size: $font-size-xs;
     letter-spacing: 0.02em;
   }

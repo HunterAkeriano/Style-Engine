@@ -21,6 +21,7 @@
         :current-user-id="currentUserId"
         :topic-status="topicStatus"
         :is-admin="isAdmin"
+        :muted-users="mutedUsers"
         :inline-reply-target-id="replyTargetId"
         :inline-reply-form-config="replyFormConfig"
         @reply="(m) => emit('reply', m)"
@@ -66,6 +67,7 @@ const props = defineProps<{
   formatDate: (value: string) => string
   replyTargetId?: string | null
   replyFormConfig?: InlineReplyFormConfig | null
+  mutedUsers?: Record<string, boolean>
 }>()
 
 const emit = defineEmits<{
