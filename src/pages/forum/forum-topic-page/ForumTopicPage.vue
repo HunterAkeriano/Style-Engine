@@ -240,6 +240,13 @@ const replyFormConfig = computed(() => ({
   sending: sendingReply.value,
 }));
 
+function applyMuteFlag(userId: string, muted: boolean) {
+  participants.value = participants.value.map((p) =>
+    p.id === userId ? { ...p, muted } : p,
+  );
+  mutedUsers.value = { ...mutedUsers.value, [userId]: muted };
+}
+
 async function refreshMutedStatuses(usersList: ForumUser[]) {
   const entries = usersList.map((user) => [
     user.id,
@@ -252,7 +259,7 @@ async function refreshUserMute(userId: string) {
   if (!canModerate.value) return;
   try {
     const status = await getUserMute(userId);
-    mutedUsers.value = { ...mutedUsers.value, [userId]: Boolean(status.muted) };
+    applyMuteFlag(userId, Boolean(status.muted));
   } catch (err) {
     console.error("Failed to refresh mute", err);
   }

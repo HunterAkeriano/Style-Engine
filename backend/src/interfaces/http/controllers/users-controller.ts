@@ -30,7 +30,7 @@ export class UsersController implements HttpController {
 
   register(router: Router) {
     router.get('/public', (req: Request<Record<string, string | undefined>, unknown, unknown, UsersQuery>, res: Response) =>
-      this.handleList(req, res)
+      this.handleList(req, res, true)
     )
 
     router.get(
@@ -38,7 +38,7 @@ export class UsersController implements HttpController {
       this.auth,
       requireAdmin,
       (req: Request<Record<string, string | undefined>, unknown, unknown, UsersQuery>, res: Response) =>
-        this.handleList(req, res)
+        this.handleList(req, res, false)
     )
 
     router.put('/:id', this.auth, requireAdmin, async (req: AuthRequest, res) => {
@@ -84,9 +84,13 @@ export class UsersController implements HttpController {
     return { page, limit, tier: sanitizedTier, sortBy: sanitizedSortBy, sortOrder: sanitizedSortOrder }
   }
 
-  private async handleList(req: Request<Record<string, string | undefined>, unknown, unknown, UsersQuery>, res: Response) {
+  private async handleList(
+    req: Request<Record<string, string | undefined>, unknown, unknown, UsersQuery>,
+    res: Response,
+    hideSuperAdmin = false
+  ) {
     try {
-      const payload = await this.service.fetchUsers(this.normalizeQuery(req))
+      const payload = await this.service.fetchUsers(this.normalizeQuery(req), { hideSuperAdmin })
       res.json(payload)
     } catch (err: any) {
       console.error('Failed to load users:', err)

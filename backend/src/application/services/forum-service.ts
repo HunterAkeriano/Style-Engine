@@ -510,7 +510,6 @@ export class ForumService {
         email: owner.email,
         avatarUrl: owner.avatarUrl,
         isAdmin: Boolean(owner.isAdmin),
-        isSuperAdmin: Boolean(owner.isSuperAdmin),
         subscriptionTier: owner.subscriptionTier ?? "free",
         muted: false,
       });
@@ -524,7 +523,6 @@ export class ForumService {
           email: msg.user.email,
           avatarUrl: msg.user.avatarUrl,
           isAdmin: Boolean(msg.user.isAdmin),
-          isSuperAdmin: Boolean(msg.user.isSuperAdmin),
           subscriptionTier: msg.user.subscriptionTier ?? "free",
           muted: false,
         });

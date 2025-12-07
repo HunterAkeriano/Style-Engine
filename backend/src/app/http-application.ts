@@ -32,7 +32,30 @@ export class HttpApplication {
     }
 
     this.app.use(cors(corsOptions))
-    this.app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
+    this.app.use(
+      helmet({
+        crossOriginResourcePolicy: { policy: 'cross-origin' },
+        contentSecurityPolicy: {
+          directives: {
+            defaultSrc: ["'self'", 'https:'],
+            scriptSrc: [
+              "'self'",
+              "'unsafe-inline'",
+              "'unsafe-eval'",
+              'https://www.youtube.com',
+              'https://s.ytimg.com',
+              'https://www.gstatic.com'
+            ],
+            styleSrc: ["'self'", "'unsafe-inline'", 'https:'],
+            imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
+            fontSrc: ["'self'", 'data:', 'https:'],
+            frameSrc: ["'self'", 'https://www.youtube.com', 'https://youtube.com'],
+            connectSrc: ["'self'", 'https:'],
+            objectSrc: ["'none'"]
+          }
+        }
+      })
+    )
     this.app.use(express.json({ limit: '1mb' }))
     this.app.use(morgan(this.env.NODE_ENV === 'production' ? 'combined' : 'dev'))
 

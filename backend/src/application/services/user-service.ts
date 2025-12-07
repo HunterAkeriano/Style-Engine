@@ -31,14 +31,18 @@ export class UserService {
     this.superAdminEmail = env.SUPER_ADMIN_EMAIL.toLowerCase()
   }
 
-  private serializeUser(user: User) {
+  private serializeUser(user: User, options: { hideSuperAdmin?: boolean } = {}) {
     const { passwordHash: _ignored, ...rest } = user.get({ plain: true }) as any
     void _ignored
     const roleData = resolveUserRole(this.env, rest)
-    return { ...rest, ...roleData }
+    const serialized = { ...rest, ...roleData }
+    if (options.hideSuperAdmin) {
+      delete (serialized as any).isSuperAdmin
+    }
+    return serialized
   }
 
-  async fetchUsers(options: UsersQueryOptions) {
+  async fetchUsers(options: UsersQueryOptions, extra?: { hideSuperAdmin?: boolean }) {
     const offset = (options.page - 1) * options.limit
     const whereConditions: WhereOptions[] = [where(fn('LOWER', col('email')), { [Op.ne]: this.superAdminEmail })]
     if (options.tier !== 'all') {
@@ -82,7 +86,7 @@ export class UserService {
     })
 
     return {
-      users: ordered.map((u: User) => this.serializeUser(u)),
+      users: ordered.map((u: User) => this.serializeUser(u, { hideSuperAdmin: extra?.hideSuperAdmin })),
       pagination: {
         page: options.page,
         limit: options.limit,
