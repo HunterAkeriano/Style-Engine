@@ -1,0 +1,124 @@
+.christmas-gift-widget {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.christmas-gift-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.christmas-gift-modal__icon {
+  font-size: 4rem;
+  line-height: 1;
+  animation: modal-icon-bounce 1.5s ease-in-out infinite;
+}
+
+@keyframes modal-icon-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.christmas-gift-modal__title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #dc143c 0%, #ffd700 50%, #228b22 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 3s ease infinite;
+  background-size: 200% 200%;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.christmas-gift-modal__message {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.christmas-gift-modal__success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, rgba(34, 139, 34, 0.15) 0%, rgba(255, 215, 0, 0.15) 100%);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 0.75rem;
+  width: 100%;
+}
+
+.christmas-gift-modal__success-icon {
+  font-size: 2rem;
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    filter: brightness(1.5);
+  }
+}
+
+.christmas-gift-modal__success-text {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffd700;
+  line-height: 1.4;
+}
+
+.christmas-gift-modal__warning {
+  padding: 1rem 1.5rem;
+  background: rgba(220, 20, 60, 0.15);
+  border: 1px solid rgba(220, 20, 60, 0.3);
+  border-radius: 0.75rem;
+  width: 100%;
+}
+
+.christmas-gift-modal__warning-text {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ff6b6b;
+}
+
+.christmas-gift-modal__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: 0.5rem;
+}

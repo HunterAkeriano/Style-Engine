@@ -1115,6 +1115,16 @@
     MANAGE_TEMPLATES: 'Керувати шаблонами',
     CLOSE: 'Закрити'
   },
+  CHRISTMAS_GIFT: {
+    MODAL_TITLE_AUTHENTICATED: 'З Новим Роком!',
+    MODAL_MESSAGE_AUTHENTICATED: 'Дякуємо, що обираєте наш проєкт! Як новорічний подарунок ми даруємо вам Premium доступ на 1 місяць.',
+    MODAL_PREMIUM_GRANTED: 'Premium підписку активовано до {date}',
+    MODAL_TITLE_UNAUTHENTICATED: 'Увійдіть, щоб отримати подарунок',
+    MODAL_MESSAGE_UNAUTHENTICATED: 'Будь ласка, увійдіть, щоб отримати новорічний подарунок - 1 місяць Premium доступу!',
+    MODAL_ALREADY_CLAIMED: 'Ви вже отримали свій новорічний подарунок',
+    MODAL_CLOSE: 'Закрити',
+    MODAL_SIGN_IN: 'Увійти'
+  },
   QUIZ: {
     HERO_BADGE: 'Платформа для тестування CSS',
     HERO_TITLE: 'Прокачай CSS через практику',

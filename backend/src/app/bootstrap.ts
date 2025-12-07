@@ -13,6 +13,7 @@ import { UsersController } from "../interfaces/http/controllers/users-controller
 import { QuizController } from "../interfaces/http/controllers/quiz-controller";
 import { initForumWs } from "../interfaces/ws/forum-ws";
 import { ForumController } from "../interfaces/http/controllers/forum-controller";
+import { ChristmasGiftController } from "../interfaces/http/controllers/christmas-gift-controller";
 
 /**
  * Application bootstrapper responsible for wiring dependencies
@@ -49,6 +50,7 @@ export async function bootstrap() {
       new UsersController(env, models),
       new QuizController(env, models),
       new ForumController(env, models),
+      new ChristmasGiftController(env, models),
     ];
     return new ApiRouter(env, controllers);
   });

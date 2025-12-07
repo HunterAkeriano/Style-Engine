@@ -1097,6 +1097,16 @@ export default {
     MANAGE_TEMPLATES: 'Manage Templates',
     CLOSE: 'Close'
   },
+  CHRISTMAS_GIFT: {
+    MODAL_TITLE_AUTHENTICATED: 'Happy New Year!',
+    MODAL_MESSAGE_AUTHENTICATED: 'Thank you for choosing our project! As a New Year gift, we\'re giving you Premium access for 1 month.',
+    MODAL_PREMIUM_GRANTED: 'Premium subscription has been activated until {date}',
+    MODAL_TITLE_UNAUTHENTICATED: 'Sign in to claim your gift',
+    MODAL_MESSAGE_UNAUTHENTICATED: 'Please sign in to receive your New Year gift - 1 month of Premium access!',
+    MODAL_ALREADY_CLAIMED: 'You\'ve already claimed your New Year gift',
+    MODAL_CLOSE: 'Close',
+    MODAL_SIGN_IN: 'Sign In'
+  },
   QUIZ: {
     HERO_BADGE: 'CSS Testing Platform',
     HERO_TITLE: 'Master CSS Through Practice',
