@@ -26,16 +26,17 @@ export const PRICING_PLANS: Record<SubscriptionTier, PricingPlan> = {
     price: 0,
     interval: 'month',
     limits: {
-      savedTemplates: 5,
-      exportFormats: ['css'],
-      historyDays: 0,
+      savedTemplates: 10,
+      exportFormats: ['css', 'scss'],
+      historyDays: 7,
       aiGenerations: 0
     },
     features: [
-      'PRICING.FREE_TEMPLATES',
-      'PRICING.BASIC_GENERATORS',
-      'PRICING.CSS_EXPORT',
-      'PRICING.COMMUNITY_SUPPORT'
+      'PRICING.FEATURE_GENERATORS',
+      'PRICING.FEATURE_FORUM',
+      'PRICING.FEATURE_SAVE_10',
+      'PRICING.FEATURE_EXPORT_CORE',
+      'PRICING.FEATURE_QUIZ'
     ]
   },
   [SubscriptionTier.PRO]: {
@@ -44,18 +45,17 @@ export const PRICING_PLANS: Record<SubscriptionTier, PricingPlan> = {
     price: 5,
     interval: 'month',
     limits: {
-      savedTemplates: 50,
+      savedTemplates: 200,
       exportFormats: ['css', 'scss', 'json'],
       historyDays: 30,
-      aiGenerations: 100
+      aiGenerations: 0
     },
     features: [
-      'PRICING.PRO_TEMPLATES',
-      'PRICING.ALL_GENERATORS',
-      'PRICING.MULTIPLE_EXPORTS',
-      'PRICING.HISTORY_30_DAYS',
-      'PRICING.AI_GENERATIONS',
-      'PRICING.PRIORITY_SUPPORT'
+      'PRICING.FEATURE_GENERATORS',
+      'PRICING.FEATURE_FORUM',
+      'PRICING.FEATURE_SAVE_200',
+      'PRICING.FEATURE_EXPORT_PRO',
+      'PRICING.FEATURE_SUPPORT_PRIORITY'
     ],
     popular: true
   },
@@ -66,20 +66,16 @@ export const PRICING_PLANS: Record<SubscriptionTier, PricingPlan> = {
     interval: 'month',
     limits: {
       savedTemplates: -1,
-      exportFormats: ['css', 'scss', 'sass', 'less', 'json', 'figma', 'sketch'],
+      exportFormats: ['css', 'scss', 'sass', 'less', 'json'],
       historyDays: -1,
       aiGenerations: -1
     },
     features: [
-      'PRICING.UNLIMITED_TEMPLATES',
-      'PRICING.ALL_GENERATORS',
-      'PRICING.ALL_EXPORTS',
-      'PRICING.UNLIMITED_HISTORY',
-      'PRICING.UNLIMITED_AI',
-      'PRICING.FIGMA_SKETCH_EXPORT',
-      'PRICING.TEAM_COLLABORATION',
-      'PRICING.PREMIUM_SUPPORT',
-      'PRICING.EARLY_ACCESS'
+      'PRICING.FEATURE_GENERATORS',
+      'PRICING.FEATURE_FORUM',
+      'PRICING.FEATURE_SAVE_UNLIMITED',
+      'PRICING.FEATURE_EXPORT_FULL',
+      'PRICING.FEATURE_SUPPORT_PREMIUM'
     ]
   }
 }

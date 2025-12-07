@@ -74,7 +74,6 @@
                 {{ t("FORUM.PINNED_LABEL") }}
               </span>
             </div>
-            <p class="forum-page__topic-desc">{{ row.description }}</p>
           </div>
         </template>
         <template #cell-status="{ value }">
@@ -145,10 +144,7 @@
           <div class="forum-page__topic">
             <div class="forum-page__topic-title">
               {{ row.title }}
-              <span
-                v-if="activeMute"
-                class="forum-page__mute-badge"
-              >
+              <span v-if="activeMute" class="forum-page__mute-badge">
                 {{ formatMuteTimer(activeMute) }}
               </span>
             </div>
@@ -157,7 +153,6 @@
                 {{ t("FORUM.PINNED_LABEL") }}
               </span>
             </div>
-            <p class="forum-page__topic-desc">{{ row.description }}</p>
           </div>
         </template>
         <template #cell-status="{ value }">
@@ -272,10 +267,7 @@ import {
   getPinnedForumTopics,
 } from "@/shared/api/forum";
 import { useToast } from "@/shared/lib/toast";
-import {
-  resolvePlanClass,
-  type PlanTier,
-} from "@/shared/lib/plans";
+import { resolvePlanClass, type PlanTier } from "@/shared/lib/plans";
 
 const { t, locale } = useI18n();
 const router = useRouter();
@@ -401,9 +393,15 @@ async function loadTopics() {
   }
 }
 
-function changePage(page: number) {
+function scrollToTopSmooth() {
+  if (typeof window === "undefined") return;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function changePage(page: number) {
   pagination.value.page = page;
-  loadTopics();
+  await loadTopics();
+  scrollToTopSmooth();
 }
 
 function handleLimitChange() {
@@ -422,16 +420,20 @@ function handleStatusChange() {
   });
 }
 
-watch([() => route.params.status, () => route.name], () => {
-  if (route.name === 'forum' || route.name === 'forum-status') {
-    const status = getStatusFromRoute();
-    if (statusFilter.value !== status) {
-      statusFilter.value = status;
-      pagination.value.page = 1;
-      loadTopics();
+watch(
+  [() => route.params.status, () => route.name],
+  () => {
+    if (route.name === "forum" || route.name === "forum-status") {
+      const status = getStatusFromRoute();
+      if (statusFilter.value !== status) {
+        statusFilter.value = status;
+        pagination.value.page = 1;
+        loadTopics();
+      }
     }
-  }
-}, { immediate: true });
+  },
+  { immediate: true },
+);
 
 function openTopic(id: string) {
   router.push(`/${locale.value}/forum/${id}`);
