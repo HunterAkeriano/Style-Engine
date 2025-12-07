@@ -19,22 +19,19 @@
         />
       </div>
 
-      <div class="mute-modal__field">
-        <label class="mute-modal__label">{{ t("FORUM.MUTE_REASON") }}</label>
-        <textarea
-          v-model="reason"
-          class="mute-modal__textarea"
-          :placeholder="t('FORUM.MUTE_REASON_PLACEHOLDER')"
-          rows="4"
-        />
-      </div>
+      <Textarea
+        v-model="reason"
+        :label="t('FORUM.MUTE_REASON')"
+        :placeholder="t('FORUM.MUTE_REASON_PLACEHOLDER')"
+        :rows="4"
+      />
     </div>
   </Modal>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { Modal, Select } from "@/shared/ui";
+import { Modal, Select, Textarea } from "@/shared/ui";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -93,28 +90,6 @@ function handleConfirm() {
     font-size: 14px;
     font-weight: 500;
     color: var(--color-text-primary);
-  }
-
-  &__textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: inherit;
-    color: var(--color-text-primary);
-    background: var(--color-surface);
-    resize: vertical;
-    min-height: 80px;
-
-    &:focus {
-      outline: none;
-      border-color: var(--color-primary);
-    }
-
-    &::placeholder {
-      color: var(--color-text-tertiary);
-    }
   }
 }
 </style>
