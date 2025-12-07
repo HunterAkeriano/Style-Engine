@@ -8,6 +8,9 @@ import {
 } from "../../infrastructure/repositories/forum-repository";
 import type { ForumMessage, ForumTopic } from "../../models";
 import { toApiError } from "../../utils/apiError";
+import type { Env } from "../../config/env";
+import { MailerService } from "./mailer-service";
+import { MailBuilder } from "../../interfaces/http/mail-builder";
 
 export interface ForumAttachment {
   type: "image" | "youtube";
@@ -38,10 +41,19 @@ export interface EditMessagePayload {
 }
 
 export class ForumService {
+  private readonly mailer?: MailerService;
+  private readonly mailBuilder: MailBuilder;
+
   constructor(
     private readonly repo: ForumRepository,
     private readonly apiUrl: string = "http://localhost:4000",
-  ) {}
+    private readonly env?: Env,
+    mailer?: MailerService,
+    mailBuilder: MailBuilder = new MailBuilder(),
+  ) {
+    this.mailer = env ? mailer ?? new MailerService(env) : undefined;
+    this.mailBuilder = mailBuilder;
+  }
 
   private toFullUrl(url: string): string {
     if (url.startsWith("/")) {
@@ -340,7 +352,10 @@ export class ForumService {
     const topic = await this.repo.findTopicById(topicId);
     if (!topic) throw toApiError(404, "Topic not found");
     await this.repo.updateTopic(topic, { status, lastActivityAt: new Date() });
-    return this.serializeTopic(topic);
+    const updated = await this.repo.findTopicById(topicId);
+    const serialized = this.serializeTopic(updated || topic);
+    await this.notifyTopicStatusChange(serialized, status);
+    return serialized;
   }
 
   async updateTopicContent(
@@ -441,6 +456,8 @@ export class ForumService {
       expiresAt: payload.expiresAt,
       reason: payload.reason || null,
     } as any);
+
+    await this.notifyMutedUser(payload.userId, payload.expiresAt, payload.reason);
 
     return { success: true };
   }
@@ -552,5 +569,99 @@ export class ForumService {
   async checkUserMute(userId: string) {
     const mute = await this.repo.findActiveMute(userId);
     return mute ? { muted: true, expiresAt: mute.expiresAt } : { muted: false };
+  }
+
+  private async notifyMutedUser(
+    userId: string,
+    expiresAt: Date | null,
+    reason?: string,
+  ) {
+    if (!this.mailer || !this.env) return;
+
+    const user = await this.repo.findUserById(userId);
+    if (!user?.email) return;
+
+    const appUrl = (this.env.APP_URL || "http://localhost:5173").replace(
+      /\/$/,
+      "",
+    );
+
+    const contacts = {
+      forum: `${appUrl}/forum`,
+      telegram: "https://t.me/dima_gulak",
+      viber: "viber://chat?number=%2B380974779784",
+      email: "gamerstaject@gmail.com",
+    };
+
+    try {
+      await this.mailer.send({
+        to: user.email,
+        subject: "You were muted on the Style Engine forum",
+        text: this.mailBuilder.plainMute({
+          appUrl,
+          userName: user.name,
+          reason,
+          expiresAt,
+          contacts,
+        }),
+        html: this.mailBuilder.htmlMute({
+          appUrl,
+          userName: user.name,
+          reason,
+          expiresAt,
+          contacts,
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to send mute notification email", err);
+    }
+  }
+
+  private async notifyTopicStatusChange(
+    topic: ReturnType<ForumService["serializeTopic"]>,
+    status: ForumStatus,
+  ) {
+    if (!this.mailer || !this.env) return;
+    const owner = topic.owner;
+    if (!owner?.email) return;
+
+    const appUrl = (this.env.APP_URL || "http://localhost:5173").replace(
+      /\/$/,
+      "",
+    );
+
+    const contacts = {
+      forum: `${appUrl}/forum`,
+      telegram: "https://t.me/dima_gulak",
+      viber: "viber://chat?number=%2B380974779784",
+      email: "gamerstaject@gmail.com",
+    };
+
+    const topicLink = `${appUrl}/forum/${topic.id}`;
+
+    try {
+      await this.mailer.send({
+        to: owner.email,
+        subject: "Your forum topic status was updated",
+        text: this.mailBuilder.plainTopicStatus({
+          appUrl,
+          topicTitle: topic.title,
+          status,
+          topicLink,
+          userName: owner.name,
+          contacts,
+        }),
+        html: this.mailBuilder.htmlTopicStatus({
+          appUrl,
+          topicTitle: topic.title,
+          status,
+          topicLink,
+          userName: owner.name,
+          contacts,
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to send topic status email", err);
+    }
   }
 }

@@ -1,5 +1,5 @@
 import type { Attributes, InferCreationAttributes, WhereOptions } from 'sequelize'
-import type { ForumMessage, ForumMute, ForumTopic, Models } from '../../models'
+import type { ForumMessage, ForumMute, ForumTopic, Models, User } from '../../models'
 import { Op } from 'sequelize'
 
 export type ForumStatus = 'open' | 'in_review' | 'closed'
@@ -206,5 +206,11 @@ export class ForumRepository {
     })
 
     return Array.from(uniqueUsers.values())
+  }
+
+  findUserById(userId: string) {
+    return this.models.User.findByPk<User>(userId, {
+      attributes: ['id', 'email', 'name']
+    })
   }
 }

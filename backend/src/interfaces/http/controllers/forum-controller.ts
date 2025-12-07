@@ -17,6 +17,7 @@ import {
 import { sendApiError } from "../../../utils/apiError";
 import { uploadForumAttachment } from "../../../middleware/upload";
 import { broadcastForumEvent, sendUserNotification } from "../../ws/forum-ws";
+import { MailerService } from "../../../application/services/mailer-service";
 
 const topicSchema = z.object({
   title: z.string().min(3).max(300),
@@ -59,7 +60,12 @@ export class ForumController implements HttpController {
     private readonly env: Env,
     models: Models,
   ) {
-    this.service = new ForumService(new ForumRepository(models), env.API_URL);
+    this.service = new ForumService(
+      new ForumRepository(models),
+      env.API_URL,
+      env,
+      new MailerService(env),
+    );
   }
 
   register(router: Router) {
