@@ -2,36 +2,45 @@ import { Router } from 'express'
 import type { Env } from '../../../config/env'
 import type { Models } from '../../../models'
 import { ChristmasGiftService } from '../../../application/services/christmas-gift-service'
+import { ProfileService } from '../../../application/services/profile-service'
+import { UserRepository } from '../../../infrastructure/repositories/user-repository'
 import type { HttpController } from '../api-router'
-import { requireAuth } from '../../../middleware/auth'
+import { createAuthMiddleware, clearAuthCache, type AuthRequest } from '../../../middleware/auth'
 import { sendApiError } from '../../../utils/apiError'
 
 export class ChristmasGiftController implements HttpController {
   readonly basePath = '/christmas-gift'
 
+  private readonly authMiddleware
   private readonly service: ChristmasGiftService
+  private readonly profileService: ProfileService
 
   constructor(
     private readonly env: Env,
     private readonly models: Models
   ) {
+    this.authMiddleware = createAuthMiddleware(env)
     this.service = new ChristmasGiftService(models)
+    this.profileService = new ProfileService(env, new UserRepository(models))
   }
 
   register(router: Router): void {
-    router.post('/claim', requireAuth, async (req, res) => {
+    router.post('/claim', this.authMiddleware, async (req, res) => {
       try {
-        const userId = req.userId
+        const authReq = req as AuthRequest
+        const userId = authReq.userId
         if (!userId) {
-          return sendApiError(res, 'Unauthorized', 401)
+          return sendApiError(res, 401, 'Unauthorized')
         }
 
-        const hasClaimed = await this.service.hasClaimedGift(userId)
-        if (hasClaimed) {
-          return sendApiError(res, 'Gift already claimed', 409)
-        }
+        console.log('[ChristmasGift] Claiming gift for user:', userId)
 
         const result = await this.service.claimGift(userId)
+
+        this.profileService.clearCache(userId)
+        clearAuthCache(userId)
+
+        console.log('[ChristmasGift] Gift claimed successfully, all caches cleared:', result)
 
         res.json({
           message: 'Premium subscription granted successfully',
@@ -39,8 +48,8 @@ export class ChristmasGiftController implements HttpController {
           subscriptionTier: result.subscriptionTier
         })
       } catch (error) {
-        console.error('Error claiming Christmas gift:', error)
-        sendApiError(res, 'Failed to claim gift', 500)
+        console.error('[ChristmasGift] Error claiming gift:', error)
+        sendApiError(res, 500, 'Failed to claim gift')
       }
     })
   }

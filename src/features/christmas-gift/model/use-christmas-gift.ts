@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { authAPI } from '@/shared/api/auth'
 import { christmasGiftAPI } from '@/entities/christmas-gift'
+import { useAuthStore } from '@/entities/user'
 
 const GIFT_CLAIMED_KEY = 'christmas_gift_2025_claimed'
 
@@ -9,7 +10,9 @@ export function useChristmasGift() {
   const isLoading = ref(false)
   const premiumGrantedDate = ref<string>()
   const alreadyClaimed = ref(false)
+  const treeVisible = ref(true)
 
+  const authStore = useAuthStore()
   const isAuthenticated = computed(() => authAPI.isAuthenticated())
 
   function checkIfClaimed(): boolean {
@@ -20,11 +23,16 @@ export function useChristmasGift() {
   function markAsClaimed() {
     if (typeof window === 'undefined') return
     localStorage.setItem(GIFT_CLAIMED_KEY, 'true')
+    treeVisible.value = false
   }
 
   function resetClaimed() {
     if (typeof window === 'undefined') return
     localStorage.setItem(GIFT_CLAIMED_KEY, 'false')
+  }
+
+  if (typeof window !== 'undefined' && checkIfClaimed()) {
+    treeVisible.value = false
   }
 
   async function handleTreeClick() {
@@ -46,6 +54,9 @@ export function useChristmasGift() {
       premiumGrantedDate.value = response.subscriptionExpiresAt
       alreadyClaimed.value = false
       markAsClaimed()
+
+      await authStore.fetchProfile()
+
       isModalOpen.value = true
     } catch (error: unknown) {
       const apiError = error as { message?: string; status?: number }
@@ -72,6 +83,7 @@ export function useChristmasGift() {
     premiumGrantedDate,
     alreadyClaimed,
     isAuthenticated,
+    treeVisible,
     handleTreeClick,
     closeModal
   }

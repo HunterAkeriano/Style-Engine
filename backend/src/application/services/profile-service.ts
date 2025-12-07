@@ -10,8 +10,9 @@ import { resolveUserRole, type UserRole } from '../../utils/roles'
 type SafeUser = Omit<InferAttributes<User>, 'passwordHash'> & { isSuperAdmin: boolean; role: UserRole; isAdmin: boolean }
 
 export class ProfileService {
-  private readonly cache = new Map<string, { user: SafeUser; expiresAt: number }>()
-  private readonly ttl = 60_000
+  // Use shared cache so invalidation works across controller instances
+  private static cache = new Map<string, { user: SafeUser; expiresAt: number }>()
+  private static readonly ttl = 60_000
 
   constructor(private readonly env: Env, private readonly users: UserRepository) {}
 
@@ -28,17 +29,21 @@ export class ProfileService {
   }
 
   private getCachedProfile(userId: string) {
-    const cached = this.cache.get(userId)
+    const cached = ProfileService.cache.get(userId)
     if (!cached) return null
     if (cached.expiresAt < Date.now()) {
-      this.cache.delete(userId)
+      ProfileService.cache.delete(userId)
       return null
     }
     return cached.user
   }
 
   private setCachedProfile(userId: string, user: SafeUser) {
-    this.cache.set(userId, { user, expiresAt: Date.now() + this.ttl })
+    ProfileService.cache.set(userId, { user, expiresAt: Date.now() + ProfileService.ttl })
+  }
+
+  clearCache(userId: string) {
+    ProfileService.cache.delete(userId)
   }
 
   async getProfile(userId: string) {

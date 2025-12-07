@@ -1,6 +1,6 @@
 <template>
   <div class="christmas-gift-widget">
-    <ChristmasTree @click="handleTreeClick" />
+    <ChristmasTree v-if="treeVisible" @click="handleTreeClick" />
 
     <Modal
       :visible="isModalOpen"
@@ -71,6 +71,7 @@ const {
   premiumGrantedDate,
   alreadyClaimed,
   isAuthenticated,
+  treeVisible,
   handleTreeClick,
   closeModal
 } = useChristmasGift()
@@ -87,7 +88,7 @@ const formattedDate = computed(() => {
 
 function handleSignIn() {
   closeModal()
-  router.push(`/${locale.value}/auth/login`)
+  router.push(`/${locale.value}/login`)
 }
 </script>
 

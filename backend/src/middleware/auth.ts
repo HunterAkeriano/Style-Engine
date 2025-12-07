@@ -35,6 +35,10 @@ function setCachedAuthUser(user: CachedAuthUser) {
   authCache.set(user.id, { data: user, expiresAt: Date.now() + AUTH_CACHE_TTL_MS })
 }
 
+export function clearAuthCache(userId: string) {
+  authCache.delete(userId)
+}
+
 export function createAuthMiddleware(env: Env) {
   return async function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
     const header = req.headers.authorization

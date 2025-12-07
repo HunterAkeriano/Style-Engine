@@ -23,22 +23,33 @@ export class ChristmasGiftService {
       newExpiresAt = oneMonthLater
     }
 
-    user.subscriptionTier = 'premium'
-    user.subscriptionExpiresAt = newExpiresAt.toISOString()
-    await user.save()
+    console.log('[ChristmasGift] Before update:', {
+      userId,
+      currentTier: user.subscriptionTier,
+      currentExpiresAt: user.subscriptionExpiresAt
+    })
+
+    await this.models.User.update(
+      {
+        subscriptionTier: 'premium',
+        subscriptionExpiresAt: newExpiresAt
+      },
+      {
+        where: { id: userId }
+      }
+    )
+
+    const updatedUser = await this.models.User.findByPk(userId)
+
+    console.log('[ChristmasGift] After update from DB:', {
+      userId,
+      subscriptionTier: updatedUser?.subscriptionTier,
+      subscriptionExpiresAt: updatedUser?.subscriptionExpiresAt
+    })
 
     return {
       subscriptionExpiresAt: newExpiresAt.toISOString(),
       subscriptionTier: 'premium'
     }
-  }
-
-  async hasClaimedGift(userId: string): Promise<boolean> {
-    const user = await this.models.User.findByPk(userId)
-    if (!user) {
-      return false
-    }
-
-    return user.subscriptionTier === 'premium' || user.subscriptionTier === 'pro'
   }
 }
