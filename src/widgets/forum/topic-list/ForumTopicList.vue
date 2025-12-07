@@ -52,7 +52,15 @@
       >
         <template #cell-title="{ row }">
           <div class="forum-page__topic">
-            <div class="forum-page__topic-title">{{ row.title }}</div>
+            <div class="forum-page__topic-title">
+              {{ row.title }}
+              <span
+                v-if="getMuteForTopic(row.id)"
+                class="forum-page__mute-badge"
+              >
+                {{ formatMuteTimer(getMuteForTopic(row.id)) }}
+              </span>
+            </div>
             <p class="forum-page__topic-desc">{{ row.description }}</p>
           </div>
         </template>
@@ -161,8 +169,10 @@ import {
 import { useAuthStore } from "@/entities";
 import {
   getForumTopics,
+  getUserActiveMutes,
   type ForumStatus,
   type ForumTopic,
+  type ForumMute,
 } from "@/shared/api/forum";
 import { useToast } from "@/shared/lib/toast";
 import {
@@ -186,6 +196,8 @@ const pagination = ref({
   hasMore: false,
 });
 const showAuthModal = ref(false);
+const userMutes = ref<ForumMute[]>([]);
+const currentTime = ref(Date.now());
 
 const statusLabels = computed<Record<ForumStatus, string>>(() => ({
   open: t("FORUM.STATUS.OPEN"),
@@ -306,8 +318,60 @@ function goToLogin() {
   router.push(`/${locale.value}/login?redirect=/${locale.value}/forum/create`);
 }
 
+async function loadUserMutes() {
+  if (!authStore.isAuthenticated) return;
+  try {
+    const { mutes } = await getUserActiveMutes();
+    userMutes.value = mutes;
+  } catch (err: any) {
+    console.error("Failed to load mutes:", err);
+  }
+}
+
+function getMuteForTopic(topicId: string) {
+  return userMutes.value.find((mute) => mute.topicId === topicId);
+}
+
+function formatMuteTimer(mute: ForumMute | undefined) {
+  if (!mute) return "";
+
+  if (!mute.expiresAt) {
+    return t("FORUM.MUTED_PERMANENTLY");
+  }
+
+  const expiresAt = new Date(mute.expiresAt).getTime();
+  const remaining = Math.max(0, expiresAt - currentTime.value);
+
+  if (remaining === 0) {
+    return t("FORUM.MUTED_EXPIRED");
+  }
+
+  const minutes = Math.floor(remaining / 60000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (days > 0) {
+    return t("FORUM.MUTED_DAYS", { days });
+  } else if (hours > 0) {
+    return t("FORUM.MUTED_HOURS", { hours });
+  } else if (minutes > 0) {
+    return t("FORUM.MUTED_MINUTES", { minutes });
+  } else {
+    return t("FORUM.MUTED_SECONDS", { seconds: Math.floor(remaining / 1000) });
+  }
+}
+
 onMounted(() => {
   loadTopics();
+  loadUserMutes();
+
+  // Update timer every second
+  const interval = setInterval(() => {
+    currentTime.value = Date.now();
+  }, 1000);
+
+  // Cleanup on unmount
+  return () => clearInterval(interval);
 });
 </script>
 

@@ -363,4 +363,119 @@ export class ForumService {
       status: topic.status,
     }));
   }
+
+  async muteUserInTopic(payload: {
+    topicId: string;
+    userId: string;
+    mutedBy: string;
+    expiresAt: Date | null;
+    reason?: string;
+    isModerator: boolean;
+  }) {
+    if (!payload.isModerator) {
+      throw toApiError(403, "Moderator or admin access required");
+    }
+
+    const topic = await this.repo.findTopicById(payload.topicId);
+    if (!topic) throw toApiError(404, "Topic not found");
+
+    const existingMute = await this.repo.findActiveMute(
+      payload.topicId,
+      payload.userId,
+    );
+    if (existingMute) {
+      await this.repo.removeMute(payload.topicId, payload.userId);
+    }
+
+    await this.repo.createMute({
+      topicId: payload.topicId,
+      userId: payload.userId,
+      mutedBy: payload.mutedBy,
+      expiresAt: payload.expiresAt,
+      reason: payload.reason || null,
+    } as any);
+
+    return { success: true };
+  }
+
+  async removeUserMessages(payload: {
+    topicId: string;
+    userId: string;
+    actorId: string;
+    isModerator: boolean;
+  }) {
+    if (!payload.isModerator) {
+      throw toApiError(403, "Moderator or admin access required");
+    }
+
+    const topic = await this.repo.findTopicById(payload.topicId);
+    if (!topic) throw toApiError(404, "Topic not found");
+
+    const deletedCount = await this.repo.deleteMessagesByUser(
+      payload.topicId,
+      payload.userId,
+    );
+
+    const newCount = Math.max(0, (topic.messagesCount || 0) - deletedCount);
+    await this.repo.updateTopic(topic, {
+      messagesCount: newCount,
+      lastActivityAt: new Date(),
+    });
+
+    return { success: true, deletedCount };
+  }
+
+  async getTopicParticipants(topicId: string) {
+    const topic = await this.repo.findTopicById(topicId);
+    if (!topic) throw toApiError(404, "Topic not found");
+
+    const messageResults = await this.repo.getTopicParticipants(topicId);
+    const participants = new Map();
+
+    if (topic.user) {
+      const owner = topic.user as any;
+      participants.set(owner.id, {
+        id: owner.id,
+        name: owner.name,
+        email: owner.email,
+        avatarUrl: owner.avatarUrl,
+        isAdmin: Boolean(owner.isAdmin),
+        isSuperAdmin: Boolean(owner.isSuperAdmin),
+        subscriptionTier: owner.subscriptionTier ?? "free",
+      });
+    }
+
+    messageResults.forEach((msg: any) => {
+      if (msg.user && !participants.has(msg.user.id)) {
+        participants.set(msg.user.id, {
+          id: msg.user.id,
+          name: msg.user.name,
+          email: msg.user.email,
+          avatarUrl: msg.user.avatarUrl,
+          isAdmin: Boolean(msg.user.isAdmin),
+          isSuperAdmin: Boolean(msg.user.isSuperAdmin),
+          subscriptionTier: msg.user.subscriptionTier ?? "free",
+        });
+      }
+    });
+
+    return Array.from(participants.values());
+  }
+
+  async getUserActiveMutes(userId: string) {
+    const mutes = await this.repo.findAllActiveMutes(userId);
+    return mutes.map((mute: any) => ({
+      id: mute.id,
+      topicId: mute.topicId,
+      topicTitle: mute.topic?.title || "",
+      expiresAt: mute.expiresAt,
+      reason: mute.reason,
+      createdAt: mute.createdAt,
+    }));
+  }
+
+  async checkUserMute(topicId: string, userId: string) {
+    const mute = await this.repo.findActiveMute(topicId, userId);
+    return mute ? { muted: true, expiresAt: mute.expiresAt } : { muted: false };
+  }
 }

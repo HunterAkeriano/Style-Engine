@@ -129,9 +129,9 @@ export function requireAdmin(req: AuthRequest, res: Response, next: NextFunction
   next()
 }
 
-export function requireSuperAdmin(req: AuthRequest, res: Response, next: NextFunction) {
-  if (!req.authUser?.isSuperAdmin) {
-    return sendApiError(res, 403, 'Super admin access required')
+export function requireModerator(req: AuthRequest, res: Response, next: NextFunction) {
+  if (!req.authUser?.isAdmin && !req.authUser?.isSuperAdmin) {
+    return sendApiError(res, 403, 'Moderator or admin access required')
   }
   next()
 }

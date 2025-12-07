@@ -6,6 +6,7 @@ import type { Models } from "../../../models";
 import {
   createAuthMiddleware,
   requireAdmin,
+  requireModerator,
   type AuthRequest,
 } from "../../../middleware/auth";
 import { ForumRepository } from "../../../infrastructure/repositories/forum-repository";
@@ -303,6 +304,128 @@ export class ForumController implements HttpController {
         return sendApiError(res, 500, "Failed to load user topics");
       }
     });
+
+    router.get(
+      "/topics/:id/participants",
+      async (req, res) => {
+        try {
+          const participants =
+            await this.service.getTopicParticipants(req.params.id);
+          res.json({ participants });
+        } catch (err: any) {
+          if (err?.status)
+            return sendApiError(res, err.status, err.message, {
+              details: err.details,
+            });
+          return sendApiError(res, 500, "Failed to load participants");
+        }
+      },
+    );
+
+    router.post(
+      "/topics/:id/mute/:userId",
+      this.auth,
+      requireModerator,
+      async (req: AuthRequest, res) => {
+        const muteSchema = z.object({
+          durationMinutes: z.number().nullable(),
+          reason: z.string().optional(),
+        });
+
+        const parsed = muteSchema.safeParse(req.body);
+        if (!parsed.success) {
+          return sendApiError(res, 400, "Invalid input", {
+            details: parsed.error.issues,
+          });
+        }
+
+        const expiresAt = parsed.data.durationMinutes
+          ? new Date(Date.now() + parsed.data.durationMinutes * 60 * 1000)
+          : null;
+
+        try {
+          await this.service.muteUserInTopic({
+            topicId: req.params.id,
+            userId: req.params.userId,
+            mutedBy: req.userId!,
+            expiresAt,
+            reason: parsed.data.reason,
+            isModerator: Boolean(
+              req.authUser?.isAdmin || req.authUser?.isSuperAdmin,
+            ),
+          });
+          res.json({ success: true });
+        } catch (err: any) {
+          if (err?.status)
+            return sendApiError(res, err.status, err.message, {
+              details: err.details,
+            });
+          return sendApiError(res, 500, "Failed to mute user");
+        }
+      },
+    );
+
+    router.delete(
+      "/topics/:id/messages/:userId",
+      this.auth,
+      requireModerator,
+      async (req: AuthRequest, res) => {
+        try {
+          const result = await this.service.removeUserMessages({
+            topicId: req.params.id,
+            userId: req.params.userId,
+            actorId: req.userId!,
+            isModerator: Boolean(
+              req.authUser?.isAdmin || req.authUser?.isSuperAdmin,
+            ),
+          });
+          res.json(result);
+        } catch (err: any) {
+          if (err?.status)
+            return sendApiError(res, err.status, err.message, {
+              details: err.details,
+            });
+          return sendApiError(res, 500, "Failed to delete messages");
+        }
+      },
+    );
+
+    router.get(
+      "/my-mutes",
+      this.auth,
+      async (req: AuthRequest, res) => {
+        try {
+          const mutes = await this.service.getUserActiveMutes(req.userId!);
+          res.json({ mutes });
+        } catch (err: any) {
+          if (err?.status)
+            return sendApiError(res, err.status, err.message, {
+              details: err.details,
+            });
+          return sendApiError(res, 500, "Failed to load mutes");
+        }
+      },
+    );
+
+    router.get(
+      "/topics/:id/mute-status",
+      this.auth,
+      async (req: AuthRequest, res) => {
+        try {
+          const status = await this.service.checkUserMute(
+            req.params.id,
+            req.userId!,
+          );
+          res.json(status);
+        } catch (err: any) {
+          if (err?.status)
+            return sendApiError(res, err.status, err.message, {
+              details: err.details,
+            });
+          return sendApiError(res, 500, "Failed to check mute status");
+        }
+      },
+    );
   }
 
   private filterAttachments(
