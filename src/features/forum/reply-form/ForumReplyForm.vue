@@ -192,11 +192,11 @@ const replyingToLabel = computed(() => {
 });
 
 function addYoutube() {
-  if (!youtube.value) return;
+  if (!youtube.value) return false;
   const match = youtube.value.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{6,})/i);
   if (!match) {
     form.errors.attachments = t("FORUM.TOPIC.YOUTUBE_INVALID");
-    return;
+    return false;
   }
   const next = [...attachments.value];
   next.push({
@@ -206,11 +206,12 @@ function addYoutube() {
   const parsed = replySchema.value.shape.attachments.safeParse(next);
   if (!parsed.success) {
     form.errors.attachments = parsed.error.issues[0]?.message || "";
-    return;
+    return false;
   }
   form.errors.attachments = "";
   form.setValue("attachments", parsed.data);
   youtube.value = "";
+  return true;
 }
 
 function onFiles(event: Event) {
@@ -247,6 +248,11 @@ function removeAttachment(index: number) {
 function submit() {
   form.errors.content = "";
   form.errors.attachments = "";
+  // If a YouTube link is filled but the button wasn't pressed, append it before submit
+  if (youtube.value) {
+    const added = addYoutube();
+    if (!added) return;
+  }
   const parsed = validateAll();
   if (!parsed) return;
 
