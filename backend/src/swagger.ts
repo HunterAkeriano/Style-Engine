@@ -194,6 +194,92 @@ export function setupSwagger(app: Express) {
               timeTaken: { type: 'integer' },
               createdAt: { type: 'string', format: 'date-time' }
             }
+          },
+          ForumAttachment: {
+            type: 'object',
+            properties: {
+              type: { type: 'string', enum: ['image', 'youtube'] },
+              url: { type: 'string', format: 'uri' }
+            }
+          },
+          ForumUser: {
+            type: 'object',
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              name: { type: 'string', nullable: true },
+              email: { type: 'string', format: 'email', nullable: true },
+              avatarUrl: { type: 'string', format: 'uri', nullable: true },
+              isAdmin: { type: 'boolean' },
+              isSuperAdmin: { type: 'boolean' },
+              subscriptionTier: { type: 'string', enum: ['free', 'pro', 'premium'] }
+            }
+          },
+          ForumTopic: {
+            type: 'object',
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              title: { type: 'string' },
+              description: { type: 'string' },
+              status: { type: 'string', enum: ['open', 'in_review', 'closed'] },
+              attachments: { type: 'array', items: { $ref: '#/components/schemas/ForumAttachment' } },
+              messagesCount: { type: 'integer' },
+              lastActivityAt: { type: 'string', format: 'date-time' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              isPinned: { type: 'boolean' },
+              pinnedAt: { type: 'string', format: 'date-time', nullable: true },
+              pinnedBy: { type: 'string', format: 'uuid', nullable: true },
+              owner: { $ref: '#/components/schemas/ForumUser' }
+            }
+          },
+          ForumMessage: {
+            type: 'object',
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              topicId: { type: 'string', format: 'uuid' },
+              userId: { type: 'string', format: 'uuid' },
+              parentId: { type: 'string', format: 'uuid', nullable: true },
+              content: { type: 'string' },
+              attachments: { type: 'array', items: { $ref: '#/components/schemas/ForumAttachment' } },
+              editedAt: { type: 'string', format: 'date-time', nullable: true },
+              editedBy: { type: 'string', format: 'uuid', nullable: true },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              author: { $ref: '#/components/schemas/ForumUser' }
+            }
+          },
+          ForumPagination: {
+            type: 'object',
+            properties: {
+              page: { type: 'integer' },
+              limit: { type: 'integer' },
+              total: { type: 'integer' },
+              totalPages: { type: 'integer' },
+              hasMore: { type: 'boolean' }
+            }
+          },
+          ForumListResponse: {
+            type: 'object',
+            properties: {
+              topics: { type: 'array', items: { $ref: '#/components/schemas/ForumTopic' } },
+              pagination: { $ref: '#/components/schemas/ForumPagination' }
+            }
+          },
+          ForumTopicResponse: {
+            type: 'object',
+            properties: {
+              topic: { $ref: '#/components/schemas/ForumTopic' },
+              messages: { type: 'array', items: { $ref: '#/components/schemas/ForumMessage' } }
+            }
+          },
+          ForumMute: {
+            type: 'object',
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              expiresAt: { type: 'string', format: 'date-time', nullable: true },
+              reason: { type: 'string', nullable: true },
+              createdAt: { type: 'string', format: 'date-time' }
+            }
           }
         }
       },
@@ -221,8 +307,292 @@ export function setupSwagger(app: Express) {
         {
           name: 'Quiz',
           description: 'CSS/SCSS/Stylus тесты'
+        },
+        {
+          name: 'Forum',
+          description: 'Форум: темы, сообщения, закрепы и мьюты'
         }
-      ]
+      ],
+      paths: {
+        '/api/forum/topics': {
+          get: {
+            tags: ['Forum'],
+            summary: 'Список тем форума',
+            parameters: [
+              { name: 'page', in: 'query', schema: { type: 'integer', default: 1 } },
+              { name: 'limit', in: 'query', schema: { type: 'integer', default: 20, maximum: 100 } },
+              { name: 'status', in: 'query', schema: { type: 'string', enum: ['open', 'in_review', 'closed'] } }
+            ],
+            responses: {
+              200: {
+                description: 'Темы с пагинацией',
+                content: {
+                  'application/json': {
+                    schema: { $ref: '#/components/schemas/ForumListResponse' }
+                  }
+                }
+              }
+            }
+          },
+          post: {
+            tags: ['Forum'],
+            summary: 'Создать тему',
+            security: [{ bearerAuth: [] }],
+            requestBody: {
+              required: true,
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    required: ['title', 'description'],
+                    properties: {
+                      title: { type: 'string', minLength: 3, maxLength: 200 },
+                      description: { type: 'string', minLength: 10, maxLength: 5000 },
+                      attachments: {
+                        type: 'array',
+                        items: { $ref: '#/components/schemas/ForumAttachment' }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            responses: {
+              201: {
+                description: 'Тема создана',
+                content: { 'application/json': { schema: { $ref: '#/components/schemas/ForumTopicResponse' } } }
+              }
+            }
+          }
+        },
+        '/api/forum/topics/pinned': {
+          get: {
+            tags: ['Forum'],
+            summary: 'Закреплённые темы',
+            parameters: [{ name: 'limit', in: 'query', schema: { type: 'integer', default: 5, maximum: 20 } }],
+            responses: {
+              200: { description: 'Список закреплённых тем', content: { 'application/json': { schema: { type: 'object', properties: { topics: { type: 'array', items: { $ref: '#/components/schemas/ForumTopic' } } } } } } }
+            }
+          }
+        },
+        '/api/forum/topics/{id}': {
+          get: {
+            tags: ['Forum'],
+            summary: 'Получить тему и сообщения',
+            parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } }],
+            responses: {
+              200: { description: 'Тема', content: { 'application/json': { schema: { $ref: '#/components/schemas/ForumTopicResponse' } } } }
+            }
+          },
+          patch: {
+            tags: ['Forum'],
+            summary: 'Обновить тему',
+            security: [{ bearerAuth: [] }],
+            parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } }],
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      title: { type: 'string' },
+                      description: { type: 'string' },
+                      attachments: { type: 'array', items: { $ref: '#/components/schemas/ForumAttachment' } }
+                    }
+                  }
+                }
+              }
+            },
+            responses: {
+              200: { description: 'Обновлённая тема', content: { 'application/json': { schema: { $ref: '#/components/schemas/ForumTopicResponse' } } } }
+            }
+          }
+        },
+        '/api/forum/topics/{id}/status': {
+          patch: {
+            tags: ['Forum'],
+            summary: 'Сменить статус темы',
+            security: [{ bearerAuth: [] }],
+            parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } }],
+            requestBody: {
+              required: true,
+              content: {
+                'application/json': {
+                  schema: { type: 'object', required: ['status'], properties: { status: { type: 'string', enum: ['open', 'in_review', 'closed'] } } }
+                }
+              }
+            },
+            responses: { 200: { description: 'Статус обновлён' } }
+          }
+        },
+        '/api/forum/topics/{id}/pin': {
+          post: {
+            tags: ['Forum'],
+            summary: 'Закрепить тему',
+            security: [{ bearerAuth: [] }],
+            parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } }],
+            responses: { 200: { description: 'Тема закреплена' } }
+          },
+          delete: {
+            tags: ['Forum'],
+            summary: 'Открепить тему',
+            security: [{ bearerAuth: [] }],
+            parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } }],
+            responses: { 200: { description: 'Тема откреплена' } }
+          }
+        },
+        '/api/forum/topics/{id}/messages': {
+          post: {
+            tags: ['Forum'],
+            summary: 'Добавить сообщение или ответ',
+            security: [{ bearerAuth: [] }],
+            parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } }],
+            requestBody: {
+              required: true,
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    required: ['content'],
+                    properties: {
+                      content: { type: 'string', minLength: 1, maxLength: 4000 },
+                      parentId: { type: 'string', format: 'uuid', nullable: true },
+                      attachments: { type: 'array', items: { $ref: '#/components/schemas/ForumAttachment' } }
+                    }
+                  }
+                }
+              }
+            },
+            responses: {
+              201: { description: 'Сообщение добавлено', content: { 'application/json': { schema: { $ref: '#/components/schemas/ForumTopicResponse' } } } }
+            }
+          }
+        },
+        '/api/forum/topics/{id}/messages/{messageId}': {
+          patch: {
+            tags: ['Forum'],
+            summary: 'Редактировать сообщение',
+            security: [{ bearerAuth: [] }],
+            parameters: [
+              { name: 'id', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } },
+              { name: 'messageId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } }
+            ],
+            requestBody: {
+              required: true,
+              content: {
+                'application/json': { schema: { type: 'object', required: ['content'], properties: { content: { type: 'string' } } } }
+              }
+            },
+            responses: { 200: { description: 'Сообщение обновлено' } }
+          }
+        },
+        '/api/forum/topics/{id}/messages/{userId}': {
+          delete: {
+            tags: ['Forum'],
+            summary: 'Удалить все сообщения пользователя в теме',
+            security: [{ bearerAuth: [] }],
+            parameters: [
+              { name: 'id', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } },
+              { name: 'userId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } }
+            ],
+            responses: { 200: { description: 'Сообщения удалены' } }
+          }
+        },
+        '/api/forum/attachments': {
+          post: {
+            tags: ['Forum'],
+            summary: 'Загрузить вложение',
+            security: [{ bearerAuth: [] }],
+            parameters: [{ name: 'topicId', in: 'query', required: false, schema: { type: 'string', format: 'uuid' } }],
+            requestBody: {
+              required: true,
+              content: {
+                'multipart/form-data': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      file: { type: 'string', format: 'binary' }
+                    }
+                  }
+                }
+              }
+            },
+            responses: {
+              201: {
+                description: 'URL загруженного файла',
+                content: { 'application/json': { schema: { type: 'object', properties: { url: { type: 'string', format: 'uri' } } } } }
+              }
+            }
+          }
+        },
+        '/api/forum/mute/{userId}': {
+          post: {
+            tags: ['Forum'],
+            summary: 'Выдать мут пользователю',
+            security: [{ bearerAuth: [] }],
+            parameters: [{ name: 'userId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } }],
+            requestBody: {
+              required: true,
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      durationMinutes: { type: 'integer', nullable: true },
+                      reason: { type: 'string' }
+                    }
+                  }
+                }
+              }
+            },
+            responses: { 200: { description: 'Мут применён' } }
+          }
+        },
+        '/api/forum/topics/{id}/participants': {
+          get: {
+            tags: ['Forum'],
+            summary: 'Участники темы',
+            parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } }],
+            responses: {
+              200: {
+                description: 'Список участников',
+                content: { 'application/json': { schema: { type: 'object', properties: { participants: { type: 'array', items: { $ref: '#/components/schemas/ForumUser' } } } } } }
+              }
+            }
+          }
+        },
+        '/api/forum/my-topics/open': {
+          get: {
+            tags: ['Forum'],
+            summary: 'Открытые темы текущего пользователя',
+            security: [{ bearerAuth: [] }],
+            responses: {
+              200: {
+                description: 'Темы пользователя',
+                content: { 'application/json': { schema: { type: 'object', properties: { topics: { type: 'array', items: { $ref: '#/components/schemas/ForumTopic' } } } } } }
+              }
+            }
+          }
+        },
+        '/api/forum/my-mutes': {
+          get: {
+            tags: ['Forum'],
+            summary: 'Активные мюты текущего пользователя',
+            security: [{ bearerAuth: [] }],
+            responses: {
+              200: { description: 'Список мьютов', content: { 'application/json': { schema: { type: 'object', properties: { mutes: { type: 'array', items: { $ref: '#/components/schemas/ForumMute' } } } } } } }
+            }
+          }
+        },
+        '/api/forum/mute-status': {
+          get: {
+            tags: ['Forum'],
+            summary: 'Проверить статус мута текущего пользователя',
+            security: [{ bearerAuth: [] }],
+            responses: { 200: { description: 'Статус мута', content: { 'application/json': { schema: { type: 'object' } } } } }
+          }
+        }
+      }
     },
     apis: ['./dist/routes/*.js', './src/interfaces/http/controllers/*.ts']
   }

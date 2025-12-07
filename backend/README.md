@@ -94,6 +94,24 @@ API будет доступен по адресу: `http://localhost:4000`
 - `POST /api/saves/:type` - Сохранить элемент
 - `DELETE /api/saves/:type/:id` - Удалить элемент
 
+### Forum
+- `GET /api/forum/topics?p=1&limit=20&status=open|in_review|closed` — список тем с пагинацией
+- `GET /api/forum/topics/pinned?limit=5` — закреплённые темы (видны всем)
+- `POST /api/forum/topics` — создать тему (JWT). Поля: `title`, `description`, `attachments[]`
+- `GET /api/forum/topics/:id` — получить тему и сообщения
+- `PATCH /api/forum/topics/:id` — обновить тему (автор или админ)
+- `PATCH /api/forum/topics/:id/status` — сменить статус (admin/moderator)
+- `POST /api/forum/topics/:id/pin` / `DELETE /api/forum/topics/:id/pin` — закрепить/открепить тему (admin/moderator)
+- `POST /api/forum/topics/:id/messages` — добавить сообщение/ответ (JWT). Поля: `content`, `parentId?`, `attachments?`
+- `PATCH /api/forum/topics/:id/messages/:messageId` — редактировать сообщение (владелец или админ)
+- `DELETE /api/forum/topics/:id/messages/:userId` — удалить все сообщения пользователя в теме (moderator/super-admin)
+- `POST /api/forum/attachments?topicId=uuid` — загрузка вложения (multipart `file`)
+- `GET /api/forum/topics/:id/participants` — участники темы
+- `GET /api/forum/my-topics/open` — открытые темы текущего пользователя
+- `POST /api/forum/mute/:userId` — выдать мут (moderator/super-admin). Тело: `durationMinutes` (null = перманентно), `reason?`
+- `GET /api/forum/my-mutes` — активные мюты текущего пользователя
+- `GET /api/forum/mute-status` — состояние мута (для UI)
+
 ## Структура базы данных
 
 ### users
@@ -111,6 +129,28 @@ API будет доступен по адресу: `http://localhost:4000`
 - name (TEXT)
 - payload (JSONB)
 - created_at (TIMESTAMP)
+
+### forum_topics
+- id (UUID, PK)
+- title, description, status
+- owner_id (UUID, FK → users.id)
+- is_pinned, pinned_at, pinned_by
+- messages_count, last_activity_at
+- created_at, updated_at
+
+### forum_messages
+- id (UUID, PK)
+- topic_id (FK → forum_topics)
+- user_id (FK → users)
+- parent_id (self FK, nullable)
+- content, attachments (JSONB), edited_at, edited_by
+- created_at, updated_at
+
+### forum_mutes
+- id (UUID, PK)
+- user_id (FK → users)
+- muted_by (FK → users)
+- reason, expires_at, created_at
 
 ## Разработка
 
