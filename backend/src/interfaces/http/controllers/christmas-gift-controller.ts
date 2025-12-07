@@ -7,6 +7,7 @@ import { UserRepository } from '../../../infrastructure/repositories/user-reposi
 import type { HttpController } from '../api-router'
 import { createAuthMiddleware, clearAuthCache, type AuthRequest } from '../../../middleware/auth'
 import { sendApiError } from '../../../utils/apiError'
+import { ApiError } from '../../../core/errors/api-error'
 
 export class ChristmasGiftController implements HttpController {
   readonly basePath = '/christmas-gift'
@@ -49,6 +50,9 @@ export class ChristmasGiftController implements HttpController {
         })
       } catch (error) {
         console.error('[ChristmasGift] Error claiming gift:', error)
+        if (error instanceof ApiError) {
+          return sendApiError(res, error.status, error.message)
+        }
         sendApiError(res, 500, 'Failed to claim gift')
       }
     })

@@ -14,6 +14,7 @@
   align-items: center;
   gap: 1.5rem;
   text-align: center;
+  color: $color-text-primary;
 }
 
 .christmas-gift-modal__icon {
@@ -60,7 +61,7 @@
   margin: 0;
   font-size: 1rem;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.8);
+  color: $color-text-secondary;
 }
 
 .christmas-gift-modal__success {
@@ -69,8 +70,12 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 1.5rem;
-  background: linear-gradient(135deg, rgba(34, 139, 34, 0.15) 0%, rgba(255, 215, 0, 0.15) 100%);
-  border: 1px solid rgba(255, 215, 0, 0.3);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--color-success), 0.12) 0%,
+    rgba(var(--color-primary), 0.12) 100%
+  );
+  border: 1px solid rgba(var(--color-success), 0.35);
   border-radius: 0.75rem;
   width: 100%;
 }
@@ -95,14 +100,14 @@
   margin: 0;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #ffd700;
+  color: color-var('color-success');
   line-height: 1.4;
 }
 
 .christmas-gift-modal__warning {
   padding: 1rem 1.5rem;
-  background: rgba(220, 20, 60, 0.15);
-  border: 1px solid rgba(220, 20, 60, 0.3);
+  background: rgba(var(--color-warning), 0.12);
+  border: 1px solid rgba(var(--color-warning), 0.3);
   border-radius: 0.75rem;
   width: 100%;
 }
@@ -111,7 +116,7 @@
   margin: 0;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #ff6b6b;
+  color: color-var('color-warning');
 }
 
 .christmas-gift-modal__actions {

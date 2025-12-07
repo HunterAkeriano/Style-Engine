@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { RouterView } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { authAPI, type User } from '@/shared/api/auth'
@@ -162,13 +162,19 @@ const settingsProps = computed(() => ({
   serverError: passwordServerError.value
 }))
 
+function applyUser(nextUser: User | null) {
+  user.value = nextUser
+  if (!nextUser) return
+  formData.name = nextUser.name || ''
+  formData.email = nextUser.email
+  originalName.value = nextUser.name || ''
+}
+
 async function loadProfile() {
   try {
     const response = await authAPI.getProfile()
-    user.value = response.user
-    formData.name = response.user.name || ''
-    formData.email = response.user.email
-    originalName.value = response.user.name || ''
+    applyUser(response.user)
+    authStore.setUser(response.user)
   } catch (error) {
     console.error('Failed to load profile', error)
   }
@@ -246,9 +252,7 @@ async function handleProfileUpdate() {
     const response = await authAPI.updateProfile({
       name: formData.name || undefined
     })
-    user.value = response.user
-    formData.name = response.user.name || ''
-    originalName.value = response.user.name || ''
+    applyUser(response.user)
     authStore.setUser(response.user)
     saveSuccess.value = true
 
@@ -280,4 +284,14 @@ async function handlePasswordChange(values: ChangePasswordForm) {
 onMounted(() => {
   loadProfile()
 })
+
+watch(
+  () => authStore.user,
+  (next) => {
+    if (next?.id !== user.value?.id || next?.subscriptionTier !== user.value?.subscriptionTier || next?.subscriptionExpiresAt !== user.value?.subscriptionExpiresAt) {
+      applyUser(next as User | null)
+    }
+  },
+  { immediate: true }
+)
 </script>

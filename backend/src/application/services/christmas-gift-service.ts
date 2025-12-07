@@ -1,4 +1,5 @@
 import type { Models } from '../../models'
+import { ApiError } from '../../core/errors/api-error'
 
 export class ChristmasGiftService {
   constructor(private readonly models: Models) {}
@@ -13,15 +14,15 @@ export class ChristmasGiftService {
     const oneMonthLater = new Date(currentDate)
     oneMonthLater.setMonth(oneMonthLater.getMonth() + 1)
 
-    let newExpiresAt: Date
+    const hasActiveSubscription =
+      (user.subscriptionTier && user.subscriptionTier !== 'free') &&
+      (!user.subscriptionExpiresAt || new Date(user.subscriptionExpiresAt) > currentDate)
 
-    if (user.subscriptionExpiresAt && new Date(user.subscriptionExpiresAt) > currentDate) {
-      const existingExpiration = new Date(user.subscriptionExpiresAt)
-      newExpiresAt = new Date(existingExpiration)
-      newExpiresAt.setMonth(newExpiresAt.getMonth() + 1)
-    } else {
-      newExpiresAt = oneMonthLater
+    if (hasActiveSubscription) {
+      throw new ApiError(409, 'Gift already claimed')
     }
+
+    const newExpiresAt = oneMonthLater
 
     console.log('[ChristmasGift] Before update:', {
       userId,

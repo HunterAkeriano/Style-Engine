@@ -10,10 +10,20 @@ export function useChristmasGift() {
   const isLoading = ref(false)
   const premiumGrantedDate = ref<string>()
   const alreadyClaimed = ref(false)
-  const treeVisible = ref(true)
+  const claimedLocal = ref(false)
 
   const authStore = useAuthStore()
   const isAuthenticated = computed(() => authAPI.isAuthenticated())
+  const hasActiveSubscription = computed(() => {
+    const user = authStore.user
+    if (!user) return false
+    const tier = user.subscriptionTier ?? 'free'
+    const expiresAt = user.subscriptionExpiresAt ? new Date(user.subscriptionExpiresAt).getTime() : null
+    if (user.isPayment) return true
+    if (tier === 'free') return false
+    if (!expiresAt) return true
+    return expiresAt > Date.now()
+  })
 
   function checkIfClaimed(): boolean {
     if (typeof window === 'undefined') return false
@@ -23,17 +33,20 @@ export function useChristmasGift() {
   function markAsClaimed() {
     if (typeof window === 'undefined') return
     localStorage.setItem(GIFT_CLAIMED_KEY, 'true')
-    treeVisible.value = false
+    claimedLocal.value = true
   }
 
   function resetClaimed() {
     if (typeof window === 'undefined') return
     localStorage.setItem(GIFT_CLAIMED_KEY, 'false')
+    claimedLocal.value = false
   }
 
   if (typeof window !== 'undefined' && checkIfClaimed()) {
-    treeVisible.value = false
+    claimedLocal.value = true
   }
+
+  const treeVisible = computed(() => !claimedLocal.value && !hasActiveSubscription.value)
 
   async function handleTreeClick() {
     if (!isAuthenticated.value) {
@@ -42,7 +55,14 @@ export function useChristmasGift() {
       return
     }
 
-    if (checkIfClaimed()) {
+    if (hasActiveSubscription.value) {
+      alreadyClaimed.value = true
+      markAsClaimed()
+      isModalOpen.value = true
+      return
+    }
+
+    if (claimedLocal.value || checkIfClaimed()) {
       alreadyClaimed.value = true
       isModalOpen.value = true
       return
