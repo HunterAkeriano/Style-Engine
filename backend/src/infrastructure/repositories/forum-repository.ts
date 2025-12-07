@@ -21,6 +21,7 @@ export class ForumRepository {
     return this.models.ForumTopic.findAndCountAll({
       where,
       order: [
+        [{ model: this.models.ForumPinnedTopic, as: 'pin' }, 'createdAt', 'DESC'],
         ['lastActivityAt', 'DESC'],
         ['createdAt', 'DESC']
       ],
@@ -29,6 +30,12 @@ export class ForumRepository {
       limit: options.limit,
       offset: (options.page - 1) * options.limit,
       include: [
+        {
+          model: this.models.ForumPinnedTopic,
+          as: 'pin',
+          attributes: ['id', 'createdAt', 'createdBy'],
+          required: false
+        },
         {
           model: this.models.User,
           as: 'user',
@@ -45,6 +52,12 @@ export class ForumRepository {
   findTopicById(id: string) {
     return this.models.ForumTopic.findByPk(id, {
       include: [
+        {
+          model: this.models.ForumPinnedTopic,
+          as: 'pin',
+          attributes: ['id', 'createdAt', 'createdBy'],
+          required: false
+        },
         {
           model: this.models.User,
           as: 'user',
@@ -100,6 +113,34 @@ export class ForumRepository {
       },
       attributes: ['id', 'status'],
       order: [['lastActivityAt', 'DESC']]
+    })
+  }
+
+  pinTopic(topicId: string, createdBy: string) {
+    return this.models.ForumPinnedTopic.upsert({ topicId, createdBy })
+  }
+
+  unpinTopic(topicId: string) {
+    return this.models.ForumPinnedTopic.destroy({ where: { topicId } })
+  }
+
+  listPinnedTopics(limit: number) {
+    return this.models.ForumPinnedTopic.findAll({
+      order: [['createdAt', 'DESC']],
+      limit,
+      include: [
+        {
+          model: this.models.ForumTopic,
+          as: 'topic',
+          include: [
+            {
+              model: this.models.User,
+              as: 'user',
+              attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin', 'subscriptionTier']
+            }
+          ]
+        }
+      ]
     })
   }
 }

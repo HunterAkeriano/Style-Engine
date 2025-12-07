@@ -62,6 +62,23 @@ export class ForumController implements HttpController {
   }
 
   register(router: Router) {
+    router.get("/topics/pinned", async (req, res) => {
+      const limit = Math.min(
+        20,
+        Math.max(1, parseInt((req.query.limit as string) || "5") || 5),
+      );
+      try {
+        const topics = await this.service.listPinnedTopics(limit);
+        res.json({ topics });
+      } catch (err: any) {
+        if (err?.status)
+          return sendApiError(res, err.status, err.message, {
+            details: err.details,
+          });
+        return sendApiError(res, 500, "Failed to load pinned topics");
+      }
+    });
+
     router.get("/topics", async (req, res) => {
       const page = Math.max(
         1,
@@ -187,6 +204,49 @@ export class ForumController implements HttpController {
               details: err.details,
             });
           return sendApiError(res, 500, "Failed to update status");
+        }
+      },
+    );
+
+    router.post(
+      "/topics/:id/pin",
+      this.auth,
+      requireAdmin,
+      async (req: AuthRequest, res) => {
+        try {
+          if (!req.userId) return sendApiError(res, 401, "Unauthorized");
+          const topic = await this.service.pinTopic(
+            req.params.id,
+            req.userId!,
+          );
+          broadcastForumEvent(req.params.id, "topic-updated", topic);
+          res.json({ topic });
+        } catch (err: any) {
+          if (err?.status)
+            return sendApiError(res, err.status, err.message, {
+              details: err.details,
+            });
+          return sendApiError(res, 500, "Failed to pin topic");
+        }
+      },
+    );
+
+    router.delete(
+      "/topics/:id/pin",
+      this.auth,
+      requireAdmin,
+      async (req: AuthRequest, res) => {
+        try {
+          if (!req.userId) return sendApiError(res, 401, "Unauthorized");
+          const topic = await this.service.unpinTopic(req.params.id);
+          broadcastForumEvent(req.params.id, "topic-updated", topic);
+          res.json({ topic });
+        } catch (err: any) {
+          if (err?.status)
+            return sendApiError(res, err.status, err.message, {
+              details: err.details,
+            });
+          return sendApiError(res, 500, "Failed to unpin topic");
         }
       },
     );

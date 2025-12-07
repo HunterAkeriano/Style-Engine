@@ -33,6 +33,97 @@
       </div>
     </section>
 
+    <Card variant="bordered" class="forum-page__pinned">
+      <div class="forum-page__pinned-header">
+        <div>
+          <div class="forum-page__pinned-label">
+            {{ t("FORUM.PINNED_TAG") }}
+          </div>
+          <h2 class="forum-page__pinned-title">
+            {{ t("FORUM.PINNED_TITLE") }}
+          </h2>
+          <p class="forum-page__pinned-subtitle">
+            {{ t("FORUM.PINNED_SUBTITLE") }}
+          </p>
+        </div>
+      </div>
+      <div v-if="pinnedLoading" class="forum-page__pinned-empty">
+        {{ t("FORUM.LOADING") }}
+      </div>
+      <div v-else-if="!pinnedTopics.length" class="forum-page__pinned-empty">
+        {{ t("FORUM.PINNED_EMPTY") }}
+      </div>
+      <Table
+        v-else
+        :columns="columns"
+        :rows="pinnedTopics"
+        row-key="id"
+        sticky-header
+        hoverable
+        class="forum-page__pinned-table"
+        :empty-text="t('FORUM.PINNED_EMPTY')"
+        @row-click="handleRowClick"
+      >
+        <template #cell-title="{ row }">
+          <div class="forum-page__topic">
+            <div class="forum-page__topic-title">
+              {{ row.title }}
+            </div>
+            <div class="forum-page__topic-labels">
+              <span class="forum-page__pin-badge">
+                {{ t("FORUM.PINNED_LABEL") }}
+              </span>
+            </div>
+            <p class="forum-page__topic-desc">{{ row.description }}</p>
+          </div>
+        </template>
+        <template #cell-status="{ value }">
+          <span :class="['forum-page__status', `forum-page__status_${value}`]">
+            {{ statusLabels[value as ForumStatus] }}
+          </span>
+        </template>
+        <template #cell-messagesCount="{ value }">
+          <span class="forum-page__badge">{{ value as number }}</span>
+        </template>
+        <template #cell-lastActivityAt="{ value }">
+          {{ formatDate(value as string) }}
+        </template>
+        <template #cell-owner="{ row }">
+          <div class="forum-page__owner">
+            <div
+              class="forum-page__avatar"
+              :data-initials="getInitials(getOwner(row))"
+            >
+              <img
+                v-if="getOwner(row)?.avatarUrl"
+                :src="getOwner(row)?.avatarUrl || ''"
+                alt=""
+              />
+              <span v-else>{{ getInitials(getOwner(row)) }}</span>
+            </div>
+            <div>
+              <div class="forum-page__owner-name">
+                {{
+                  getOwner(row)?.name || getOwner(row)?.email || t("FORUM.ANON")
+                }}
+              </div>
+              <div v-if="getOwner(row)?.isAdmin" class="forum-page__owner-role">
+                {{ t("FORUM.ADMIN") }}
+              </div>
+              <Icon
+                v-if="planTier(getOwner(row)) !== 'free'"
+                name="icon-crown"
+                class="forum-page__owner-crown"
+                :class="`forum-page__owner-crown_${planClass(
+                  planTier(getOwner(row)),
+                )}`"
+              />
+            </div>
+          </div>
+        </template>
+      </Table>
+    </Card>
+
     <Card variant="bordered" class="forum-page__card">
       <div class="forum-page__table-header">
         <div class="forum-page__hint">{{ t("FORUM.TABLE_HINT") }}</div>
@@ -53,6 +144,11 @@
         <template #cell-title="{ row }">
           <div class="forum-page__topic">
             <div class="forum-page__topic-title">{{ row.title }}</div>
+            <div class="forum-page__topic-labels">
+              <span v-if="row.isPinned" class="forum-page__pin-badge">
+                {{ t("FORUM.PINNED_LABEL") }}
+              </span>
+            </div>
             <p class="forum-page__topic-desc">{{ row.description }}</p>
           </div>
         </template>
@@ -163,6 +259,7 @@ import {
   getForumTopics,
   type ForumStatus,
   type ForumTopic,
+  getPinnedForumTopics,
 } from "@/shared/api/forum";
 import { useToast } from "@/shared/lib/toast";
 import {
@@ -186,6 +283,8 @@ const pagination = ref({
   hasMore: false,
 });
 const showAuthModal = ref(false);
+const pinnedTopics = ref<ForumTopic[]>([]);
+const pinnedLoading = ref(false);
 
 const statusLabels = computed<Record<ForumStatus, string>>(() => ({
   open: t("FORUM.STATUS.OPEN"),
@@ -251,6 +350,17 @@ function planClass(tier?: PlanTier) {
   return resolvePlanClass(tier);
 }
 
+async function loadPinnedTopics() {
+  pinnedLoading.value = true;
+  try {
+    pinnedTopics.value = await getPinnedForumTopics(6);
+  } catch (err: any) {
+    toast.error(err?.message || t("FORUM.LOAD_ERROR"));
+  } finally {
+    pinnedLoading.value = false;
+  }
+}
+
 async function loadTopics() {
   loading.value = true;
   try {
@@ -283,13 +393,17 @@ function handleStatusChange() {
   loadTopics();
 }
 
+function openTopic(id: string) {
+  router.push(`/${locale.value}/forum/${id}`);
+}
+
 function handleRowClick(payload: {
   row: Record<string, unknown>;
   index: number;
 }) {
   const topic = payload.row as unknown as ForumTopic;
   if (topic?.id) {
-    router.push(`/${locale.value}/forum/${topic.id}`);
+    openTopic(topic.id);
   }
 }
 
@@ -307,6 +421,7 @@ function goToLogin() {
 }
 
 onMounted(() => {
+  loadPinnedTopics();
   loadTopics();
 });
 </script>

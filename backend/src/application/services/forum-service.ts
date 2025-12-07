@@ -150,11 +150,15 @@ export class ForumService {
   }
 
   private serializeTopic(topic: ForumTopic) {
-    const { user, attachments, ...rest } = topic.get({ plain: true }) as any;
+    const { user, attachments, pin, ...rest } = topic.get({ plain: true }) as any;
     const owner = user as ForumTopic["user"] | undefined;
+    const pinData = pin as { createdAt?: string; createdBy?: string } | undefined;
     return {
       ...rest,
       attachments: this.serializeAttachments(attachments),
+      isPinned: Boolean(pinData),
+      pinnedAt: pinData?.createdAt ?? null,
+      pinnedBy: pinData?.createdBy ?? null,
       owner: owner
         ? {
             id: owner.id,
@@ -362,5 +366,39 @@ export class ForumService {
       id: topic.id,
       status: topic.status,
     }));
+  }
+
+  async listPinnedTopics(limit: number) {
+    const normalizedLimit = Math.min(20, Math.max(1, limit));
+    const pins = await this.repo.listPinnedTopics(normalizedLimit);
+    return pins
+      .map((pin) => {
+        const topic = (pin as any).topic as ForumTopic | undefined;
+        if (topic) {
+          (topic as any).pin = {
+            createdAt: (pin as any).createdAt,
+            createdBy: (pin as any).createdBy,
+          };
+        }
+        return topic;
+      })
+      .filter((topic): topic is ForumTopic => Boolean(topic))
+      .map((topic) => this.serializeTopic(topic));
+  }
+
+  async pinTopic(topicId: string, actorId: string) {
+    const topic = await this.repo.findTopicById(topicId);
+    if (!topic) throw toApiError(404, "Topic not found");
+    await this.repo.pinTopic(topicId, actorId);
+    const updated = await this.repo.findTopicById(topicId);
+    return this.serializeTopic(updated || topic);
+  }
+
+  async unpinTopic(topicId: string) {
+    const topic = await this.repo.findTopicById(topicId);
+    if (!topic) throw toApiError(404, "Topic not found");
+    await this.repo.unpinTopic(topicId);
+    const updated = await this.repo.findTopicById(topicId);
+    return this.serializeTopic(updated || topic);
   }
 }

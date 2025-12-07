@@ -24,6 +24,9 @@ export interface ForumTopic {
   lastActivityAt: string
   createdAt: string
   updatedAt: string
+  isPinned: boolean
+  pinnedAt: string | null
+  pinnedBy?: string | null
   owner: ForumUser | null
 }
 
@@ -106,9 +109,25 @@ export async function changeForumTopicStatus(id: string, status: ForumStatus): P
   return response.data.topic
 }
 
+export async function pinForumTopic(id: string): Promise<ForumTopic> {
+  const response = await api.post<{ topic: ForumTopic }>(`/forum/topics/${id}/pin`)
+  return response.data.topic
+}
+
+export async function unpinForumTopic(id: string): Promise<ForumTopic> {
+  const response = await api.delete<{ topic: ForumTopic }>(`/forum/topics/${id}/pin`)
+  return response.data.topic
+}
+
 export async function getForumTopic(id: string): Promise<ForumTopicResponse> {
   const response = await api.get<ForumTopicResponse>(`/forum/topics/${id}`)
   return response.data
+}
+
+export async function getPinnedForumTopics(limit = 6): Promise<ForumTopic[]> {
+  const query = buildQuery({ limit })
+  const response = await api.get<{ topics: ForumTopic[] }>(`/forum/topics/pinned${query}`)
+  return response.data.topics
 }
 
 export async function postForumMessage(

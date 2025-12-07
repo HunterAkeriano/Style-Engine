@@ -193,6 +193,17 @@ export class ForumMessage extends Model<InferAttributes<ForumMessage>, InferCrea
   declare updatedAt: CreationOptional<Date>
 }
 
+export class ForumPinnedTopic extends Model<
+  InferAttributes<ForumPinnedTopic>,
+  InferCreationAttributes<ForumPinnedTopic>
+> {
+  declare id: CreationOptional<string>
+  declare topicId: ForeignKey<ForumTopic['id']>
+  declare topic?: ForumTopic
+  declare createdBy: ForeignKey<User['id']>
+  declare createdAt: CreationOptional<Date>
+}
+
 export interface Models {
   User: typeof User
   RefreshToken: typeof RefreshToken
@@ -208,6 +219,7 @@ export interface Models {
   QuizAttempt: typeof QuizAttempt
   ForumTopic: typeof ForumTopic
   ForumMessage: typeof ForumMessage
+  ForumPinnedTopic: typeof ForumPinnedTopic
 }
 
 export function initModels(sequelize: Sequelize): Models {
@@ -599,6 +611,22 @@ export function initModels(sequelize: Sequelize): Models {
     }
   )
 
+  ForumPinnedTopic.init(
+    {
+      id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+      topicId: { type: DataTypes.UUID, allowNull: false, unique: true, field: 'topic_id' },
+      createdBy: { type: DataTypes.UUID, allowNull: false, field: 'created_by' },
+      createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' }
+    },
+    {
+      sequelize,
+      tableName: 'forum_pinned_topics',
+      underscored: true,
+      createdAt: 'created_at',
+      updatedAt: false
+    }
+  )
+
   // Quiz relationships
   User.hasMany(QuizResult, { foreignKey: 'userId', as: 'quizResults' })
   QuizResult.belongsTo(User, { foreignKey: 'userId', as: 'user' })
@@ -612,6 +640,9 @@ export function initModels(sequelize: Sequelize): Models {
   ForumMessage.belongsTo(User, { foreignKey: 'userId', as: 'user' })
   ForumMessage.belongsTo(ForumMessage, { foreignKey: 'parentId', as: 'parent' })
   ForumMessage.hasMany(ForumMessage, { foreignKey: 'parentId', as: 'replies' })
+  ForumTopic.hasOne(ForumPinnedTopic, { foreignKey: 'topicId', as: 'pin' })
+  ForumPinnedTopic.belongsTo(ForumTopic, { foreignKey: 'topicId', as: 'topic' })
+  ForumPinnedTopic.belongsTo(User, { foreignKey: 'createdBy', as: 'pinner' })
 
   return {
     User,
@@ -627,6 +658,7 @@ export function initModels(sequelize: Sequelize): Models {
     QuizResult,
     QuizAttempt,
     ForumTopic,
-    ForumMessage
+    ForumMessage,
+    ForumPinnedTopic
   }
 }

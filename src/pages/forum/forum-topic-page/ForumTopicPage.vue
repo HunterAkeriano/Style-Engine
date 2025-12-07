@@ -15,12 +15,14 @@
         :status-options="statusOptions"
         :can-edit="canEditTopic"
         :is-editing="editingTopic"
-        :is-admin="Boolean(authStore.user?.isAdmin)"
-        :is-super-admin="Boolean(authStore.user?.isSuperAdmin)"
+        :is-admin="authStore.isAdmin"
+        :is-super-admin="authStore.isSuperAdmin"
+        :pinning="pinningTopic"
         @back="goBack"
         @edit="startTopicEdit"
         @cancel-edit="cancelTopicEdit"
         @update-status="onStatusChange"
+        @toggle-pin="togglePin"
       />
 
       <ForumTopicAttachments
@@ -94,7 +96,9 @@ import {
   editForumMessage,
   getForumTopic,
   openForumStream,
+  pinForumTopic,
   postForumMessage,
+  unpinForumTopic,
   updateForumTopic,
   uploadForumAttachment,
   type ForumAttachment,
@@ -130,6 +134,7 @@ const sendingReply = ref(false);
 const replyParentId = ref<string | null>(null);
 let stopStream: (() => void) | null = null;
 const editingTopic = ref(false);
+const pinningTopic = ref(false);
 
 const statusLabels = computed<Record<ForumStatus, string>>(() => ({
   open: t("FORUM.STATUS.OPEN"),
@@ -161,7 +166,7 @@ const threadedMessages = computed<MessageNode[]>(() => {
 
 const canEditTopic = computed(() => {
   if (!topic.value) return false;
-  if (authStore.user?.isAdmin) return true;
+  if (authStore.isAdmin) return true;
   return (
     topic.value.status === "open" &&
     topic.value.owner?.id === authStore.user?.id
@@ -172,15 +177,15 @@ const canReply = computed(() => {
   if (!topic.value) return false;
   if (!authStore.isAuthenticated) return false;
   if (topic.value.status === "open") return true;
-  return Boolean(authStore.user?.isAdmin);
+  return Boolean(authStore.isAdmin);
 });
 
 const replyPlaceholder = computed(() => {
   if (!authStore.isAuthenticated) return t("FORUM.TOPIC.LOGIN_TO_REPLY");
   if (!topic.value) return t("FORUM.TOPIC.REPLY_PLACEHOLDER");
-  if (topic.value.status === "closed" && !authStore.user?.isAdmin)
+  if (topic.value.status === "closed" && !authStore.isAdmin)
     return t("FORUM.TOPIC.CLOSED_REPLY");
-  if (topic.value.status === "in_review" && !authStore.user?.isAdmin)
+  if (topic.value.status === "in_review" && !authStore.isAdmin)
     return t("FORUM.TOPIC.REVIEW_REPLY");
   return t("FORUM.TOPIC.REPLY_PLACEHOLDER");
 });
@@ -337,6 +342,26 @@ async function onStatusChange(status: ForumStatus) {
     }
   } catch (err: any) {
     toast.error(err?.message || t("FORUM.TOPIC.STATUS_ERROR"));
+  }
+}
+
+async function togglePin() {
+  if (!topic.value || !authStore.isAdmin || pinningTopic.value) return;
+  pinningTopic.value = true;
+  try {
+    const updated = topic.value.isPinned
+      ? await unpinForumTopic(topic.value.id)
+      : await pinForumTopic(topic.value.id);
+    topic.value = updated;
+    toast.success(
+      updated.isPinned
+        ? t("FORUM.TOPIC.PINNED_SUCCESS")
+        : t("FORUM.TOPIC.UNPINNED_SUCCESS"),
+    );
+  } catch (err: any) {
+    toast.error(err?.message || t("FORUM.TOPIC.PIN_ERROR"));
+  } finally {
+    pinningTopic.value = false;
   }
 }
 

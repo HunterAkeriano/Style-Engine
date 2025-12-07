@@ -3,7 +3,15 @@
     <div class="forum-topic__hero-row">
       <div>
         <div class="forum-topic__eyebrow">{{ t("FORUM.TOPIC.TAG") }}</div>
-        <h1 class="forum-topic__title">{{ topic.title }}</h1>
+        <div class="forum-topic__title-row">
+          <h1 class="forum-topic__title">{{ topic.title }}</h1>
+          <span
+            v-if="topic.isPinned"
+            class="forum-topic__pin-badge"
+          >
+            {{ t("FORUM.TOPIC.PINNED_BADGE") }}
+          </span>
+        </div>
         <p class="forum-topic__subtitle">{{ topic.description }}</p>
         <div class="forum-topic__meta">
           <span
@@ -40,6 +48,20 @@
           :label="t('FORUM.TOPIC.STATUS_LABEL')"
           @update:modelValue="emit('update-status', localStatus)"
         />
+        <Button
+          v-if="isAdmin"
+          size="sm"
+          variant="secondary"
+          class="forum-topic__pin-toggle"
+          :disabled="pinning"
+          @click="emit('toggle-pin')"
+        >
+          {{
+            topic?.isPinned
+              ? t("FORUM.TOPIC.UNPIN")
+              : t("FORUM.TOPIC.PIN")
+          }}
+        </Button>
         <Button
           v-if="canEdit && !isEditing"
           size="sm"
@@ -84,6 +106,7 @@ const props = defineProps<{
   isEditing: boolean;
   isAdmin: boolean;
   isSuperAdmin: boolean;
+  pinning: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -91,6 +114,7 @@ const emit = defineEmits<{
   (e: "edit"): void;
   (e: "cancel-edit"): void;
   (e: "update-status", value: ForumStatus): void;
+  (e: "toggle-pin"): void;
 }>();
 
 const { t, locale } = useI18n();
