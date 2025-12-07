@@ -121,10 +121,7 @@ export class ForumController implements HttpController {
       try {
         const topic = await this.service.createTopic(req.userId!, {
           ...parsed.data,
-          attachments: this.sanitizeAttachments(
-            parsed.data.attachments ?? [],
-            true,
-          ),
+          attachments: this.sanitizeAttachments(parsed.data.attachments ?? []),
         });
         res.status(201).json({ topic });
       } catch (err: any) {
@@ -160,7 +157,7 @@ export class ForumController implements HttpController {
         const patch = {
           ...parsed.data,
           attachments: parsed.data.attachments
-            ? this.sanitizeAttachments(parsed.data.attachments, true)
+            ? this.sanitizeAttachments(parsed.data.attachments)
             : undefined,
         };
         const topic = await this.service.updateTopicContent(
@@ -266,7 +263,6 @@ export class ForumController implements HttpController {
 
         const attachments = this.filterAttachments(
           parsed.data.attachments ?? [],
-          true,
         );
 
         try {
@@ -484,21 +480,14 @@ export class ForumController implements HttpController {
     );
   }
 
-  private filterAttachments(
-    attachments: ForumAttachment[],
-    isAdmin: boolean,
-  ): ForumAttachment[] {
-    return this.sanitizeAttachments(attachments, isAdmin);
+  private filterAttachments(attachments: ForumAttachment[]): ForumAttachment[] {
+    return this.sanitizeAttachments(attachments);
   }
 
-  private sanitizeAttachments(
-    attachments: ForumAttachment[],
-    allowYoutube: boolean,
-  ): ForumAttachment[] {
+  private sanitizeAttachments(attachments: ForumAttachment[]): ForumAttachment[] {
     const result: ForumAttachment[] = [];
     for (const item of attachments) {
       if (item.type === "youtube") {
-        if (!allowYoutube) continue;
         const id = this.extractYoutubeId(item.url);
         if (id) {
           result.push({

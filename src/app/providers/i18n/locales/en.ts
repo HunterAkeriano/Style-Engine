@@ -618,7 +618,7 @@ export default {
       CLOSED_REPLY: 'Topic is closed for replies.',
       REVIEW_REPLY: 'Only admins can reply while the topic is under review.',
       ADD_IMAGE: 'Add image',
-      YOUTUBE_PLACEHOLDER: 'YouTube link (admins only)',
+      YOUTUBE_PLACEHOLDER: 'YouTube link (anyone can add)',
       ADD_VIDEO: 'Add video',
       YOUTUBE_INVALID: 'Could not detect a YouTube video ID.',
       ATTACH_LIMIT: 'Attachment limit reached ({limit}).',

@@ -628,7 +628,7 @@
       CLOSED_REPLY: 'Тема закрита для відповідей.',
       REVIEW_REPLY: 'На розгляді відповідають лише адміни.',
       ADD_IMAGE: 'Додати зображення',
-      YOUTUBE_PLACEHOLDER: 'Посилання на YouTube (лише для адмінів)',
+      YOUTUBE_PLACEHOLDER: 'Посилання на YouTube (можуть додавати всі)',
       ADD_VIDEO: 'Додати відео',
       YOUTUBE_INVALID: 'Не вдалося визначити YouTube-відео.',
       ATTACH_LIMIT: 'Ліміт вкладень ({limit}).',

@@ -110,7 +110,7 @@ const props = withDefaults(
     cancelReplyLabel?: string;
   }>(),
   {
-    allowVideo: false,
+    allowVideo: true,
     maxAttachments: 5,
     sending: false,
     replyingTo: null,

@@ -103,7 +103,7 @@ const props = withDefaults(
     initialTitle: '',
     initialDescription: '',
     initialAttachments: () => [],
-    allowVideo: false,
+    allowVideo: true,
     disabled: false,
     maxAttachments: 10
   }
