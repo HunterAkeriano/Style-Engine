@@ -323,7 +323,7 @@ export class ForumController implements HttpController {
     );
 
     router.post(
-      "/topics/:id/mute/:userId",
+      "/mute/:userId",
       this.auth,
       requireModerator,
       async (req: AuthRequest, res) => {
@@ -344,8 +344,7 @@ export class ForumController implements HttpController {
           : null;
 
         try {
-          await this.service.muteUserInTopic({
-            topicId: req.params.id,
+          await this.service.muteUser({
             userId: req.params.userId,
             mutedBy: req.userId!,
             expiresAt,
@@ -408,14 +407,11 @@ export class ForumController implements HttpController {
     );
 
     router.get(
-      "/topics/:id/mute-status",
+      "/mute-status",
       this.auth,
       async (req: AuthRequest, res) => {
         try {
-          const status = await this.service.checkUserMute(
-            req.params.id,
-            req.userId!,
-          );
+          const status = await this.service.checkUserMute(req.userId!);
           res.json(status);
         } catch (err: any) {
           if (err?.status)

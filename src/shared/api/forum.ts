@@ -17,8 +17,6 @@ export interface ForumUser {
 
 export interface ForumMute {
   id: string
-  topicId: string
-  topicTitle: string
   expiresAt: string | null
   reason: string | null
   createdAt: string
@@ -213,11 +211,11 @@ export async function getTopicParticipants(topicId: string): Promise<{ participa
   return response.data
 }
 
-export async function muteUserInTopic(topicId: string, userId: string, payload: {
+export async function muteUser(userId: string, payload: {
   durationMinutes: number | null
   reason?: string
 }): Promise<{ success: boolean }> {
-  const response = await api.post<{ success: boolean }>(`/forum/topics/${topicId}/mute/${userId}`, payload)
+  const response = await api.post<{ success: boolean }>(`/forum/mute/${userId}`, payload)
   return response.data
 }
 

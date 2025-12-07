@@ -105,7 +105,6 @@ export class ForumService {
         try {
           await fsp.rename(currentPath, destination);
         } catch {
-          // fallback: copy if rename fails (cross-device)
           await fsp.copyFile(currentPath, destination);
           await fsp.unlink(currentPath);
         }
@@ -214,6 +213,14 @@ export class ForumService {
   }
 
   async createTopic(userId: string, payload: CreateTopicPayload) {
+    const mute = await this.repo.findActiveMute(userId);
+    if (mute) {
+      const muteMessage = mute.expiresAt
+        ? `You are muted until ${new Date(mute.expiresAt).toLocaleString()}`
+        : "You are permanently muted";
+      throw toApiError(403, muteMessage);
+    }
+
     const created = await this.repo.createTopic({
       userId,
       title: payload.title,
@@ -262,6 +269,16 @@ export class ForumService {
     const topic = await this.repo.findTopicById(payload.topicId);
     if (!topic) throw toApiError(404, "Topic not found");
     this.assertCanPost(topic.status as ForumStatus, payload.isAdmin);
+
+    if (!payload.isAdmin) {
+      const mute = await this.repo.findActiveMute(payload.userId);
+      if (mute) {
+        const muteMessage = mute.expiresAt
+          ? `You are muted until ${new Date(mute.expiresAt).toLocaleString()}`
+          : "You are permanently muted";
+        throw toApiError(403, muteMessage);
+      }
+    }
 
     const created = await this.repo.createMessage({
       topicId: payload.topicId,
@@ -364,8 +381,7 @@ export class ForumService {
     }));
   }
 
-  async muteUserInTopic(payload: {
-    topicId: string;
+  async muteUser(payload: {
     userId: string;
     mutedBy: string;
     expiresAt: Date | null;
@@ -376,19 +392,12 @@ export class ForumService {
       throw toApiError(403, "Moderator or admin access required");
     }
 
-    const topic = await this.repo.findTopicById(payload.topicId);
-    if (!topic) throw toApiError(404, "Topic not found");
-
-    const existingMute = await this.repo.findActiveMute(
-      payload.topicId,
-      payload.userId,
-    );
+    const existingMute = await this.repo.findActiveMute(payload.userId);
     if (existingMute) {
-      await this.repo.removeMute(payload.topicId, payload.userId);
+      await this.repo.removeMute(payload.userId);
     }
 
     await this.repo.createMute({
-      topicId: payload.topicId,
       userId: payload.userId,
       mutedBy: payload.mutedBy,
       expiresAt: payload.expiresAt,
@@ -466,16 +475,14 @@ export class ForumService {
     const mutes = await this.repo.findAllActiveMutes(userId);
     return mutes.map((mute: any) => ({
       id: mute.id,
-      topicId: mute.topicId,
-      topicTitle: mute.topic?.title || "",
       expiresAt: mute.expiresAt,
       reason: mute.reason,
       createdAt: mute.createdAt,
     }));
   }
 
-  async checkUserMute(topicId: string, userId: string) {
-    const mute = await this.repo.findActiveMute(topicId, userId);
+  async checkUserMute(userId: string) {
+    const mute = await this.repo.findActiveMute(userId);
     return mute ? { muted: true, expiresAt: mute.expiresAt } : { muted: false };
   }
 }

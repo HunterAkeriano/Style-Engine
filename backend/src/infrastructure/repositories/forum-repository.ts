@@ -114,10 +114,9 @@ export class ForumRepository {
     return this.models.ForumMute.create(payload)
   }
 
-  findActiveMute(topicId: string, userId: string) {
+  findActiveMute(userId: string) {
     return this.models.ForumMute.findOne({
       where: {
-        topicId,
         userId,
         [Op.or]: [
           { expiresAt: null },
@@ -135,20 +134,13 @@ export class ForumRepository {
           { expiresAt: null },
           { expiresAt: { [Op.gt]: new Date() } }
         ]
-      },
-      include: [
-        {
-          model: this.models.ForumTopic,
-          as: 'topic',
-          attributes: ['id', 'title']
-        }
-      ]
+      }
     })
   }
 
-  removeMute(topicId: string, userId: string) {
+  removeMute(userId: string) {
     return this.models.ForumMute.destroy({
-      where: { topicId, userId }
+      where: { userId }
     })
   }
 
@@ -165,7 +157,6 @@ export class ForumRepository {
       ]
     })
 
-    // Get unique users
     const uniqueUsers = new Map()
     messages.forEach(msg => {
       if (msg.user && !uniqueUsers.has(msg.userId)) {

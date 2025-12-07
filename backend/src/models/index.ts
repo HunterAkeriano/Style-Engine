@@ -195,8 +195,6 @@ export class ForumMessage extends Model<InferAttributes<ForumMessage>, InferCrea
 
 export class ForumMute extends Model<InferAttributes<ForumMute>, InferCreationAttributes<ForumMute>> {
   declare id: CreationOptional<string>
-  declare topicId: ForeignKey<ForumTopic['id']>
-  declare topic?: ForumTopic
   declare userId: ForeignKey<User['id']>
   declare user?: User
   declare mutedBy: ForeignKey<User['id']>
@@ -617,7 +615,6 @@ export function initModels(sequelize: Sequelize): Models {
   ForumMute.init(
     {
       id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-      topicId: { type: DataTypes.UUID, allowNull: false, field: 'topic_id' },
       userId: { type: DataTypes.UUID, allowNull: false, field: 'user_id' },
       mutedBy: { type: DataTypes.UUID, allowNull: false, field: 'muted_by' },
       expiresAt: { type: DataTypes.DATE, allowNull: true, field: 'expires_at' },
@@ -643,12 +640,10 @@ export function initModels(sequelize: Sequelize): Models {
 
   ForumTopic.belongsTo(User, { foreignKey: 'userId', as: 'user' })
   ForumTopic.hasMany(ForumMessage, { foreignKey: 'topicId', as: 'messages' })
-  ForumTopic.hasMany(ForumMute, { foreignKey: 'topicId', as: 'mutes' })
   ForumMessage.belongsTo(ForumTopic, { foreignKey: 'topicId', as: 'topic' })
   ForumMessage.belongsTo(User, { foreignKey: 'userId', as: 'user' })
   ForumMessage.belongsTo(ForumMessage, { foreignKey: 'parentId', as: 'parent' })
   ForumMessage.hasMany(ForumMessage, { foreignKey: 'parentId', as: 'replies' })
-  ForumMute.belongsTo(ForumTopic, { foreignKey: 'topicId', as: 'topic' })
   ForumMute.belongsTo(User, { foreignKey: 'userId', as: 'user' })
   ForumMute.belongsTo(User, { foreignKey: 'mutedBy', as: 'mutedByUser' })
 

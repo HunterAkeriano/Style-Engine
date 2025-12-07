@@ -138,7 +138,6 @@ import ParticipantsSidebar from "@/widgets/forum/participants-sidebar/Participan
 import MuteModal from "@/features/forum/mute-modal/MuteModal.vue";
 import {
   getTopicParticipants,
-  muteUserInTopic,
   deleteUserMessages,
   type ForumUser,
 } from "@/shared/api/forum";

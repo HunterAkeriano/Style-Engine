@@ -1,14 +1,12 @@
 @import '@/app/styles/variables';
 
 .forum-reply {
-  position: sticky;
   bottom: $space-lg;
   z-index: 100;
   display: flex;
   flex-direction: column;
   gap: $space-lg;
   padding: $space-2xl;
-  margin-top: $space-3xl;
   border: 1px solid color-var-alpha('panel-border', 0.4);
   border-radius: $border-radius-3xl;
   background:
@@ -32,7 +30,6 @@
     bottom: $space-md;
     padding: $space-xl $space-lg;
     gap: $space-md;
-    margin-top: $space-2xl;
   }
 
   &::before {
