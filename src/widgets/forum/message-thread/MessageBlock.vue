@@ -1,5 +1,9 @@
 <template>
-  <div class="forum-message" :style="{ marginLeft: `${depth * 18}px` }">
+  <div
+    :id="messageAnchorId"
+    class="forum-message"
+    :style="{ marginLeft: `${depth * 18}px` }"
+  >
     <div class="forum-message__header">
       <div class="forum-message__avatar">
         <img
@@ -29,6 +33,19 @@
           </span>
         </div>
       </div>
+    </div>
+
+    <div v-if="parentAuthor" class="forum-message__reply-to">
+      <span class="forum-message__reply-label">{{
+        t("FORUM.TOPIC.REPLYING_TO")
+      }}</span>
+      <button
+        class="forum-message__reply-link"
+        type="button"
+        @click="scrollToParent"
+      >
+        {{ parentAuthor }}
+      </button>
     </div>
 
     <div class="forum-message__body">
@@ -116,6 +133,8 @@
         :current-user-id="currentUserId"
         :inline-reply-target-id="props.inlineReplyTargetId"
         :inline-reply-form-config="replyConfig"
+        :parent-author="node.author?.name || node.author?.email || 'User'"
+        :parent-id="node.id"
         @reply="$emit('reply', $event)"
         @edit="$emit('edit', $event)"
         @inline-reply-submit="$emit('inline-reply-submit', $event)"
@@ -158,6 +177,8 @@ const props = defineProps<{
     allowVideo?: boolean;
     sending: boolean;
   } | null;
+  parentAuthor?: string | null;
+  parentId?: string | null;
 }>();
 
 const emit = defineEmits<{
@@ -189,6 +210,7 @@ const replyConfig = computed(() => props.inlineReplyFormConfig ?? null);
 const showInlineReply = computed(
   () => props.inlineReplyTargetId === props.node.id,
 );
+const messageAnchorId = computed(() => `message-${props.node.id}`);
 
 watch(
   () => props.node.content,
@@ -203,6 +225,7 @@ const initials = computed(() => {
 });
 
 const editedLabel = computed(() => t("FORUM.TOPIC.EDITED"));
+const parentAuthor = computed(() => props.parentAuthor || null);
 
 function startEdit() {
   if (!canEditThis.value) return;
@@ -231,34 +254,72 @@ function handleInlineSubmit(payload: {
 function handleInlineCancel() {
   emit("inline-reply-cancel");
 }
+
+function scrollToParent() {
+  if (!props.parentId) return;
+  const el = document.getElementById(`message-${props.parentId}`);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
 </script>
 
 <style scoped lang="scss">
 @import "@/app/styles/variables";
 
 .forum-message {
-  border-radius: 14px;
-  padding: 14px;
-  background: color-var-alpha("color-bg-secondary", 0.65);
-  border-color: color-var-alpha("panel-border", 0.3);
-  margin-bottom: 12px;
+  position: relative;
+  border-radius: $border-radius-xl;
+  padding: $space-md $space-md $space-lg $space-xl;
+  background:
+    linear-gradient(
+      150deg,
+      color-var-alpha("color-bg-secondary", 0.9),
+      color-var-alpha("color-bg-primary", 0.8)
+    ),
+    color-var("color-bg-secondary");
+  border: 1px solid color-var-alpha("panel-border", 0.45);
+  box-shadow: 0 16px 60px color-var-alpha("color-text-primary", 0.1);
+  margin-bottom: $space-md;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: -18px;
+    top: 18px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $color-primary, $color-accent);
+    box-shadow:
+      0 0 0 6px color-var-alpha("color-primary", 0.16),
+      0 10px 25px color-var-alpha("color-primary", 0.35);
+  }
 
   &__header {
     display: flex;
-    gap: 10px;
+    gap: $space-sm;
     align-items: center;
+    flex-wrap: wrap;
   }
 
   &__avatar {
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
-    background: color-var-alpha("color-bg-secondary", 0.5);
+    background:
+      radial-gradient(
+        circle at 30% 30%,
+        color-var-alpha("color-accent", 0.3),
+        transparent 55%
+      ),
+      color-var-alpha("color-bg-secondary", 0.7);
     display: grid;
     place-items: center;
-    color: color-var("color-text-secondary");
+    color: color-var("color-text-primary");
     font-weight: 700;
     overflow: hidden;
+    border: 1px solid color-var-alpha("panel-border", 0.3);
 
     img {
       width: 100%;
@@ -270,27 +331,31 @@ function handleInlineCancel() {
   &__meta {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
+    min-width: 0;
   }
 
   &__author {
     display: flex;
-    gap: 8px;
+    gap: $space-xs;
     align-items: center;
     font-weight: 600;
+    color: $color-text-primary;
+    flex-wrap: wrap;
   }
 
   &__role {
-    padding: 4px 8px;
+    padding: 4px 10px;
     border-radius: 999px;
-    background: color-var-alpha("color-warning", 0.15);
-    color: color-var("color-warning");
-    font-size: 12px;
+    background: color-var-alpha("color-primary", 0.12);
+    color: color-var("color-primary");
+    font-size: $font-size-xs;
+    letter-spacing: 0.02em;
   }
 
   &__timestamps {
-    font-size: 13px;
-    color: color-var-alpha("color-text-secondary", 0.8);
+    font-size: $font-size-sm;
+    color: color-var-alpha("color-text-secondary", 0.85);
   }
 
   &__edited {
@@ -298,28 +363,69 @@ function handleInlineCancel() {
   }
 
   &__body {
-    margin-top: 10px;
+    margin-top: $space-sm;
+  }
+
+  &__reply-to {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-xs;
+    margin-top: $space-sm;
+    padding: 6px 10px;
+    border-radius: $border-radius-full;
+    background: color-var-alpha("color-bg-secondary", 0.6);
+    border: 1px solid color-var-alpha("panel-border", 0.35);
+    width: fit-content;
+  }
+
+  &__reply-label {
+    font-size: $font-size-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: color-var-alpha("color-text-secondary", 0.9);
+  }
+
+  &__reply-link {
+    border: none;
+    background: transparent;
+    color: $color-primary;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.18s ease;
+
+    &:hover {
+      color: $color-accent;
+      text-decoration: underline;
+    }
   }
 
   &__text {
     margin: 0;
     white-space: pre-wrap;
     color: $color-text-primary;
+    line-height: 1.65;
   }
 
   &__attachments {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 10px;
-    margin-top: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: $space-sm;
+    margin-top: $space-sm;
   }
 
   &__attachment {
-    border-radius: 12px;
+    border-radius: $border-radius-lg;
     overflow: hidden;
-    border: 1px solid color-var-alpha("panel-border", 0.25);
-    background: color-var-alpha("color-bg-secondary", 0.45);
-    height: 140px;
+    border: 1px solid color-var-alpha("panel-border", 0.35);
+    background: color-var-alpha("color-bg-secondary", 0.55);
+    height: 160px;
+    transition:
+      transform 0.18s ease,
+      box-shadow 0.18s ease;
 
     img,
     iframe {
@@ -327,35 +433,45 @@ function handleInlineCancel() {
       height: 100%;
       object-fit: cover;
     }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 26px color-var-alpha("color-text-primary", 0.12);
+    }
   }
 
   &__actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 12px;
-    gap: 10px;
+    margin-top: $space-md;
+    gap: $space-sm;
     flex-wrap: wrap;
+    border-top: 1px solid color-var-alpha("panel-border", 0.25);
+    padding-top: $space-sm;
   }
 
   &__actions-row {
     display: flex;
-    gap: 8px;
+    gap: $space-xs;
     align-items: center;
+    flex-wrap: wrap;
   }
 
   &__edit-actions {
     display: flex;
-    gap: 8px;
+    gap: $space-xs;
   }
 
   &__replies {
-    margin-top: 12px;
+    margin-top: $space-md;
+    padding-left: $space-md;
+    border-left: 1px dashed color-var-alpha("panel-border", 0.35);
   }
 }
 
 .forum-message__inline-reply {
-  margin-top: 14px;
+  margin-top: $space-md;
 
   .forum-reply {
     position: relative;

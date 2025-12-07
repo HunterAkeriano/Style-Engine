@@ -59,10 +59,7 @@
           </Button>
         </div>
       </div>
-      <Button
-        :disabled="!canReply || sending"
-        @click="submit"
-      >
+      <Button :disabled="!canReply || sending" size="sm" @click="submit">
         {{ sending ? t("FORUM.TOPIC.SENDING") : sendLabel }}
       </Button>
     </div>
@@ -164,7 +161,9 @@ const contentModel = computed({
   get: () => (form.values.content as string) || "",
   set: (val: string) => form.setValue("content", val),
 });
-const attachments = computed<ForumAttachmentDraft[]>(() => form.values.attachments || []);
+const attachments = computed<ForumAttachmentDraft[]>(
+  () => form.values.attachments || [],
+);
 const contentError = computed(() => form.errors.content || "");
 const attachmentsError = computed(() => form.errors.attachments || "");
 
@@ -296,7 +295,9 @@ function validateAll() {
   return parsed.data;
 }
 
-defineExpose({ setContent: (value: string) => form.setValue("content", value) });
+defineExpose({
+  setContent: (value: string) => form.setValue("content", value),
+});
 </script>
 
 <style scoped lang="scss" src="./forum-reply-form.scss"></style>

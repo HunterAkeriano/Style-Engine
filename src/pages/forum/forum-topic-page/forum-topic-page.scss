@@ -91,7 +91,7 @@
 }
 
 .forum-topic__card {
-  padding: $space-3xl;
+  padding: $space-lg;
   background:
     linear-gradient(135deg, color-var-alpha('color-bg-secondary', 0.9), color-var-alpha('color-bg-primary', 0.8)),
     radial-gradient(circle at 25% 35%, color-var-alpha('color-primary', 0.06), transparent 40%);
