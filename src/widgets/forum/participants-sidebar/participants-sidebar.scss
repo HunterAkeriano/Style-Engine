@@ -9,6 +9,8 @@
   border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 20px;
+  border: 1px solid rgba(var(--panel-border), 0.3);
+  background: linear-gradient(135deg, rgba(var(--color-bg-secondary), 0.95), rgba(var(--color-bg-primary), 0.85)), radial-gradient(circle at 12% 18%, rgba(var(--color-primary), 0.12), transparent 40%), radial-gradient(circle at 88% 22%, rgba(var(--color-accent), 0.1), transparent 35%), rgba(var(--color-bg-secondary), 0.6);
 
   &__header {
     margin-bottom: 20px;
