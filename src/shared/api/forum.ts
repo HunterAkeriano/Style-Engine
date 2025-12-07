@@ -11,7 +11,15 @@ export interface ForumUser {
   email: string | null
   avatarUrl: string | null
   isAdmin?: boolean
+  isSuperAdmin?: boolean
   subscriptionTier?: 'free' | 'pro' | 'premium'
+}
+
+export interface ForumMute {
+  id: string
+  expiresAt: string | null
+  reason: string | null
+  createdAt: string
 }
 
 export interface ForumTopic {
@@ -214,5 +222,33 @@ export function openNotificationStream(userId: string, handlers: {
 
 export async function getUserOpenTopics(): Promise<{ topics: Array<{ id: string; status: ForumStatus }> }> {
   const response = await api.get<{ topics: Array<{ id: string; status: ForumStatus }> }>('/forum/my-topics/open')
+  return response.data
+}
+
+export async function getTopicParticipants(topicId: string): Promise<{ participants: ForumUser[] }> {
+  const response = await api.get<{ participants: ForumUser[] }>(`/forum/topics/${topicId}/participants`)
+  return response.data
+}
+
+export async function muteUser(userId: string, payload: {
+  durationMinutes: number | null
+  reason?: string
+}): Promise<{ success: boolean }> {
+  const response = await api.post<{ success: boolean }>(`/forum/mute/${userId}`, payload)
+  return response.data
+}
+
+export async function deleteUserMessages(topicId: string, userId: string): Promise<{ success: boolean; deletedCount: number }> {
+  const response = await api.delete<{ success: boolean; deletedCount: number }>(`/forum/topics/${topicId}/messages/${userId}`)
+  return response.data
+}
+
+export async function getUserActiveMutes(): Promise<{ mutes: ForumMute[] }> {
+  const response = await api.get<{ mutes: ForumMute[] }>('/forum/my-mutes')
+  return response.data
+}
+
+export async function checkUserMuteStatus(topicId: string): Promise<{ muted: boolean; expiresAt?: string | null }> {
+  const response = await api.get<{ muted: boolean; expiresAt?: string | null }>(`/forum/topics/${topicId}/mute-status`)
   return response.data
 }

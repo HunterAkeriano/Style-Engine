@@ -17,13 +17,20 @@ const SSG_PUBLIC_ROUTES = [
   '/docs/gradients',
   '/docs/shadows',
   '/docs/animations',
+  '/quiz',
+  '/quiz/leaderboard',
   '/gradient',
   '/shadow',
   '/animation',
   '/clip-path',
+  '/grid',
   '/favicon',
   '/privacy-policy',
-  '/cookie-policy'
+  '/cookie-policy',
+  '/forum',
+  '/forum/status/open',
+  '/forum/status/in_review',
+  '/forum/status/closed'
 ]
 
 const localizedSsgRoutes = AVAILABLE_LOCALES.flatMap((locale) =>

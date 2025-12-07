@@ -1,22 +1,18 @@
 @import '@/app/styles/variables';
 
 .forum-reply {
-  position: sticky;
   bottom: $space-lg;
   z-index: 100;
   display: flex;
   flex-direction: column;
   gap: $space-lg;
   padding: $space-2xl;
-  margin-top: $space-3xl;
   border: 1px solid color-var-alpha('panel-border', 0.4);
   border-radius: $border-radius-3xl;
   background:
     linear-gradient(135deg, color-var-alpha('color-bg-secondary', 0.95), color-var-alpha('color-bg-primary', 0.92)),
     radial-gradient(circle at 18% 25%, color-var-alpha('color-primary', 0.1), transparent 45%),
     radial-gradient(circle at 82% 30%, color-var-alpha('color-accent', 0.08), transparent 40%);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
   box-shadow:
     0 16px 60px rgba(0, 0, 0, 0.35),
     0 8px 24px rgba(0, 0, 0, 0.2),
@@ -32,7 +28,6 @@
     bottom: $space-md;
     padding: $space-xl $space-lg;
     gap: $space-md;
-    margin-top: $space-2xl;
   }
 
   &::before {

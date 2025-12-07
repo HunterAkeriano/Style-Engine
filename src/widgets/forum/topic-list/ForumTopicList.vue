@@ -143,7 +143,15 @@
       >
         <template #cell-title="{ row }">
           <div class="forum-page__topic">
-            <div class="forum-page__topic-title">{{ row.title }}</div>
+            <div class="forum-page__topic-title">
+              {{ row.title }}
+              <span
+                v-if="activeMute"
+                class="forum-page__mute-badge"
+              >
+                {{ formatMuteTimer(activeMute) }}
+              </span>
+            </div>
             <div class="forum-page__topic-labels">
               <span v-if="row.isPinned" class="forum-page__pin-badge">
                 {{ t("FORUM.PINNED_LABEL") }}
@@ -242,8 +250,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { computed, onMounted, ref, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import {
   Button,
@@ -257,8 +265,10 @@ import {
 import { useAuthStore } from "@/entities";
 import {
   getForumTopics,
+  getUserActiveMutes,
   type ForumStatus,
   type ForumTopic,
+  type ForumMute,
   getPinnedForumTopics,
 } from "@/shared/api/forum";
 import { useToast } from "@/shared/lib/toast";
@@ -269,12 +279,22 @@ import {
 
 const { t, locale } = useI18n();
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const toast = useToast();
 
 const topics = ref<ForumTopic[]>([]);
 const loading = ref(false);
-const statusFilter = ref<"all" | ForumStatus>("all");
+
+const getStatusFromRoute = (): "all" | ForumStatus => {
+  const statusParam = route.params.status as string | undefined;
+  if (statusParam && ["open", "in_review", "closed"].includes(statusParam)) {
+    return statusParam as ForumStatus;
+  }
+  return "all";
+};
+
+const statusFilter = ref<"all" | ForumStatus>(getStatusFromRoute());
 const pagination = ref({
   page: 1,
   limit: 10,
@@ -285,6 +305,9 @@ const pagination = ref({
 const showAuthModal = ref(false);
 const pinnedTopics = ref<ForumTopic[]>([]);
 const pinnedLoading = ref(false);
+const userMutes = ref<ForumMute[]>([]);
+const activeMute = computed<ForumMute | null>(() => userMutes.value[0] ?? null);
+const currentTime = ref(Date.now());
 
 const statusLabels = computed<Record<ForumStatus, string>>(() => ({
   open: t("FORUM.STATUS.OPEN"),
@@ -390,8 +413,25 @@ function handleLimitChange() {
 
 function handleStatusChange() {
   pagination.value.page = 1;
-  loadTopics();
+  const status = statusFilter.value === "all" ? "" : statusFilter.value;
+  const path = status
+    ? `/${locale.value}/forum/status/${status}`
+    : `/${locale.value}/forum`;
+  router.push(path).then(() => {
+    loadTopics();
+  });
 }
+
+watch([() => route.params.status, () => route.name], () => {
+  if (route.name === 'forum' || route.name === 'forum-status') {
+    const status = getStatusFromRoute();
+    if (statusFilter.value !== status) {
+      statusFilter.value = status;
+      pagination.value.page = 1;
+      loadTopics();
+    }
+  }
+}, { immediate: true });
 
 function openTopic(id: string) {
   router.push(`/${locale.value}/forum/${id}`);
@@ -420,9 +460,56 @@ function goToLogin() {
   router.push(`/${locale.value}/login?redirect=/${locale.value}/forum/create`);
 }
 
+async function loadUserMutes() {
+  if (!authStore.isAuthenticated) return;
+  try {
+    const { mutes } = await getUserActiveMutes();
+    userMutes.value = mutes;
+  } catch (err: any) {
+    console.error("Failed to load mutes:", err);
+  }
+}
+
+function formatMuteTimer(mute: ForumMute | null) {
+  if (!mute) return "";
+
+  if (!mute.expiresAt) {
+    return t("FORUM.MUTED_PERMANENTLY");
+  }
+
+  const expiresAt = new Date(mute.expiresAt).getTime();
+  const remaining = Math.max(0, expiresAt - currentTime.value);
+
+  if (remaining === 0) {
+    return t("FORUM.MUTED_EXPIRED");
+  }
+
+  const minutes = Math.floor(remaining / 60000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (days > 0) {
+    return t("FORUM.MUTED_DAYS", { days });
+  } else if (hours > 0) {
+    return t("FORUM.MUTED_HOURS", { hours });
+  } else if (minutes > 0) {
+    return t("FORUM.MUTED_MINUTES", { minutes });
+  } else {
+    return t("FORUM.MUTED_SECONDS", { seconds: Math.floor(remaining / 1000) });
+  }
+}
+
 onMounted(() => {
+  statusFilter.value = getStatusFromRoute();
   loadPinnedTopics();
   loadTopics();
+  loadUserMutes();
+
+  const interval = setInterval(() => {
+    currentTime.value = Date.now();
+  }, 1000);
+
+  return () => clearInterval(interval);
 });
 </script>
 

@@ -204,6 +204,18 @@ export class ForumPinnedTopic extends Model<
   declare createdAt: CreationOptional<Date>
 }
 
+export class ForumMute extends Model<InferAttributes<ForumMute>, InferCreationAttributes<ForumMute>> {
+  declare id: CreationOptional<string>
+  declare userId: ForeignKey<User['id']>
+  declare user?: User
+  declare mutedBy: ForeignKey<User['id']>
+  declare mutedByUser?: User
+  declare expiresAt: Date | null
+  declare reason: string | null
+  declare createdAt: CreationOptional<Date>
+  declare updatedAt: CreationOptional<Date>
+}
+
 export interface Models {
   User: typeof User
   RefreshToken: typeof RefreshToken
@@ -219,6 +231,7 @@ export interface Models {
   QuizAttempt: typeof QuizAttempt
   ForumTopic: typeof ForumTopic
   ForumMessage: typeof ForumMessage
+  ForumMute: typeof ForumMute
   ForumPinnedTopic: typeof ForumPinnedTopic
 }
 
@@ -611,6 +624,25 @@ export function initModels(sequelize: Sequelize): Models {
     }
   )
 
+  ForumMute.init(
+    {
+      id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+      userId: { type: DataTypes.UUID, allowNull: false, field: 'user_id' },
+      mutedBy: { type: DataTypes.UUID, allowNull: false, field: 'muted_by' },
+      expiresAt: { type: DataTypes.DATE, allowNull: true, field: 'expires_at' },
+      reason: { type: DataTypes.TEXT, allowNull: true },
+      createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
+      updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' }
+    },
+    {
+      sequelize,
+      tableName: 'forum_mutes',
+      underscored: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at'
+    }
+  )
+
   ForumPinnedTopic.init(
     {
       id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -640,6 +672,8 @@ export function initModels(sequelize: Sequelize): Models {
   ForumMessage.belongsTo(User, { foreignKey: 'userId', as: 'user' })
   ForumMessage.belongsTo(ForumMessage, { foreignKey: 'parentId', as: 'parent' })
   ForumMessage.hasMany(ForumMessage, { foreignKey: 'parentId', as: 'replies' })
+  ForumMute.belongsTo(User, { foreignKey: 'userId', as: 'user' })
+  ForumMute.belongsTo(User, { foreignKey: 'mutedBy', as: 'mutedByUser' })
   ForumTopic.hasOne(ForumPinnedTopic, { foreignKey: 'topicId', as: 'pin' })
   ForumPinnedTopic.belongsTo(ForumTopic, { foreignKey: 'topicId', as: 'topic' })
   ForumPinnedTopic.belongsTo(User, { foreignKey: 'createdBy', as: 'pinner' })
@@ -658,7 +692,8 @@ export function initModels(sequelize: Sequelize): Models {
     QuizResult,
     QuizAttempt,
     ForumTopic,
+    ForumPinnedTopic,
     ForumMessage,
-    ForumPinnedTopic
+    ForumMute
   }
 }

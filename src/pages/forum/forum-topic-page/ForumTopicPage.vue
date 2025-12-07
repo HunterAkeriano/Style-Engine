@@ -9,6 +9,19 @@
     <div class="container">
       <Breadcrumbs />
 
+      <div class="forum-topic__layout">
+        <ParticipantsSidebar
+          v-if="topic"
+          :topic-title="topic.title"
+          :participants="participants"
+          :can-moderate="canModerate"
+          :current-user-id="authStore.user?.id || ''"
+          @mute="handleMuteClick"
+          @delete-messages="handleDeleteMessages"
+        />
+
+        <div class="forum-topic__main">
+
       <ForumTopicHeader
         :topic="topic"
         :status-labels="statusLabels"
@@ -81,7 +94,16 @@
         @submit="sendReply"
         @cancel-reply="clearReply"
       />
+        </div>
+      </div>
     </div>
+
+    <MuteModal
+      :visible="showMuteModal"
+      :user-name="selectedUser?.name || selectedUser?.email || ''"
+      @confirm="handleMuteConfirm"
+      @close="showMuteModal = false"
+    />
   </div>
 </template>
 
@@ -95,6 +117,7 @@ import {
   changeForumTopicStatus,
   editForumMessage,
   getForumTopic,
+  muteUser,
   openForumStream,
   pinForumTopic,
   postForumMessage,
@@ -116,6 +139,13 @@ import ForumMessagesBoard, {
 import ForumReplyForm from "@/features/forum/reply-form/ForumReplyForm.vue";
 import ForumTopicForm from "@/features/forum/topic-form/ForumTopicForm.vue";
 import type { ForumAttachmentDraft } from "@/entities/forum";
+import ParticipantsSidebar from "@/widgets/forum/participants-sidebar/ParticipantsSidebar.vue";
+import MuteModal from "@/features/forum/mute-modal/MuteModal.vue";
+import {
+  getTopicParticipants,
+  deleteUserMessages,
+  type ForumUser,
+} from "@/shared/api/forum";
 
 const { t, locale } = useI18n();
 const route = useRoute();
@@ -135,6 +165,9 @@ const replyParentId = ref<string | null>(null);
 let stopStream: (() => void) | null = null;
 const editingTopic = ref(false);
 const pinningTopic = ref(false);
+const participants = ref<ForumUser[]>([]);
+const showMuteModal = ref(false);
+const selectedUser = ref<ForumUser | null>(null);
 
 const statusLabels = computed<Record<ForumStatus, string>>(() => ({
   open: t("FORUM.STATUS.OPEN"),
@@ -180,6 +213,10 @@ const canReply = computed(() => {
   return Boolean(authStore.isAdmin);
 });
 
+const canModerate = computed(() => {
+  return Boolean(authStore.user?.isAdmin || authStore.user?.isSuperAdmin);
+});
+
 const replyPlaceholder = computed(() => {
   if (!authStore.isAuthenticated) return t("FORUM.TOPIC.LOGIN_TO_REPLY");
   if (!topic.value) return t("FORUM.TOPIC.REPLY_PLACEHOLDER");
@@ -220,10 +257,55 @@ async function loadTopic() {
     );
     topic.value = topicData;
     messages.value = topicMessages;
+    await loadParticipants();
   } catch (err: any) {
     toast.error(err?.message || t("FORUM.LOAD_ERROR"));
   } finally {
     loading.value = false;
+  }
+}
+
+async function loadParticipants() {
+  try {
+    const { participants: participantsList } = await getTopicParticipants(
+      route.params.id as string,
+    );
+    participants.value = participantsList;
+  } catch (err: any) {
+    console.error("Failed to load participants:", err);
+  }
+}
+
+function handleMuteClick(user: ForumUser) {
+  selectedUser.value = user;
+  showMuteModal.value = true;
+}
+
+async function handleMuteConfirm(payload: {
+  durationMinutes: number | null;
+  reason: string;
+}) {
+  if (!selectedUser.value || !topic.value) return;
+  try {
+    await muteUser(selectedUser.value.id, payload);
+    toast.success(t("FORUM.USER_MUTED"));
+    showMuteModal.value = false;
+    selectedUser.value = null;
+  } catch (err: any) {
+    toast.error(err?.message || t("FORUM.MUTE_ERROR"));
+  }
+}
+
+async function handleDeleteMessages(user: ForumUser) {
+  if (!topic.value) return;
+  if (!confirm(t("FORUM.CONFIRM_DELETE_MESSAGES", { name: user.name || user.email }))) return;
+
+  try {
+    const result = await deleteUserMessages(topic.value.id, user.id);
+    toast.success(t("FORUM.MESSAGES_DELETED", { count: result.deletedCount }));
+    await loadTopic();
+  } catch (err: any) {
+    toast.error(err?.message || t("FORUM.DELETE_ERROR"));
   }
 }
 

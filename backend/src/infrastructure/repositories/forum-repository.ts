@@ -1,5 +1,6 @@
 import type { Attributes, InferCreationAttributes, WhereOptions } from 'sequelize'
-import type { ForumMessage, ForumTopic, Models } from '../../models'
+import type { ForumMessage, ForumMute, ForumTopic, Models } from '../../models'
+import { Op } from 'sequelize'
 
 export type ForumStatus = 'open' | 'in_review' | 'closed'
 
@@ -105,6 +106,12 @@ export class ForumRepository {
     return this.models.ForumMessage.create(payload)
   }
 
+  deleteMessagesByUser(topicId: string, userId: string) {
+    return this.models.ForumMessage.destroy({
+      where: { topicId, userId }
+    })
+  }
+
   findUserOpenTopics(userId: string) {
     return this.models.ForumTopic.findAll({
       where: {
@@ -142,5 +149,62 @@ export class ForumRepository {
         }
       ]
     })
+  }
+
+  createMute(payload: InferCreationAttributes<ForumMute>) {
+    return this.models.ForumMute.create(payload)
+  }
+
+  findActiveMute(userId: string) {
+    return this.models.ForumMute.findOne({
+      where: {
+        userId,
+        [Op.or]: [
+          { expiresAt: null },
+          { expiresAt: { [Op.gt]: new Date() } }
+        ]
+      }
+    })
+  }
+
+  findAllActiveMutes(userId: string) {
+    return this.models.ForumMute.findAll({
+      where: {
+        userId,
+        [Op.or]: [
+          { expiresAt: null },
+          { expiresAt: { [Op.gt]: new Date() } }
+        ]
+      }
+    })
+  }
+
+  removeMute(userId: string) {
+    return this.models.ForumMute.destroy({
+      where: { userId }
+    })
+  }
+
+  async getTopicParticipants(topicId: string) {
+    const messages = await this.models.ForumMessage.findAll({
+      where: { topicId },
+      attributes: ['userId'],
+      include: [
+        {
+          model: this.models.User,
+          as: 'user',
+          attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin', 'isSuperAdmin', 'subscriptionTier']
+        }
+      ]
+    })
+
+    const uniqueUsers = new Map()
+    messages.forEach(msg => {
+      if (msg.user && !uniqueUsers.has(msg.userId)) {
+        uniqueUsers.set(msg.userId, msg)
+      }
+    })
+
+    return Array.from(uniqueUsers.values())
   }
 }

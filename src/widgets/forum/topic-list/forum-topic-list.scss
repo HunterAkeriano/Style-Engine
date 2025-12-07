@@ -3,60 +3,165 @@
 .forum-page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 20px 0 80px;
+  gap: $space-2xl;
+  padding: $space-3xl 0 $space-4xl;
   color: $color-text-primary;
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+  animation: forumPageEntrance 900ms cubic-bezier(0.25, 0.9, 0.35, 1) 100ms forwards;
+  backface-visibility: hidden;
+
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background:
+      radial-gradient(ellipse 100% 80% at 50% 0%, color-var-alpha('color-primary', 0.2), transparent 60%),
+      radial-gradient(circle 120% at 10% 20%, color-var-alpha('color-accent', 0.15), transparent 50%),
+      radial-gradient(circle 130% at 90% 80%, color-var-alpha('color-secondary', 0.18), transparent 50%),
+      $color-bg-primary;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      radial-gradient(circle, color-var-alpha('color-text-primary', 0.8) 1px, transparent 1px),
+      radial-gradient(circle, color-var-alpha('color-text-primary', 0.6) 1.5px, transparent 1.5px),
+      radial-gradient(circle, color-var-alpha('color-primary', 0.4) 2px, transparent 2px);
+    background-size: 200px 200px, 300px 300px, 400px 400px;
+    background-position: 0 0, 100px 100px, 200px 200px;
+    opacity: 0.6;
+    pointer-events: none;
+    animation: starfield-drift 120s linear infinite;
+  }
 
   &__hero {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 24px;
-    border-radius: 18px;
+    gap: $space-lg;
+    padding: $space-3xl $space-2xl;
+    border-radius: $border-radius-3xl;
     background:
-      linear-gradient(135deg, color-var-alpha('color-primary', 0.16), color-var-alpha('color-secondary', 0.12)),
-      color-var-alpha('color-bg-secondary', 0.65);
+      linear-gradient(135deg, color-var-alpha('color-primary', 0.15), color-var-alpha('color-secondary', 0.12)),
+      linear-gradient(145deg, color-var-alpha('color-bg-secondary', 0.9), color-var-alpha('color-bg-tertiary', 0.85));
     border: 1px solid color-var-alpha('panel-border', 0.5);
-    box-shadow: 0 14px 60px color-var-alpha('color-text-primary', 0.25);
+    box-shadow:
+      0 20px 60px color-var-alpha('color-text-primary', 0.2),
+      0 0 0 1px color-var-alpha('panel-border', 0.3),
+      inset 0 1px 0 color-var-alpha('panel-border', 0.4),
+      0 0 80px color-var-alpha('color-primary', 0.1);
+    position: relative;
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+    animation: forumHeroEntrance 1000ms cubic-bezier(0.25, 0.9, 0.35, 1) 200ms forwards;
+    z-index: 2;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 30%, color-var-alpha('color-primary', 0.1), transparent 50%),
+        radial-gradient(circle at 80% 70%, color-var-alpha('color-secondary', 0.08), transparent 50%);
+      opacity: 0.8;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, color-var-alpha('color-primary', 0.6), transparent);
+      z-index: 1;
+    }
+
+    > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: $breakpoint-md) {
+      padding: $space-2xl $space-lg;
+    }
   }
 
   &__eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 12px;
-    border-radius: 999px;
+    padding: 10px 18px;
+    border-radius: $border-radius-full;
     width: fit-content;
-    background: color-var-alpha('color-bg-secondary', 0.8);
+    background: linear-gradient(135deg, color-var-alpha('color-bg-secondary', 0.95), color-var-alpha('color-bg-tertiary', 0.9));
     color: $color-secondary;
-    font-size: 13px;
-    letter-spacing: 0.2px;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.4px;
     text-transform: uppercase;
     border: 1px solid color-var-alpha('panel-border', 0.4);
-    box-shadow: 0 4px 16px color-var-alpha('color-text-primary', 0.1);
+    box-shadow:
+      0 4px 12px color-var-alpha('color-text-primary', 0.1),
+      inset 0 1px 0 color-var-alpha('panel-border', 0.3),
+      0 0 20px color-var-alpha('color-secondary', 0.2);
+    opacity: 0;
+    transform: translate3d(0, 15px, 0) scale3d(0.95, 0.95, 1);
+    animation: forumItemRise 800ms cubic-bezier(0.25, 0.9, 0.35, 1) 400ms forwards;
+    backface-visibility: hidden;
   }
 
   &__header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 20px;
+    gap: $space-xl;
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+    animation: forumItemRise 900ms cubic-bezier(0.25, 0.9, 0.35, 1) 500ms forwards;
+    backface-visibility: hidden;
 
     @media (max-width: $breakpoint-md) {
       flex-wrap: wrap;
+      gap: $space-lg;
     }
   }
 
   &__title {
-    font-size: 32px;
+    font-size: $font-size-4xl;
+    font-weight: $font-weight-bold;
     line-height: 1.2;
     margin: 0;
+    background: linear-gradient(135deg, $color-primary, $color-secondary, $color-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 40px color-var-alpha('color-primary', 0.3);
+
+    @media (max-width: $breakpoint-md) {
+      font-size: $font-size-3xl;
+    }
   }
 
   &__subtitle {
-    margin: 8px 0 0;
+    margin: $space-sm 0 0;
     max-width: 720px;
-    color: color-var-alpha('color-text-secondary', 0.75);
+    color: color-var-alpha('color-text-secondary', 0.9);
+    font-size: $font-size-base;
+    line-height: 1.6;
+
+    @media (min-width: $breakpoint-md) {
+      font-size: $font-size-lg;
+    }
   }
 
   &__header-actions {
@@ -64,7 +169,7 @@
     grid-template-columns: repeat(2, 1fr);
     width: fit-content;
     align-items: center;
-    gap: 12px;
+    gap: $space-md;
     flex-wrap: wrap;
     justify-content: flex-end;
 
@@ -79,6 +184,14 @@
     button {
       grid-column: 1/-1;
     }
+
+    @media (min-width: $breakpoint-md) {
+      grid-template-columns: repeat(3, 1fr);
+      
+      button {
+        grid-column: auto;
+      }
+    }
   }
 
   &__create {
@@ -86,7 +199,39 @@
   }
 
   &__card {
-    padding: 16px;
+    padding: $space-2xl;
+    background:
+      linear-gradient(135deg, color-var-alpha('color-bg-secondary', 0.95), color-var-alpha('color-bg-primary', 0.92)),
+      radial-gradient(circle at 30% 40%, color-var-alpha('color-primary', 0.1), transparent 50%);
+    border: 1px solid color-var-alpha('panel-border', 0.4);
+    border-radius: $border-radius-3xl;
+    box-shadow:
+      0 24px 64px color-var-alpha('color-text-primary', 0.15),
+      0 0 0 1px color-var-alpha('panel-border', 0.3),
+      inset 0 1px 0 color-var-alpha('panel-border', 0.4),
+      0 0 60px color-var-alpha('color-primary', 0.08);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+    animation: forumCardEntrance 1000ms cubic-bezier(0.25, 0.9, 0.35, 1) 600ms forwards;
+    backface-visibility: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, color-var-alpha('color-primary', 0.5), transparent);
+      z-index: 1;
+    }
+
+    @media (max-width: $breakpoint-md) {
+      padding: $space-xl;
+    }
   }
 
   &__pinned {
@@ -145,41 +290,64 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 8px 4px 16px;
-    color: color-var-alpha('color-text-secondary', 0.78);
+    gap: $space-md;
+    padding: $space-md 4px $space-xl;
+    color: color-var-alpha('color-text-secondary', 0.9);
+    border-bottom: 1px solid color-var-alpha('panel-border', 0.3);
   }
 
   &__hint {
-    font-size: 14px;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
   }
 
   &__counter {
-    font-size: 14px;
-    color: color-var-alpha('color-text-primary', 0.9);
-    padding: 6px 12px;
-    border-radius: 12px;
-    background: color-var-alpha('color-bg-secondary', 0.7);
-    border: 1px solid color-var-alpha('panel-border', 0.3);
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: color-var-alpha('color-text-primary', 0.95);
+    padding: 10px 18px;
+    border-radius: $border-radius-xl;
+    background: linear-gradient(135deg, color-var-alpha('color-bg-secondary', 0.85), color-var-alpha('color-bg-tertiary', 0.8));
+    border: 1px solid color-var-alpha('panel-border', 0.4);
+    box-shadow:
+      0 2px 8px color-var-alpha('color-text-primary', 0.1),
+      inset 0 1px 0 color-var-alpha('panel-border', 0.3),
+      0 0 20px color-var-alpha('color-primary', 0.15);
   }
 
   &__topic {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
 
   &__topic-title {
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-base;
     color: $color-text-primary;
+    line-height: 1.4;
   }
 
   &__topic-desc {
     margin: 0;
-    font-size: 14px;
-    color: color-var-alpha('color-text-secondary', 0.8);
+    font-size: $font-size-sm;
+    color: color-var-alpha('color-text-secondary', 0.85);
     max-width: 640px;
+    line-height: 1.5;
+  }
+
+  &__mute-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    margin-left: $space-sm;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    background: color-var-alpha('color-error', 0.15);
+    color: color-var('color-error');
+    border-radius: $border-radius-md;
+    border: 1px solid color-var-alpha('color-error', 0.3);
+    box-shadow: 0 2px 8px color-var-alpha('color-error', 0.2);
   }
 
   &__topic-labels {
@@ -207,12 +375,13 @@
   &__status {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 600;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: $border-radius-full;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
     text-transform: capitalize;
+    transition: transform $transition-base, box-shadow $transition-base;
 
     &::before {
       content: '';
@@ -220,21 +389,30 @@
       height: 8px;
       border-radius: 50%;
       background: currentColor;
+      box-shadow: 0 0 8px currentColor;
     }
 
     &_open {
       color: color-var('color-success');
-      background: color-var-alpha('color-success', 0.15);
+      background: color-var-alpha('color-success', 0.18);
+      border: 1px solid color-var-alpha('color-success', 0.3);
     }
 
     &_in_review {
       color: color-var('color-warning');
-      background: color-var-alpha('color-warning', 0.15);
+      background: color-var-alpha('color-warning', 0.18);
+      border: 1px solid color-var-alpha('color-warning', 0.3);
     }
 
     &_closed {
       color: color-var('color-error');
-      background: color-var-alpha('color-error', 0.15);
+      background: color-var-alpha('color-error', 0.18);
+      border: 1px solid color-var-alpha('color-error', 0.3);
+    }
+
+    &:hover {
+      transform: translate3d(0, -1px, 0);
+      box-shadow: 0 4px 12px color-var-alpha('color-text-primary', 0.15);
     }
   }
 
@@ -242,32 +420,36 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 40px;
-    padding: 6px 10px;
-    border-radius: 12px;
-    background: color-var-alpha('color-bg-secondary', 0.6);
-    font-weight: 700;
-    color: color-var('color-text-secondary');
+    min-width: 44px;
+    padding: 8px 12px;
+    border-radius: $border-radius-xl;
+    background: linear-gradient(135deg, color-var-alpha('color-bg-secondary', 0.75), color-var-alpha('color-bg-tertiary', 0.7));
+    font-weight: $font-weight-bold;
+    color: color-var('color-text-primary');
+    border: 1px solid color-var-alpha('panel-border', 0.3);
+    box-shadow: 0 2px 8px color-var-alpha('color-text-primary', 0.08);
   }
 
   &__owner {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: $space-md;
   }
 
   &__avatar {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    min-height: 36px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
     border-radius: 50%;
-    background: color-var-alpha('color-bg-secondary', 0.4);
+    background: linear-gradient(135deg, color-var-alpha('color-bg-secondary', 0.7), color-var-alpha('color-bg-tertiary', 0.6));
     display: grid;
     place-items: center;
     color: color-var('color-text-secondary');
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     overflow: hidden;
+    border: 2px solid color-var-alpha('panel-border', 0.4);
+    box-shadow: 0 2px 8px color-var-alpha('color-text-primary', 0.1);
 
     img {
       width: 100%;
@@ -277,13 +459,15 @@
   }
 
   &__owner-name {
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
     color: $color-text-primary;
+    font-size: $font-size-sm;
   }
 
   &__owner-role {
-    font-size: 12px;
-    color: color-var-alpha('color-text-secondary', 0.8);
+    font-size: $font-size-xs;
+    color: color-var-alpha('color-text-secondary', 0.85);
+    margin-top: 2px;
   }
 
   &__owner-crown {
@@ -293,14 +477,21 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    transition: transform $transition-base;
+
+    &:hover {
+      transform: scale3d(1.2, 1.2, 1) rotate3d(0, 0, 1, 15deg);
+    }
   }
 
   &__owner-crown_pro {
     color: color-var('color-primary');
+    filter: drop-shadow(0 0 6px color-var-alpha('color-primary', 0.6));
   }
 
   &__owner-crown_premium {
     color: color-var('color-success');
+    filter: drop-shadow(0 0 6px color-var-alpha('color-success', 0.6));
   }
 
   &__owner-plan {
@@ -320,7 +511,7 @@
   }
 
   &__owner-plan_pro {
-    background: color-var-alpha('color-primary', 0.12);
+    background: color-var-alpha('color-primary', 0.15);
     color: color-var('color-primary');
   }
 
@@ -330,20 +521,193 @@
   }
 
   &__pagination {
-    margin-top: 16px;
+    margin-top: $space-xl;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: $space-md;
     justify-content: flex-end;
+    padding-top: $space-xl;
+    border-top: 1px solid color-var-alpha('panel-border', 0.3);
   }
 
   &__page-info {
-    color: color-var-alpha('color-text-secondary', 0.8);
-    font-size: 14px;
+    color: color-var-alpha('color-text-secondary', 0.9);
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
   }
 
   &__modal-text {
-    color: color-var-alpha('color-text-secondary', 0.8);
-    margin: 8px 0 0;
+    color: color-var-alpha('color-text-secondary', 0.85);
+    margin: $space-sm 0 0;
+    line-height: 1.6;
+  }
+}
+
+.forum-page :deep(.table__wrapper) {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.forum-page :deep(.table__thead) {
+  background: linear-gradient(135deg, color-var-alpha('color-bg-secondary', 0.7), color-var-alpha('color-bg-tertiary', 0.6));
+}
+
+.forum-page :deep(.table__th) {
+  background: transparent;
+  color: color-var-alpha('color-text-secondary', 0.95);
+  font-weight: $font-weight-semibold;
+  border-bottom: 2px solid color-var-alpha('panel-border', 0.5);
+  transition: color $transition-base;
+  padding: $space-lg $space-xl;
+
+  &:hover {
+    color: $color-text-primary;
+  }
+}
+
+.forum-page :deep(.table__tbody) {
+  background: transparent;
+}
+
+.forum-page :deep(.table__tr) {
+  transition: background-color $transition-base, box-shadow $transition-base;
+  border-bottom: 1px solid color-var-alpha('panel-border', 0.4);
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent, 
+      color-var-alpha('panel-border', 0.5), 
+      color-var-alpha('panel-border', 0.3),
+      color-var-alpha('panel-border', 0.5),
+      transparent
+    );
+    opacity: 0.8;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, color-var-alpha('color-primary', 0.12), color-var-alpha('color-secondary', 0.1));
+    box-shadow: 0 2px 8px color-var-alpha('color-text-primary', 0.1);
+    
+    &::after {
+      opacity: 1;
+      background: linear-gradient(90deg, 
+        transparent, 
+        color-var-alpha('color-primary', 0.4), 
+        color-var-alpha('color-primary', 0.2),
+        color-var-alpha('color-primary', 0.4),
+        transparent
+      );
+    }
+  }
+
+  &:last-child {
+    border-bottom: none;
+    
+    &::after {
+      display: none;
+    }
+  }
+}
+
+.forum-page :deep(.table__td) {
+  background: transparent;
+  border-bottom: none;
+  padding: $space-xl;
+  transition: color $transition-base;
+}
+
+.forum-page :deep(.table__empty) {
+  padding: $space-4xl;
+  color: color-var-alpha('color-text-secondary', 0.8);
+  font-size: $font-size-base;
+}
+
+@keyframes forumPageEntrance {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes forumHeroEntrance {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0) scale3d(0.98, 0.98, 1);
+  }
+  60% {
+    opacity: 1;
+    transform: translate3d(0, -2px, 0) scale3d(1, 1, 1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+  }
+}
+
+@keyframes forumItemRise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0) scale3d(0.96, 0.96, 1);
+  }
+  60% {
+    opacity: 1;
+    transform: translate3d(0, -1px, 0) scale3d(1, 1, 1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+  }
+}
+
+@keyframes forumCardEntrance {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0) scale3d(0.97, 0.97, 1);
+  }
+  60% {
+    opacity: 1;
+    transform: translate3d(0, -2px, 0) scale3d(1, 1, 1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+  }
+}
+
+@keyframes starfield-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-200px, -200px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forum-page,
+  .forum-page__hero,
+  .forum-page__eyebrow,
+  .forum-page__header,
+  .forum-page__card {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .forum-page::after {
+    animation: none !important;
   }
 }
