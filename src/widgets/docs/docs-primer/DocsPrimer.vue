@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DocsPrimerSection } from '@/pages/docs/model/content'
+import type { DocsPrimerSection } from '@/entities/docs'
 
 defineProps<{
   eyebrow: string

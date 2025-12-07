@@ -119,7 +119,7 @@ import { useRoute, useRouter } from 'vue-router'
 import type { ClipPathLayer, ClipPathType } from '@/shared/types'
 import { formatClipPath, type CSSFormat, copyToClipboard, smoothScrollToTop } from '@/shared/lib'
 import { ClipPathPreview, ClipPathControls, ClipPathPresets } from '@/features/clip-path'
-import { CLIP_PATH_PRESETS, type ClipPathPreset } from './clip-path-presets'
+import { CLIP_PATH_PRESETS, type ClipPathPreset } from '@/entities/clip-path/model/clip-path-presets'
 import {
   listPublicSaves,
   type SavedItem,

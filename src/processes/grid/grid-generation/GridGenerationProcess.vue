@@ -107,7 +107,7 @@ import { resolveSubscriptionTier } from '@/shared/lib/save-quota'
 import { GridControls, GridPreview } from '@/features/grid'
 import type { GridItem } from '@/shared/types/grid'
 import type { SelectOption } from '@/shared/ui'
-import { resolveGridTemplate } from './grid-presets'
+import { resolveGridTemplate } from '@/entities/grid/model/grid-presets'
 
 const { t, locale } = useI18n()
 const router = useRouter()

@@ -13,24 +13,26 @@
         <p class="auth-shell__subtitle">{{ t('AUTH.RESET_SUBTITLE') }}</p>
       </div>
 
-      <form class="auth-shell__form" @submit.prevent="submit" novalidate>
+<form class="auth-shell__form" @submit.prevent="submit" novalidate>
         <Input
-          v-model="form.password"
+          name="password"
+          v-model="passwordModel"
           :label="t('AUTH.NEW_PASSWORD')"
           :error="errors.password ? t(`VALIDATION.${errors.password}`) : ''"
           type="password"
           show-password-toggle
           autocomplete="new-password"
-          @input="errors.password = ''"
+          @input="clearServerError"
         />
         <Input
-          v-model="form.confirmPassword"
+          name="confirmPassword"
+          v-model="confirmPasswordModel"
           :label="t('AUTH.CONFIRM_PASSWORD')"
           :error="errors.confirmPassword ? t(`VALIDATION.${errors.confirmPassword}`) : ''"
           type="password"
           show-password-toggle
           autocomplete="new-password"
-          @input="errors.confirmPassword = ''"
+          @input="clearServerError"
         />
 
         <button :disabled="loading" type="submit" class="auth-shell__submit">
@@ -51,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { authAPI } from '@/shared/api/auth'
@@ -60,17 +62,25 @@ import { Input } from '@/shared/ui'
 import { StarfieldAnimation } from '@/shared/ui/StarfieldAnimation'
 import ThemeSwitcher from '@/shared/ui/theme-switcher/ThemeSwitcher.vue'
 import LanguageSwitcher from '@/features/common/language-switcher/ui/language-switcher/LanguageSwitcher.vue'
+import { useZodForm } from '@/shared/lib/form/zodForm'
 
 const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-const form = reactive<ResetPasswordForm>({
+const form = useZodForm(resetPasswordSchema, {
   password: '',
   confirmPassword: ''
 })
-
-const errors = reactive<{ password?: string; confirmPassword?: string }>({})
+const passwordModel = computed({
+  get: () => form.values.password as string,
+  set: (val: string) => form.setValue('password', val)
+})
+const confirmPasswordModel = computed({
+  get: () => form.values.confirmPassword as string,
+  set: (val: string) => form.setValue('confirmPassword', val)
+})
+const errors = form.errors
 const loading = ref(false)
 const serverMessage = ref('')
 const serverError = ref('')
@@ -88,19 +98,15 @@ async function submit() {
     return
   }
 
-  const result = resetPasswordSchema.safeParse(form)
-  if (!result.success) {
-    result.error.issues.forEach((issue) => {
-      const field = issue.path[0] as keyof ResetPasswordForm
-      errors[field] = issue.message
-    })
-    return
-  }
+  const result = form.validateAll() as ResetPasswordForm | null
+  if (!result) return
 
   loading.value = true
   try {
-    await authAPI.resetPassword({ token, password: form.password })
+    await authAPI.resetPassword({ token, password: result.password })
     serverMessage.value = t('AUTH.RESET_SUCCESS')
+    form.setValue('password', '')
+    form.setValue('confirmPassword', '')
     setTimeout(() => {
       router.push(`/${locale.value}/login`)
     }, 800)
@@ -109,6 +115,10 @@ async function submit() {
   } finally {
     loading.value = false
   }
+}
+
+function clearServerError() {
+  serverError.value = ''
 }
 </script>
 

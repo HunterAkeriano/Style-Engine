@@ -36,7 +36,7 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { Icon } from '@/shared/ui'
-import { AVAILABLE_LOCALES, type Locale } from '@/app/providers'
+import { isLocale } from '@/shared/config/locales'
 
 const { locale, t } = useI18n()
 const router = useRouter()
@@ -49,9 +49,6 @@ const languages = [
   { code: 'uk', name: 'Українська' },
   { code: 'en', name: 'English' }
 ]
-
-const isLocale = (value: string): value is Locale =>
-  (AVAILABLE_LOCALES as readonly string[]).includes(value)
 
 function toggleDropdown() {
   isOpen.value = !isOpen.value

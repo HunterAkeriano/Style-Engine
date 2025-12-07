@@ -83,38 +83,52 @@
     >
       <form class="user-management-page__form" @submit.prevent="submitEdit">
         <Input
-          v-model="form.email"
+          name="email"
+          v-model="emailModel"
           :label="t('MODERATION.USERS_TABLE.EMAIL')"
-          :error="formErrors.email"
+          :error="errors.email || ''"
           required
         />
         <Input
-          v-model="form.name"
+          name="name"
+          v-model="nameModel"
           :label="t('MODERATION.USERS_TABLE.NAME')"
-          :error="formErrors.name"
+          :error="errors.name || ''"
         />
         <Select
-          v-model="form.subscriptionTier"
+          name="subscriptionTier"
+          :model-value="formValues.subscriptionTier"
           :options="tierOptions.slice(1)"
           :label="t('MODERATION.USERS_TABLE.PLAN')"
+          :error="errors.subscriptionTier || ''"
+          @update:modelValue="(val) => handleSubscriptionTierChange(val as TierFilter)"
         />
         <Select
-          v-model="form.role"
+          name="role"
+          :model-value="formValues.role"
           :options="roleOptions"
           :label="t('MODERATION.USER_ROLE_LABEL')"
+          :error="errors.role || ''"
+          @update:modelValue="(val) => form.setValue('role', val as UserRole)"
         />
         <Select
-          v-if="form.subscriptionTier !== 'free'"
-          v-model="form.subscriptionDuration"
+          v-if="formValues.subscriptionTier !== 'free'"
+          name="subscriptionDuration"
+          :model-value="formValues.subscriptionDuration"
           :options="durationOptions"
           :label="t('MODERATION.USER_MODAL_DURATION')"
+          :error="errors.subscriptionDuration || ''"
+          @update:modelValue="
+            (val) => form.setValue('subscriptionDuration', val as UserEditForm['subscriptionDuration'])
+          "
         />
         <Input
-          v-model="form.password"
+          name="password"
+          v-model="passwordModel"
           type="password"
           :label="t('MODERATION.USER_MODAL_PASSWORD')"
           :hint="t('MODERATION.USER_MODAL_PASSWORD_HINT')"
-          :error="formErrors.password"
+          :error="errors.password || ''"
         />
       </form>
     </Modal>
@@ -130,6 +144,7 @@ import { useToast } from '@/shared/lib/toast'
 import { getModerationUsers, updateUser, deleteUser, type PublicUser, type UserRole } from '@/shared/api/users'
 import type { UsersParams } from '@/shared/api/users'
 import { Breadcrumbs } from '@/widgets/common'
+import { useZodForm } from '@/shared/lib/form/zodForm'
 
 type TierFilter = 'all' | 'free' | 'pro' | 'premium'
 
@@ -153,30 +168,55 @@ const loadedCount = computed(() => users.value.length)
 const selectedUser = ref<PublicUser | null>(null)
 const isModalOpen = ref(false)
 const modalLoading = ref(false)
-const form = reactive({
+const userEditSchema = computed(() =>
+  z.object({
+    email: z
+      .string()
+      .min(1, { message: t('VALIDATION.EMAIL_REQUIRED') })
+      .email({ message: t('VALIDATION.EMAIL_INVALID') }),
+    name: z
+      .string()
+      .min(1, { message: t('VALIDATION.NAME_MIN') })
+      .max(120, { message: t('VALIDATION.NAME_MAX') })
+      .optional(),
+    password: z.string().min(8, { message: t('VALIDATION.PASSWORD_MIN') }).optional(),
+    subscriptionTier: z.enum(['free', 'pro', 'premium']),
+    subscriptionDuration: z.enum(['month', 'forever', 'free']),
+    role: z.enum(['user', 'moderator', 'super_admin'])
+  })
+)
+
+type UserEditForm = {
+  name?: string
+  email: string
+  password?: string
+  subscriptionTier: TierFilter
+  subscriptionDuration: 'month' | 'forever' | 'free'
+  role: UserRole
+}
+
+const form = useZodForm(userEditSchema, {
   name: '',
   email: '',
   password: '',
-  subscriptionTier: 'free' as TierFilter,
-  subscriptionDuration: 'month' as 'month' | 'forever' | 'free',
-  role: 'user' as UserRole
+  subscriptionTier: 'free',
+  subscriptionDuration: 'month',
+  role: 'user'
 })
-const formErrors = ref<Record<string, string>>({})
+const formValues = form.values as UserEditForm
+const errors = form.errors
 
-const userEditSchema = z.object({
-  email: z
-    .string()
-    .min(1, { message: t('VALIDATION.EMAIL_REQUIRED') })
-    .email({ message: t('VALIDATION.EMAIL_INVALID') }),
-  name: z
-    .string()
-    .min(1, { message: t('VALIDATION.NAME_MIN') })
-    .max(120, { message: t('VALIDATION.NAME_MAX') })
-    .optional(),
-  password: z.string().min(8, { message: t('VALIDATION.PASSWORD_MIN') }).optional(),
-  subscriptionTier: z.enum(['free', 'pro', 'premium']),
-  subscriptionDuration: z.enum(['month', 'forever', 'free']),
-  role: z.enum(['user', 'moderator', 'super_admin'])
+const emailModel = computed({
+  get: () => formValues.email || '',
+  set: (val: string) => form.setValue('email', val)
+})
+const nameModel = computed({
+  get: () => formValues.name || '',
+  set: (val: string) => form.setValue('name', val)
+})
+const passwordModel = computed({
+  get: () => formValues.password || '',
+  set: (val: string) => form.setValue('password', val)
 })
 
 const tierOptions = computed(() => [
@@ -219,6 +259,32 @@ function formatRole(value?: UserRole) {
   return map[(value ?? 'user') as UserRole]
 }
 
+function clearFormErrors() {
+  Object.keys(errors).forEach((key) => {
+    errors[key] = ''
+  })
+}
+
+function normalizeFormValues() {
+  form.setValue('email', (formValues.email || '').trim())
+  const trimmedName = (formValues.name || '').trim()
+  form.setValue('name', trimmedName ? trimmedName : undefined)
+  const normalizedPassword = (formValues.password || '').trim()
+  form.setValue('password', normalizedPassword || undefined)
+  if (formValues.subscriptionTier === 'free') {
+    form.setValue('subscriptionDuration', 'free')
+  }
+}
+
+function handleSubscriptionTierChange(value: TierFilter) {
+  form.setValue('subscriptionTier', value)
+  if (value === 'free') {
+    form.setValue('subscriptionDuration', 'free')
+  } else if (formValues.subscriptionDuration === 'free') {
+    form.setValue('subscriptionDuration', 'month')
+  }
+}
+
 async function loadUsers() {
   loading.value = true
   error.value = ''
@@ -241,12 +307,15 @@ async function loadUsers() {
 function openEdit(user: PublicUser) {
   clearFormErrors()
   selectedUser.value = user
-  form.name = user.name ?? ''
-  form.email = user.email
-  form.subscriptionTier = user.subscriptionTier
-  form.subscriptionDuration = user.subscriptionTier === 'free' ? 'free' : 'month'
-  form.password = ''
-  form.role = (user.role as UserRole) || (user.isSuperAdmin ? 'super_admin' : user.isAdmin ? 'moderator' : 'user')
+  form.setValue('name', user.name ?? '')
+  form.setValue('email', user.email)
+  form.setValue('subscriptionTier', user.subscriptionTier as TierFilter)
+  form.setValue('subscriptionDuration', user.subscriptionTier === 'free' ? 'free' : 'month')
+  form.setValue(
+    'role',
+    (user.role as UserRole) || (user.isSuperAdmin ? 'super_admin' : user.isAdmin ? 'moderator' : 'user')
+  )
+  form.setValue('password', '')
   isModalOpen.value = true
 }
 
@@ -254,53 +323,36 @@ function closeModal() {
   clearFormErrors()
   isModalOpen.value = false
   selectedUser.value = null
-  form.password = ''
-}
-
-function clearFormErrors() {
-  formErrors.value = {}
+  form.setValue('password', '')
 }
 
 async function submitEdit() {
   if (!selectedUser.value) return
 
-  const trimmedName = form.name.trim()
-  const trimmedEmail = form.email.trim()
-
-  const parsed = userEditSchema.safeParse({
-    email: trimmedEmail,
-    name: trimmedName || undefined,
-    password: form.password || undefined,
-    subscriptionTier: form.subscriptionTier,
-    subscriptionDuration: form.subscriptionTier === 'free' ? 'free' : form.subscriptionDuration,
-    role: form.role
-  })
-
-  if (!parsed.success) {
-    formErrors.value = parsed.error.issues.reduce<Record<string, string>>((acc, issue) => {
-      const key = String(issue.path[0] ?? 'form')
-      acc[key] = issue.message
-      return acc
-    }, {})
-    toast.error(parsed.error.issues[0]?.message || t('VALIDATION.SERVER_ERROR'))
+  normalizeFormValues()
+  const parsed = form.validateAll() as UserEditForm | null
+  if (!parsed) {
+    const firstError = Object.values(errors).find(Boolean)
+    if (firstError) {
+      toast.error(firstError)
+    }
     return
   }
 
-  formErrors.value = {}
   modalLoading.value = true
 
   try {
     const payload: Record<string, unknown> = {
-      email: parsed.data.email,
-      subscriptionTier: parsed.data.subscriptionTier,
-      subscriptionDuration: parsed.data.subscriptionDuration,
-      role: parsed.data.role
+      email: parsed.email,
+      subscriptionTier: parsed.subscriptionTier,
+      subscriptionDuration: parsed.subscriptionTier === 'free' ? 'free' : parsed.subscriptionDuration,
+      role: parsed.role
     }
-    if (parsed.data.name) {
-      payload.name = parsed.data.name
+    if (parsed.name) {
+      payload.name = parsed.name
     }
-    if (parsed.data.password) {
-      payload.password = parsed.data.password
+    if (parsed.password) {
+      payload.password = parsed.password
     }
     const updated = await updateUser(selectedUser.value.id, payload)
     users.value = users.value.map(user => (user.id === updated.id ? updated : user))

@@ -3,7 +3,12 @@
     ref="selectRef"
     :class="[
       'select',
-      { 'select_error': error, 'select_disabled': disabled, 'select_open': isOpen, 'select_drop-up': isDropUp }
+      {
+        'select_error': mergedError,
+        'select_disabled': disabled,
+        'select_open': isOpen,
+        'select_drop-up': isDropUp
+      }
     ]"
   >
     <label v-if="label" class="select__label">
@@ -41,7 +46,7 @@
           <button
             v-for="option in options"
             :key="option.value"
-            :class="['select__option', { 'select__option_active': option.value === modelValue }]"
+            :class="['select__option', { 'select__option_active': option.value === selectValue }]"
             type="button"
             @click="handleSelect(option.value)"
           >
@@ -51,13 +56,14 @@
       </transition>
     </div>
 
-    <span v-if="error" class="select__error">{{ error }}</span>
+    <span v-if="mergedError" class="select__error">{{ mergedError }}</span>
     <span v-else-if="hint" class="select__hint">{{ hint }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useFormContext } from '@/shared/lib/form/zodForm'
 import Icon from '@/shared/ui/Icon/Icon.vue'
 import type { SelectOption } from './types'
 
@@ -70,6 +76,7 @@ interface Props {
   hint?: string
   disabled?: boolean
   required?: boolean
+  name?: string
 }
 
 interface Emits {
@@ -79,7 +86,8 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
-  required: false
+  required: false,
+  modelValue: ''
 })
 
 const emit = defineEmits<Emits>()
@@ -88,13 +96,25 @@ const selectRef = ref<HTMLElement | null>(null)
 const dropdownRef = ref<HTMLElement | null>(null)
 const isOpen = ref(false)
 const isDropUp = ref(false)
+const form = useFormContext()
+const field = props.name && form ? form.registerField(props.name) : null
+
+const selectValue = computed({
+  get: () => (field ? field.value.value : props.modelValue),
+  set: (value: string | number) => {
+    if (field) {
+      field.setValue(value)
+    }
+    emit('update:modelValue', value)
+  }
+})
 
 const selectedOption = computed(() => {
-  return props.options.find(option => option.value === props.modelValue)
+  return props.options.find(option => option.value === selectValue.value)
 })
 
 function handleSelect(value: string | number) {
-  emit('update:modelValue', value)
+  selectValue.value = value
   emit('change', value)
   closeDropdown()
 }
@@ -148,6 +168,8 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
   window.removeEventListener('resize', updateDirection)
 })
+
+const mergedError = computed(() => props.error || field?.error.value || '')
 </script>
 
 <style lang="scss" scoped src="./Select.scss"></style>

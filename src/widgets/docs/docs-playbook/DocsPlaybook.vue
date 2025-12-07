@@ -56,7 +56,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/shared/lib/toast'
-import type { DocsSnippet } from '@/pages/docs/model/content'
+import type { DocsSnippet } from '@/entities/docs'
 import { Button } from '@/shared/ui'
 import { copyToClipboard } from '@/shared/lib'
 

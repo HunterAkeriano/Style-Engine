@@ -1,4 +1,4 @@
-import type { Locale } from '@/app/providers/i18n'
+import type { Locale } from '@/shared/config/locales'
 
 export type DocsTopicKey = 'gradients' | 'shadows' | 'animations'
 

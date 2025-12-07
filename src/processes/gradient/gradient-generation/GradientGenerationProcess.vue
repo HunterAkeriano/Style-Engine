@@ -134,7 +134,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/shared/lib/toast'
 import { useRoute, useRouter } from 'vue-router'
-import type { GradientPreset } from './gradient-presets'
+import type { GradientPreset } from '@/entities/gradient/model/gradient-presets'
 import type { GradientCenter, GradientColor, GradientExtent, GradientType } from '@/shared/types'
 import {
   buildGradientValue,
@@ -145,7 +145,7 @@ import {
   normalizePayload
 } from '@/shared/lib'
 import { GradientPreview, GradientControls, GradientPresets } from '@/features/gradient'
-import { GRADIENT_PRESETS } from './gradient-presets'
+import { GRADIENT_PRESETS } from '@/entities/gradient/model/gradient-presets'
 import {
   listPublicSaves,
   type SavedItem,

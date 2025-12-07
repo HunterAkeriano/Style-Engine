@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { ClipPathPreset } from '@/processes/clip-path/clip-path-generation/clip-path-presets'
+import type { ClipPathPreset } from '@/entities/clip-path/model/clip-path-presets'
 import { Button } from '@/shared/ui'
 import { formatClipPath } from '@/shared/lib/clip-path'
 import {

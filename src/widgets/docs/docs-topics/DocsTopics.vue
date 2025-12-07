@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DocsTopicCard } from '@/pages/docs/model/content'
+import type { DocsTopicCard } from '@/entities/docs'
 import { NavLink } from '@/shared/ui'
 
 defineProps<{

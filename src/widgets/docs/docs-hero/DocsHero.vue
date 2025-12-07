@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DocsHeroContent } from '@/pages/docs/model/content'
+import type { DocsHeroContent } from '@/entities/docs'
 import { NavLink } from '@/shared/ui'
 
 const defaultCode = `@keyframes float {

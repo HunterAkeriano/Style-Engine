@@ -50,11 +50,8 @@
                 v-bind="settingsProps"
                 @update:name="updateName"
                 @submit="handleProfileUpdate"
-                @update:currentPassword="(value: string) => (passwordForm.currentPassword = value)"
-                @update:newPassword="(value: string) => (passwordForm.newPassword = value)"
-                @update:confirmPassword="(value: string) => (passwordForm.confirmPassword = value)"
-                @reset-errors="resetPasswordErrors"
                 @submit-password="handlePasswordChange"
+                @clear-password-error="passwordServerError = ''"
               />
             </RouterView>
           </main>
@@ -71,7 +68,7 @@ import { useI18n } from 'vue-i18n'
 import { authAPI, type User } from '@/shared/api/auth'
 import { useAuthStore } from '@/entities'
 import { useTheme } from '@/shared/composables/use-theme'
-import { changePasswordSchema, type ChangePasswordForm } from '@/shared/lib/validation/auth'
+import { type ChangePasswordForm } from '@/shared/lib/validation/auth'
 import ProfileHero from '@/widgets/profile/ProfileHero.vue'
 import ProfileNavigation from '@/widgets/profile/ProfileNavigation.vue'
 import './profile-page.scss'
@@ -100,12 +97,6 @@ const isSaving = ref(false)
 const uploadError = ref<string | null>(null)
 const saveError = ref<string | null>(null)
 const saveSuccess = ref(false)
-const passwordForm = reactive<ChangePasswordForm>({
-  currentPassword: '',
-  newPassword: '',
-  confirmPassword: ''
-})
-const passwordErrors = reactive<Partial<Record<keyof ChangePasswordForm, string>>>({})
 const passwordSuccess = ref(false)
 const passwordServerError = ref('')
 const isChangingPassword = ref(false)
@@ -166,20 +157,10 @@ const settingsProps = computed(() => ({
   hasChanges: hasChanges.value,
   saveError: saveError.value,
   saveSuccess: saveSuccess.value,
-  currentPassword: passwordForm.currentPassword,
-  newPassword: passwordForm.newPassword,
-  confirmPassword: passwordForm.confirmPassword,
-  errors: passwordErrors,
   isChanging: isChangingPassword.value,
   success: passwordSuccess.value,
   serverError: passwordServerError.value
 }))
-
-function resetPasswordErrors() {
-  passwordErrors.currentPassword = ''
-  passwordErrors.newPassword = ''
-  passwordErrors.confirmPassword = ''
-}
 
 async function loadProfile() {
   try {
@@ -281,27 +262,14 @@ async function handleProfileUpdate() {
   }
 }
 
-async function handlePasswordChange() {
-  resetPasswordErrors()
+async function handlePasswordChange(values: ChangePasswordForm) {
   passwordSuccess.value = false
   passwordServerError.value = ''
 
-  const result = changePasswordSchema.safeParse(passwordForm)
-  if (!result.success) {
-    result.error.issues.forEach((issue) => {
-      const field = issue.path[0] as keyof ChangePasswordForm
-      passwordErrors[field] = issue.message
-    })
-    return
-  }
-
   isChangingPassword.value = true
   try {
-    await authAPI.changePassword(passwordForm.currentPassword, passwordForm.newPassword)
+    await authAPI.changePassword(values.currentPassword, values.newPassword)
     passwordSuccess.value = true
-    passwordForm.currentPassword = ''
-    passwordForm.newPassword = ''
-    passwordForm.confirmPassword = ''
   } catch (err: any) {
     passwordServerError.value = err?.message || t('PROFILE.CHANGE_PASSWORD_ERROR')
   } finally {

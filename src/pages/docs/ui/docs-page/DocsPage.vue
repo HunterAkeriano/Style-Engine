@@ -36,20 +36,28 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHead } from '@unhead/vue'
-import { getLocaleFromPath, setLocale, type Locale } from '@/app/providers'
-import { getDocsPageContent } from '@/pages/docs/model/content'
+import { type Locale, getLocaleFromPath, persistLocale } from '@/shared/config/locales'
+import { getDocsPageContent } from '@/entities/docs'
 import { DocsHero, DocsTopics, DocsPlaybook, DocsPrimer } from '@/widgets/docs'
 import { useRoute } from 'vue-router'
 import { Breadcrumbs } from '@/widgets/common'
 
 const route = useRoute()
 const routeLocale = computed(() => getLocaleFromPath(route.fullPath) as Locale)
-setLocale(routeLocale.value)
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+
+watch(
+  routeLocale,
+  (value) => {
+    locale.value = value
+    persistLocale(value)
+  },
+  { immediate: true }
+)
 
 const content = computed(() => getDocsPageContent(routeLocale.value))
 

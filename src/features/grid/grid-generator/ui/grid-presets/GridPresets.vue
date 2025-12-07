@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { resolveGridTemplate, type GridPreset } from '@/processes/grid/grid-generation/grid-presets'
+import { resolveGridTemplate, type GridPreset } from '@/entities/grid/model/grid-presets'
 import type { GridItem } from '@/shared/types/grid'
 
 interface Props {

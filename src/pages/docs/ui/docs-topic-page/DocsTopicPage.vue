@@ -8,18 +8,29 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useHead } from '@unhead/vue'
 import { useRoute } from 'vue-router'
-import { getLocaleFromPath, setLocale, type Locale } from '@/app/providers'
-import { getDocsTopicContent, type DocsTopicKey } from '@/pages/docs/model/content'
+import { type Locale, getLocaleFromPath, persistLocale } from '@/shared/config/locales'
+import { getDocsTopicContent, type DocsTopicKey } from '@/entities/docs'
 import DocsTopicContent from './components/docs-topic-content/DocsTopicContent.vue'
 import { Breadcrumbs } from '@/widgets/common'
 
 const props = defineProps<{ topic: DocsTopicKey }>()
 const route = useRoute()
 const routeLocale = computed(() => getLocaleFromPath(route.fullPath) as Locale)
-setLocale(routeLocale.value)
+const { locale } = useI18n()
+
+watch(
+  routeLocale,
+  (value) => {
+    locale.value = value
+    persistLocale(value)
+  },
+  { immediate: true }
+)
+
 const localized = computed(() => getDocsTopicContent(routeLocale.value, props.topic))
 const topic = computed(() => localized.value.topic)
 const otherTopics = computed(() => localized.value.otherTopics)

@@ -20,18 +20,11 @@
       />
 
       <ProfilePasswordForm
-        :current-password="currentPassword"
-        :new-password="newPassword"
-        :confirm-password="confirmPassword"
-        :errors="errors"
         :is-changing="isChanging"
         :success="success"
         :server-error="serverError"
-        @update:currentPassword="$emit('update:currentPassword', $event)"
-        @update:newPassword="$emit('update:newPassword', $event)"
-        @update:confirmPassword="$emit('update:confirmPassword', $event)"
-        @reset-errors="$emit('reset-errors')"
-        @submit="$emit('submit-password')"
+        @clear-server-error="$emit('clear-password-error')"
+        @submit="(values) => $emit('submit-password', values)"
       />
     </div>
   </div>
@@ -50,10 +43,6 @@ interface Props {
   hasChanges: boolean
   saveError: string | null
   saveSuccess: boolean
-  currentPassword: string
-  newPassword: string
-  confirmPassword: string
-  errors: Record<string, string>
   isChanging: boolean
   success: boolean
   serverError: string
@@ -64,11 +53,8 @@ defineProps<Props>()
 defineEmits<{
   'update:name': [value: string]
   submit: []
-  'update:currentPassword': [value: string]
-  'update:newPassword': [value: string]
-  'update:confirmPassword': [value: string]
-  'reset-errors': []
-  'submit-password': []
+  'submit-password': [value: import('@/shared/lib/validation/auth').ChangePasswordForm]
+  'clear-password-error': []
 }>()
 
 const { t } = useI18n()

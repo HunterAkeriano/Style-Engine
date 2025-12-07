@@ -100,7 +100,7 @@
 import { computed } from 'vue'
 import { useToast } from '@/shared/lib/toast'
 import { useI18n } from 'vue-i18n'
-import type { DocsTopicContent } from '@/pages/docs/model/content'
+import type { DocsTopicContent } from '@/entities/docs'
 import { Button, NavLink } from '@/shared/ui'
 import { copyToClipboard } from '@/shared/lib'
 
