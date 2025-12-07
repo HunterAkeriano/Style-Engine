@@ -147,6 +147,7 @@ import {
   getTopicParticipants,
   deleteUserMessages,
   type ForumUser,
+  checkUserMuteStatus,
 } from "@/shared/api/forum";
 
 const { t, locale } = useI18n();
@@ -171,6 +172,7 @@ const participants = ref<ForumUser[]>([]);
 const showMuteModal = ref(false);
 const selectedUser = ref<ForumUser | null>(null);
 const mutedUsers = ref<Record<string, boolean>>({});
+const isSelfMuted = ref(false);
 
 const statusLabels = computed<Record<ForumStatus, string>>(() => ({
   open: t("FORUM.STATUS.OPEN"),
@@ -212,6 +214,7 @@ const canEditTopic = computed(() => {
 const canReply = computed(() => {
   if (!topic.value) return false;
   if (!authStore.isAuthenticated) return false;
+  if (isSelfMuted.value) return false;
   if (topic.value.status === "open") return true;
   return Boolean(authStore.isAdmin);
 });
@@ -253,13 +256,21 @@ async function refreshMutedStatuses(usersList: ForumUser[]) {
     Boolean((user as any).muted),
   ]) as Array<[string, boolean]>;
   mutedUsers.value = Object.fromEntries(entries);
+
+  const currentId = authStore.user?.id;
+  if (currentId && mutedUsers.value[currentId] !== undefined) {
+    isSelfMuted.value = mutedUsers.value[currentId];
+  }
 }
 
 async function refreshUserMute(userId: string) {
-  if (!canModerate.value) return;
+  if (!canModerate.value && authStore.user?.id !== userId) return;
   try {
     const status = await getUserMute(userId);
     applyMuteFlag(userId, Boolean(status.muted));
+    if (authStore.user?.id === userId) {
+      isSelfMuted.value = Boolean(status.muted);
+    }
   } catch (err) {
     console.error("Failed to refresh mute", err);
   }
@@ -286,6 +297,7 @@ async function loadTopic() {
     topic.value = topicData;
     messages.value = topicMessages;
     await loadParticipants();
+    await checkSelfMuteStatus();
   } catch (err: any) {
     toast.error(err?.message || t("FORUM.LOAD_ERROR"));
   } finally {
@@ -308,6 +320,19 @@ async function loadParticipants() {
 function handleMuteClick(user: ForumUser) {
   selectedUser.value = user;
   showMuteModal.value = true;
+}
+
+async function checkSelfMuteStatus() {
+  if (!authStore.user || !topic.value) return;
+  try {
+    const status = await checkUserMuteStatus(topic.value.id);
+    isSelfMuted.value = Boolean(status.muted);
+    if (status.muted) {
+      applyMuteFlag(authStore.user.id, true);
+    }
+  } catch (err) {
+    console.error("Failed to check mute status", err);
+  }
 }
 
 async function handleMuteConfirm(payload: {

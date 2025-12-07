@@ -45,12 +45,12 @@ export function buildTopicFormSchema(options: {
         .string()
         .trim()
         .min(3, { message: messages.titleMin })
-        .max(200, { message: messages.titleMax }),
+        .max(300, { message: messages.titleMax }),
       description: z
         .string()
         .trim()
         .min(10, { message: messages.descriptionMin })
-        .max(5000, { message: messages.descriptionMax }),
+        .max(20000, { message: messages.descriptionMax }),
       attachments: z
         .array(attachmentDraftSchema)
         .max(options.maxAttachments, { message: messages.attachmentsLimit }),
@@ -100,7 +100,7 @@ export function buildReplyFormSchema(options: {
         .string()
         .trim()
         .min(1, { message: messages.contentMin })
-        .max(4000, { message: messages.contentMax }),
+        .max(10000, { message: messages.contentMax }),
       attachments: z
         .array(attachmentDraftSchema)
         .max(options.maxAttachments, { message: messages.attachmentsLimit }),

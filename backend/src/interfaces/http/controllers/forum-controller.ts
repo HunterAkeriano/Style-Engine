@@ -19,8 +19,8 @@ import { uploadForumAttachment } from "../../../middleware/upload";
 import { broadcastForumEvent, sendUserNotification } from "../../ws/forum-ws";
 
 const topicSchema = z.object({
-  title: z.string().min(3).max(200),
-  description: z.string().min(10).max(5000),
+  title: z.string().min(3).max(300),
+  description: z.string().min(10).max(20000),
   attachments: z
     .array(
       z.object({ type: z.enum(["image", "youtube"]), url: z.string().url() }),
@@ -35,7 +35,7 @@ const nullableParentId = z.preprocess(
 );
 
 const messageSchema = z.object({
-  content: z.string().min(1).max(4000),
+  content: z.string().min(1).max(10000),
   parentId: nullableParentId,
   attachments: z
     .array(
