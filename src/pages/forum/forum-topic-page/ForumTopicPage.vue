@@ -115,6 +115,7 @@ import {
   changeForumTopicStatus,
   editForumMessage,
   getForumTopic,
+  muteUser,
   openForumStream,
   postForumMessage,
   updateForumTopic,
@@ -281,7 +282,7 @@ async function handleMuteConfirm(payload: {
 }) {
   if (!selectedUser.value || !topic.value) return;
   try {
-    await muteUserInTopic(topic.value.id, selectedUser.value.id, payload);
+    await muteUser(selectedUser.value.id, payload);
     toast.success(t("FORUM.USER_MUTED"));
     showMuteModal.value = false;
     selectedUser.value = null;

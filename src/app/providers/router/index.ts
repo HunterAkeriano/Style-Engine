@@ -57,6 +57,16 @@ const mainLayoutChildren: RouteRecordRaw[] = [
     },
   },
   {
+    path: "forum/status/:status",
+    name: "forum-status",
+    component: () => import("@/pages/forum/forum-list-page/ForumListPage.vue"),
+    meta: {
+      titleKey: "META.FORUM",
+      descriptionKey: "META_DESCRIPTION.FORUM",
+      breadcrumbKey: "BREADCRUMBS.FORUM",
+    },
+  },
+  {
     path: "forum/:id",
     name: "forum-topic",
     component: () => import("@/pages/forum/forum-topic-page/ForumTopicPage.vue"),

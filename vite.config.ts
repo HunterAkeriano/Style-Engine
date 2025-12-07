@@ -25,7 +25,11 @@ const ssgPublicRoutes = [
   '/grid',
   '/privacy-policy',
   '/favicon',
-  '/cookie-policy'
+  '/cookie-policy',
+  '/forum',
+  '/forum/status/open',
+  '/forum/status/in_review',
+  '/forum/status/closed'
 ];
 const ssgIncludedRoutes = locales.flatMap(locale => ssgPublicRoutes.map(route => `/${locale}${route === '/' ? '' : route}`));
 const base = process.env.VITE_BASE ?? '/css-lab/';

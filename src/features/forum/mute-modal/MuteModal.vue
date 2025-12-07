@@ -39,7 +39,7 @@ import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
-const props = defineProps<{
+const { visible, userName } = defineProps<{
   visible: boolean;
   userName: string;
 }>();
@@ -49,7 +49,9 @@ const emit = defineEmits<{
   (e: "close"): void;
 }>();
 
-const selectedDuration = ref<number | null>(15);
+const PERMANENT_VALUE = "permanent";
+
+const selectedDuration = ref<number | string>(15);
 const reason = ref("");
 
 const durationOptions = computed(() => [
@@ -60,12 +62,15 @@ const durationOptions = computed(() => [
   { value: 720, label: t("FORUM.DURATION_12_HOURS") },
   { value: 1440, label: t("FORUM.DURATION_1_DAY") },
   { value: 10080, label: t("FORUM.DURATION_1_WEEK") },
-  { value: null, label: t("FORUM.DURATION_PERMANENT") },
+  { value: PERMANENT_VALUE, label: t("FORUM.DURATION_PERMANENT") },
 ]);
 
 function handleConfirm() {
   emit("confirm", {
-    durationMinutes: selectedDuration.value,
+    durationMinutes:
+      selectedDuration.value === PERMANENT_VALUE
+        ? null
+        : Number(selectedDuration.value),
     reason: reason.value.trim(),
   });
 }

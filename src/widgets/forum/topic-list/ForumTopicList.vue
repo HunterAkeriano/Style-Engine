@@ -55,10 +55,10 @@
             <div class="forum-page__topic-title">
               {{ row.title }}
               <span
-                v-if="getMuteForTopic(row.id)"
+                v-if="activeMute"
                 class="forum-page__mute-badge"
               >
-                {{ formatMuteTimer(getMuteForTopic(row.id)) }}
+                {{ formatMuteTimer(activeMute) }}
               </span>
             </div>
             <p class="forum-page__topic-desc">{{ row.description }}</p>
@@ -154,8 +154,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { computed, onMounted, ref, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import {
   Button,
@@ -182,12 +182,22 @@ import {
 
 const { t, locale } = useI18n();
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const toast = useToast();
 
 const topics = ref<ForumTopic[]>([]);
 const loading = ref(false);
-const statusFilter = ref<"all" | ForumStatus>("all");
+
+const getStatusFromRoute = (): "all" | ForumStatus => {
+  const statusParam = route.params.status as string | undefined;
+  if (statusParam && ["open", "in_review", "closed"].includes(statusParam)) {
+    return statusParam as ForumStatus;
+  }
+  return "all";
+};
+
+const statusFilter = ref<"all" | ForumStatus>(getStatusFromRoute());
 const pagination = ref({
   page: 1,
   limit: 10,
@@ -197,6 +207,7 @@ const pagination = ref({
 });
 const showAuthModal = ref(false);
 const userMutes = ref<ForumMute[]>([]);
+const activeMute = computed<ForumMute | null>(() => userMutes.value[0] ?? null);
 const currentTime = ref(Date.now());
 
 const statusLabels = computed<Record<ForumStatus, string>>(() => ({
@@ -292,8 +303,25 @@ function handleLimitChange() {
 
 function handleStatusChange() {
   pagination.value.page = 1;
-  loadTopics();
+  const status = statusFilter.value === "all" ? "" : statusFilter.value;
+  const path = status 
+    ? `/${locale.value}/forum/status/${status}`
+    : `/${locale.value}/forum`;
+  router.push(path).then(() => {
+    loadTopics();
+  });
 }
+
+watch([() => route.params.status, () => route.name], () => {
+  if (route.name === 'forum' || route.name === 'forum-status') {
+    const status = getStatusFromRoute();
+    if (statusFilter.value !== status) {
+      statusFilter.value = status;
+      pagination.value.page = 1;
+      loadTopics();
+    }
+  }
+}, { immediate: true });
 
 function handleRowClick(payload: {
   row: Record<string, unknown>;
@@ -328,11 +356,7 @@ async function loadUserMutes() {
   }
 }
 
-function getMuteForTopic(topicId: string) {
-  return userMutes.value.find((mute) => mute.topicId === topicId);
-}
-
-function formatMuteTimer(mute: ForumMute | undefined) {
+function formatMuteTimer(mute: ForumMute | null) {
   if (!mute) return "";
 
   if (!mute.expiresAt) {
@@ -362,6 +386,7 @@ function formatMuteTimer(mute: ForumMute | undefined) {
 }
 
 onMounted(() => {
+  statusFilter.value = getStatusFromRoute();
   loadTopics();
   loadUserMutes();
 
