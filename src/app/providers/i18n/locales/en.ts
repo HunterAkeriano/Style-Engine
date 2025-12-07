@@ -670,6 +670,8 @@ export default {
   CONTACT_WIDGET: {
     TRIGGER: 'Contact',
     TITLE: 'Quick contact',
+    FORUM: 'Community forum',
+    FORUM_HINT: 'Leave a public message',
     TELEGRAM: '{\'@\'}dima_gulak',
     VIBER: '+38 (097) 477-97-84',
     MAIL: 'Email',

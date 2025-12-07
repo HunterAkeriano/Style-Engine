@@ -680,6 +680,8 @@
   CONTACT_WIDGET: {
     TRIGGER: 'Контакт',
     TITLE: 'Швидкий контакт',
+    FORUM: 'Форум спільноти',
+    FORUM_HINT: 'Залишити публічне повідомлення',
     TELEGRAM: "{'@'}dima_gulak",
     VIBER: '+38 (097) 477-97-84',
     MAIL: 'Email',
