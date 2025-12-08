@@ -168,6 +168,16 @@
   }
 }
 
+.forum-reply__spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: $border-radius-full;
+  animation: replySpinner 0.8s linear infinite;
+}
+
 .forum-reply__inputs {
   display: grid;
   grid-template-columns: minmax(140px, 220px) 1fr;
@@ -315,6 +325,12 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes replySpinner {
+  to {
+    transform: rotate(360deg);
   }
 }
 

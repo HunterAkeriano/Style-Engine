@@ -60,7 +60,10 @@
         </div>
       </div>
       <Button :disabled="!canReply || sending" size="sm" @click="submit">
-        {{ sending ? t("FORUM.TOPIC.SENDING") : sendLabel }}
+        <template v-if="sending" #icon>
+          <span class="forum-reply__spinner" aria-hidden="true"></span>
+        </template>
+        {{ sendLabel }}
       </Button>
     </div>
 

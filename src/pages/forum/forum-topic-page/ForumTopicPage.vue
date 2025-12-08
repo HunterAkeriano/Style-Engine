@@ -425,15 +425,15 @@ async function sendReply(payload: {
   if (!topic.value || !canReply.value || !payload.content.trim()) return;
   sendingReply.value = true;
   try {
-    const finalAttachments: ForumAttachment[] = [];
-    for (const item of payload.attachments) {
-      if (item.file) {
-        const url = await uploadForumAttachment(item.file, topic.value.id);
-        finalAttachments.push({ type: "image", url });
-      } else if (item.url) {
-        finalAttachments.push({ type: item.type, url: item.url });
-      }
-    }
+    const finalAttachments: ForumAttachment[] = await Promise.all(
+      payload.attachments.map(async (item) => {
+        if (item.file) {
+          const url = await uploadForumAttachment(item.file, topic.value!.id);
+          return { type: "image", url } as ForumAttachment;
+        }
+        return { type: item.type, url: item.url! } as ForumAttachment;
+      }),
+    );
     const { topic: updatedTopic, message } = await postForumMessage(
       topic.value.id,
       {
