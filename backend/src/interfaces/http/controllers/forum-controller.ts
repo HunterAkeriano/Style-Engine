@@ -219,10 +219,7 @@ export class ForumController implements HttpController {
       async (req: AuthRequest, res) => {
         try {
           if (!req.userId) return sendApiError(res, 401, "Unauthorized");
-          const topic = await this.service.pinTopic(
-            req.params.id,
-            req.userId!,
-          );
+          const topic = await this.service.pinTopic(req.params.id, req.userId!);
           broadcastForumEvent(req.params.id, "topic-updated", topic);
           res.json({ topic });
         } catch (err: any) {
@@ -367,22 +364,20 @@ export class ForumController implements HttpController {
       }
     });
 
-    router.get(
-      "/topics/:id/participants",
-      async (req, res) => {
-        try {
-          const participants =
-            await this.service.getTopicParticipants(req.params.id);
-          res.json({ participants });
-        } catch (err: any) {
-          if (err?.status)
-            return sendApiError(res, err.status, err.message, {
-              details: err.details,
-            });
-          return sendApiError(res, 500, "Failed to load participants");
-        }
-      },
-    );
+    router.get("/topics/:id/participants", async (req, res) => {
+      try {
+        const participants = await this.service.getTopicParticipants(
+          req.params.id,
+        );
+        res.json({ participants });
+      } catch (err: any) {
+        if (err?.status)
+          return sendApiError(res, err.status, err.message, {
+            details: err.details,
+          });
+        return sendApiError(res, 500, "Failed to load participants");
+      }
+    });
 
     router.post(
       "/mute/:userId",
@@ -493,25 +488,34 @@ export class ForumController implements HttpController {
       },
     );
 
-    router.get(
-      "/my-mutes",
-      this.auth,
-      async (req: AuthRequest, res) => {
-        try {
-          const mutes = await this.service.getUserActiveMutes(req.userId!);
-          res.json({ mutes });
-        } catch (err: any) {
-          if (err?.status)
-            return sendApiError(res, err.status, err.message, {
-              details: err.details,
-            });
-          return sendApiError(res, 500, "Failed to load mutes");
-        }
-      },
-    );
+    router.get("/my-mutes", this.auth, async (req: AuthRequest, res) => {
+      try {
+        const mutes = await this.service.getUserActiveMutes(req.userId!);
+        res.json({ mutes });
+      } catch (err: any) {
+        if (err?.status)
+          return sendApiError(res, err.status, err.message, {
+            details: err.details,
+          });
+        return sendApiError(res, 500, "Failed to load mutes");
+      }
+    });
+
+    router.get("/mute-status", this.auth, async (req: AuthRequest, res) => {
+      try {
+        const status = await this.service.checkUserMute(req.userId!);
+        res.json(status);
+      } catch (err: any) {
+        if (err?.status)
+          return sendApiError(res, err.status, err.message, {
+            details: err.details,
+          });
+        return sendApiError(res, 500, "Failed to check mute status");
+      }
+    });
 
     router.get(
-      "/mute-status",
+      "/topics/:id/mute-status",
       this.auth,
       async (req: AuthRequest, res) => {
         try {
@@ -532,7 +536,9 @@ export class ForumController implements HttpController {
     return this.sanitizeAttachments(attachments);
   }
 
-  private sanitizeAttachments(attachments: ForumAttachment[]): ForumAttachment[] {
+  private sanitizeAttachments(
+    attachments: ForumAttachment[],
+  ): ForumAttachment[] {
     const result: ForumAttachment[] = [];
     for (const item of attachments) {
       if (item.type === "youtube") {

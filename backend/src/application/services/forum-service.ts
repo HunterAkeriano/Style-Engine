@@ -51,7 +51,7 @@ export class ForumService {
     mailer?: MailerService,
     mailBuilder: MailBuilder = new MailBuilder(),
   ) {
-    this.mailer = env ? mailer ?? new MailerService(env) : undefined;
+    this.mailer = env ? (mailer ?? new MailerService(env)) : undefined;
     this.mailBuilder = mailBuilder;
   }
 
@@ -161,9 +161,13 @@ export class ForumService {
   }
 
   private serializeTopic(topic: ForumTopic) {
-    const { user, attachments, pin, ...rest } = topic.get({ plain: true }) as any;
+    const { user, attachments, pin, ...rest } = topic.get({
+      plain: true,
+    }) as any;
     const owner = user as ForumTopic["user"] | undefined;
-    const pinData = pin as { createdAt?: string; createdBy?: string } | undefined;
+    const pinData = pin as
+      | { createdAt?: string; createdBy?: string }
+      | undefined;
     return {
       ...rest,
       attachments: this.serializeAttachments(attachments),
@@ -445,10 +449,7 @@ export class ForumService {
       throw toApiError(403, "Moderator or admin access required");
     }
 
-    const existingMute = await this.repo.findActiveMute(payload.userId);
-    if (existingMute) {
-      await this.repo.removeMute(payload.userId);
-    }
+    await this.repo.removeMute(payload.userId);
 
     await this.repo.createMute({
       userId: payload.userId,
@@ -457,7 +458,11 @@ export class ForumService {
       reason: payload.reason || null,
     } as any);
 
-    await this.notifyMutedUser(payload.userId, payload.expiresAt, payload.reason);
+    await this.notifyMutedUser(
+      payload.userId,
+      payload.expiresAt,
+      payload.reason,
+    );
 
     return { success: true };
   }
