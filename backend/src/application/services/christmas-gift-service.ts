@@ -14,15 +14,20 @@ export class ChristmasGiftService {
     const oneMonthLater = new Date(currentDate)
     oneMonthLater.setMonth(oneMonthLater.getMonth() + 1)
 
-    const hasActiveSubscription =
-      (user.subscriptionTier && user.subscriptionTier !== 'free') &&
+    const hasActivePremium =
+      user.subscriptionTier === 'premium' &&
       (!user.subscriptionExpiresAt || new Date(user.subscriptionExpiresAt) > currentDate)
 
-    if (hasActiveSubscription) {
+    if (hasActivePremium) {
       throw new ApiError(409, 'Gift already claimed')
     }
 
-    const newExpiresAt = oneMonthLater
+    const baseDate =
+      user.subscriptionTier === 'premium' && user.subscriptionExpiresAt
+        ? new Date(user.subscriptionExpiresAt)
+        : currentDate
+    const newExpiresAt = new Date(baseDate)
+    newExpiresAt.setMonth(newExpiresAt.getMonth() + 1)
 
     console.log('[ChristmasGift] Before update:', {
       userId,

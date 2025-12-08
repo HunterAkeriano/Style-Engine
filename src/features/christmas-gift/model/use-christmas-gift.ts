@@ -19,8 +19,7 @@ export function useChristmasGift() {
     if (!user) return false
     const tier = user.subscriptionTier ?? 'free'
     const expiresAt = user.subscriptionExpiresAt ? new Date(user.subscriptionExpiresAt).getTime() : null
-    if (user.isPayment) return true
-    if (tier === 'free') return false
+    if (tier !== 'premium') return false
     if (!expiresAt) return true
     return expiresAt > Date.now()
   })
