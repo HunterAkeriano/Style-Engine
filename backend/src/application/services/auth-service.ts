@@ -11,7 +11,9 @@ import { PasswordResetRepository } from '../../infrastructure/repositories/passw
 import { toApiError } from '../../utils/apiError'
 import { resolveUserRole, type UserRole } from '../../utils/roles'
 
-export type SafeUser = Omit<InferAttributes<User>, 'passwordHash'> & { isSuperAdmin: boolean; role: UserRole; isAdmin: boolean }
+export type SafeUser = Omit<InferAttributes<User>, 'passwordHash'> & {
+  role: UserRole
+}
 
 export class AuthService {
   constructor(
@@ -23,8 +25,8 @@ export class AuthService {
   ) {}
 
   private attachSuperFlag(user: Omit<InferAttributes<User>, 'passwordHash'>): SafeUser {
-    const roleData = resolveUserRole(this.env, { email: user.email, isAdmin: user.isAdmin, isSuperAdmin: user.isSuperAdmin })
-    return { ...user, ...roleData }
+    const roleData = resolveUserRole(this.env, { email: user.email, role: (user as any).role })
+    return { ...user, role: roleData.role }
   }
 
   toSafeUser(user: User | null): SafeUser | null {
@@ -67,8 +69,7 @@ export class AuthService {
       'avatarUrl',
       'createdAt',
       'isPayment',
-      'isAdmin',
-      'isSuperAdmin',
+      'role',
       'subscriptionTier',
       'subscriptionExpiresAt'
     ])
@@ -103,8 +104,7 @@ export class AuthService {
       'subscriptionTier',
       'subscriptionExpiresAt',
       'isPayment',
-      'isAdmin',
-      'isSuperAdmin',
+      'role',
       'createdAt'
     ])
     if (!user) throw toApiError(401, 'Invalid refresh token')
@@ -197,8 +197,6 @@ export class AuthService {
       'avatarUrl',
       'createdAt',
       'isPayment',
-      'isAdmin',
-      'isSuperAdmin',
       'subscriptionTier',
       'subscriptionExpiresAt'
     ])

@@ -37,7 +37,7 @@ export function setupRouterGuards(router: Router) {
       return
     }
 
-    if (to.meta.requiresAdmin && !authStore.user?.isAdmin) {
+    if (to.meta.requiresAdmin && !authStore.isAdmin) {
       const currentLocale = getCurrentLocale()
       next({ name: `${currentLocale}-home` })
       return

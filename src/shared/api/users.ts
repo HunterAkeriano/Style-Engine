@@ -13,8 +13,6 @@ export interface PublicUser {
   subscriptionExpiresAt?: string | null
   createdAt: string
   isPayment?: boolean
-  isAdmin?: boolean
-  isSuperAdmin?: boolean
   role?: UserRole
 }
 

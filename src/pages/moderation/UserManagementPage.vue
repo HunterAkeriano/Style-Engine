@@ -357,7 +357,7 @@ function openEdit(user: PublicUser) {
   form.setValue('subscriptionDuration', user.subscriptionTier === 'free' ? 'free' : 'month')
   form.setValue(
     'role',
-    (user.role as UserRole) || (user.isSuperAdmin ? 'super_admin' : user.isAdmin ? 'moderator' : 'user')
+    (user.role as UserRole) || 'user'
   )
   form.setValue('password', '')
   isModalOpen.value = true

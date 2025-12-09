@@ -8,8 +8,6 @@ export interface User {
   subscriptionTier?: 'free' | 'pro' | 'premium'
   plan?: 'free' | 'pro' | 'premium'
   isPayment?: boolean
-  isAdmin?: boolean
-  isSuperAdmin?: boolean
   role?: UserRole
   subscriptionExpiresAt?: string | null
   createdAt: string

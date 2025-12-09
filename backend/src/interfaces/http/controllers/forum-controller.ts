@@ -170,7 +170,7 @@ export class ForumController implements HttpController {
           req.params.id,
           req.userId!,
           patch,
-          Boolean(req.authUser?.isAdmin),
+          Boolean(req.authUser && (req.authUser.role === "moderator" || req.authUser.role === "super_admin")),
         );
         broadcastForumEvent(req.params.id, "topic-updated", topic);
         res.json({ topic });
@@ -198,7 +198,7 @@ export class ForumController implements HttpController {
           const topic = await this.service.updateStatus(
             req.params.id,
             parsed.data.status,
-            Boolean(req.authUser?.isAdmin),
+            Boolean(req.authUser && (req.authUser.role === "moderator" || req.authUser.role === "super_admin")),
           );
           broadcastForumEvent(req.params.id, "status", topic);
           res.json({ topic });
@@ -275,7 +275,7 @@ export class ForumController implements HttpController {
             content: parsed.data.content,
             parentId: parsed.data.parentId ?? null,
             attachments,
-            isAdmin: Boolean(req.authUser?.isAdmin),
+            isModerator: Boolean(req.authUser && (req.authUser.role === "moderator" || req.authUser.role === "super_admin")),
           });
           broadcastForumEvent(req.params.id, "message", payload.message);
 
@@ -323,7 +323,7 @@ export class ForumController implements HttpController {
             messageId: req.params.messageId,
             userId: req.userId!,
             content: parsed.data.content,
-            isAdmin: Boolean(req.authUser?.isAdmin),
+            isModerator: Boolean(req.authUser && (req.authUser.role === "moderator" || req.authUser.role === "super_admin")),
           });
           broadcastForumEvent(req.params.id, "message-edit", message);
           res.json({ message });
@@ -406,9 +406,7 @@ export class ForumController implements HttpController {
             mutedBy: req.userId!,
             expiresAt,
             reason: parsed.data.reason,
-            isModerator: Boolean(
-              req.authUser?.isAdmin || req.authUser?.isSuperAdmin,
-            ),
+            isModerator: Boolean(req.authUser && (req.authUser.role === "moderator" || req.authUser.role === "super_admin")),
           });
           res.json({ success: true });
         } catch (err: any) {
@@ -448,9 +446,7 @@ export class ForumController implements HttpController {
           await this.service.unmuteUser({
             userId: req.params.userId,
             actorId: req.userId!,
-            isModerator: Boolean(
-              req.authUser?.isAdmin || req.authUser?.isSuperAdmin,
-            ),
+            isModerator: Boolean(req.authUser && (req.authUser.role === "moderator" || req.authUser.role === "super_admin")),
           });
           res.json({ success: true });
         } catch (err: any) {
@@ -473,9 +469,7 @@ export class ForumController implements HttpController {
             topicId: req.params.id,
             userId: req.params.userId,
             actorId: req.userId!,
-            isModerator: Boolean(
-              req.authUser?.isAdmin || req.authUser?.isSuperAdmin,
-            ),
+            isModerator: Boolean(req.authUser && (req.authUser.role === "moderator" || req.authUser.role === "super_admin")),
           });
           res.json(result);
         } catch (err: any) {

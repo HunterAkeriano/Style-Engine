@@ -12,7 +12,6 @@ describe('UserRepository', () => {
     email: 'test@example.com',
     name: 'Test User',
     passwordHash: 'hashed-password',
-    isAdmin: false,
     subscriptionTier: 'free',
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -154,15 +153,15 @@ describe('UserRepository', () => {
     it('should update multiple fields', async () => {
       const userToUpdate = {
         ...mockUser,
-        update: jest.fn().mockResolvedValue({ ...mockUser, name: 'New Name', isAdmin: true })
+        update: jest.fn().mockResolvedValue({ ...mockUser, name: 'New Name', subscriptionTier: 'pro' })
       };
-      const patch = { name: 'New Name', isAdmin: true };
+      const patch = { name: 'New Name', subscriptionTier: 'pro' as const };
 
       const result = await userRepository.update(userToUpdate as any, patch);
 
       expect(userToUpdate.update).toHaveBeenCalledWith(patch);
       expect(result.name).toBe('New Name');
-      expect(result.isAdmin).toBe(true);
+      expect(result.subscriptionTier).toBe('pro');
     });
   });
 

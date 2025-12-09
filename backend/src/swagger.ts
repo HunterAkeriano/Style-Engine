@@ -86,14 +86,6 @@ export function setupSwagger(app: Express) {
                 nullable: true,
                 description: 'Дата окончания платной подписки (null для free, 2100-01-01 для бессрочной)'
               },
-              isAdmin: {
-                type: 'boolean',
-                description: 'Является ли пользователь администратором'
-              },
-              isSuperAdmin: {
-                type: 'boolean',
-                description: 'Отметка супер-админа (email из env)'
-              },
               role: {
                 type: 'string',
                 enum: ['user', 'moderator', 'super_admin'],
@@ -209,8 +201,7 @@ export function setupSwagger(app: Express) {
               name: { type: 'string', nullable: true },
               email: { type: 'string', format: 'email', nullable: true },
               avatarUrl: { type: 'string', format: 'uri', nullable: true },
-              isAdmin: { type: 'boolean' },
-              isSuperAdmin: { type: 'boolean' },
+              role: { type: 'string', enum: ['user', 'moderator', 'super_admin'] },
               subscriptionTier: { type: 'string', enum: ['free', 'pro', 'premium'] }
             }
           },

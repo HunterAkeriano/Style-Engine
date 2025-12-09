@@ -16,9 +16,9 @@
       <div class="forum-message__meta">
         <div class="forum-message__author">
           <span>{{ node.author?.name || node.author?.email || "User" }}</span>
-          <span v-if="node.author?.isAdmin" class="forum-message__role"
-            >Admin</span
-          >
+          <span v-if="isModerator(node.author)" class="forum-message__role">
+            Admin
+          </span>
           <span v-if="isMuted" class="forum-message__muted">
             {{ t("FORUM.MUTED_BADGE") }}
           </span>
@@ -236,6 +236,8 @@ const initials = computed(() => {
 
 const editedLabel = computed(() => t("FORUM.TOPIC.EDITED"));
 const parentAuthor = computed(() => props.parentAuthor || null);
+const isModerator = (user: ForumMessage["author"]) =>
+  user?.role === "moderator" || user?.role === "super_admin";
 
 function startEdit() {
   if (!canEditThis.value) return;

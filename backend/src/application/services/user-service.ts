@@ -4,7 +4,7 @@ import type { Env } from '../../config/env'
 import { UserRepository } from '../../infrastructure/repositories/user-repository'
 import type { Models, User } from '../../models'
 import { toApiError } from '../../utils/apiError'
-import { resolveUserRole, roleToFlags, type UserRole } from '../../utils/roles'
+import { resolveUserRole, type UserRole } from '../../utils/roles'
 
 type Tier = 'all' | 'free' | 'pro' | 'premium'
 type SortField = 'name' | 'email' | 'createdat' | 'subscriptiontier'
@@ -31,18 +31,14 @@ export class UserService {
     this.superAdminEmail = env.SUPER_ADMIN_EMAIL.toLowerCase()
   }
 
-  private serializeUser(user: User, options: { hideSuperAdmin?: boolean } = {}) {
+  private serializeUser(user: User) {
     const { passwordHash: _ignored, ...rest } = user.get({ plain: true }) as any
     void _ignored
     const roleData = resolveUserRole(this.env, rest)
-    const serialized = { ...rest, ...roleData }
-    if (options.hideSuperAdmin) {
-      delete (serialized as any).isSuperAdmin
-    }
-    return serialized
+    return { ...rest, ...roleData }
   }
 
-  async fetchUsers(options: UsersQueryOptions, extra?: { hideSuperAdmin?: boolean }) {
+  async fetchUsers(options: UsersQueryOptions, _extra?: { hideSuperAdmin?: boolean }) {
     const offset = (options.page - 1) * options.limit
     const whereConditions: WhereOptions[] = [where(fn('LOWER', col('email')), { [Op.ne]: this.superAdminEmail })]
     if (options.tier !== 'all') {
@@ -69,8 +65,7 @@ export class UserService {
         'subscriptionTier',
         'subscriptionExpiresAt',
         'createdAt',
-        'isAdmin',
-        'isSuperAdmin'
+        'role'
       ],
       order: [
         [
@@ -86,7 +81,7 @@ export class UserService {
     })
 
     return {
-      users: ordered.map((u: User) => this.serializeUser(u, { hideSuperAdmin: extra?.hideSuperAdmin })),
+      users: ordered.map((u: User) => this.serializeUser(u)),
       pagination: {
         page: options.page,
         limit: options.limit,
@@ -137,9 +132,7 @@ export class UserService {
       if (!allowedRoles.includes(payload.role)) {
         throw toApiError(400, 'Invalid role')
       }
-      const flags = roleToFlags(payload.role)
-      updates.isAdmin = flags.isAdmin
-      updates.isSuperAdmin = flags.isSuperAdmin
+      updates.role = payload.role
     }
 
     if (!Object.keys(updates).length) {

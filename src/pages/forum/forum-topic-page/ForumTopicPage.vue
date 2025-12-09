@@ -70,7 +70,7 @@
         :can-reply="canReply"
         :topic-status="topic?.status || 'open'"
         :current-user-id="authStore.user?.id || ''"
-        :is-admin="Boolean(authStore.user?.isAdmin)"
+        :is-admin="authStore.isAdmin"
         :format-date="formatDate"
         :reply-target-id="replyParentId"
         :reply-form-config="replyFormConfig"
@@ -220,7 +220,7 @@ const canReply = computed(() => {
 });
 
 const canModerate = computed(() => {
-  return Boolean(authStore.user?.isAdmin || authStore.user?.isSuperAdmin);
+  return Boolean(authStore.isAdmin);
 });
 
 const replyPlaceholder = computed(() => {

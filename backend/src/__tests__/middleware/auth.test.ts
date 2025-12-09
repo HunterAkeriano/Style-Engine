@@ -37,10 +37,9 @@ describe("Auth Middleware", () => {
 
     mockUser = {
       id: "user-123",
-      isAdmin: false,
-      isSuperAdmin: false,
       isPayment: true,
       subscriptionTier: "pro",
+      role: "user",
       email: "user@example.com",
       get: jest.fn(),
     };
@@ -152,18 +151,15 @@ describe("Auth Middleware", () => {
         attributes: [
           "id",
           "email",
-          "isAdmin",
-          "isSuperAdmin",
           "isPayment",
           "subscriptionTier",
+          "role",
         ],
       });
       expect(mockReq.userId).toBe("user-123");
       expect(mockReq.authUser).toEqual({
         id: "user-123",
         role: "user",
-        isAdmin: false,
-        isSuperAdmin: false,
         isPayment: true,
         subscriptionTier: "pro",
       });
@@ -171,36 +167,13 @@ describe("Auth Middleware", () => {
       expect(apiError.sendApiError).not.toHaveBeenCalled();
     });
 
-    it("should convert isAdmin to boolean", async () => {
-      const adminUser = {
-        id: "admin-user",
-        isAdmin: 1,
-        isPayment: true,
-        subscriptionTier: "pro",
-        get: jest.fn(),
-      };
-      adminUser.get.mockReturnValue(adminUser);
-
-      const localUserModel = {
-        findByPk: jest.fn().mockResolvedValue(adminUser),
-      };
-      (db.getModels as jest.Mock).mockReturnValue({ User: localUserModel });
-
-      mockReq = { headers: { authorization: "Bearer admin-token" } };
-      (jwt.verify as jest.Mock).mockReturnValue({ sub: "admin-user" });
-
-      const middleware = createAuthMiddleware(mockEnv);
-      await middleware(mockReq as AuthRequest, mockRes as Response, mockNext);
-
-      expect(mockReq.authUser?.isAdmin).toBe(true);
-    });
-
     it("should convert isPayment to boolean", async () => {
       const nonPayingUser = {
         id: "non-paying-user",
-        isAdmin: false,
         isPayment: 0,
         subscriptionTier: "free",
+        role: "user",
+        email: "np@example.com",
         get: jest.fn(),
       };
       nonPayingUser.get.mockReturnValue(nonPayingUser);
@@ -222,9 +195,10 @@ describe("Auth Middleware", () => {
     it("should default to free tier if subscriptionTier is null", async () => {
       const userWithNoTier = {
         id: "no-tier-user",
-        isAdmin: false,
         isPayment: false,
         subscriptionTier: null,
+        role: "user",
+        email: "no-tier@example.com",
         get: jest.fn(),
       };
       userWithNoTier.get.mockReturnValue(userWithNoTier);
@@ -348,8 +322,6 @@ describe("Auth Middleware", () => {
       expect(mockReq.authUser).toEqual({
         id: "user-123",
         role: "user",
-        isAdmin: false,
-        isSuperAdmin: false,
         isPayment: true,
         subscriptionTier: "pro",
       });
@@ -386,8 +358,6 @@ describe("Auth Middleware", () => {
       mockReq.authUser = {
         id: "user-123",
         role: "user",
-        isAdmin: false,
-        isSuperAdmin: false,
         isPayment: true,
         subscriptionTier: "pro",
       };
@@ -406,8 +376,6 @@ describe("Auth Middleware", () => {
       mockReq.authUser = {
         id: "admin-123",
         role: "moderator",
-        isAdmin: true,
-        isSuperAdmin: false,
         isPayment: true,
         subscriptionTier: "premium",
       };

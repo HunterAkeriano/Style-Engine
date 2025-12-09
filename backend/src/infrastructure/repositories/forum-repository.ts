@@ -40,7 +40,7 @@ export class ForumRepository {
         {
           model: this.models.User,
           as: 'user',
-          attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin', 'subscriptionTier']
+          attributes: ['id', 'name', 'email', 'avatarUrl', 'subscriptionTier', 'role']
         }
       ]
     })
@@ -62,7 +62,7 @@ export class ForumRepository {
         {
           model: this.models.User,
           as: 'user',
-          attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin', 'subscriptionTier']
+          attributes: ['id', 'name', 'email', 'avatarUrl', 'subscriptionTier', 'role']
         }
       ]
     })
@@ -78,7 +78,7 @@ export class ForumRepository {
         {
           model: this.models.User,
           as: 'user',
-          attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin', 'subscriptionTier']
+          attributes: ['id', 'name', 'email', 'avatarUrl', 'subscriptionTier', 'role']
         }
       ]
     })
@@ -95,7 +95,7 @@ export class ForumRepository {
         {
           model: this.models.User,
           as: 'user',
-          attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin', 'subscriptionTier']
+          attributes: ['id', 'name', 'email', 'avatarUrl', 'subscriptionTier', 'role']
         },
         { model: this.models.ForumMessage, as: 'parent', attributes: ['id', 'userId'] }
       ]
@@ -143,7 +143,7 @@ export class ForumRepository {
             {
               model: this.models.User,
               as: 'user',
-              attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin', 'subscriptionTier']
+              attributes: ['id', 'name', 'email', 'avatarUrl', 'subscriptionTier', 'role']
             }
           ]
         }
@@ -193,7 +193,7 @@ export class ForumRepository {
         {
           model: this.models.User,
           as: 'user',
-          attributes: ['id', 'name', 'email', 'avatarUrl', 'isAdmin', 'isSuperAdmin', 'subscriptionTier']
+          attributes: ['id', 'name', 'email', 'avatarUrl', 'subscriptionTier', 'role']
         }
       ]
     })

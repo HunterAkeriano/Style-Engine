@@ -12,9 +12,8 @@ export async function ensureSuperAdmin(env: Env) {
   if (existing) {
     await existing.update({
       passwordHash,
-      isAdmin: true,
-      isSuperAdmin: true,
       isPayment: true,
+      role: 'super_admin',
       subscriptionTier: 'pro'
     })
     return
@@ -23,9 +22,8 @@ export async function ensureSuperAdmin(env: Env) {
   await User.create({
     email,
     passwordHash,
-    isAdmin: true,
-    isSuperAdmin: true,
     isPayment: true,
+    role: 'super_admin',
     subscriptionTier: 'pro'
   })
 }

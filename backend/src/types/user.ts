@@ -7,7 +7,6 @@ export interface User {
   avatarUrl: string | null
   isPayment: boolean
   subscriptionTier: SubscriptionTier
-  isAdmin: boolean
   createdAt: Date
   updatedAt: Date
   subscriptionExpiresAt?: Date | null

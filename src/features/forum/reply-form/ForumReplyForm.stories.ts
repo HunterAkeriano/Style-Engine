@@ -59,8 +59,7 @@ const baseMessage: ForumMessage = {
     name: 'Alice',
     email: 'alice@example.com',
     avatarUrl: null,
-    isAdmin: false,
-    isSuperAdmin: false,
+    role: 'user',
     subscriptionTier: 'pro'
   }
 }

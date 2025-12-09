@@ -11,6 +11,7 @@ import { toApiError } from "../../utils/apiError";
 import type { Env } from "../../config/env";
 import { MailerService } from "./mailer-service";
 import { MailBuilder } from "../../interfaces/http/mail-builder";
+import { resolveUserRole } from "../../utils/roles";
 
 export interface ForumAttachment {
   type: "image" | "youtube";
@@ -29,7 +30,7 @@ export interface CreateMessagePayload {
   content: string;
   parentId?: string | null;
   attachments: ForumAttachment[];
-  isAdmin: boolean;
+  isModerator: boolean;
 }
 
 export interface EditMessagePayload {
@@ -37,7 +38,7 @@ export interface EditMessagePayload {
   messageId: string;
   userId: string;
   content: string;
-  isAdmin: boolean;
+  isModerator: boolean;
 }
 
 export class ForumService {
@@ -168,6 +169,13 @@ export class ForumService {
     const pinData = pin as
       | { createdAt?: string; createdBy?: string }
       | undefined;
+    const roleData = owner
+      ? resolveUserRole(this.env, {
+          email: owner.email,
+          role: (owner as any).role,
+        })
+      : null;
+
     return {
       ...rest,
       attachments: this.serializeAttachments(attachments),
@@ -180,7 +188,7 @@ export class ForumService {
             name: owner.name,
             email: owner.email,
             avatarUrl: owner.avatarUrl,
-            isAdmin: Boolean((owner as any).isAdmin),
+            role: roleData?.role ?? "user",
             subscriptionTier: (owner as any).subscriptionTier ?? "free",
           }
         : null,
@@ -190,6 +198,13 @@ export class ForumService {
   private serializeMessage(message: ForumMessage) {
     const { user, attachments, ...rest } = message.get({ plain: true }) as any;
     const author = user as ForumMessage["user"] | undefined;
+    const roleData = author
+      ? resolveUserRole(this.env, {
+          email: author.email,
+          role: (author as any).role,
+        })
+      : null;
+
     return {
       ...rest,
       attachments: this.serializeAttachments(attachments),
@@ -199,7 +214,7 @@ export class ForumService {
             name: author.name,
             email: author.email,
             avatarUrl: author.avatarUrl,
-            isAdmin: Boolean((author as any).isAdmin),
+            role: roleData?.role ?? "user",
             subscriptionTier: (author as any).subscriptionTier ?? "free",
           }
         : null,
@@ -278,19 +293,19 @@ export class ForumService {
     };
   }
 
-  private assertCanPost(status: ForumStatus, isAdmin: boolean) {
+  private assertCanPost(status: ForumStatus, isModerator: boolean) {
     if (status === "open") return;
-    if (status === "in_review" && isAdmin) return;
-    if (status === "closed" && isAdmin) return;
+    if (status === "in_review" && isModerator) return;
+    if (status === "closed" && isModerator) return;
     throw toApiError(403, "Topic is not accepting replies");
   }
 
   async addMessage(payload: CreateMessagePayload) {
     const topic = await this.repo.findTopicById(payload.topicId);
     if (!topic) throw toApiError(404, "Topic not found");
-    this.assertCanPost(topic.status as ForumStatus, payload.isAdmin);
+    this.assertCanPost(topic.status as ForumStatus, payload.isModerator);
 
-    if (!payload.isAdmin) {
+    if (!payload.isModerator) {
       const mute = await this.repo.findActiveMute(payload.userId);
       if (mute) {
         const muteMessage = mute.expiresAt
@@ -333,7 +348,7 @@ export class ForumService {
     }
 
     const isOwner = message.userId === payload.userId;
-    const canEdit = payload.isAdmin || (isOwner && topic.status === "open");
+    const canEdit = payload.isModerator || (isOwner && topic.status === "open");
     if (!canEdit)
       throw toApiError(403, "Editing is not allowed for this topic");
 
@@ -350,9 +365,9 @@ export class ForumService {
   async updateStatus(
     topicId: string,
     status: ForumStatus,
-    actorIsAdmin: boolean,
+    actorIsModerator: boolean,
   ) {
-    if (!actorIsAdmin) throw toApiError(403, "Admin access required");
+    if (!actorIsModerator) throw toApiError(403, "Admin access required");
     const topic = await this.repo.findTopicById(topicId);
     if (!topic) throw toApiError(404, "Topic not found");
     await this.repo.updateTopic(topic, { status, lastActivityAt: new Date() });
@@ -368,14 +383,14 @@ export class ForumService {
     patch: Partial<
       Pick<CreateTopicPayload, "title" | "description" | "attachments">
     >,
-    isAdmin: boolean,
+    isModerator: boolean,
   ) {
     const topic = await this.repo.findTopicById(topicId);
     if (!topic) throw toApiError(404, "Topic not found");
-    if (topic.status !== "open" && !isAdmin) {
+    if (topic.status !== "open" && !isModerator) {
       throw toApiError(403, "Editing is locked for this topic");
     }
-    if (topic.userId !== userId && !isAdmin) {
+    if (topic.userId !== userId && !isModerator) {
       throw toApiError(403, "You cannot edit this topic");
     }
     const nextAttachments = patch.attachments
@@ -526,12 +541,16 @@ export class ForumService {
 
     if (topic.user) {
       const owner = topic.user as any;
+      const roleData = resolveUserRole(this.env, {
+        email: owner.email,
+        role: owner.role,
+      });
       participants.set(owner.id, {
         id: owner.id,
         name: owner.name,
         email: owner.email,
         avatarUrl: owner.avatarUrl,
-        isAdmin: Boolean(owner.isAdmin),
+        role: roleData.role,
         subscriptionTier: owner.subscriptionTier ?? "free",
         muted: false,
       });
@@ -539,12 +558,16 @@ export class ForumService {
 
     messageResults.forEach((msg: any) => {
       if (msg.user && !participants.has(msg.user.id)) {
+        const roleData = resolveUserRole(this.env, {
+          email: msg.user.email,
+          role: (msg.user as any).role,
+        });
         participants.set(msg.user.id, {
           id: msg.user.id,
           name: msg.user.name,
           email: msg.user.email,
           avatarUrl: msg.user.avatarUrl,
-          isAdmin: Boolean(msg.user.isAdmin),
+          role: roleData.role,
           subscriptionTier: msg.user.subscriptionTier ?? "free",
           muted: false,
         });

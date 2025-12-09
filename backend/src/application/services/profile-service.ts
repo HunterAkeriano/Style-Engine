@@ -7,7 +7,7 @@ import { toApiError } from '../../utils/apiError'
 import type { InferAttributes } from 'sequelize'
 import { resolveUserRole, type UserRole } from '../../utils/roles'
 
-type SafeUser = Omit<InferAttributes<User>, 'passwordHash'> & { isSuperAdmin: boolean; role: UserRole; isAdmin: boolean }
+type SafeUser = Omit<InferAttributes<User>, 'passwordHash'> & { role: UserRole }
 
 export class ProfileService {
   // Use shared cache so invalidation works across controller instances
@@ -17,8 +17,8 @@ export class ProfileService {
   constructor(private readonly env: Env, private readonly users: UserRepository) {}
 
   private attachSuperFlag(user: Omit<InferAttributes<User>, 'passwordHash'>) {
-    const roleData = resolveUserRole(this.env, { email: user.email, isAdmin: user.isAdmin, isSuperAdmin: user.isSuperAdmin })
-    return { ...user, ...roleData }
+    const roleData = resolveUserRole(this.env, { email: user.email, role: (user as any).role })
+    return { ...user, role: roleData.role }
   }
 
   private toSafeUser(user: User | null) {
@@ -59,8 +59,7 @@ export class ProfileService {
       'updatedAt',
       'isPayment',
       'subscriptionTier',
-      'isAdmin',
-      'isSuperAdmin',
+      'role',
       'subscriptionExpiresAt'
     ])
     const safe = this.toSafeUser(user)

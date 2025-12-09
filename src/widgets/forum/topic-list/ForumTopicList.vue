@@ -106,7 +106,7 @@
                   getOwner(row)?.name || getOwner(row)?.email || t("FORUM.ANON")
                 }}
               </div>
-              <div v-if="getOwner(row)?.isAdmin" class="forum-page__owner-role">
+              <div v-if="isModerator(getOwner(row))" class="forum-page__owner-role">
                 {{ t("FORUM.ADMIN") }}
               </div>
               <Icon
@@ -185,7 +185,7 @@
                   getOwner(row)?.name || getOwner(row)?.email || t("FORUM.ANON")
                 }}
               </div>
-              <div v-if="getOwner(row)?.isAdmin" class="forum-page__owner-role">
+              <div v-if="isModerator(getOwner(row))" class="forum-page__owner-role">
                 {{ t("FORUM.ADMIN") }}
               </div>
               <Icon
@@ -363,6 +363,10 @@ function planTier(owner?: ForumTopic["owner"]): PlanTier {
 
 function planClass(tier?: PlanTier) {
   return resolvePlanClass(tier);
+}
+
+function isModerator(user?: ForumTopic["owner"] | null) {
+  return user?.role === "moderator" || user?.role === "super_admin";
 }
 
 async function loadPinnedTopics() {

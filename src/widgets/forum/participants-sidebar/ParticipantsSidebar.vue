@@ -38,7 +38,7 @@
             <div class="participant__name">
               {{ participant.name || participant.email || t("FORUM.ANON") }}
             </div>
-            <div v-if="participant.isAdmin" class="participant__role">
+            <div v-if="isModerator(participant)" class="participant__role">
               {{ t("FORUM.ADMIN") }}
             </div>
             <div v-if="participant.muted" class="participant__muted">
@@ -97,6 +97,10 @@ function getInitials(user: ForumUser) {
   if (parts.length >= 2)
     return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
   return name.slice(0, 2).toUpperCase();
+}
+
+function isModerator(user: ForumUser) {
+  return user.role === "moderator" || user.role === "super_admin";
 }
 </script>
 

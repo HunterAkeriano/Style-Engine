@@ -10,8 +10,6 @@ export interface AuthRequest extends Request {
   authUser?: {
     id: string
     role: UserRole
-    isAdmin: boolean
-    isSuperAdmin: boolean
     isPayment: boolean
     subscriptionTier: 'free' | 'pro' | 'premium'
   }
@@ -59,20 +57,21 @@ export function createAuthMiddleware(env: Env) {
       }
       const { User } = getModels()
       const user = await User.findByPk(payload.sub, {
-        attributes: ['id', 'email', 'isAdmin', 'isSuperAdmin', 'isPayment', 'subscriptionTier']
+        attributes: ['id', 'email', 'isPayment', 'subscriptionTier', 'role']
       })
       if (!user) {
         return sendApiError(res, 401, 'User not found')
       }
 
       const plain = user.get()
-      const roleData = resolveUserRole(env, { email: plain.email, isAdmin: plain.isAdmin, isSuperAdmin: plain.isSuperAdmin })
+      const roleData = resolveUserRole(env, {
+        email: plain.email,
+        role: (plain as any).role
+      })
       req.userId = plain.id
       req.authUser = {
         id: plain.id,
         role: roleData.role,
-        isAdmin: roleData.isAdmin,
-        isSuperAdmin: roleData.isSuperAdmin,
         isPayment: Boolean(plain.isPayment),
         subscriptionTier: (plain.subscriptionTier as 'free' | 'pro' | 'premium') ?? 'free'
       }
@@ -104,17 +103,18 @@ export function createOptionalAuthMiddleware(env: Env) {
       }
       const { User } = getModels()
       const user = await User.findByPk(payload.sub, {
-        attributes: ['id', 'email', 'isAdmin', 'isSuperAdmin', 'isPayment', 'subscriptionTier']
+        attributes: ['id', 'email', 'isPayment', 'subscriptionTier', 'role']
       })
       if (user) {
         const plain = user.get()
-        const roleData = resolveUserRole(env, { email: plain.email, isAdmin: plain.isAdmin, isSuperAdmin: plain.isSuperAdmin })
+        const roleData = resolveUserRole(env, {
+          email: plain.email,
+          role: (plain as any).role
+        })
         req.userId = plain.id
         req.authUser = {
           id: plain.id,
           role: roleData.role,
-          isAdmin: roleData.isAdmin,
-          isSuperAdmin: roleData.isSuperAdmin,
           isPayment: Boolean(plain.isPayment),
           subscriptionTier: (plain.subscriptionTier as 'free' | 'pro' | 'premium') ?? 'free'
         }
@@ -127,14 +127,14 @@ export function createOptionalAuthMiddleware(env: Env) {
 }
 
 export function requireAdmin(req: AuthRequest, res: Response, next: NextFunction) {
-  if (!req.authUser?.isAdmin) {
+  if (req.authUser?.role !== 'moderator' && req.authUser?.role !== 'super_admin') {
     return sendApiError(res, 403, 'Admin access required')
   }
   next()
 }
 
 export function requireModerator(req: AuthRequest, res: Response, next: NextFunction) {
-  if (!req.authUser?.isAdmin && !req.authUser?.isSuperAdmin) {
+  if (req.authUser?.role !== 'moderator' && req.authUser?.role !== 'super_admin') {
     return sendApiError(res, 403, 'Moderator or admin access required')
   }
   next()

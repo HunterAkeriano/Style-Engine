@@ -31,7 +31,6 @@ describe('AuthService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     isPayment: false,
-    isAdmin: false,
     subscriptionTier: 'free',
     subscriptionExpiresAt: null,
     get: jest.fn().mockReturnThis()
@@ -102,7 +101,6 @@ describe('AuthService', () => {
       createdAt: mockUser.createdAt,
       updatedAt: mockUser.updatedAt,
       isPayment: mockUser.isPayment,
-      isAdmin: mockUser.isAdmin,
       subscriptionTier: mockUser.subscriptionTier,
       subscriptionExpiresAt: mockUser.subscriptionExpiresAt
     })) as any;
@@ -114,7 +112,7 @@ describe('AuthService', () => {
 
       expect(result).toBeDefined();
       expect(result?.email).toBe('test@example.com');
-      expect(result).toHaveProperty('isSuperAdmin');
+      expect(result).toHaveProperty('role', 'user');
       expect((result as any)?.passwordHash).toBeUndefined();
     });
 
@@ -131,7 +129,6 @@ describe('AuthService', () => {
           createdAt: mockUser.createdAt,
           updatedAt: mockUser.updatedAt,
           isPayment: mockUser.isPayment,
-          isAdmin: mockUser.isAdmin,
           subscriptionTier: mockUser.subscriptionTier,
           subscriptionExpiresAt: mockUser.subscriptionExpiresAt
         }))
@@ -140,7 +137,7 @@ describe('AuthService', () => {
       const result = authService.toSafeUser(adminUser as any);
 
       expect(result).toBeDefined();
-      expect(result).toHaveProperty('isSuperAdmin');
+      expect(result).toHaveProperty('role', 'super_admin');
     });
 
     it('should return null for null user', () => {

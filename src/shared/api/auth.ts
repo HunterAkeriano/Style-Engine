@@ -15,8 +15,6 @@ export interface User {
   subscriptionExpiresAt?: string | null
   subscriptionTier?: 'free' | 'pro' | 'premium'
   isPayment?: boolean
-  isAdmin?: boolean
-  isSuperAdmin?: boolean
   role?: UserRole
 }
 

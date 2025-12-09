@@ -4,14 +4,14 @@ const api = useApi();
 
 export type ForumStatus = "open" | "in_review" | "closed";
 export type ForumAttachment = { type: "image" | "youtube"; url: string };
+export type ForumUserRole = "user" | "moderator" | "super_admin";
 
 export interface ForumUser {
   id: string;
   name: string | null;
   email: string | null;
   avatarUrl: string | null;
-  isAdmin?: boolean;
-  isSuperAdmin?: boolean;
+  role?: ForumUserRole;
   subscriptionTier?: "free" | "pro" | "premium";
   muted?: boolean;
 }
