@@ -912,6 +912,8 @@
     SIGN_UP: "Зареєструватися",
     SIGN_IN: "Увійти",
     OR_CONTINUE: "або продовжити з",
+    SIGN_IN_WITH_GOOGLE: "Увійти через Google",
+    SIGN_UP_WITH_GOOGLE: "Зареєструватися через Google",
     SIGNING_IN: "Вхід...",
     CREATING_ACCOUNT: "Створюємо акаунт...",
     OR: "або",

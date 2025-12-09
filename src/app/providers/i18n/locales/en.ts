@@ -910,6 +910,8 @@ export default {
     SIGN_UP: "Sign up",
     SIGN_IN: "Sign in",
     OR_CONTINUE: "or continue with",
+    SIGN_IN_WITH_GOOGLE: "Sign in with Google",
+    SIGN_UP_WITH_GOOGLE: "Sign up with Google",
     SIGNING_IN: "Signing in...",
     CREATING_ACCOUNT: "Creating account...",
     OR: "or",
