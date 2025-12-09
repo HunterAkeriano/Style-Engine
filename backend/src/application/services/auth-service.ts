@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 import { type InferAttributes } from 'sequelize'
+import { OAuth2Client } from 'google-auth-library'
 import type { Env } from '../../config/env'
 import type { User } from '../../models'
 import { TokenService } from './token-service'
@@ -158,5 +159,71 @@ export class AuthService {
 
     const newHash = await bcrypt.hash(payload.newPassword, 10)
     await this.users.update(user, { passwordHash: newHash, updatedAt: new Date() as any })
+  }
+
+  async googleAuth(credential: string) {
+    const googleClientId = this.env.GOOGLE_CLIENT_ID
+    if (!googleClientId) {
+      throw toApiError(500, 'Google OAuth not configured')
+    }
+
+    const client = new OAuth2Client(googleClientId)
+
+    let payload
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: googleClientId
+      })
+      payload = ticket.getPayload()
+    } catch (err) {
+      console.error('Google token verification error:', err)
+      throw toApiError(401, 'Invalid Google token')
+    }
+
+    if (!payload || !payload.email) {
+      throw toApiError(401, 'Invalid Google token')
+    }
+
+    const email = payload.email.toLowerCase()
+    const name = payload.name || payload.given_name || null
+    const avatarUrl = payload.picture || null
+
+    let user = await this.users.findByEmail(email, [
+      'id',
+      'email',
+      'passwordHash',
+      'name',
+      'avatarUrl',
+      'createdAt',
+      'isPayment',
+      'isAdmin',
+      'isSuperAdmin',
+      'subscriptionTier',
+      'subscriptionExpiresAt'
+    ])
+
+    if (!user) {
+      const randomPassword = crypto.randomBytes(32).toString('hex')
+      const passwordHash = await bcrypt.hash(randomPassword, 10)
+      user = await this.users.create({
+        email,
+        passwordHash,
+        name,
+        avatarUrl
+      })
+    } else if (!user.avatarUrl && avatarUrl) {
+      await this.users.update(user, { avatarUrl })
+    }
+
+    const tokens = this.tokenService.signPair(user.id)
+    await this.refreshTokens.create({
+      userId: user.id,
+      tokenHash: tokens.refreshHash,
+      expiresAt: tokens.refreshExpires,
+      revoked: false
+    })
+
+    return { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken, user: this.toSafeUser(user)! }
   }
 }

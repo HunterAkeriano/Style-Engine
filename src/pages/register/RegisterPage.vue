@@ -14,6 +14,18 @@
           <p class="register-page__subtitle">{{ t('AUTH.REGISTER_SUBTITLE') }}</p>
         </div>
 
+        <div class="register-page__google">
+          <GoogleSignInButton
+            @success="handleGoogleSuccess"
+            @error="handleGoogleError"
+            :button-configs="{ theme: 'outline', size: 'large', width: 400, text: 'signup_with' }"
+          />
+        </div>
+
+        <div class="register-page__divider">
+          <span>{{ t('AUTH.OR') }}</span>
+        </div>
+
         <form class="register-form" @submit.prevent="handleSubmit" novalidate>
           <Input
             name="email"
@@ -77,6 +89,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { GoogleSignInButton, type CredentialResponse } from 'vue3-google-signin'
 import { useAuthStore } from '@/entities'
 import { StarfieldAnimation } from '@/shared/ui/StarfieldAnimation'
 import { Input } from '@/shared/ui'
@@ -152,6 +165,35 @@ async function handleSubmit() {
   } finally {
     isSubmitting.value = false
   }
+}
+
+async function handleGoogleSuccess(response: CredentialResponse) {
+  if (!response.credential) {
+    serverError.value = t('VALIDATION.SERVER_ERROR')
+    return
+  }
+
+  isSubmitting.value = true
+  serverError.value = ''
+
+  try {
+    await authStore.googleAuth(response.credential)
+
+    if (authStore.error) {
+      serverError.value = authStore.error
+      return
+    }
+
+    router.push(`/${locale.value}/profile`)
+  } catch {
+    serverError.value = t('VALIDATION.SERVER_ERROR')
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+function handleGoogleError() {
+  serverError.value = t('VALIDATION.SERVER_ERROR')
 }
 </script>
 

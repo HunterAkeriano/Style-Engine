@@ -914,6 +914,7 @@
     OR_CONTINUE: "або продовжити з",
     SIGNING_IN: "Вхід...",
     CREATING_ACCOUNT: "Створюємо акаунт...",
+    OR: "або",
   },
   VALIDATION: {
     EMAIL_REQUIRED: "Потрібен email",

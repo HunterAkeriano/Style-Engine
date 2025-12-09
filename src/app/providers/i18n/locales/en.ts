@@ -912,6 +912,7 @@ export default {
     OR_CONTINUE: "or continue with",
     SIGNING_IN: "Signing in...",
     CREATING_ACCOUNT: "Creating account...",
+    OR: "or",
   },
   VALIDATION: {
     EMAIL_REQUIRED: "Email is required",

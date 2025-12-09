@@ -44,6 +44,10 @@ const changePasswordSchema = z.object({
   newPassword: strongPassword
 })
 
+const googleAuthSchema = z.object({
+  credential: z.string().min(1)
+})
+
 export class AuthController implements HttpController {
   readonly basePath = '/auth'
 
@@ -182,6 +186,22 @@ export class AuthController implements HttpController {
       } catch (err: any) {
         if (err?.status) return sendApiError(res, err.status, err.message, { details: err.details })
         return sendApiError(res, 500, 'Failed to change password')
+      }
+    })
+
+    router.post('/google', async (req, res) => {
+      const parsed = googleAuthSchema.safeParse(req.body)
+      if (!parsed.success) {
+        return sendApiError(res, 400, 'Invalid payload', { details: parsed.error.issues })
+      }
+      try {
+        const { accessToken, refreshToken, user } = await this.service.googleAuth(parsed.data.credential)
+        const cookie = serializeCookie('refreshToken', refreshToken, this.cookieConfig())
+        res.setHeader('Set-Cookie', cookie)
+        res.json({ token: accessToken, user })
+      } catch (err: any) {
+        if (err?.status) return sendApiError(res, err.status, err.message, { details: err.details })
+        return sendApiError(res, 500, 'Failed to authenticate with Google')
       }
     })
   }

@@ -14,6 +14,18 @@
           <p class="login-page__subtitle">{{ t('AUTH.LOGIN_SUBTITLE') }}</p>
         </div>
 
+        <div class="login-page__google">
+          <GoogleSignInButton
+            @success="handleGoogleSuccess"
+            @error="handleGoogleError"
+            :button-configs="{ theme: 'outline', size: 'large', width: 400, text: 'signin_with' }"
+          />
+        </div>
+
+        <div class="login-page__divider">
+          <span>{{ t('AUTH.OR') }}</span>
+        </div>
+
         <form class="login-form" @submit.prevent="handleSubmit" novalidate>
           <Input
             name="email"
@@ -73,6 +85,7 @@
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { GoogleSignInButton, type CredentialResponse } from 'vue3-google-signin'
 import { useAuthStore } from '@/entities'
 import { StarfieldAnimation } from '@/shared/ui/StarfieldAnimation'
 import { Input } from '@/shared/ui'
@@ -150,6 +163,37 @@ async function handleSubmit() {
   } finally {
     isSubmitting.value = false
   }
+}
+
+async function handleGoogleSuccess(response: CredentialResponse) {
+  if (!response.credential) {
+    serverError.value = t('VALIDATION.SERVER_ERROR')
+    return
+  }
+
+  isSubmitting.value = true
+  serverError.value = ''
+
+  try {
+    await authStore.googleAuth(response.credential)
+
+    if (authStore.error) {
+      serverError.value = authStore.error
+      return
+    }
+
+    const redirectPath =
+      typeof route.query.redirect === 'string' ? route.query.redirect : `/${locale.value}/profile`
+    router.push(redirectPath)
+  } catch {
+    serverError.value = t('VALIDATION.SERVER_ERROR')
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+function handleGoogleError() {
+  serverError.value = t('VALIDATION.SERVER_ERROR')
 }
 </script>
 

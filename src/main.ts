@@ -1,6 +1,7 @@
 import { createPinia } from 'pinia'
 import { ViteSSG } from 'vite-ssg'
 import { createHead } from '@unhead/vue/server'
+import GoogleSignInPlugin from 'vue3-google-signin'
 import { toastPlugin } from '@/shared/lib/toast'
 import { App } from '@/app'
 import { clickOutside } from '@/shared/directives'
@@ -59,6 +60,11 @@ export const createApp = ViteSSG(
     app.use(i18nInstance)
     if (!existingHead) {
       app.use(head)
+    }
+    if (typeof window !== 'undefined') {
+      app.use(GoogleSignInPlugin, {
+        clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID
+      })
     }
     app.use(toastPlugin, {
       position: 'bottom-right',

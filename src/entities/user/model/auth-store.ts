@@ -124,6 +124,29 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function googleAuth(credential: string) {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await apiClient.post<{ token: string; user: User }>('/auth/google', {
+        credential
+      })
+      setToken(response.data.token)
+      setUser(response.data.user)
+      try {
+        const freshUser = await fetchProfile()
+        setUser(freshUser)
+      } catch (err) {
+        console.error('Failed to refresh profile after google auth', err)
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Google authentication failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   async function logout() {
     try {
       await apiClient.post('/auth/logout')
@@ -153,6 +176,7 @@ export const useAuthStore = defineStore('auth', () => {
     fetchProfile,
     login,
     register,
+    googleAuth,
     logout
   }
 })

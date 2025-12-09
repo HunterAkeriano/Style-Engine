@@ -88,6 +88,34 @@
   }
 }
 
+.register-page__google {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $space-lg;
+}
+
+.register-page__divider {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  margin-bottom: $space-lg;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: $color-border;
+  }
+
+  span {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
 .register-form {
   display: flex;
   flex-direction: column;
