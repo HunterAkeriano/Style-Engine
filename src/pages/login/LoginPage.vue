@@ -66,6 +66,12 @@
             <span>{{ t("AUTH.OR_CONTINUE") }}</span>
           </div>
 
+          <div
+            ref="googleButtonRef"
+            class="login-page__google-hidden"
+            aria-hidden="true"
+          ></div>
+
           <Button
             class="login-page__google-button"
             variant="outline"
@@ -74,7 +80,11 @@
             @click="handleGoogleClick"
           >
             <template #icon>
-              <Icon name="icon-google" class-name="login-page__google-icon" size="18" />
+              <Icon
+                name="icon-google"
+                class-name="login-page__google-icon"
+                size="18"
+              />
             </template>
             {{ t("AUTH.SIGN_IN_WITH_GOOGLE") }}
           </Button>
@@ -94,10 +104,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { useOneTap, type CredentialResponse } from "vue3-google-signin";
+import { useGsiScript, type CredentialResponse } from "vue3-google-signin";
 import { useAuthStore } from "@/entities";
 import { Button, Icon, Input } from "@/shared/ui";
 import { StarfieldAnimation } from "@/shared/ui/StarfieldAnimation";
@@ -127,11 +137,10 @@ const errors = form.errors;
 const isSubmitting = ref(false);
 const serverError = ref("");
 
-const { isReady: isGoogleReady, login: loginWithGoogle } = useOneTap({
-  disableAutomaticPrompt: true,
-  onSuccess: handleGoogleSuccess,
-  onError: handleGoogleError,
-});
+const { scriptLoaded: isGsiScriptLoaded } = useGsiScript();
+const isGoogleReady = ref(false);
+const googleButtonRef = ref<HTMLElement | null>(null);
+let renderedGoogleBtn: HTMLElement | null = null;
 
 function clearFieldError(field: keyof LoginFormData) {
   errors[field] = "";
@@ -187,8 +196,12 @@ async function handleSubmit() {
 
 function handleGoogleClick() {
   serverError.value = "";
-  if (!isGoogleReady.value) return;
-  loginWithGoogle();
+  if (!isGoogleReady.value || !renderedGoogleBtn) {
+    serverError.value = t("VALIDATION.GOOGLE_DISABLED");
+    return;
+  }
+
+  renderedGoogleBtn.click();
 }
 
 async function handleGoogleSuccess(response: CredentialResponse) {
@@ -223,6 +236,45 @@ async function handleGoogleSuccess(response: CredentialResponse) {
 function handleGoogleError() {
   serverError.value = t("VALIDATION.SERVER_ERROR");
 }
+
+watch(
+  () => isGsiScriptLoaded.value,
+  (loaded) => {
+    if (!loaded || isGoogleReady.value) return;
+
+    const google = (window as any)?.google;
+    if (!google?.accounts?.id) return;
+
+    google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: (response: CredentialResponse) => {
+        if (!response.credential) {
+          handleGoogleError();
+          return;
+        }
+        handleGoogleSuccess(response);
+      },
+      ux_mode: "popup",
+      cancel_on_tap_outside: true,
+      use_fedcm_for_prompt: false,
+    });
+
+    if (googleButtonRef.value) {
+      google.accounts.id.renderButton(googleButtonRef.value, {
+        type: "standard",
+        theme: "outline",
+        size: "large",
+        text: "signin_with",
+        shape: "rectangular",
+        logo_alignment: "left",
+      });
+      renderedGoogleBtn =
+        googleButtonRef.value.querySelector("div[role=button]");
+    }
+
+    isGoogleReady.value = true;
+  },
+);
 </script>
 
 <style lang="scss" scoped src="./login-page.scss"></style>

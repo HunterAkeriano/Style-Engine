@@ -928,6 +928,7 @@ export default {
     SERVER_ERROR: "Something went wrong. Please try again",
     USER_EXISTS: "User with this email already exists",
     INVALID_CREDENTIALS: "Invalid email or password",
+    GOOGLE_DISABLED: "Google sign-in is blocked in your browser. Allow third-party sign-in and try again.",
   },
   PROFILE: {
     TITLE: "Profile",

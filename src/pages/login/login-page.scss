@@ -231,6 +231,14 @@
   stroke: unset;
 }
 
+.login-page__google-hidden {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  pointer-events: none;
+  opacity: 0;
+}
+
 .login-page__footer {
   margin-top: $space-xl;
   text-align: center;
