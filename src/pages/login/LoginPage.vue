@@ -141,6 +141,7 @@ const { scriptLoaded: isGsiScriptLoaded } = useGsiScript();
 const isGoogleReady = ref(false);
 const googleButtonRef = ref<HTMLElement | null>(null);
 let renderedGoogleBtn: HTMLElement | null = null;
+let googleInitialized = false;
 
 function clearFieldError(field: keyof LoginFormData) {
   errors[field] = "";
@@ -240,11 +241,27 @@ function handleGoogleError() {
 watch(
   () => isGsiScriptLoaded.value,
   (loaded) => {
-    if (!loaded || isGoogleReady.value) return;
+    if (!loaded) return;
+    setupGoogleButton();
+  },
+  { immediate: true },
+);
 
-    const google = (window as any)?.google;
-    if (!google?.accounts?.id) return;
+watch(
+  () => googleButtonRef.value,
+  () => {
+    if (!isGsiScriptLoaded.value) return;
+    setupGoogleButton();
+  },
+  { immediate: true },
+);
 
+function setupGoogleButton() {
+  const google = (window as any)?.google;
+  const target = googleButtonRef.value;
+  if (!google?.accounts?.id || !target) return;
+
+  if (!googleInitialized) {
     google.accounts.id.initialize({
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
       callback: (response: CredentialResponse) => {
@@ -258,23 +275,21 @@ watch(
       cancel_on_tap_outside: true,
       use_fedcm_for_prompt: false,
     });
+    googleInitialized = true;
+  }
 
-    if (googleButtonRef.value) {
-      google.accounts.id.renderButton(googleButtonRef.value, {
-        type: "standard",
-        theme: "outline",
-        size: "large",
-        text: "signin_with",
-        shape: "rectangular",
-        logo_alignment: "left",
-      });
-      renderedGoogleBtn =
-        googleButtonRef.value.querySelector("div[role=button]");
-    }
+  google.accounts.id.renderButton(target, {
+    type: "standard",
+    theme: "outline",
+    size: "large",
+    text: "signin_with",
+    shape: "rectangular",
+    logo_alignment: "left",
+  });
 
-    isGoogleReady.value = true;
-  },
-);
+  renderedGoogleBtn = target.querySelector("div[role=button]");
+  isGoogleReady.value = Boolean(renderedGoogleBtn);
+}
 </script>
 
 <style lang="scss" scoped src="./login-page.scss"></style>

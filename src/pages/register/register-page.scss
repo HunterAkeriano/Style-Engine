@@ -107,7 +107,12 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: $color-border;
+    background: linear-gradient(
+      90deg,
+      color-var-alpha('color-text-primary', 0.08),
+      color-var-alpha('color-text-primary', 0.2),
+      color-var-alpha('color-text-primary', 0.08)
+    );
   }
 
   span {
@@ -216,6 +221,13 @@
 .register-page__google-button {
   width: 100%;
   max-width: 100%;
+  background: $color-bg-primary;
+  border-color: $color-border;
+
+  &:hover:not(.button_disabled) {
+    border-color: $color-primary;
+    background: color-var-alpha('color-primary', 0.04);
+  }
 }
 
 .register-page__google-icon {
