@@ -3,7 +3,6 @@
   border: 1px solid color-var-alpha('color-text-primary', 0.06);
   border-radius: 20px;
   padding: $space-xl;
-  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.24);
   position: relative;
   overflow: hidden;
 
@@ -51,11 +50,10 @@
     border: 1px solid color-var-alpha('color-border', 0.35);
     overflow: hidden;
     cursor: pointer;
-    transition: transform 180ms ease, box-shadow 200ms ease;
+    transition: transform 180ms ease;
 
     &:hover {
       transform: translate3d(0, -2px, 0);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     }
   }
 
