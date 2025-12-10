@@ -716,3 +716,13 @@
     animation: none !important;
   }
 }
+
+/* Force-remove shadows on forum pages and nested elements */
+.forum-page,
+.forum-page *,
+.forum-topic,
+.forum-topic *,
+.forum-create,
+.forum-create * {
+  box-shadow: none !important;
+}

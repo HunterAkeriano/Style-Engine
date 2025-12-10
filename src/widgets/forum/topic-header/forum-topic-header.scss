@@ -11,9 +11,6 @@
     radial-gradient(circle at 12% 18%, color-var-alpha('color-primary', 0.12), transparent 40%),
     radial-gradient(circle at 88% 22%, color-var-alpha('color-accent', 0.1), transparent 35%),
     color-var-alpha('color-bg-secondary', 0.6);
-  box-shadow:
-    0 20px 70px color-var-alpha('color-text-primary', 0.22),
-    inset 0 1px 0 color-var-alpha('panel-border', 0.5);
   overflow: hidden;
   isolation: isolate;
   opacity: 0;
@@ -70,7 +67,6 @@
   font-size: $font-size-xs;
   margin-bottom: $space-md;
   border: 1px solid color-var-alpha('color-primary', 0.28);
-  box-shadow: 0 4px 20px color-var-alpha('color-primary', 0.15);
   position: relative;
   overflow: hidden;
   transition: transform $transition-base;
@@ -133,7 +129,6 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   border: 1px solid color-var-alpha('color-accent', 0.3);
-  box-shadow: 0 6px 18px color-var-alpha('color-accent', 0.18);
 }
 
 .forum-topic__subtitle {
@@ -207,7 +202,7 @@
   overflow: hidden;
   transition:
     transform $transition-base,
-    box-shadow $transition-base;
+    border-color $transition-base;
 
   &::before {
     content: '';
@@ -215,7 +210,7 @@
     height: 9px;
     border-radius: 50%;
     background: currentColor;
-    box-shadow: 0 0 10px currentColor;
+    box-shadow: none;
     animation: pulse 2s ease-in-out infinite;
   }
 
@@ -230,7 +225,6 @@
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px currentColor;
   }
 
   &_open {

@@ -11,11 +11,6 @@
     linear-gradient(135deg, color-var-alpha('color-bg-secondary', 0.95), color-var-alpha('color-bg-primary', 0.92)),
     radial-gradient(circle at 18% 25%, color-var-alpha('color-primary', 0.1), transparent 45%),
     radial-gradient(circle at 82% 30%, color-var-alpha('color-accent', 0.08), transparent 40%);
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.32),
-    0 12px 28px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 color-var-alpha('panel-border', 0.6),
-    inset 0 -1px 0 color-var-alpha('panel-border', 0.2);
   overflow: hidden;
   isolation: isolate;
   opacity: 0;
@@ -100,7 +95,6 @@
   font-weight: $font-weight-bold;
   font-size: $font-size-sm;
   color: $color-primary;
-  box-shadow: 0 4px 16px color-var-alpha('color-primary', 0.12);
   position: relative;
   overflow: hidden;
   transition: transform $transition-base;
@@ -241,8 +235,7 @@
   overflow: hidden;
   transition:
     transform $transition-base,
-    border-color $transition-base,
-    box-shadow $transition-base;
+    border-color $transition-base;
 
   &::before {
     content: '';
@@ -261,7 +254,6 @@
   &:hover {
     transform: translateY(-2px);
     border-color: color-var-alpha('color-primary', 0.4);
-    box-shadow: 0 4px 16px color-var-alpha('color-primary', 0.15);
 
     &::before {
       opacity: 1;

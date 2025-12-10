@@ -97,9 +97,6 @@
     radial-gradient(circle at 25% 35%, color-var-alpha('color-primary', 0.06), transparent 40%);
   border: 1px solid color-var-alpha('panel-border', 0.35);
   border-radius: $border-radius-3xl;
-  box-shadow:
-    0 16px 48px color-var-alpha('color-text-primary', 0.2),
-    inset 0 1px 0 color-var-alpha('panel-border', 0.4);
   position: relative;
   overflow: hidden;
   isolation: isolate;
