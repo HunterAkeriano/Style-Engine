@@ -105,7 +105,7 @@
             <p class="footer__author">
               {{ t("FOOTER.CO_FOUNDER") }}
               <a rel="noopener noreferrer" class="footer__author-link">
-                Kristina Voborobyeva
+                Kristina Vorobiova
               </a>
             </p>
           </div>
