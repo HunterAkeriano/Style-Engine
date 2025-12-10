@@ -11,6 +11,7 @@ export const useAuthStore = defineStore('auth', () => {
   const error = ref<string | null>(null)
   const token = ref<string | null>(null)
   const hydrated = ref(false)
+  let sessionPromise: Promise<void> | null = null
 
   const isAuthenticated = computed(() => user.value !== null)
   const userPlan = computed(() => (user.value?.isPayment ? 'pro' : user.value?.plan || 'free'))
@@ -62,16 +63,24 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function ensureSession() {
     if (hydrated.value) return
-    hydrated.value = true
-    const stored = getCookie(AUTH_TOKEN_KEY)
-    if (!stored) return
-    setToken(stored)
-    try {
-      await fetchProfile()
-    } catch {
-      setToken(null)
-      setUser(null)
-    }
+    if (sessionPromise) return sessionPromise
+
+    sessionPromise = (async () => {
+      hydrated.value = true
+      const stored = getCookie(AUTH_TOKEN_KEY)
+      if (!stored) return
+      setToken(stored)
+      try {
+        await fetchProfile()
+      } catch {
+        setToken(null)
+        setUser(null)
+      }
+    })().finally(() => {
+      sessionPromise = null
+    })
+
+    return sessionPromise
   }
 
   async function login(email: string, password: string) {
