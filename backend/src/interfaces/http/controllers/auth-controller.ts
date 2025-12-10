@@ -119,7 +119,7 @@ export class AuthController implements HttpController {
       await this.service.logout(token)
       res.setHeader(
         'Set-Cookie',
-        serializeCookie('refreshToken', '', { path: '/api/auth/refresh', httpOnly: true, maxAge: 0 })
+        serializeCookie('refreshToken', '', { ...this.cookieConfig(), maxAge: 0 })
       )
       res.json({ ok: true })
     })
@@ -208,11 +208,13 @@ export class AuthController implements HttpController {
 
   private cookieConfig() {
     const env = this.env ?? ({ NODE_ENV: 'development' } as Env)
+    const isProd = env.NODE_ENV === 'production'
     return {
       httpOnly: true,
-      secure: env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
-      path: '/api/auth/refresh',
+      secure: isProd,
+      // Allow refresh cookie to be sent from a different origin (frontend vs backend)
+      sameSite: (isProd ? 'none' : 'lax') as const,
+      path: '/api',
       maxAge: 30 * 24 * 60 * 60
     }
   }
