@@ -38,7 +38,7 @@ export class UserService {
     return { ...rest, ...roleData }
   }
 
-  async fetchUsers(options: UsersQueryOptions, _extra?: { hideSuperAdmin?: boolean }) {
+  async fetchUsers(options: UsersQueryOptions) {
     const offset = (options.page - 1) * options.limit
     const whereConditions: WhereOptions[] = [where(fn('LOWER', col('email')), { [Op.ne]: this.superAdminEmail })]
     if (options.tier !== 'all') {
