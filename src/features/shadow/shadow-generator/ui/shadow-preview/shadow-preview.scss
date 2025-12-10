@@ -8,6 +8,15 @@
   border: 1px solid color-var-alpha('panel-border', 0.28);
   box-shadow: 0 28px 70px rgba(0, 0, 0, 0.42), 0 18px 32px $color-primary-alpha-18;
   isolation: isolate;
+
+  @media (max-width: $breakpoint-md) {
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.32), 0 10px 22px $color-primary-alpha-16;
+    background: linear-gradient(
+      145deg,
+      color-var-alpha('color-bg-primary', 0.96),
+      color-var-alpha('color-bg-secondary', 0.92)
+    );
+  }
 }
 
 .shadow-preview__scene {
@@ -43,6 +52,7 @@
   mix-blend-mode: screen;
   z-index: -1;
   animation: orbFloat 18s ease-in-out infinite alternate;
+  will-change: transform;
 
   &::after {
     content: '';
@@ -182,6 +192,25 @@
 @keyframes pulseDot {
   0%, 100% { transform: scale(1); box-shadow: 0 0 0 6px color-var-alpha('color-primary', 0.2); }
   50% { transform: scale(1.15); box-shadow: 0 0 0 12px color-var-alpha('color-secondary', 0.22); }
+}
+
+@media (max-width: $breakpoint-md) {
+  .shadow-preview__grid,
+  .shadow-preview__orb,
+  .shadow-preview__card,
+  .shadow-preview__card::before,
+  .shadow-preview__card::after,
+  .shadow-preview__dot {
+    animation: none !important;
+  }
+
+  .shadow-preview__grid {
+    opacity: 0.35;
+  }
+
+  .shadow-preview__orb {
+    opacity: 0.35;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

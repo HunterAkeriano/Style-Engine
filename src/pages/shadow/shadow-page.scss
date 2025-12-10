@@ -267,6 +267,29 @@
   z-index: 1;
 }
 
+@media (max-width: $breakpoint-lg) {
+  .shadow-page {
+    background: linear-gradient(180deg, $color-bg-secondary, $color-bg-primary);
+  }
+
+  .shadow-page::before,
+  .shadow-page::after,
+  .shadow-page__motion,
+  .shadow-page__wave {
+    animation: none !important;
+    opacity: 0.35;
+  }
+
+  .shadow-page__motion {
+    opacity: 0.25;
+  }
+
+  .shadow-page__waves,
+  .shadow-page__motion {
+    display: none;
+  }
+}
+
 @keyframes shadowNebula {
   0% {
     transform: translate3d(0, 0, 0) scale(1);

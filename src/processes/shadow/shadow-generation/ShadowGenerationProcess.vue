@@ -41,17 +41,6 @@
       </div>
     </div>
 
-    <div class="shadow-generation__presets">
-      <ShadowPresets
-        :presets="allPresets"
-        :active-id="selectedPresetId"
-        :saving-id="savingPresetId"
-        :is-saved="isPresetSaved"
-        @apply="applyPreset"
-        @copy="copyPreset"
-        @save="handleSavePreset"
-      />
-    </div>
     <Modal
       :title="t('COMMON.AUTH_REQUIRED_TITLE')"
       :subtitle="t('COMMON.AUTH_REQUIRED_DESCRIPTION')"
@@ -124,23 +113,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useToast } from "@/shared/lib/toast";
 import { useRoute, useRouter } from "vue-router";
 import type { ShadowLayer, ShadowPreset } from "@/shared/types";
 import { randomHexColor, hexToRgb } from "@/shared/lib/color";
 import {
-  copyToClipboard,
   formatBoxShadow,
   type CSSFormat,
   smoothScrollToTop,
 } from "@/shared/lib";
-import {
-  ShadowControls,
-  ShadowPreview,
-  ShadowPresets,
-} from "@/features/shadow";
+import { ShadowControls, ShadowPreview } from "@/features/shadow";
 import { SHADOW_PRESETS } from "@/processes";
 import {
   listPublicSaves,
@@ -190,6 +174,8 @@ const defaultLayers: ShadowLayer[] = [
 const layers = ref<ShadowLayer[]>(normalizeLayers(defaultLayers));
 let layerIdCounter = layers.value.length;
 const selectedPresetId = ref<string | null>(null);
+const layerPatchQueue = new Map<string, Partial<ShadowLayer>>();
+let layerPatchRaf: number | null = null;
 
 const route = useRoute();
 const router = useRouter();
@@ -293,12 +279,69 @@ function removeLayer(id: string) {
 }
 
 function updateLayer(id: string, patch: Partial<ShadowLayer>) {
-  const layer = layers.value.find((item) => item.id === id);
-  if (!layer) return;
+  const sanitized = sanitizePatch(patch);
+  if (!Object.keys(sanitized).length) return;
 
-  Object.assign(layer, sanitizePatch(patch));
-  selectedPresetId.value = null;
-  updatePresetQuery(null);
+  const existing = layerPatchQueue.get(id) ?? {};
+  layerPatchQueue.set(id, { ...existing, ...sanitized });
+
+  if (layerPatchRaf !== null) return;
+  layerPatchRaf = requestAnimationFrame(flushLayerPatchQueue);
+}
+
+function flushLayerPatchQueue() {
+  layerPatchRaf = null;
+  if (!layerPatchQueue.size) return;
+
+  let didUpdate = false;
+  for (const [id, patch] of layerPatchQueue.entries()) {
+    const layer = layers.value.find((item) => item.id === id);
+    if (!layer) continue;
+
+    const hasChanges = applyLayerPatch(layer, patch);
+    didUpdate = didUpdate || hasChanges;
+  }
+
+  layerPatchQueue.clear();
+
+  if (didUpdate) {
+    selectedPresetId.value = null;
+    updatePresetQuery(null);
+  }
+}
+
+function applyLayerPatch(
+  layer: ShadowLayer,
+  patch: Partial<ShadowLayer>,
+): boolean {
+  let changed = false;
+
+  if (typeof patch.x === "number" && patch.x !== layer.x) {
+    layer.x = patch.x;
+    changed = true;
+  }
+  if (typeof patch.y === "number" && patch.y !== layer.y) {
+    layer.y = patch.y;
+    changed = true;
+  }
+  if (typeof patch.spread === "number" && patch.spread !== layer.spread) {
+    layer.spread = patch.spread;
+    changed = true;
+  }
+  if (typeof patch.opacity === "number" && patch.opacity !== layer.opacity) {
+    layer.opacity = patch.opacity;
+    changed = true;
+  }
+  if (typeof patch.color === "string" && patch.color !== layer.color) {
+    layer.color = patch.color;
+    changed = true;
+  }
+  if (typeof patch.inset === "boolean" && patch.inset !== layer.inset) {
+    layer.inset = patch.inset;
+    changed = true;
+  }
+
+  return changed;
 }
 
 function sanitizePatch(patch: Partial<ShadowLayer>): Partial<ShadowLayer> {
@@ -355,21 +398,6 @@ function applyPreset(preset: ShadowPreset) {
   smoothScrollToTop();
 }
 
-async function copyPreset(preset: ShadowPreset) {
-  const code = formatBoxShadow(
-    preset.layers.map((layer) => ({
-      ...layer,
-      blur: 0,
-      color: resolveColor(layer),
-    })),
-    "css",
-  );
-  const ok = await copyToClipboard(code);
-  toast[ok ? "success" : "error"](
-    ok ? t("COMMON.COPIED_TO_CLIPBOARD") : t("COMMON.COPY_FAILED"),
-  );
-}
-
 async function handleSaveCurrentShadow() {
   if (!authStore.isAuthenticated) {
     showAuthModal.value = true;
@@ -399,23 +427,6 @@ async function handleSaveCurrentShadow() {
     defaultName: t("SHADOW.CUSTOM_SHADOW"),
   };
   saveName.value = t("SHADOW.CUSTOM_SHADOW");
-  showSaveModal.value = true;
-}
-
-async function handleSavePreset(preset: ShadowPreset) {
-  if (!authStore.isAuthenticated) {
-    showAuthModal.value = true;
-    return;
-  }
-
-  saveContext.value = {
-    preset,
-    payload: {
-      layers: preset.layers,
-    },
-    defaultName: preset.name,
-  };
-  saveName.value = preset.name;
   showSaveModal.value = true;
 }
 
@@ -489,21 +500,11 @@ function handleProLimitConfirm() {
   });
 }
 
-function isPresetSaved(preset: ShadowPreset) {
-  return savedShadowHashes.value.has(shadowPresetHash(preset));
-}
-
 function handleAuthConfirm() {
   showAuthModal.value = false;
   router.push({
     name: `${locale.value}-login`,
     query: { redirect: route.fullPath },
-  });
-}
-
-function shadowPresetHash(preset: ShadowPreset) {
-  return JSON.stringify({
-    layers: preset.layers,
   });
 }
 
@@ -619,6 +620,14 @@ onMounted(() => {
   applyPresetFromQuery(route.query.preset);
   loadCommunityPresets();
   loadSavedShadows();
+});
+
+onUnmounted(() => {
+  if (layerPatchRaf !== null) {
+    cancelAnimationFrame(layerPatchRaf);
+    layerPatchRaf = null;
+  }
+  layerPatchQueue.clear();
 });
 
 watch(

@@ -10,7 +10,7 @@
 
     <div class="shadow-presets__grid">
       <article
-        v-for="preset in presets"
+        v-for="preset in renderedPresets"
         :key="preset.id"
         class="shadow-presets__card"
         :class="{ 'shadow-presets__card_active': preset.id === activeId }"
@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs } from 'vue'
+import { computed, onMounted, onUnmounted, ref, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ShadowPreset } from '@/shared/types'
 import { Button } from '@/shared/ui'
@@ -90,6 +90,40 @@ const { presets, savingId, isSaved } = toRefs(props)
 const { t } = useI18n()
 const isPresetSaved = (preset: ShadowPreset) => (isSaved?.value && isSaved.value(preset)) ?? false
 
+type ShadowPresetWithValue = ShadowPreset & { shadowValue: string }
+const shadowCache = new WeakMap<ShadowPreset, string>()
+const isLightPresetMode = ref(false)
+
+const handleResize = () => {
+  if (typeof window === 'undefined') return
+  isLightPresetMode.value = window.innerWidth < 1024
+}
+
+onMounted(() => {
+  handleResize()
+  if (typeof window !== 'undefined') {
+    window.addEventListener('resize', handleResize, { passive: true })
+  }
+})
+
+onUnmounted(() => {
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('resize', handleResize)
+  }
+})
+
+const renderedPresets = computed<ShadowPresetWithValue[]>(() =>
+  presets.value.map(preset => {
+    let cached = shadowCache.get(preset)
+    if (!cached && !isLightPresetMode.value) {
+      cached = buildShadow(preset.layers)
+      shadowCache.set(preset, cached)
+    }
+    const shadowValue = isLightPresetMode.value ? 'none' : cached ?? 'none'
+    return { ...preset, shadowValue }
+  })
+)
+
 function handleCardClick(preset: ShadowPreset, event: MouseEvent) {
   const target = event.target as HTMLElement | null
   if (target?.closest('.shadow-presets__actions')) return
@@ -108,8 +142,10 @@ function buildShadow(layers: ShadowPreset['layers']) {
     .join(', ')
 }
 
-function getStyle(preset: ShadowPreset) {
-  const shadow = buildShadow(preset.layers)
+function getStyle(preset: ShadowPresetWithValue) {
+  const shadow = isLightPresetMode.value
+    ? 'none'
+    : preset.shadowValue || buildShadow(preset.layers)
   return {
     boxShadow: shadow,
     '--shadow-value': shadow
