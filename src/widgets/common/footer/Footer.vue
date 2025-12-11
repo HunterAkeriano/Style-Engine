@@ -3,7 +3,7 @@
     <div class="container">
       <div class="footer__content">
         <div class="footer__brand">
-          <Logo class="footer__logo" />
+          <Logo class="footer__logo" not-show />
           <h3 class="footer__brand-title">CSS-Zone</h3>
           <p class="footer__brand-description">
             {{ t("HOME.SUBTITLE") }}

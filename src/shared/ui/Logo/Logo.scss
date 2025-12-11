@@ -14,17 +14,44 @@
     height: 40px;
     fill: white;
     stroke: white;
-
-    &:hover {
-    }
   }
 
   &__text {
+    display: none;
     font-size: $font-size-xl;
     font-weight: $font-weight-bold;
-    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+    letter-spacing: -0.5px;
+
+    @media (min-width: $breakpoint-lg) {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  &__text-css {
+    background: linear-gradient(135deg, #06b6d4, #8b5cf6, #ec4899);
+    background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  &__text-zone {
+    color: var(--color-text-primary);
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
   }
 }
