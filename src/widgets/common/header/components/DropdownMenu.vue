@@ -50,7 +50,7 @@ const setActiveDropdown = inject<(id: string | null) => void>(
 );
 
 const isOpen = computed(() => activeDropdownId.value === props.id);
-let closeTimeout: NodeJS.Timeout | null = null;
+let closeTimeout: ReturnType<typeof setTimeout> | null = null;
 
 function handleMouseEnter() {
   if (closeTimeout) {
