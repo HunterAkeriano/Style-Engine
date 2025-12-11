@@ -88,7 +88,7 @@ export const AsHeroSection: Story = {
           <StarfieldAnimation v-bind="args" />
           <div style="position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: white; text-align: center; padding: 20px;">
             <h1 style="font-size: 2.5rem; margin: 0 0 1rem 0; font-weight: bold; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-              Style Engine
+              CSS-Zone
             </h1>
             <p style="font-size: 1.2rem; margin: 0 0 2rem 0; opacity: 0.9; max-width: 600px;">
               Create beautiful gradients, shadows, and animations with our powerful CSS generator tools

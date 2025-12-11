@@ -63,28 +63,61 @@
       />
     </symbol>
 
-    <symbol id="icon-logo" viewBox="0 0 40 40">
+    <symbol id="icon-logo" viewBox="0 0 48 48">
       <defs>
-        <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color: #667eea; stop-opacity: 1" />
-          <stop offset="50%" style="stop-color: #764ba2; stop-opacity: 1" />
-          <stop offset="100%" style="stop-color: #f093fb; stop-opacity: 1" />
+        <linearGradient id="logo-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#0f172a" />
+          <stop offset="100%" stop-color="#1e293b" />
+        </linearGradient>
+        <linearGradient id="logo-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#06b6d4" />
+          <stop offset="50%" stop-color="#8b5cf6" />
+          <stop offset="100%" stop-color="#ec4899" />
+        </linearGradient>
+        <linearGradient id="logo-wave" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#06b6d4" />
+          <stop offset="50%" stop-color="#8b5cf6" />
+          <stop offset="100%" stop-color="#ec4899" />
         </linearGradient>
       </defs>
-      <rect
-        x="4"
-        y="4"
-        width="32"
-        height="32"
-        rx="8"
-        fill="url(#logo-gradient)"
+      <rect x="2" y="2" width="44" height="44" rx="10" fill="url(#logo-bg)" />
+      <path
+        d="M15 13c-3 0-5 2-5 5v4c0 1.5-1.5 2-2.5 2 1 0 2.5.5 2.5 2v4c0 3 2 5 5 5"
+        stroke="url(#logo-accent)"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        fill="none"
       />
       <path
-        d="M12 16 L20 12 L28 16 L28 24 L20 28 L12 24 Z"
-        fill="white"
-        fill-opacity="0.9"
+        d="M33 13c3 0 5 2 5 5v4c0 1.5 1.5 2 2.5 2-1 0-2.5.5-2.5 2v4c0 3-2 5-5 5"
+        stroke="url(#logo-accent)"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        fill="none"
       />
-      <circle cx="20" cy="20" r="4" fill="url(#logo-gradient)" />
+      <path
+        d="M16 24c2-4 4-6 8-6s6 6 8 6 4-6 8-6"
+        stroke="url(#logo-wave)"
+        stroke-width="3"
+        stroke-linecap="round"
+        fill="none"
+        opacity="0.3"
+      />
+      <path
+        d="M14 28c3-5 5-8 10-8s7 8 10 8"
+        stroke="url(#logo-wave)"
+        stroke-width="3"
+        stroke-linecap="round"
+        fill="none"
+        opacity="0.5"
+      />
+      <path
+        d="M16 24c3-4 5-6 8-6s5 6 8 6"
+        stroke="url(#logo-wave)"
+        stroke-width="3.5"
+        stroke-linecap="round"
+        fill="none"
+      />
     </symbol>
 
     <symbol id="icon-user" viewBox="0 0 20 20">

@@ -165,7 +165,7 @@ export class AuthController implements HttpController {
         const builder = new MailBuilder();
         await new MailerService(this.env).send({
           to: userEmail,
-          subject: "Reset your Style Engine password",
+          subject: "Reset your CSS-Zone password",
           text: builder.plainReset(resetLink),
           html: builder.htmlReset(resetLink),
         });

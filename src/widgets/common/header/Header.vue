@@ -4,53 +4,51 @@
       <div class="header__content">
         <Logo />
 
-        <div class="header__mobile-title" aria-hidden="true">
-          style engine
-        </div>
+        <div class="header__mobile-title" aria-hidden="true">CSS-ZONE</div>
 
         <nav class="header__nav">
-          <DropdownMenu :title="t('NAV.DOCS')" is-first id="docs-dropdown" >
-          <NavLink :to="`/${locale}/docs`" class-name="header__nav-link">
-            {{ t('NAV.DOCS') }}
-          </NavLink>
+          <DropdownMenu :title="t('NAV.DOCS')" is-first id="docs-dropdown">
+            <NavLink :to="`/${locale}/docs`" class-name="header__nav-link">
+              {{ t("NAV.DOCS") }}
+            </NavLink>
 
-          <NavLink :to="`/${locale}/quiz`" class-name="header__nav-link">
-            {{ t('NAV.QUIZ') }}
-          </NavLink>
+            <NavLink :to="`/${locale}/quiz`" class-name="header__nav-link">
+              {{ t("NAV.QUIZ") }}
+            </NavLink>
 
-          <NavLink :to="`/${locale}/forum`" class-name="header__nav-link">
-            {{ t('NAV.FORUM') }}
-          </NavLink>
-        </DropdownMenu>
+            <NavLink :to="`/${locale}/forum`" class-name="header__nav-link">
+              {{ t("NAV.FORUM") }}
+            </NavLink>
+          </DropdownMenu>
 
-        <DropdownMenu id="functions-dropdown" :title="t('NAV.FUNCTIONS')">
-          <NavLink :to="`/${locale}/gradient`" class-name="header__nav-link">
-            {{ t('NAV.GRADIENTS') }}
+          <DropdownMenu id="functions-dropdown" :title="t('NAV.FUNCTIONS')">
+            <NavLink :to="`/${locale}/gradient`" class-name="header__nav-link">
+              {{ t("NAV.GRADIENTS") }}
             </NavLink>
 
             <NavLink :to="`/${locale}/shadow`" class-name="header__nav-link">
-              {{ t('NAV.SHADOWS') }}
+              {{ t("NAV.SHADOWS") }}
             </NavLink>
 
             <NavLink :to="`/${locale}/animation`" class-name="header__nav-link">
-              {{ t('NAV.ANIMATIONS') }}
+              {{ t("NAV.ANIMATIONS") }}
             </NavLink>
 
             <NavLink :to="`/${locale}/clip-path`" class-name="header__nav-link">
-              {{ t('NAV.CLIP_PATHS') }}
+              {{ t("NAV.CLIP_PATHS") }}
             </NavLink>
 
             <NavLink :to="`/${locale}/grid`" class-name="header__nav-link">
-              {{ t('NAV.GRID') }}
+              {{ t("NAV.GRID") }}
             </NavLink>
 
             <NavLink :to="`/${locale}/favicon`" class-name="header__nav-link">
-              {{ t('NAV.FAVICON') }}
+              {{ t("NAV.FAVICON") }}
             </NavLink>
           </DropdownMenu>
 
           <NavLink :to="`/${locale}/about`" class-name="header__nav-link">
-            {{ t('NAV.ABOUT') }}
+            {{ t("NAV.ABOUT") }}
           </NavLink>
         </nav>
 
@@ -63,7 +61,7 @@
           </template>
           <template v-else>
             <Button size="sm" variant="outline" @click="goToAuth">
-              {{ t('NAV.LOGIN') }}
+              {{ t("NAV.LOGIN") }}
             </Button>
           </template>
         </div>
@@ -82,44 +80,84 @@
       :aria-hidden="!isMobileMenuOpen"
     >
       <nav class="header__mobile-nav">
-        <NavLink :to="`/${locale}/docs`" class-name="header__mobile-link" @click="closeMobileMenu">
-          {{ t('NAV.DOCS') }}
+        <NavLink
+          :to="`/${locale}/docs`"
+          class-name="header__mobile-link"
+          @click="closeMobileMenu"
+        >
+          {{ t("NAV.DOCS") }}
         </NavLink>
 
-        <NavLink :to="`/${locale}/quiz`" class-name="header__mobile-link" @click="closeMobileMenu">
-          {{ t('NAV.QUIZ') }}
+        <NavLink
+          :to="`/${locale}/quiz`"
+          class-name="header__mobile-link"
+          @click="closeMobileMenu"
+        >
+          {{ t("NAV.QUIZ") }}
         </NavLink>
 
-        <NavLink :to="`/${locale}/forum`" class-name="header__mobile-link" @click="closeMobileMenu">
-          {{ t('NAV.FORUM') }}
+        <NavLink
+          :to="`/${locale}/forum`"
+          class-name="header__mobile-link"
+          @click="closeMobileMenu"
+        >
+          {{ t("NAV.FORUM") }}
         </NavLink>
 
-        <NavLink :to="`/${locale}/gradient`" class-name="header__mobile-link" @click="closeMobileMenu">
-          {{ t('NAV.GRADIENTS') }}
+        <NavLink
+          :to="`/${locale}/gradient`"
+          class-name="header__mobile-link"
+          @click="closeMobileMenu"
+        >
+          {{ t("NAV.GRADIENTS") }}
         </NavLink>
 
-        <NavLink :to="`/${locale}/shadow`" class-name="header__mobile-link" @click="closeMobileMenu">
-          {{ t('NAV.SHADOWS') }}
+        <NavLink
+          :to="`/${locale}/shadow`"
+          class-name="header__mobile-link"
+          @click="closeMobileMenu"
+        >
+          {{ t("NAV.SHADOWS") }}
         </NavLink>
 
-        <NavLink :to="`/${locale}/animation`" class-name="header__mobile-link" @click="closeMobileMenu">
-          {{ t('NAV.ANIMATIONS') }}
+        <NavLink
+          :to="`/${locale}/animation`"
+          class-name="header__mobile-link"
+          @click="closeMobileMenu"
+        >
+          {{ t("NAV.ANIMATIONS") }}
         </NavLink>
 
-        <NavLink :to="`/${locale}/clip-path`" class-name="header__mobile-link" @click="closeMobileMenu">
-          {{ t('NAV.CLIP_PATHS') }}
+        <NavLink
+          :to="`/${locale}/clip-path`"
+          class-name="header__mobile-link"
+          @click="closeMobileMenu"
+        >
+          {{ t("NAV.CLIP_PATHS") }}
         </NavLink>
 
-        <NavLink :to="`/${locale}/grid`" class-name="header__mobile-link" @click="closeMobileMenu">
-          {{ t('NAV.GRID') }}
+        <NavLink
+          :to="`/${locale}/grid`"
+          class-name="header__mobile-link"
+          @click="closeMobileMenu"
+        >
+          {{ t("NAV.GRID") }}
         </NavLink>
 
-        <NavLink :to="`/${locale}/favicon`" class-name="header__mobile-link" @click="closeMobileMenu">
-          {{ t('NAV.FAVICON') }}
+        <NavLink
+          :to="`/${locale}/favicon`"
+          class-name="header__mobile-link"
+          @click="closeMobileMenu"
+        >
+          {{ t("NAV.FAVICON") }}
         </NavLink>
 
-        <NavLink :to="`/${locale}/about`" class-name="header__mobile-link" @click="closeMobileMenu">
-          {{ t('NAV.ABOUT') }}
+        <NavLink
+          :to="`/${locale}/about`"
+          class-name="header__mobile-link"
+          @click="closeMobileMenu"
+        >
+          {{ t("NAV.ABOUT") }}
         </NavLink>
       </nav>
 
@@ -128,17 +166,31 @@
         <LanguageSwitcher />
 
         <template v-if="authStore.isAuthenticated && authStore.user">
-          <NavLink :to="`/${locale}/profile`" class-name="header__mobile-link" @click="closeMobileMenu">
-            {{ t('NAV.PROFILE') }}
+          <NavLink
+            :to="`/${locale}/profile`"
+            class-name="header__mobile-link"
+            @click="closeMobileMenu"
+          >
+            {{ t("NAV.PROFILE") }}
           </NavLink>
 
-          <Button size="md" variant="danger" style="width: 100%;" @click="handleLogout">
-            {{ t('NAV.LOGOUT') }}
+          <Button
+            size="md"
+            variant="danger"
+            style="width: 100%"
+            @click="handleLogout"
+          >
+            {{ t("NAV.LOGOUT") }}
           </Button>
         </template>
         <template v-else>
-          <Button size="md" variant="primary" style="width: 100%;" @click="goToAuth">
-            {{ t('NAV.LOGIN') }}
+          <Button
+            size="md"
+            variant="primary"
+            style="width: 100%"
+            @click="goToAuth"
+          >
+            {{ t("NAV.LOGIN") }}
           </Button>
         </template>
       </div>
@@ -147,67 +199,70 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, provide, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock-upgrade'
-import { useAuthStore } from '@/entities'
-import { LanguageSwitcher } from '@/features'
-import Logo from '@/shared/ui/Logo/Logo.vue'
-import { Button, Icon, NavLink, ThemeSwitcher } from '@/shared/ui'
-import UserMenu from '@/widgets/common/user-menu/UserMenu.vue'
-import DropdownMenu from './components/DropdownMenu.vue'
+import { nextTick, onBeforeUnmount, provide, ref, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+import {
+  disableBodyScroll,
+  clearAllBodyScrollLocks,
+} from "body-scroll-lock-upgrade";
+import { useAuthStore } from "@/entities";
+import { LanguageSwitcher } from "@/features";
+import Logo from "@/shared/ui/Logo/Logo.vue";
+import { Button, Icon, NavLink, ThemeSwitcher } from "@/shared/ui";
+import UserMenu from "@/widgets/common/user-menu/UserMenu.vue";
+import DropdownMenu from "./components/DropdownMenu.vue";
 
-const router = useRouter()
-const authStore = useAuthStore()
-const { t, locale } = useI18n()
-const isMobileMenuOpen = ref(false)
-const mobileMenuRef = ref<HTMLElement | null>(null)
+const router = useRouter();
+const authStore = useAuthStore();
+const { t, locale } = useI18n();
+const isMobileMenuOpen = ref(false);
+const mobileMenuRef = ref<HTMLElement | null>(null);
 
-const activeDropdownId = ref<string | null>(null)
+const activeDropdownId = ref<string | null>(null);
 
 function setActiveDropdown(id: string | null) {
-  activeDropdownId.value = id
+  activeDropdownId.value = id;
 }
 
-provide('activeDropdownId', activeDropdownId)
-provide('setActiveDropdown', setActiveDropdown)
+provide("activeDropdownId", activeDropdownId);
+provide("setActiveDropdown", setActiveDropdown);
 
 function toggleMobileMenu() {
-  isMobileMenuOpen.value = !isMobileMenuOpen.value
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
 }
 
 function closeMobileMenu() {
-  isMobileMenuOpen.value = false
+  isMobileMenuOpen.value = false;
 }
 
 function goToAuth() {
-  closeMobileMenu()
-  router.push(`/${locale.value}/login`)
+  closeMobileMenu();
+  router.push(`/${locale.value}/login`);
 }
 
 function handleLogout() {
-  authStore.logout()
-  closeMobileMenu()
-  router.push(`/${locale.value}`)
+  authStore.logout();
+  closeMobileMenu();
+  router.push(`/${locale.value}`);
 }
 
 watch(isMobileMenuOpen, async (isOpen) => {
   if (isOpen) {
-    await nextTick()
+    await nextTick();
     if (mobileMenuRef.value) {
       disableBodyScroll(mobileMenuRef.value, {
-        reserveScrollBarGap: true
-      })
+        reserveScrollBarGap: true,
+      });
     }
   } else {
-    clearAllBodyScrollLocks()
+    clearAllBodyScrollLocks();
   }
-})
+});
 
 onBeforeUnmount(() => {
-  clearAllBodyScrollLocks()
-})
+  clearAllBodyScrollLocks();
+});
 </script>
 
 <style lang="scss" scoped src="./header.scss"></style>

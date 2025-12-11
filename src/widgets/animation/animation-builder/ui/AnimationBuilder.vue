@@ -212,7 +212,7 @@ const proLimitSubtitle = computed(() =>
     entity: entityLabel.value
   })
 )
-const animationName = 'style-engine-motion'
+const animationName = 'css-zone-motion'
 
 const duration = ref(1200)
 const delay = ref(0)

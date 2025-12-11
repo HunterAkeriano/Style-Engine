@@ -1,1 +1,1 @@
-export const AUTH_TOKEN_KEY = 'style-engine-token'
+export const AUTH_TOKEN_KEY = 'css-zone-token'

@@ -7,9 +7,9 @@ export function setupSwagger(app: Express) {
     definition: {
       openapi: '3.0.3',
       info: {
-        title: 'Style Engine API',
+        title: 'CSS-Zone API',
         version: '0.1.0',
-        description: 'REST API для Style Engine - генератор градиентов, теней и анимаций. Поддерживает аутентификацию, профили пользователей и сохранение настроек.',
+        description: 'REST API для CSS-Zone - генератор градиентов, теней и анимаций. Поддерживает аутентификацию, профили пользователей и сохранение настроек.',
         contact: {
           name: 'Dmitriy Hulak',
           url: 'https://github.com/dmitriy-hulak'

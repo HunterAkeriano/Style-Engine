@@ -1,12 +1,12 @@
 {
-  "name": "style-engine",
+  "name": "css-zone",
   "private": true,
   "workspaces": [
     "backend"
   ],
   "version": "0.1.0",
   "type": "module",
-  "description": "Style Engine - Генератор CSS-градиентов, теней и анимаций",
+  "description": "CSS-Zone - Генератор CSS-градиентов, теней и анимаций",
   "scripts": {
     "dev": "vite --host",
     "build": "vue-tsc && vite build",

@@ -2,7 +2,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
 export type Theme = 'light' | 'dark'
 
-const STORAGE_KEY = 'style-engine-theme'
+const STORAGE_KEY = 'css-zone-theme'
 const theme = ref<Theme>('dark')
 const isReady = ref(false)
 let mediaQuery: MediaQueryList | null = null

@@ -1,4 +1,4 @@
-# Style Engine (css-lab)
+# CSS-Zone (css-lab)
 
 Документація для розробників. Проєкт: Vite + Vue 3 (script setup), Pinia, vue-router, vue-i18n, @unhead/vue, SCSS. Статична генерація через `vite-ssg`. Бекенд виділений у окремий npm-воркспейс (`backend/`).
 

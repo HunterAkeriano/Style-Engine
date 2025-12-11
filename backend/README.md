@@ -1,6 +1,6 @@
-# Style Engine Backend
+# CSS-Zone Backend
 
-Express.js REST API с PostgreSQL для приложения Style Engine.
+Express.js REST API с PostgreSQL для приложения CSS-Zone.
 
 ## Требования
 
@@ -23,13 +23,13 @@ npm install
 brew services start postgresql@16
 
 # Создать базу данных
-/opt/homebrew/opt/postgresql@16/bin/createdb style_engine
+/opt/homebrew/opt/postgresql@16/bin/createdb css_zone
 
 # Применить схему
-/opt/homebrew/opt/postgresql@16/bin/psql -d style_engine -f src/db/schema.sql
+/opt/homebrew/opt/postgresql@16/bin/psql -d css_zone -f src/db/schema.sql
 
 # Применить миграцию для оплаты/модерации
-/opt/homebrew/opt/postgresql@16/bin/psql -d style_engine -f src/db/migrations/002_payment_publish.sql
+/opt/homebrew/opt/postgresql@16/bin/psql -d css_zone -f src/db/migrations/002_payment_publish.sql
 ```
 
 ### 3. Настройка переменных окружения
@@ -43,7 +43,7 @@ cp .env.example .env
 Для macOS с Homebrew PostgreSQL используйте свой username:
 
 ```
-DATABASE_URL=postgres://ваш-username@localhost:5432/style_engine
+DATABASE_URL=postgres://ваш-username@localhost:5432/css_zone
 JWT_SECRET=замените-на-безопасный-ключ-минимум-12-символов
 PORT=4000
 NODE_ENV=development

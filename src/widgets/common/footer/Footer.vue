@@ -4,7 +4,7 @@
       <div class="footer__content">
         <div class="footer__brand">
           <Logo class="footer__logo" />
-          <h3 class="footer__brand-title">Style Engine</h3>
+          <h3 class="footer__brand-title">CSS-Zone</h3>
           <p class="footer__brand-description">
             {{ t("HOME.SUBTITLE") }}
           </p>
@@ -85,7 +85,7 @@
         <div class="footer__divider"></div>
         <div class="footer__bottom-content">
           <p class="footer__copyright">
-            © {{ currentYear }} Style Engine.
+            © {{ currentYear }} CSS-Zone.
             {{ t("FOOTER.ALL_RIGHTS_RESERVED") }}
           </p>
 

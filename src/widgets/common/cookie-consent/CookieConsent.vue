@@ -37,8 +37,8 @@ import { useI18n } from 'vue-i18n'
 import { Button, NavLink } from '@/shared/ui'
 import { getCookie, setCookie, removeCookie } from '@/shared/lib/cookies'
 
-const STORAGE_KEY = 'style-engine-cookie-accepted-at'
-const SESSION_KEY = 'style-engine-cookie-dismissed'
+const STORAGE_KEY = 'css-zone-cookie-accepted-at'
+const SESSION_KEY = 'css-zone-cookie-dismissed'
 const THIRTY_DAYS = 30
 
 const visible = ref(false)

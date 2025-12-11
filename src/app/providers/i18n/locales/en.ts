@@ -40,7 +40,7 @@ export default {
     FORUM_TOPIC: "Topic",
   },
   HOME: {
-    TITLE: "Style Engine",
+    TITLE: "CSS-Zone",
     SUBTITLE:
       "CSS gradient, shadow, and animation generator with live preview and code export",
     QUIZ_BUTTON: "CSS Quiz",
@@ -53,7 +53,7 @@ export default {
     ABOUT_TAG: "What is it",
     ABOUT_TITLE: "A design lab for CSS motion, gradients, and shadows",
     ABOUT_TEXT:
-      "Style Engine helps designers and developers craft production-ready gradients, shadows, and animations with live previews and instant code export.",
+      "CSS-Zone helps designers and developers craft production-ready gradients, shadows, and animations with live previews and instant code export.",
     ABOUT_POINT_1: "Live playground with pixel-perfect previews",
     ABOUT_POINT_2: "Clean, copy-paste CSS for modern frameworks",
     ABOUT_POINT_3: "One place to experiment, document, and share",
@@ -303,7 +303,7 @@ export default {
     PRESET_APPLY_FAILED: "Failed to apply preset",
   },
   ANIMATION: {
-    EYEBROW: "Style Engine",
+    EYEBROW: "CSS-Zone",
     TITLE: "Animation Generator",
     SUBTITLE:
       "Ready-to-use CSS animation patterns with live preview, HTML and styles you can copy in one click.",
@@ -510,7 +510,7 @@ export default {
     TOPICS_LABEL: "Subpages",
     TOPICS_TITLE: "Topics with live demos",
     TOPICS_SUBTITLE:
-      "Each subpage is a concise how-to: a checklist, visual examples, and minimal code you can copy into Style Engine.",
+      "Each subpage is a concise how-to: a checklist, visual examples, and minimal code you can copy into CSS-Zone.",
     OPEN_TOPIC: "Open subpage",
     PLAYBOOK_LABEL: "Practice",
     PLAYBOOK_TITLE: "Mini playbook",
@@ -529,7 +529,7 @@ export default {
     TAG: "Community forum",
     TITLE: "Forum",
     SUBTITLE:
-      "Ask questions, share ideas, and get help from the Style Engine community and team.",
+      "Ask questions, share ideas, and get help from the CSS-Zone community and team.",
     CREATE_BUTTON: "Create topic",
     PER_PAGE: "Topics per page",
     STATUS_FILTER: "Status",
@@ -695,7 +695,7 @@ export default {
     },
   },
   META: {
-    HOME: "Style Engine - Home",
+    HOME: "CSS-Zone - Home",
     GRADIENT: "Gradient Generator",
     SHADOW: "Shadow Generator",
     ANIMATION: "Animation Generator",
@@ -704,7 +704,7 @@ export default {
     FAVICON: "Favicon Generator",
     QUIZ: "CSS Quiz",
     QUIZ_MANAGE: "Quiz Management",
-    ABOUT: "About Style Engine",
+    ABOUT: "About CSS-Zone",
     PRIVACY: "Privacy Policy",
     COOKIE: "Cookie Policy",
     DOCS: "CSS Guide",
@@ -730,7 +730,7 @@ export default {
     EMAIL: "gamerstaject{'@'}gmail.com",
   },
   META_DESCRIPTION: {
-    HOME: "Style Engine is a CSS lab with generators for gradients, shadows, and animations plus live preview and clean code export.",
+    HOME: "CSS-Zone is a CSS lab with generators for gradients, shadows, and animations plus live preview and clean code export.",
     GRADIENT:
       "Design linear, radial, and conic CSS gradients, preview them instantly, and copy production-ready code.",
     SHADOW:
@@ -746,30 +746,30 @@ export default {
     QUIZ_MANAGE:
       "Manage quiz questions, categories, and test settings for the CSS quiz.",
     ABOUT:
-      "About Style Engine: plans, premium tiers, and community members with live stats.",
+      "About CSS-Zone: plans, premium tiers, and community members with live stats.",
     DOCS: "Clear CSS guide with subpages for gradients, shadows, and animations plus animated examples.",
     DOCS_GRADIENTS:
-      "Gradient recipes with angles, stops, and layered backgrounds you can paste into Style Engine.",
+      "Gradient recipes with angles, stops, and layered backgrounds you can paste into CSS-Zone.",
     DOCS_SHADOWS:
       "Layered shadow presets with glow, outline, and hover micro-interactions.",
     DOCS_ANIMATIONS:
       "Reusable keyframes with easing suggestions and stagger timings for production UI.",
-    PROFILE: "Manage your Style Engine profile and saved presets.",
-    AUTH: "Sign in to sync your Style Engine presets and get a personalized experience.",
+    PROFILE: "Manage your CSS-Zone profile and saved presets.",
+    AUTH: "Sign in to sync your CSS-Zone presets and get a personalized experience.",
     MODERATION:
       "Review and approve community submissions for gradients, shadows, and animations.",
     FORUM:
-      "Ask questions, share ideas, and discuss features in the Style Engine community forum.",
+      "Ask questions, share ideas, and discuss features in the CSS-Zone community forum.",
     FORUM_CREATE:
       "Open a new forum topic to describe your case, attach screenshots, or link a YouTube video.",
     FORUM_TOPIC:
-      "Read the full conversation, status, and replies for this Style Engine forum topic.",
+      "Read the full conversation, status, and replies for this CSS-Zone forum topic.",
     NOT_FOUND:
       "The page was not found. Jump back to the generators and keep experimenting.",
     PRIVACY:
-      "Style Engine privacy policy: what data we collect, how we use it, and how to contact us.",
+      "CSS-Zone privacy policy: what data we collect, how we use it, and how to contact us.",
     COOKIE:
-      "Cookie policy: how Style Engine uses cookies, how to control them, and what it means for you.",
+      "Cookie policy: how CSS-Zone uses cookies, how to control them, and what it means for you.",
   },
   NOT_FOUND: {
     TAG: "Lost in the CSS nebula",
@@ -791,7 +791,7 @@ export default {
     TITLE: "Privacy policy",
     HIGHLIGHT: "How we protect your data",
     SUBTITLE:
-      "We only collect what’s needed to run the generators, save your work, and improve Style Engine. Here’s what that means in practice.",
+      "We only collect what’s needed to run the generators, save your work, and improve CSS-Zone. Here’s what that means in practice.",
     PILL_CORE: "Data we collect",
     PILL_USE: "How we use it",
     PILL_RIGHTS: "Your choices",
@@ -808,7 +808,7 @@ export default {
       ],
       USE_TITLE: "How we use your data",
       USE_BODY:
-        "We only process data to operate and evolve Style Engine—never to sell or share with advertisers.",
+        "We only process data to operate and evolve CSS-Zone—never to sell or share with advertisers.",
       USE_POINTS: [
         "Sync your saves across devices and keep your presets safe.",
         "Improve generators by understanding feature usage in aggregate.",
@@ -893,7 +893,7 @@ export default {
     CHANGE_PASSWORD: "Change password",
     CURRENT_PASSWORD: "Current password",
     REGISTER_TITLE: "Create Account",
-    REGISTER_SUBTITLE: "Join Style Engine to save and sync your creative work",
+    REGISTER_SUBTITLE: "Join CSS-Zone to save and sync your creative work",
     EMAIL: "Email",
     PASSWORD: "Password",
     NEW_PASSWORD: "New password",
@@ -1090,14 +1090,14 @@ export default {
   },
   ABOUT: {
     PAGE_TAG: "About us",
-    PAGE_TITLE: "Style Engine is built with our community",
+    PAGE_TITLE: "CSS-Zone is built with our community",
     PAGE_TITLE_HIGHLIGHT:
       "Celebrating premium creators and motion designers on every screen.",
     PAGE_SUBTITLE:
       "Choose a plan that fits and meet the people building with us.",
     MISSION_TAG: "Why this exists",
     MISSION_TITLE:
-      "We ship Style Engine so teams can design motion without friction",
+      "We ship CSS-Zone so teams can design motion without friction",
     MISSION_TEXT:
       "This site is our lab for gradients, shadows, and motion recipes with live previews and copy-paste code. We keep experiments fast so designers and developers can stay in flow together.",
     MISSION_POINT_1_TITLE: "Our goal",
@@ -1114,7 +1114,7 @@ export default {
     PLANS_SUBTITLE:
       "Start free with all generators and forum replies. Upgrade only when you need more saves, exports, and support.",
     COMMUNITY_TAG: "Community",
-    COMMUNITY_TITLE: "People using Style Engine",
+    COMMUNITY_TITLE: "People using CSS-Zone",
     COMMUNITY_SUBTITLE:
       "Premium creators are shown first, then Pro, then everyone else. Filter by tier, sort any column, and keep loading more.",
     OUR_COMMUNITY: "Community spotlight",
@@ -1147,7 +1147,7 @@ export default {
   },
   PRICING: {
     TITLE: "Choose Your Plan",
-    SUBTITLE: "Unlock unlimited creativity with Style Engine Pro",
+    SUBTITLE: "Unlock unlimited creativity with CSS-Zone Pro",
     MONTHLY: "Monthly",
     POPULAR: "Most Popular",
     CURRENT_PLAN: "Current Plan",
@@ -1255,7 +1255,7 @@ export default {
     SUPPORT_TAG: "Help us grow",
     SUPPORT_TITLE: "Support This Platform",
     SUPPORT_DESCRIPTION:
-      "Style Engine Quiz stays free for everyone. Your support funds new questions, features, and keeps the leaderboard running for the community.",
+      "CSS-Zone Quiz stays free for everyone. Your support funds new questions, features, and keeps the leaderboard running for the community.",
     CONTACT_US: "Get in Touch",
     LIMIT_REACHED: "Daily limit reached ({limit} attempts)",
     LOGIN_TO_GET_MORE: "Log in to get more attempts (5/day)",

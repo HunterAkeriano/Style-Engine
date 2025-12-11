@@ -42,7 +42,7 @@ export class MailBuilder {
   <div style="font-family: 'Inter', Arial, sans-serif; background: #0b1220; color: #e2e8f0; padding: 32px;">
     <div style="max-width: 520px; margin: 0 auto; background: linear-gradient(135deg, rgba(99,102,241,0.16), rgba(236,72,153,0.16)); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.35);">
       <div style="padding: 24px 28px; background: radial-gradient(circle at 20% 20%, rgba(99,102,241,0.25), transparent 45%), radial-gradient(circle at 80% 0%, rgba(236,72,153,0.2), transparent 45%), rgba(15,23,42,0.92);">
-        <p style="margin: 0; text-transform: uppercase; letter-spacing: 0.08em; color: #a5b4fc; font-size: 12px;">Style Engine</p>
+        <p style="margin: 0; text-transform: uppercase; letter-spacing: 0.08em; color: #a5b4fc; font-size: 12px;">CSS-Zone</p>
         <h1 style="margin: 8px 0 6px; color: #f8fafc; font-size: 22px;">Reset your password</h1>
         <p style="margin: 0; color: #cbd5e1; line-height: 1.6;">We received a request to reset your password. Click the button below to choose a new one.</p>
       </div>
@@ -72,7 +72,7 @@ export class MailBuilder {
 
     return `Hi ${name},
 
-Your posting permissions on the Style Engine forum have been limited.
+Your posting permissions on the CSS-Zone forum have been limited.
 Duration: ${duration}
 Reason: ${reason}
 
@@ -102,9 +102,9 @@ If this mute is temporary, you can post again once it expires.`
   <div style="font-family: 'Inter', Arial, sans-serif; background: #0b1220; color: #e2e8f0; padding: 32px;">
     <div style="max-width: 520px; margin: 0 auto; background: linear-gradient(135deg, rgba(99,102,241,0.16), rgba(236,72,153,0.16)); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.35);">
       <div style="padding: 24px 28px; background: radial-gradient(circle at 20% 20%, rgba(99,102,241,0.25), transparent 45%), radial-gradient(circle at 80% 0%, rgba(236,72,153,0.2), transparent 45%), rgba(15,23,42,0.92);">
-        <p style="margin: 0; text-transform: uppercase; letter-spacing: 0.08em; color: #a5b4fc; font-size: 12px;">Style Engine</p>
+        <p style="margin: 0; text-transform: uppercase; letter-spacing: 0.08em; color: #a5b4fc; font-size: 12px;">CSS-Zone</p>
         <h1 style="margin: 8px 0 6px; color: #f8fafc; font-size: 22px;">Forum mute notice</h1>
-        <p style="margin: 0; color: #cbd5e1; line-height: 1.6;">Hi ${name}, your posting permissions on the Style Engine forum have been limited.</p>
+        <p style="margin: 0; color: #cbd5e1; line-height: 1.6;">Hi ${name}, your posting permissions on the CSS-Zone forum have been limited.</p>
       </div>
       <div style="padding: 24px 28px; background: rgba(15,23,42,0.92); backdrop-filter: blur(8px);">
         <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 16px 18px; margin-bottom: 14px;">
@@ -173,7 +173,7 @@ You can also open the app: ${options.appUrl}`
   <div style="font-family: 'Inter', Arial, sans-serif; background: #0b1220; color: #e2e8f0; padding: 32px;">
     <div style="max-width: 520px; margin: 0 auto; background: linear-gradient(135deg, rgba(99,102,241,0.16), rgba(236,72,153,0.16)); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.35);">
       <div style="padding: 24px 28px; background: radial-gradient(circle at 20% 20%, rgba(99,102,241,0.25), transparent 45%), radial-gradient(circle at 80% 0%, rgba(236,72,153,0.2), transparent 45%), rgba(15,23,42,0.92);">
-        <p style="margin: 0; text-transform: uppercase; letter-spacing: 0.08em; color: #a5b4fc; font-size: 12px;">Style Engine</p>
+        <p style="margin: 0; text-transform: uppercase; letter-spacing: 0.08em; color: #a5b4fc; font-size: 12px;">CSS-Zone</p>
         <h1 style="margin: 8px 0 6px; color: #f8fafc; font-size: 22px;">Topic status updated</h1>
         <p style="margin: 0; color: #cbd5e1; line-height: 1.6;">Hi ${name}, the status of your topic has changed.</p>
       </div>

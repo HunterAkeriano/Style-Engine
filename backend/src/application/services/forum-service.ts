@@ -624,7 +624,7 @@ export class ForumService {
     try {
       await this.mailer.send({
         to: user.email,
-        subject: "You were muted on the Style Engine forum",
+        subject: "You were muted on the CSS-Zone forum",
         text: this.mailBuilder.plainMute({
           appUrl,
           userName: user.name,
