@@ -38,7 +38,7 @@ watch(
   },
 );
 
-const DEFAULT_ROBOTS = "noindex, nofollow";
+const DEFAULT_ROBOTS = "index, follow";
 const defaultSiteUrl =
   import.meta.env.VITE_APP_URL ||
   import.meta.env.VITE_API_BASE_URL ||
@@ -46,7 +46,9 @@ const defaultSiteUrl =
 
 function buildUrl(origin: string, relativePath: string) {
   const trimmedOrigin = origin.replace(/\/$/, "");
-  const normalizedPath = relativePath.startsWith("/") ? relativePath : `/${relativePath}`;
+  const normalizedPath = relativePath.startsWith("/")
+    ? relativePath
+    : `/${relativePath}`;
   return `${trimmedOrigin}${normalizedPath}`;
 }
 
@@ -89,7 +91,8 @@ useHead(() => {
     { name: "robots", content: robots },
     {
       name: "keywords",
-      content: "CSS gradients, CSS shadows, CSS animations, design tools, generators",
+      content:
+        "CSS gradients, CSS shadows, CSS animations, design tools, generators",
     },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -111,11 +114,11 @@ useHead(() => {
     AVAILABLE_LOCALES.map((lng) => ({
       rel: "alternate",
       hreflang: lng,
-    href: buildUrl(
-      origin,
-      `/${lng}${normalizedPath === "/" ? "" : normalizedPath}`,
-    ),
-  }));
+      href: buildUrl(
+        origin,
+        `/${lng}${normalizedPath === "/" ? "" : normalizedPath}`,
+      ),
+    }));
   altLinks.push({
     rel: "alternate",
     hreflang: "x-default",
@@ -125,8 +128,7 @@ useHead(() => {
     ),
   });
 
-  const manifestHref =
-    manifestByLocale[locale.value] || manifestByLocale.en;
+  const manifestHref = manifestByLocale[locale.value] || manifestByLocale.en;
 
   const link = [
     { rel: "canonical", href: canonicalUrl },
