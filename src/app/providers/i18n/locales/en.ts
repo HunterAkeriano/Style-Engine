@@ -1,4 +1,5 @@
 export default {
+  TITLE: "CSS-Zone",
   NAV: {
     GRADIENTS: "Gradients",
     SHADOWS: "Shadows",
@@ -730,6 +731,8 @@ export default {
     EMAIL: "gamerstaject{'@'}gmail.com",
   },
   META_DESCRIPTION: {
+    SITE:
+      "CSS-Zone helps designers and developers build gradients, shadows, and animations with instant previews and clean CSS exports.",
     HOME: "CSS-Zone is a CSS lab with generators for gradients, shadows, and animations plus live preview and clean code export.",
     GRADIENT:
       "Design linear, radial, and conic CSS gradients, preview them instantly, and copy production-ready code.",

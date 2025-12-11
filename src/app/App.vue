@@ -107,9 +107,10 @@ useHead(() => {
     { name: "theme-color", content: "#111827" },
   ];
 
-  const altLinks = AVAILABLE_LOCALES.map((lng) => ({
-    rel: "alternate",
-    hreflang: lng,
+  const altLinks: { rel: string; hreflang: string; href: string }[] =
+    AVAILABLE_LOCALES.map((lng) => ({
+      rel: "alternate",
+      hreflang: lng,
     href: buildUrl(
       origin,
       `/${lng}${normalizedPath === "/" ? "" : normalizedPath}`,
