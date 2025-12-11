@@ -1,0 +1,21 @@
+{
+  "name": "CSS-Zone",
+  "short_name": "CSS-Zone",
+  "description": "Build pixel-perfect gradients, shadows, and animations with live preview and easy CSS export.",
+  "start_url": "/en/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

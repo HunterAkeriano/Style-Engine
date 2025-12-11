@@ -1,0 +1,21 @@
+{
+  "name": "CSS-Zone",
+  "short_name": "CSS-Zone",
+  "description": "Створюйте і експортуйте градієнти, тіні та анімації з миттєвим переглядом і CSS-експортом.",
+  "start_url": "/uk/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

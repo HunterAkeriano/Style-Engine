@@ -18,6 +18,7 @@
     "lint": "eslint . --ext .ts,.vue",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "generate:sitemap": "node scripts/generate-sitemap.cjs",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "predeploy:ssg": "npm run build:ssg && cp dist/index.html dist/404.html",

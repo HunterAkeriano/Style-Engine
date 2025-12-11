@@ -12,32 +12,9 @@ import { setupRouterGuards } from '@/app/providers/router/guards'
 
 import '@/app/styles/index.scss'
 import 'vue-toastification/dist/index.css'
-
-const SSG_PUBLIC_ROUTES = [
-  '/',
-  '/about',
-  '/docs',
-  '/docs/gradients',
-  '/docs/shadows',
-  '/docs/animations',
-  '/quiz',
-  '/quiz/leaderboard',
-  '/gradient',
-  '/shadow',
-  '/animation',
-  '/clip-path',
-  '/grid',
-  '/favicon',
-  '/privacy-policy',
-  '/cookie-policy',
-  '/forum',
-  '/forum/status/open',
-  '/forum/status/in_review',
-  '/forum/status/closed'
-]
-
+import { PUBLIC_ROUTES } from '@/shared/config/seo-routes'
 const localizedSsgRoutes = AVAILABLE_LOCALES.flatMap((locale) =>
-  SSG_PUBLIC_ROUTES.map((route) => `/${locale}${route === '/' ? '' : route}`)
+  PUBLIC_ROUTES.map((route) => `/${locale}${route === '/' ? '' : route}`)
 )
 
 const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY
