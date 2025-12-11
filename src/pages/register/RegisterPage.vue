@@ -123,6 +123,7 @@ import {
   type RegisterFormData,
 } from "@/shared/lib/validation/auth";
 import { useZodForm } from "@/shared/lib/form/zodForm";
+import { useRecaptchaToken } from "@/shared/lib/recaptcha";
 
 const router = useRouter();
 const { t, locale } = useI18n();
@@ -133,6 +134,8 @@ const form = useZodForm(registerSchema, {
   password: "",
   name: "",
 });
+const { getRecaptchaToken: getRegisterRecaptchaToken } =
+  useRecaptchaToken("register");
 const emailModel = computed({
   get: () => form.values.email as string,
   set: (val: string) => form.setValue("email", val),
@@ -172,7 +175,13 @@ async function handleSubmit() {
   isSubmitting.value = true;
 
   try {
-    await authStore.register(result.email, result.password, result.name || "");
+    const recaptchaToken = await getRegisterRecaptchaToken();
+    await authStore.register(
+      result.email,
+      result.password,
+      result.name || "",
+      recaptchaToken || undefined,
+    );
     if (authStore.error) {
       serverError.value = authStore.error;
       return;

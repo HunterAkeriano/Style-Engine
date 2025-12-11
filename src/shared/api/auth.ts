@@ -31,6 +31,7 @@ export interface ApiError {
 export interface ResetPasswordPayload {
   token: string
   password: string
+  recaptchaToken?: string | null
 }
 
 class AuthAPI {
@@ -86,8 +87,8 @@ class AuthAPI {
     return !!getCookie(AUTH_TOKEN_KEY)
   }
 
-  async requestPasswordReset(email: string): Promise<void> {
-    await api.post('/auth/forgot-password', { email })
+  async requestPasswordReset(email: string, recaptchaToken?: string | null): Promise<void> {
+    await api.post('/auth/forgot-password', { email, recaptchaToken })
   }
 
   async resetPassword(payload: ResetPasswordPayload): Promise<void> {

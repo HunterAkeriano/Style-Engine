@@ -16,6 +16,7 @@ const EnvSchema = z.object({
   SMTP_FROM: z.string().email().optional(),
   APP_URL: z.string().url().optional(),
   API_URL: z.string().url().default("http://localhost:4000"),
+  RECAPTCHA_SECRET: z.string().min(1),
   GOOGLE_CLIENT_ID: z.string().optional(),
 });
 

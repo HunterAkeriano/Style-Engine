@@ -33,6 +33,7 @@ describe("Auth Middleware", () => {
       SUPER_ADMIN_PASSWORD: "test-password",
       NODE_ENV: "test",
       API_URL: "http://localhost:4000",
+      RECAPTCHA_SECRET: "recaptcha-secret",
     };
 
     mockUser = {

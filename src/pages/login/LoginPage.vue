@@ -115,6 +115,7 @@ import ThemeSwitcher from "@/shared/ui/theme-switcher/ThemeSwitcher.vue";
 import LanguageSwitcher from "@/features/common/language-switcher/ui/language-switcher/LanguageSwitcher.vue";
 import { loginSchema, type LoginFormData } from "@/shared/lib/validation/auth";
 import { useZodForm } from "@/shared/lib/form/zodForm";
+import { useRecaptchaToken } from "@/shared/lib/recaptcha";
 
 const router = useRouter();
 const route = useRoute();
@@ -125,6 +126,8 @@ const form = useZodForm(loginSchema, {
   email: "",
   password: "",
 });
+const { getRecaptchaToken: getLoginRecaptchaToken } =
+  useRecaptchaToken("login");
 const emailModel = computed({
   get: () => form.values.email as string,
   set: (val: string) => form.setValue("email", val),
@@ -159,7 +162,8 @@ async function handleSubmit() {
   isSubmitting.value = true;
 
   try {
-    await authStore.login(result.email, result.password);
+    const recaptchaToken = await getLoginRecaptchaToken();
+    await authStore.login(result.email, result.password, recaptchaToken || undefined);
 
     if (authStore.error) {
       serverError.value =

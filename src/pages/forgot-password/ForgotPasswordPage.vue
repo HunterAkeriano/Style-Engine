@@ -53,11 +53,13 @@ import { StarfieldAnimation } from '@/shared/ui/StarfieldAnimation'
 import ThemeSwitcher from '@/shared/ui/theme-switcher/ThemeSwitcher.vue'
 import LanguageSwitcher from '@/features/common/language-switcher/ui/language-switcher/LanguageSwitcher.vue'
 import { useZodForm } from '@/shared/lib/form/zodForm'
+import { useRecaptchaToken } from '@/shared/lib/recaptcha'
 
 const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
+const { getRecaptchaToken: getForgotRecaptchaToken } = useRecaptchaToken('forgot_password')
 const form = useZodForm(forgotPasswordSchema, { email: '' })
 const emailModel = computed({
   get: () => form.values.email as string,
@@ -81,7 +83,8 @@ async function submit() {
 
   loading.value = true
   try {
-    await authAPI.requestPasswordReset(result.email)
+    const recaptchaToken = await getForgotRecaptchaToken()
+    await authAPI.requestPasswordReset(result.email, recaptchaToken || undefined)
     serverMessage.value = t('AUTH.RESET_EMAIL_SENT')
     toast.success(serverMessage.value)
     setTimeout(() => {

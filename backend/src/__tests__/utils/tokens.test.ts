@@ -23,6 +23,7 @@ describe("Tokens Utils", () => {
       SUPER_ADMIN_EMAIL: "admin@test.com",
       SUPER_ADMIN_PASSWORD: "password123",
       API_URL: "http://localhost:4000",
+      RECAPTCHA_SECRET: "recaptcha-secret",
     };
   });
 

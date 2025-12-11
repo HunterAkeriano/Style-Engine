@@ -23,6 +23,7 @@ describe("AuthController", () => {
   const validName = "Test User";
   const weakPassword = "12345";
   const invalidEmail = "invalid-email";
+  const validRecaptchaToken = "valid-recaptcha-token";
 
   beforeEach(() => {
     mockEnv = {
@@ -30,6 +31,7 @@ describe("AuthController", () => {
       NODE_ENV: "test",
       APP_URL: "http://localhost:4000",
       REFRESH_TOKEN_SECRET: "refresh-secret",
+      RECAPTCHA_SECRET: "recaptcha-secret",
     };
 
     mockModels = {};
@@ -71,6 +73,7 @@ describe("AuthController", () => {
         email: validEmail,
         password: validPassword,
         name: validName,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(201);
@@ -83,6 +86,7 @@ describe("AuthController", () => {
         email: validEmail,
         password: validPassword,
         name: validName,
+        recaptchaToken: validRecaptchaToken,
       });
     });
 
@@ -91,6 +95,7 @@ describe("AuthController", () => {
         email: validEmail,
         password: weakPassword,
         name: validName,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -103,6 +108,7 @@ describe("AuthController", () => {
         email: invalidEmail,
         password: validPassword,
         name: validName,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -115,6 +121,7 @@ describe("AuthController", () => {
         email: validEmail,
         password: "password123!",
         name: validName,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -126,6 +133,7 @@ describe("AuthController", () => {
         email: validEmail,
         password: "PASSWORD123!",
         name: validName,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -137,6 +145,7 @@ describe("AuthController", () => {
         email: validEmail,
         password: "PasswordABC!",
         name: validName,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -148,6 +157,7 @@ describe("AuthController", () => {
         email: validEmail,
         password: "Password123",
         name: validName,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -159,6 +169,7 @@ describe("AuthController", () => {
         email: validEmail,
         password: "Pass1!",
         name: validName,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -181,6 +192,7 @@ describe("AuthController", () => {
       const response = await supertest(app).post("/auth/register").send({
         email: validEmail,
         password: validPassword,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(201);
@@ -193,6 +205,7 @@ describe("AuthController", () => {
           email: validEmail,
           password: validPassword,
           name: "a".repeat(121),
+          recaptchaToken: validRecaptchaToken,
         });
 
       expect(response.status).toBe(400);
@@ -209,6 +222,7 @@ describe("AuthController", () => {
         email: validEmail,
         password: validPassword,
         name: validName,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(409);
@@ -224,6 +238,7 @@ describe("AuthController", () => {
         email: validEmail,
         password: validPassword,
         name: validName,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(500);
@@ -266,6 +281,7 @@ describe("AuthController", () => {
       const response = await supertest(app).post("/auth/login").send({
         email: validEmail,
         password: validPassword,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(200);
@@ -276,6 +292,7 @@ describe("AuthController", () => {
       expect(mockAuthService.login).toHaveBeenCalledWith({
         email: validEmail,
         password: validPassword,
+        recaptchaToken: validRecaptchaToken,
       });
     });
 
@@ -283,6 +300,7 @@ describe("AuthController", () => {
       const response = await supertest(app).post("/auth/login").send({
         email: invalidEmail,
         password: validPassword,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -292,6 +310,7 @@ describe("AuthController", () => {
     it("should reject login with missing password", async () => {
       const response = await supertest(app).post("/auth/login").send({
         email: validEmail,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -307,6 +326,7 @@ describe("AuthController", () => {
       const response = await supertest(app).post("/auth/login").send({
         email: validEmail,
         password: "wrongpassword",
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(401);
@@ -324,12 +344,14 @@ describe("AuthController", () => {
         email: validEmail,
         password: validPassword,
         name: "should be ignored",
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(200);
       expect(mockAuthService.login).toHaveBeenCalledWith({
         email: validEmail,
         password: validPassword,
+        recaptchaToken: validRecaptchaToken,
       });
     });
   });
@@ -442,7 +464,10 @@ describe("AuthController", () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({ ok: true });
-      expect(mockAuthService.forgotPassword).toHaveBeenCalledWith(validEmail);
+      expect(mockAuthService.forgotPassword).toHaveBeenCalledWith(
+        validEmail,
+        validRecaptchaToken,
+      );
     });
 
     it("should reject invalid email format", async () => {
@@ -500,6 +525,7 @@ describe("AuthController", () => {
       const response = await supertest(app).post("/auth/reset-password").send({
         token: validToken,
         password: validPassword,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(200);
@@ -507,6 +533,7 @@ describe("AuthController", () => {
       expect(mockAuthService.resetPassword).toHaveBeenCalledWith({
         token: validToken,
         password: validPassword,
+        recaptchaToken: validRecaptchaToken,
       });
     });
 
@@ -514,6 +541,7 @@ describe("AuthController", () => {
       const response = await supertest(app).post("/auth/reset-password").send({
         token: validToken,
         password: weakPassword,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -529,6 +557,7 @@ describe("AuthController", () => {
       const response = await supertest(app).post("/auth/reset-password").send({
         token: "invalid-token",
         password: validPassword,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -539,6 +568,7 @@ describe("AuthController", () => {
       const response = await supertest(app).post("/auth/reset-password").send({
         token: "short",
         password: validPassword,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -548,6 +578,7 @@ describe("AuthController", () => {
     it("should reject missing token", async () => {
       const response = await supertest(app).post("/auth/reset-password").send({
         password: validPassword,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -557,6 +588,7 @@ describe("AuthController", () => {
     it("should reject missing password", async () => {
       const response = await supertest(app).post("/auth/reset-password").send({
         token: validToken,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -725,6 +757,7 @@ describe("AuthController", () => {
 
       const response = await supertest(app).post("/auth/forgot-password").send({
         email: "nonexistent@example.com",
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(200);
@@ -737,6 +770,7 @@ describe("AuthController", () => {
       const response = await supertest(app).post("/auth/login").send({
         email: sqlInjection,
         password: validPassword,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(400);
@@ -756,6 +790,7 @@ describe("AuthController", () => {
         email: validEmail,
         password: validPassword,
         name: xssAttempt,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect(response.status).toBe(201);
@@ -767,6 +802,7 @@ describe("AuthController", () => {
       const response = await supertest(app).post("/auth/register").send({
         email: longEmail,
         password: validPassword,
+        recaptchaToken: validRecaptchaToken,
       });
 
       expect([400, 500]).toContain(response.status);
@@ -785,6 +821,7 @@ describe("AuthController", () => {
           supertest(app).post("/auth/register").send({
             email: validEmail,
             password: validPassword,
+            recaptchaToken: validRecaptchaToken,
           }),
         );
 

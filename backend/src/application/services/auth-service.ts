@@ -8,6 +8,7 @@ import { TokenService } from './token-service'
 import { UserRepository } from '../../infrastructure/repositories/user-repository'
 import { RefreshTokenRepository } from '../../infrastructure/repositories/refresh-token-repository'
 import { PasswordResetRepository } from '../../infrastructure/repositories/password-reset-repository'
+import { RecaptchaService } from './recaptcha-service'
 import { toApiError } from '../../utils/apiError'
 import { resolveUserRole, type UserRole } from '../../utils/roles'
 
@@ -21,7 +22,8 @@ export class AuthService {
     private readonly users: UserRepository,
     private readonly refreshTokens: RefreshTokenRepository,
     private readonly resets: PasswordResetRepository,
-    private readonly tokenService: TokenService
+    private readonly tokenService: TokenService,
+    private readonly recaptcha: RecaptchaService
   ) {}
 
   private attachSuperFlag(user: Omit<InferAttributes<User>, 'passwordHash'>): SafeUser {
@@ -36,7 +38,14 @@ export class AuthService {
     return this.attachSuperFlag(rest)
   }
 
-  async register(payload: { email: string; password: string; name?: string }) {
+  async register(payload: {
+    email: string
+    password: string
+    name?: string
+    recaptchaToken: string
+  }) {
+    await this.recaptcha.verify(payload.recaptchaToken)
+
     const existing = await this.users.findByEmail(payload.email)
     if (existing) {
       throw toApiError(409, 'User already exists')
@@ -60,7 +69,13 @@ export class AuthService {
     return { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken, user: this.toSafeUser(user)! }
   }
 
-  async login(payload: { email: string; password: string }) {
+  async login(payload: {
+    email: string
+    password: string
+    recaptchaToken: string
+  }) {
+    await this.recaptcha.verify(payload.recaptchaToken)
+
     const user = await this.users.findByEmail(payload.email, [
       'id',
       'email',
@@ -119,7 +134,9 @@ export class AuthService {
     await this.refreshTokens.revokeByHash(tokenHash)
   }
 
-  async forgotPassword(email: string) {
+  async forgotPassword(email: string, recaptchaToken: string) {
+    await this.recaptcha.verify(recaptchaToken)
+
     const user = await this.users.findByEmail(email, ['id', 'email'])
     if (!user) throw toApiError(404, 'Email not found')
 
@@ -137,7 +154,13 @@ export class AuthService {
     return { token, userEmail: user.email }
   }
 
-  async resetPassword(payload: { token: string; password: string }) {
+  async resetPassword(payload: {
+    token: string
+    password: string
+    recaptchaToken: string
+  }) {
+    await this.recaptcha.verify(payload.recaptchaToken)
+
     const tokenHash = this.tokenService.hashResetToken(payload.token)
     const reset = await this.resets.findValid(tokenHash)
     if (!reset) throw toApiError(400, 'Invalid or expired token')

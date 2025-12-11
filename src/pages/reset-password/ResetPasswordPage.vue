@@ -63,6 +63,7 @@ import { StarfieldAnimation } from '@/shared/ui/StarfieldAnimation'
 import ThemeSwitcher from '@/shared/ui/theme-switcher/ThemeSwitcher.vue'
 import LanguageSwitcher from '@/features/common/language-switcher/ui/language-switcher/LanguageSwitcher.vue'
 import { useZodForm } from '@/shared/lib/form/zodForm'
+import { useRecaptchaToken } from '@/shared/lib/recaptcha'
 
 const { t, locale } = useI18n()
 const route = useRoute()
@@ -86,6 +87,8 @@ const serverMessage = ref('')
 const serverError = ref('')
 
 const token = (route.query.token as string) || ''
+const { getRecaptchaToken: getResetRecaptchaToken } =
+  useRecaptchaToken('reset_password')
 
 async function submit() {
   errors.password = ''
@@ -103,7 +106,12 @@ async function submit() {
 
   loading.value = true
   try {
-    await authAPI.resetPassword({ token, password: result.password })
+    const recaptchaToken = await getResetRecaptchaToken()
+    await authAPI.resetPassword({
+      token,
+      password: result.password,
+      recaptchaToken: recaptchaToken || undefined,
+    })
     serverMessage.value = t('AUTH.RESET_SUCCESS')
     form.setValue('password', '')
     form.setValue('confirmPassword', '')

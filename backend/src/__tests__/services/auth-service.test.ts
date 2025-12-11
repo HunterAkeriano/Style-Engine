@@ -21,6 +21,7 @@ describe('AuthService', () => {
   let mockRefreshTokenRepo: jest.Mocked<RefreshTokenRepository>;
   let mockPasswordResetRepo: jest.Mocked<PasswordResetRepository>;
   let mockTokenService: jest.Mocked<TokenService>;
+  let mockRecaptchaService: { verify: jest.Mock };
 
   const mockUser = {
     id: 'user-123',
@@ -39,7 +40,8 @@ describe('AuthService', () => {
   beforeEach(() => {
     mockEnv = {
       JWT_SECRET: 'test-secret',
-      SUPER_ADMIN_EMAIL: 'admin@example.com'
+      SUPER_ADMIN_EMAIL: 'admin@example.com',
+      RECAPTCHA_SECRET: 'recaptcha-secret'
     };
 
     mockUserRepo = {
@@ -67,12 +69,16 @@ describe('AuthService', () => {
       hashResetToken: jest.fn()
     } as any;
 
+    mockRecaptchaService = {
+      verify: jest.fn().mockResolvedValue(undefined)
+    };
     authService = new AuthService(
       mockEnv,
       mockUserRepo,
       mockRefreshTokenRepo,
       mockPasswordResetRepo,
-      mockTokenService
+      mockTokenService,
+      mockRecaptchaService as any
     );
 
     // Reset mocks
@@ -160,7 +166,8 @@ describe('AuthService', () => {
       const result = await authService.register({
         email: 'test@example.com',
         password: 'password123',
-        name: 'Test User'
+        name: 'Test User',
+        recaptchaToken: 'recaptcha-token'
       });
 
       expect(result.accessToken).toBe('access-token');
@@ -186,7 +193,8 @@ describe('AuthService', () => {
 
       await authService.register({
         email: 'TEST@EXAMPLE.COM',
-        password: 'password123'
+        password: 'password123',
+        recaptchaToken: 'recaptcha-token'
       });
 
       expect(mockUserRepo.create).toHaveBeenCalledWith(
@@ -202,7 +210,8 @@ describe('AuthService', () => {
       await expect(
         authService.register({
           email: 'test@example.com',
-          password: 'password123'
+          password: 'password123',
+          recaptchaToken: 'recaptcha-token'
         })
       ).rejects.toMatchObject({
         status: 409,
@@ -222,7 +231,8 @@ describe('AuthService', () => {
 
       await authService.register({
         email: 'test@example.com',
-        password: 'password123'
+        password: 'password123',
+        recaptchaToken: 'recaptcha-token'
       });
 
       expect(mockUserRepo.create).toHaveBeenCalledWith(
@@ -245,7 +255,8 @@ describe('AuthService', () => {
 
       const result = await authService.login({
         email: 'test@example.com',
-        password: 'password123'
+        password: 'password123',
+        recaptchaToken: 'recaptcha-token'
       });
 
       expect(result.accessToken).toBe('access-token');
@@ -260,7 +271,8 @@ describe('AuthService', () => {
       await expect(
         authService.login({
           email: 'nonexistent@example.com',
-          password: 'password123'
+          password: 'password123',
+          recaptchaToken: 'recaptcha-token'
         })
       ).rejects.toMatchObject({
         status: 401,
@@ -275,7 +287,8 @@ describe('AuthService', () => {
       await expect(
         authService.login({
           email: 'test@example.com',
-          password: 'wrong-password'
+          password: 'wrong-password',
+          recaptchaToken: 'recaptcha-token'
         })
       ).rejects.toMatchObject({
         status: 401,
@@ -295,7 +308,8 @@ describe('AuthService', () => {
 
       await authService.login({
         email: 'test@example.com',
-        password: 'password123'
+        password: 'password123',
+        recaptchaToken: 'recaptcha-token'
       });
 
       expect(mockRefreshTokenRepo.create).toHaveBeenCalledWith({
@@ -390,7 +404,7 @@ describe('AuthService', () => {
       mockUserRepo.findByEmail.mockResolvedValue(mockUser as any);
       mockTokenService.hashResetToken.mockReturnValue('hashed-reset-token');
 
-      const result = await authService.forgotPassword('test@example.com');
+      const result = await authService.forgotPassword('test@example.com', 'recaptcha-token');
 
       expect(result.token).toBe('reset-token-hex');
       expect(result.userEmail).toBe('test@example.com');
@@ -406,7 +420,9 @@ describe('AuthService', () => {
     it('should throw error if email not found', async () => {
       mockUserRepo.findByEmail.mockResolvedValue(null);
 
-      await expect(authService.forgotPassword('nonexistent@example.com')).rejects.toMatchObject({
+      await expect(
+        authService.forgotPassword('nonexistent@example.com', 'recaptcha-token')
+      ).rejects.toMatchObject({
         status: 404,
         message: 'Email not found'
       });
@@ -416,7 +432,7 @@ describe('AuthService', () => {
       mockUserRepo.findByEmail.mockResolvedValue(mockUser as any);
       mockTokenService.hashResetToken.mockReturnValue('hashed-reset-token');
 
-      await authService.forgotPassword('test@example.com');
+      await authService.forgotPassword('test@example.com', 'recaptcha-token');
 
       expect(crypto.randomBytes).toHaveBeenCalledWith(24);
     });
@@ -426,7 +442,7 @@ describe('AuthService', () => {
       mockTokenService.hashResetToken.mockReturnValue('hashed-reset-token');
       const beforeCall = Date.now();
 
-      await authService.forgotPassword('test@example.com');
+      await authService.forgotPassword('test@example.com', 'recaptcha-token');
 
       const call = mockPasswordResetRepo.create.mock.calls[0][0];
       expect(call.expiresAt).toBeDefined();
@@ -450,7 +466,8 @@ describe('AuthService', () => {
 
       await authService.resetPassword({
         token: 'reset-token',
-        password: 'new-password'
+        password: 'new-password',
+        recaptchaToken: 'recaptcha-token'
       });
 
       expect(bcrypt.hash).toHaveBeenCalledWith('new-password', 10);
@@ -470,7 +487,8 @@ describe('AuthService', () => {
       await expect(
         authService.resetPassword({
           token: 'invalid-token',
-          password: 'new-password'
+          password: 'new-password',
+          recaptchaToken: 'recaptcha-token'
         })
       ).rejects.toMatchObject({
         status: 400,
@@ -491,7 +509,8 @@ describe('AuthService', () => {
       await expect(
         authService.resetPassword({
           token: 'reset-token',
-          password: 'new-password'
+          password: 'new-password',
+          recaptchaToken: 'recaptcha-token'
         })
       ).rejects.toMatchObject({
         status: 400,

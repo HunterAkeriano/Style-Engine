@@ -83,14 +83,15 @@ export const useAuthStore = defineStore('auth', () => {
     return sessionPromise
   }
 
-  async function login(email: string, password: string) {
+  async function login(email: string, password: string, recaptchaToken?: string | null) {
     setLoading(true)
     setError(null)
 
     try {
       const response = await apiClient.post<{ token: string; user: User }>('/auth/login', {
         email,
-        password
+        password,
+        recaptchaToken
       })
       setToken(response.data.token)
       setUser(response.data.user)
@@ -107,7 +108,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(email: string, password: string, name: string) {
+  async function register(email: string, password: string, name: string, recaptchaToken?: string | null) {
     setLoading(true)
     setError(null)
 
@@ -115,7 +116,8 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await apiClient.post<{ token: string; user: User }>('/auth/register', {
         email,
         password,
-        name
+        name,
+        recaptchaToken
       })
       setToken(response.data.token)
       setUser(response.data.user)

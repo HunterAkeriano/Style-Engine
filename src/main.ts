@@ -2,6 +2,7 @@ import { createPinia } from 'pinia'
 import { ViteSSG } from 'vite-ssg'
 import { createHead } from '@unhead/vue/server'
 import GoogleSignInPlugin from 'vue3-google-signin'
+import { VueReCaptcha } from 'vue-recaptcha-v3'
 import { toastPlugin } from '@/shared/lib/toast'
 import { App } from '@/app'
 import { clickOutside } from '@/shared/directives'
@@ -39,6 +40,8 @@ const localizedSsgRoutes = AVAILABLE_LOCALES.flatMap((locale) =>
   SSG_PUBLIC_ROUTES.map((route) => `/${locale}${route === '/' ? '' : route}`)
 )
 
+const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY
+
 export const createApp = ViteSSG(
   App,
   {
@@ -62,6 +65,16 @@ export const createApp = ViteSSG(
       app.use(head)
     }
     if (typeof window !== 'undefined') {
+      if (recaptchaSiteKey) {
+        app.use(VueReCaptcha, {
+          siteKey: recaptchaSiteKey,
+          loaderOptions: {
+            autoHideBadge: true
+          }
+        })
+      } else {
+        console.warn('VITE_RECAPTCHA_SITE_KEY is not set; reCAPTCHA is disabled')
+      }
       app.use(GoogleSignInPlugin, {
         clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID
       })

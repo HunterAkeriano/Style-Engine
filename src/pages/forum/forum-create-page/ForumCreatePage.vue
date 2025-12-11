@@ -44,7 +44,6 @@ import { useToast } from '@/shared/lib/toast'
 const { t, locale } = useI18n()
 const router = useRouter()
 const toast = useToast()
-
 const isSubmitting = ref(false)
 const formRef = ref<InstanceType<typeof ForumTopicForm> | null>(null)
 
@@ -75,7 +74,7 @@ async function handleSubmit(payload: { title: string; description: string; attac
     const topic = await createForumTopic({
       title: payload.title.trim(),
       description: payload.description.trim(),
-      attachments: finalAttachments
+      attachments: finalAttachments,
     })
     toast.success(t('FORUM.CREATE.SUCCESS'))
     formRef.value?.resetForm()

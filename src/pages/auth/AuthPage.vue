@@ -61,10 +61,12 @@ import { reactive, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { NavLink, Input, Button } from '@/shared/ui'
 import { useAuthStore } from '@/entities'
+import { useRecaptchaToken } from '@/shared/lib/recaptcha'
 
 const auth = useAuthStore()
 const router = useRouter()
 const route = useRoute()
+const { getRecaptchaToken: getAuthRecaptchaToken } = useRecaptchaToken('auth_form')
 
 const mode = ref<'login' | 'register'>('login')
 const form = reactive({
@@ -81,10 +83,11 @@ function toggleMode() {
 async function handleSubmit() {
   if (!form.email || !form.password) return
 
+  const recaptchaToken = await getAuthRecaptchaToken()
   if (mode.value === 'login') {
-    await auth.login(form.email, form.password)
+    await auth.login(form.email, form.password, recaptchaToken || undefined)
   } else {
-    await auth.register(form.email, form.password, form.name)
+    await auth.register(form.email, form.password, form.name, recaptchaToken || undefined)
   }
 
   if (auth.isAuthenticated) {

@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import type { Env } from "../../../config/env";
 import { parseCookies, serializeCookie } from "../../../utils/cookies";
 import { AuthService } from "../../../application/services/auth-service";
+import { RecaptchaService } from "../../../application/services/recaptcha-service";
 import { TokenService } from "../../../application/services/token-service";
 import { MailerService } from "../../../application/services/mailer-service";
 import { UserRepository } from "../../../infrastructure/repositories/user-repository";
@@ -23,20 +24,24 @@ const credentialsSchema = z.object({
   email: z.string().email(),
   password: strongPassword,
   name: z.string().min(1).max(120).optional(),
+  recaptchaToken: z.string().min(1),
 });
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
+  recaptchaToken: z.string().min(1),
 });
 
 const forgotSchema = z.object({
   email: z.string().email(),
+  recaptchaToken: z.string().min(1),
 });
 
 const resetSchema = z.object({
   token: z.string().min(10),
   password: strongPassword,
+  recaptchaToken: z.string().min(1),
 });
 
 const changePasswordSchema = z.object({
@@ -57,12 +62,14 @@ export class AuthController implements HttpController {
   constructor(env: Env, models: Models) {
     this.env = env;
     const tokenService = new TokenService(env);
+    const recaptchaService = new RecaptchaService(env.RECAPTCHA_SECRET);
     this.service = new AuthService(
       env,
       new UserRepository(models),
       new RefreshTokenRepository(models),
       new PasswordResetRepository(models),
       tokenService,
+      recaptchaService,
     );
   }
 
@@ -76,9 +83,12 @@ export class AuthController implements HttpController {
       }
 
       try {
-        const { accessToken, refreshToken, user } = await this.service.register(
-          parsed.data,
-        );
+        const { accessToken, refreshToken, user } = await this.service.register({
+          email: parsed.data.email,
+          password: parsed.data.password,
+          name: parsed.data.name,
+          recaptchaToken: parsed.data.recaptchaToken,
+        });
         const cookie = serializeCookie(
           "refreshToken",
           refreshToken,
@@ -103,9 +113,11 @@ export class AuthController implements HttpController {
         });
       }
       try {
-        const { accessToken, refreshToken, user } = await this.service.login(
-          parsed.data,
-        );
+        const { accessToken, refreshToken, user } = await this.service.login({
+          email: parsed.data.email,
+          password: parsed.data.password,
+          recaptchaToken: parsed.data.recaptchaToken,
+        });
         const cookie = serializeCookie(
           "refreshToken",
           refreshToken,
@@ -159,6 +171,7 @@ export class AuthController implements HttpController {
       try {
         const { token, userEmail } = await this.service.forgotPassword(
           parsed.data.email,
+          parsed.data.recaptchaToken,
         );
         const appUrl = this.env.APP_URL || "http://localhost:5173";
         const resetLink = `${appUrl}/reset-password?token=${token}`;
@@ -187,7 +200,11 @@ export class AuthController implements HttpController {
         });
       }
       try {
-        await this.service.resetPassword(parsed.data);
+        await this.service.resetPassword({
+          token: parsed.data.token,
+          password: parsed.data.password,
+          recaptchaToken: parsed.data.recaptchaToken,
+        });
         res.json({ ok: true });
       } catch (err: any) {
         if (err?.status)
