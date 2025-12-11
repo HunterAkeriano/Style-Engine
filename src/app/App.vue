@@ -38,7 +38,7 @@ watch(
   },
 );
 
-const DEFAULT_ROBOTS = "index, follow";
+const DEFAULT_ROBOTS = "noindex, nofollow";
 const defaultSiteUrl =
   import.meta.env.VITE_APP_URL ||
   import.meta.env.VITE_API_BASE_URL ||
