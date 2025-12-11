@@ -406,8 +406,6 @@ describe("ProfileController", () => {
       expect(mockProfileService.updateAvatar).toHaveBeenCalledWith(
         userId,
         "test-avatar.jpg",
-        "localhost:3000",
-        "http",
       );
     });
 

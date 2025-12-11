@@ -81,12 +81,16 @@ export class ProfileService {
     return safe
   }
 
-  async updateAvatar(userId: string, fileName: string, host: string, protocol: string) {
+  async updateAvatar(userId: string, fileName: string) {
     const user = await this.users.findById(userId)
     if (!user) throw toApiError(404, 'User not found')
 
     const oldAvatarUrl = user.avatarUrl || undefined
-    const avatarUrl = `${protocol}://${host}/uploads/avatars/${fileName}`
+    const baseUrl = this.env.API_URL?.replace(/\/+$/, '') || ''
+    const avatarUrl =
+      baseUrl.length > 0
+        ? new URL(`/uploads/avatars/${fileName}`, baseUrl).toString()
+        : `/uploads/avatars/${fileName}`
     await this.users.update(user, { avatarUrl, updatedAt: new Date() as any })
 
     if (oldAvatarUrl) {

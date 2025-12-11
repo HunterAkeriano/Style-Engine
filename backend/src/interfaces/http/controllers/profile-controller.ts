@@ -54,7 +54,7 @@ export class ProfileController implements HttpController {
         return sendApiError(res, 400, 'No file uploaded')
       }
       try {
-        const result = await this.service.updateAvatar(req.userId!, req.file.filename, req.get('host')!, req.protocol)
+        const result = await this.service.updateAvatar(req.userId!, req.file.filename)
         res.json(result)
       } catch (err: any) {
         if (err?.status) return sendApiError(res, err.status, err.message, { details: err.details })
