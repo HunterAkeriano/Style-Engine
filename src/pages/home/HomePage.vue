@@ -1,5 +1,5 @@
 <template>
-  <div class="home-page">
+  <div class="home-page motion-off" data-motion="off">
     <HomeHero />
     <HomeAbout />
     <HomeFeatures />

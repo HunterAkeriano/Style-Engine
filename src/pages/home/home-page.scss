@@ -3,4 +3,44 @@
   overflow: hidden;
   background: $hero-background;
   color: $color-text-primary;
+
+  &.motion-off {
+    .home-hero,
+    .home-hero * {
+      animation: none !important;
+      animation-play-state: paused !important;
+      transform: none !important;
+    }
+
+    .home-hero::before,
+    .home-hero::after {
+      display: none !important;
+    }
+
+    .home-showcase,
+    .home-showcase * {
+      animation: none !important;
+      animation-play-state: paused !important;
+      transform: none !important;
+    }
+
+    .holographic-dream__particles,
+    .morph-magic__particles {
+      display: none !important;
+    }
+
+    .home-tech,
+    .home-tech * {
+      animation: none !important;
+      animation-play-state: paused !important;
+      transform: none !important;
+    }
+
+    .home-about,
+    .home-about * {
+      animation: none !important;
+      animation-play-state: paused !important;
+      transform: none !important;
+    }
+  }
 }
