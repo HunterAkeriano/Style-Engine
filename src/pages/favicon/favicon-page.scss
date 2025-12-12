@@ -9,6 +9,7 @@
     radial-gradient(100% 100% at 50% 100%, color-var-alpha('color-accent', 0.18), transparent 70%),
     linear-gradient(180deg, $color-bg-secondary, $color-bg-primary);
   color: $color-text-primary;
+  padding-top: 120px;
 
   &::before {
     content: '';
@@ -205,6 +206,7 @@
 @media (max-width: 768px) {
   .favicon-page {
     padding: $space-2xl 0;
+    padding-top: 120px;
 
     &__header {
       padding: $space-md;
@@ -237,6 +239,7 @@
 @media (max-width: 480px) {
   .favicon-page {
     padding: $space-xl 0;
+    padding-top: 120px;
 
     &__header {
       padding: $space-sm;

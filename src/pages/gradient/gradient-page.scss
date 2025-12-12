@@ -1,6 +1,7 @@
 .gradient-page {
   padding: $space-3xl 0;
   min-height: calc(var(--app-vh, 1vh) * 100);
+  padding-top: 120px;
   position: relative;
   overflow: hidden;
   background:
@@ -205,6 +206,7 @@
 @media (max-width: 768px) {
   .gradient-page {
     padding: $space-2xl 0;
+    padding-top: 120px;
 
     &__header {
       padding: $space-md;
@@ -237,6 +239,7 @@
 @media (max-width: 480px) {
   .gradient-page {
     padding: $space-xl 0;
+    padding-top: 120px;
 
     &__header {
       padding: $space-sm;

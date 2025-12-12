@@ -2,6 +2,7 @@
 
 .grid-page {
   padding: $space-3xl 0;
+  padding-top: 120px;
   min-height: calc(var(--app-vh, 1vh) * 100);
   position: relative;
   overflow: hidden;
@@ -227,6 +228,7 @@
 @media (max-width: 768px) {
   .grid-page {
     padding: $space-2xl 0;
+    padding-top: 120px;
 
     &__header {
       padding: $space-md;
@@ -259,6 +261,7 @@
 @media (max-width: 480px) {
   .grid-page {
     padding: $space-xl 0;
+    padding-top: 120px;
 
     &__header {
       padding: $space-sm;

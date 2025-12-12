@@ -29,6 +29,7 @@ import ForumTopicList from "@/widgets/forum/topic-list/ForumTopicList.vue";
 
   @media (min-width: $breakpoint-md) {
     padding: $space-3xl 0;
+    padding-top: 120px;
   }
 }
 

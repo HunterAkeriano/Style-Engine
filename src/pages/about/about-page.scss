@@ -9,13 +9,16 @@
     $color-bg-primary;
   position: relative;
   overflow: hidden;
+  padding-top: 120px;
 
   @media (max-width: 768px) {
     padding: $space-3xl 0;
+    padding-top: 120px;
   }
 
   @media (max-width: 480px) {
     padding: $space-2xl 0;
+    padding-top: 120px;
   }
 
   &__container {

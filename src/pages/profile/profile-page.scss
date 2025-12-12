@@ -7,6 +7,7 @@
   position: relative;
   overflow: hidden;
   isolation: isolate;
+  padding-top: 120px;
 
   &__sky {
     position: absolute;
@@ -630,6 +631,8 @@
 
 @media (max-width: 1200px) {
   .profile-page {
+    padding-top: 120px;
+
     &__main {
       grid-template-columns: 320px 1fr;
       gap: $space-xl;
@@ -647,6 +650,8 @@
 
 @media (max-width: 992px) {
   .profile-page {
+    padding-top: 120px;
+
     &__main {
       grid-template-columns: 1fr;
       gap: $space-2xl;
@@ -684,6 +689,8 @@
 
 @media (max-width: 768px) {
   .profile-page {
+    padding-top: 120px;
+
     &__container {
       padding: 0 $space-md;
     }
@@ -739,6 +746,7 @@
 @media (max-width: 480px) {
   .profile-page {
     padding: $space-xl 0;
+    padding-top: 120px;
 
     &__container {
       padding: 0 $space-sm;
