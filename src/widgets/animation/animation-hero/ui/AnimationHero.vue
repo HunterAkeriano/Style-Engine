@@ -1,5 +1,9 @@
 <template>
-  <section class="animation-hero">
+  <section
+    ref="sectionRef"
+    class="animation-hero"
+    :class="{ 'is-visible': isVisible }"
+  >
     <div class="animation-hero__orbits" aria-hidden="true">
       <span class="animation-hero__sun"></span>
 
@@ -50,6 +54,7 @@
 <script setup lang="ts">
 import { NavLink } from '@/shared/ui'
 import { useI18n } from 'vue-i18n'
+import { useSectionVisibility } from '@/shared/composables'
 
 interface Props {
   eyebrow: string
@@ -63,6 +68,7 @@ interface Props {
 defineProps<Props>()
 
 const { t } = useI18n()
+const { sectionRef, isVisible } = useSectionVisibility()
 </script>
 
 <style lang="scss" scoped src="./animation-hero.scss"></style>

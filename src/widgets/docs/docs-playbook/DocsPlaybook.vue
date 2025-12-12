@@ -1,5 +1,9 @@
 <template>
-  <section class="docs-playbook">
+  <section
+    ref="sectionRef"
+    class="docs-playbook"
+    :class="{ 'is-visible': isVisible }"
+  >
     <div class="docs-playbook__head">
       <p class="docs-playbook__eyebrow">{{ eyebrow }}</p>
       <h2 class="docs-playbook__title">{{ title }}</h2>
@@ -59,6 +63,7 @@ import { useToast } from '@/shared/lib/toast'
 import type { DocsSnippet } from '@/entities/docs'
 import { Button } from '@/shared/ui'
 import { copyToClipboard } from '@/shared/lib'
+import { useSectionVisibility } from '@/shared/composables'
 
 defineProps<{
   eyebrow: string
@@ -70,6 +75,7 @@ defineProps<{
 const { t } = useI18n()
 const toast = useToast()
 const copyLabel = computed(() => t('DOCS.COPY'))
+const { sectionRef, isVisible } = useSectionVisibility()
 
 async function copy(code: string) {
   const ok = await copyToClipboard(code)

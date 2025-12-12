@@ -1,5 +1,10 @@
 .docs-topics {
+  --animation-state: paused;
   margin-top: 3rem;
+
+  &.is-visible {
+    --animation-state: running;
+  }
 
   &__head {
     h2 {
@@ -136,6 +141,7 @@
     border-radius: $border-radius-lg;
     display: block;
     animation: docs-card-float 3.2s ease-in-out infinite;
+    animation-play-state: var(--animation-state);
   }
 
   &__list {

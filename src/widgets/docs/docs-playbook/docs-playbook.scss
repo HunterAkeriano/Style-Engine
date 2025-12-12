@@ -1,5 +1,10 @@
 .docs-playbook {
+  --animation-state: paused;
   margin-top: 3rem;
+
+  &.is-visible {
+    --animation-state: running;
+  }
 
   &__head {
     h2 {
@@ -80,6 +85,7 @@
     background: linear-gradient(120deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
     transform: rotate(12deg);
     animation: docs-playbook-slide 7s ease-in-out infinite;
+    animation-play-state: var(--animation-state);
   }
 
   &__chip {
@@ -111,6 +117,7 @@
     text-transform: uppercase;
     letter-spacing: 0.08em;
     animation: docs-playbook-marquee 12s linear infinite;
+    animation-play-state: var(--animation-state);
     white-space: nowrap;
 
     span {
@@ -125,6 +132,7 @@
     border-radius: 50%;
     background: radial-gradient(circle, rgba(124, 58, 237, 0.65), rgba(124, 58, 237, 0));
     animation: docs-playbook-pulse 2.8s ease-out infinite;
+    animation-play-state: var(--animation-state);
 
     &_delayed {
       position: absolute;

@@ -1,5 +1,9 @@
 <template>
-  <section class="not-found-page">
+  <section
+    ref="sectionRef"
+    class="not-found-page"
+    :class="{ 'is-visible': isVisible }"
+  >
     <div class="not-found-page__bg" aria-hidden="true"></div>
     <div class="not-found-page__container">
       <div class="not-found-page__visual" aria-hidden="true">
@@ -65,8 +69,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { NavLink } from '@/shared/ui'
+import { useSectionVisibility } from '@/shared/composables'
 
 const { t } = useI18n()
+const { sectionRef, isVisible } = useSectionVisibility()
 </script>
 
 <style lang="scss" scoped src="./not-found-page.scss"></style>

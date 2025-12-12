@@ -1,5 +1,9 @@
 <template>
-  <section class="profile-hero">
+  <section
+    ref="sectionRef"
+    class="profile-hero"
+    :class="{ 'is-visible': isVisible }"
+  >
     <div class="profile-hero__user">
       <h3 class="profile-hero__name">{{ userName || email }}</h3>
 
@@ -72,6 +76,7 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Icon } from '@/shared/ui'
+import { useSectionVisibility } from '@/shared/composables'
 
 interface Props {
   displayAvatarUrl: string | null
@@ -96,6 +101,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const fileInputRef = ref<HTMLInputElement | null>(null)
+const { sectionRef, isVisible } = useSectionVisibility()
 
 function onSelect(event: Event) {
   emit('file-selected', event)

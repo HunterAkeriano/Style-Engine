@@ -1,6 +1,7 @@
 @import '@/app/styles/variables';
 
 .profile-hero {
+  --animation-state: paused;
   padding: $space-xl;
   background: color-var-alpha('surface-panel-2', 0.45);
   border-radius: $border-radius-lg;
@@ -9,6 +10,10 @@
   display: flex;
   flex-direction: column;
   gap: $space-lg;
+
+  &.is-visible {
+    --animation-state: running;
+  }
 }
 
 .profile-hero__user {
@@ -90,6 +95,7 @@
   &_premium {
     color: #10b981;
     animation: premium-glow-shadow 2s ease-in-out infinite;
+    animation-play-state: var(--animation-state);
     will-change: box-shadow;
     border-radius: 50%;
   }
@@ -113,6 +119,7 @@
     0 0 20px rgba(16, 185, 129, 0.3);
   z-index: 2;
   animation: badge-pulse 2s ease-in-out infinite;
+  animation-play-state: var(--animation-state);
   will-change: box-shadow;
   backface-visibility: hidden;
 }

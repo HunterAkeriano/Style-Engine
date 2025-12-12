@@ -1,5 +1,9 @@
 <template>
-  <section class="about-mission">
+<section
+  ref="sectionRef"
+  class="about-mission"
+  :class="{ 'is-visible': isVisible }"
+>
     <div class="about-mission__visual" aria-hidden="true">
       <div class="about-mission__grid"></div>
       <div class="about-mission__glow about-mission__glow_primary"></div>
@@ -48,8 +52,10 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { useSectionVisibility } from '@/shared/composables'
 
 const { t } = useI18n()
+const { sectionRef, isVisible } = useSectionVisibility()
 </script>
 
 <style lang="scss" scoped src="./about-mission.scss"></style>

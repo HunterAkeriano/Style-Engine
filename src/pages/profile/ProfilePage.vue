@@ -1,5 +1,10 @@
 <template>
-  <div class="profile-page" @mousemove="handleMouseMove">
+  <div
+    ref="sectionRef"
+    class="profile-page"
+    :class="{ 'is-visible': isVisible }"
+    @mousemove="handleMouseMove"
+  >
     <div class="profile-page__sky">
       <span v-if="isDark" class="profile-page__stars profile-page__stars-1"></span>
       <span v-if="isDark" class="profile-page__stars profile-page__stars-2"></span>
@@ -68,6 +73,7 @@ import { useI18n } from 'vue-i18n'
 import { authAPI, type User } from '@/shared/api/auth'
 import { useAuthStore } from '@/entities'
 import { useTheme } from '@/shared/composables/use-theme'
+import { useSectionVisibility } from '@/shared/composables'
 import { type ChangePasswordForm } from '@/shared/lib/validation/auth'
 import ProfileHero from '@/widgets/profile/ProfileHero.vue'
 import ProfileNavigation from '@/widgets/profile/ProfileNavigation.vue'
@@ -76,6 +82,7 @@ import './profile-page.scss'
 const { t, locale } = useI18n()
 const { isDark } = useTheme()
 const authStore = useAuthStore()
+const { sectionRef, isVisible } = useSectionVisibility()
 
 const mouseX = ref(0)
 const mouseY = ref(0)

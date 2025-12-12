@@ -1,4 +1,5 @@
 .header {
+  --animation-state: paused;
   position: fixed;
   top: 0;
   width: 100%;
@@ -7,7 +8,11 @@
   border-bottom: 1px solid $color-border;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
   overflow: visible;
-   transition: background $transition-base, border-color $transition-base, box-shadow $transition-base;
+  transition: background $transition-base, border-color $transition-base, box-shadow $transition-base;
+
+  &.is-visible {
+    --animation-state: running;
+  }
 
   &__content {
     display: flex;
@@ -103,6 +108,7 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: headerTitleSheen 6s ease-in-out infinite, headerTitleFloat 9s ease-in-out infinite;
+    animation-play-state: var(--animation-state);
     white-space: nowrap;
 
     @media (min-width: $breakpoint-md) {

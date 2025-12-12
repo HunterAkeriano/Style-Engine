@@ -1,5 +1,9 @@
 <template>
-  <div class="about-page">
+  <div
+    ref="sectionRef"
+    class="about-page"
+    :class="{ 'is-visible': isVisible }"
+  >
     <div class="about-page__container">
       <Breadcrumbs />
       <AboutHero />
@@ -17,9 +21,11 @@ import { useRouter } from 'vue-router'
 import { PRICING_PLANS, SubscriptionTier } from '@/shared/config/pricing'
 import { Breadcrumbs } from '@/widgets/common'
 import { AboutHero, AboutMission, AboutPlans, AboutCommunity } from '@/widgets/about'
+import { useSectionVisibility } from '@/shared/composables'
 
 const { locale } = useI18n()
 const router = useRouter()
+const { sectionRef, isVisible } = useSectionVisibility()
 
 const plans = computed(() => [
   PRICING_PLANS[SubscriptionTier.FREE],

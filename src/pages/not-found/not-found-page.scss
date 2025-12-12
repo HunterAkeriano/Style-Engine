@@ -1,4 +1,5 @@
 .not-found-page {
+  --animation-state: paused;
   position: relative;
   min-height: calc(var(--app-vh, 1vh) * 100);
   padding: $space-3xl $space-xl;
@@ -9,6 +10,10 @@
     radial-gradient(120% 120% at 15% 15%, color-var-alpha('color-primary', 0.25), transparent 50%),
     radial-gradient(110% 110% at 85% 10%, color-var-alpha('color-accent', 0.18), transparent 50%),
     linear-gradient(180deg, color-var-alpha('surface-panel-2', 0.9), color-var-alpha('surface-panel-3', 0.9));
+
+  &.is-visible {
+    --animation-state: running;
+  }
 
   @media (max-width: 768px) {
     padding: $space-2xl $space-lg;
@@ -27,6 +32,7 @@
       linear-gradient(120deg, color-var-alpha('panel-border', 0.18), transparent 60%);
     opacity: 0.8;
     animation: not-found-glow 32s ease-in-out infinite;
+    animation-play-state: var(--animation-state);
     pointer-events: none;
     z-index: 0;
   }
@@ -75,6 +81,7 @@
     opacity: 0.8;
     mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.9));
     animation: not-found-grid 18s ease-in-out infinite;
+    animation-play-state: var(--animation-state);
     z-index: 1;
   }
 
@@ -114,6 +121,7 @@
     border: 1px dashed color-var-alpha('panel-border', 0.5);
     box-shadow: 0 0 30px color-var-alpha('color-primary', 0.12);
     animation: not-found-spin 24s linear infinite;
+    animation-play-state: var(--animation-state);
 
     &_outer {
       width: 100%;
@@ -148,12 +156,14 @@
 
     &_slow {
       animation: not-found-spin 20s linear infinite;
+      animation-play-state: var(--animation-state);
     }
 
     &_fast {
       width: 62%;
       height: 62%;
       animation: not-found-spin 12s linear infinite reverse;
+      animation-play-state: var(--animation-state);
     }
   }
 

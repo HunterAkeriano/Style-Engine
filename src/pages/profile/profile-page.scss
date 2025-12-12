@@ -1,6 +1,7 @@
 @import '@/app/styles/variables';
 
 .profile-page {
+  --animation-state: paused;
   min-height: 100vh;
   padding: $space-2xl 0;
   background: var(--page-background);
@@ -8,6 +9,10 @@
   overflow: hidden;
   isolation: isolate;
   padding-top: 120px;
+
+  &.is-visible {
+    --animation-state: running;
+  }
 
   &__sky {
     position: absolute;
@@ -25,6 +30,7 @@
     opacity: 0.8;
     mix-blend-mode: screen;
     animation: star-swipe 48s linear infinite;
+    animation-play-state: var(--animation-state);
     animation-fill-mode: both;
     will-change: transform;
     backface-visibility: hidden;
@@ -88,6 +94,7 @@
       border-radius: 50%;
       background: radial-gradient(circle, rgba(255, 220, 100, 0.3) 0%, transparent 70%);
       animation: sun-rays 4s ease-in-out infinite;
+      animation-play-state: var(--animation-state);
     }
   }
 
@@ -98,6 +105,7 @@
     opacity: 0.8;
     z-index: 0;
     animation: cloud-float 20s ease-in-out infinite;
+    animation-play-state: var(--animation-state);
     will-change: transform;
     backface-visibility: hidden;
     contain: layout paint;

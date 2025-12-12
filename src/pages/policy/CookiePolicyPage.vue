@@ -1,5 +1,9 @@
 <template>
-  <section class="policy-page policy-page_cookie">
+  <section
+    ref="sectionRef"
+    class="policy-page policy-page_cookie"
+    :class="{ 'is-visible': isVisible }"
+  >
     <div aria-hidden="true" class="policy-page__bg"></div>
     <div class="policy-page__container">
       <Breadcrumbs />
@@ -32,8 +36,10 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Breadcrumbs } from '@/widgets/common'
+import { useSectionVisibility } from '@/shared/composables'
 
 const { t } = useI18n()
+const { sectionRef, isVisible } = useSectionVisibility()
 
 const sections = computed(() => [
   {

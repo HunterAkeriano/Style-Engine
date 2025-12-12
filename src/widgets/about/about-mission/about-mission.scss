@@ -1,6 +1,7 @@
 @import '@/app/styles/variables';
 
 .about-mission {
+  --animation-state: paused;
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
@@ -12,6 +13,10 @@
   border: 1px solid color-var-alpha('panel-border', 0.35);
   box-shadow: 0 24px 80px color-var-alpha('color-text-primary', 0.12);
   overflow: hidden;
+
+  &.is-visible {
+    --animation-state: running;
+  }
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
@@ -53,6 +58,7 @@
     opacity: 0.9;
     mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.9));
     animation: grid-float 14s ease-in-out infinite;
+    animation-play-state: var(--animation-state);
     z-index: 1;
   }
 
@@ -92,6 +98,7 @@
     border: 1px dashed color-var-alpha('panel-border', 0.5);
     box-shadow: 0 0 30px color-var-alpha('color-primary', 0.15);
     animation: spin 24s linear infinite;
+    animation-play-state: var(--animation-state);
 
     &_outer {
       width: 100%;
@@ -126,12 +133,14 @@
 
     &_slow {
       animation: spin 18s linear infinite;
+      animation-play-state: var(--animation-state);
     }
 
     &_fast {
       width: 62%;
       height: 62%;
       animation: spin 10s linear infinite reverse;
+      animation-play-state: var(--animation-state);
     }
   }
 
@@ -159,6 +168,7 @@
     background: radial-gradient(circle, color-var-alpha('color-primary', 0.3), transparent 60%);
     border: 1px solid color-var-alpha('panel-border', 0.35);
     animation: pulse 6s ease-in-out infinite;
+    animation-play-state: var(--animation-state);
     z-index: 2;
 
     @media (max-width: 640px) {
@@ -175,6 +185,7 @@
     opacity: 0.7;
     z-index: 1;
     animation: beam-slide 4s ease-in-out infinite;
+    animation-play-state: var(--animation-state);
 
     &_top {
       top: 30%;

@@ -1,5 +1,9 @@
 <template>
-  <section class="docs-hero">
+<section
+  ref="sectionRef"
+  class="docs-hero"
+  :class="{ 'is-visible': isVisible }"
+>
     <div class="docs-hero__text">
       <p class="docs-hero__eyebrow">{{ content.eyebrow }}</p>
       <h1 class="docs-hero__title">{{ content.title }}</h1>
@@ -44,6 +48,7 @@
 <script setup lang="ts">
 import type { DocsHeroContent } from '@/entities/docs'
 import { NavLink } from '@/shared/ui'
+import { useSectionVisibility } from '@/shared/composables'
 
 const defaultCode = `@keyframes float {
   0%, 100% { transform: translateY(0); }
@@ -53,6 +58,8 @@ const defaultCode = `@keyframes float {
 defineProps<{
   content: DocsHeroContent
 }>()
+
+const { sectionRef, isVisible } = useSectionVisibility()
 </script>
 
 <style lang="scss" scoped src="./docs-hero.scss"></style>

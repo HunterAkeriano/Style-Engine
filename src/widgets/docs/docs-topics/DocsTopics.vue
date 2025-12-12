@@ -1,5 +1,9 @@
 <template>
-  <section class="docs-topics">
+<section
+  ref="sectionRef"
+  class="docs-topics"
+  :class="{ 'is-visible': isVisible }"
+>
     <div class="docs-topics__head">
       <p class="docs-topics__eyebrow">{{ eyebrow }}</p>
       <h2 class="docs-topics__title">{{ title }}</h2>
@@ -43,6 +47,7 @@
 <script setup lang="ts">
 import type { DocsTopicCard } from '@/entities/docs'
 import { NavLink } from '@/shared/ui'
+import { useSectionVisibility } from '@/shared/composables'
 
 defineProps<{
   eyebrow: string
@@ -51,6 +56,8 @@ defineProps<{
   topics: DocsTopicCard[]
   openLabel: string
 }>()
+
+const { sectionRef, isVisible } = useSectionVisibility()
 </script>
 
 <style lang="scss" scoped src="./docs-topics.scss"></style>

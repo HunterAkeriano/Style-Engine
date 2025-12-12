@@ -1,5 +1,9 @@
 <template>
-  <header class="header" :class="{ header_open: isMobileMenuOpen }">
+  <header
+    ref="sectionRef"
+    class="header"
+    :class="{ header_open: isMobileMenuOpen, 'is-visible': isVisible }"
+  >
     <div class="container">
       <div class="header__content">
         <Logo />
@@ -212,12 +216,14 @@ import Logo from "@/shared/ui/Logo/Logo.vue";
 import { Button, Icon, NavLink, ThemeSwitcher } from "@/shared/ui";
 import UserMenu from "@/widgets/common/user-menu/UserMenu.vue";
 import DropdownMenu from "./components/DropdownMenu.vue";
+import { useSectionVisibility } from "@/shared/composables";
 
 const router = useRouter();
 const authStore = useAuthStore();
 const { t, locale } = useI18n();
 const isMobileMenuOpen = ref(false);
 const mobileMenuRef = ref<HTMLElement | null>(null);
+const { sectionRef, isVisible } = useSectionVisibility({ rootMargin: "80px" });
 
 const activeDropdownId = ref<string | null>(null);
 

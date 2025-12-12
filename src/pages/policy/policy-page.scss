@@ -1,6 +1,7 @@
 @import '@/app/styles/variables';
 
 .policy-page {
+  --animation-state: paused;
   position: relative;
   min-height: calc(var(--app-vh, 1vh) * 100);
   padding: $space-4xl $space-xl;
@@ -11,6 +12,10 @@
     radial-gradient(120% 120% at 15% 15%, color-var-alpha('color-primary', 0.22), transparent 55%),
     radial-gradient(120% 120% at 80% 10%, color-var-alpha('color-accent', 0.2), transparent 55%),
     linear-gradient(180deg, color-var-alpha('surface-panel-2', 0.92), color-var-alpha('surface-panel-3', 0.92));
+
+  &.is-visible {
+    --animation-state: running;
+  }
 
   @media (max-width: 1024px) {
     padding: $space-3xl $space-lg;
@@ -39,6 +44,7 @@
     opacity: 0.8;
     mask-image: radial-gradient(120% 120% at 50% 45%, rgba(0, 0, 0, 0.9), transparent 92%);
     animation: policy-glow 36s ease-in-out infinite alternate;
+    animation-play-state: var(--animation-state);
     pointer-events: none;
     z-index: 0;
   }
