@@ -50,9 +50,23 @@
   letter-spacing: 0.02em;
   text-transform: uppercase;
   margin-bottom: $space-md;
-  box-shadow: 0 0 20px $color-primary-alpha-20;
+  position: relative;
   animation: techEyebrowPulse 3s ease-in-out infinite;
   animation-play-state: var(--animation-state);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -15px;
+    border-radius: $border-radius-full;
+    background: radial-gradient(
+      ellipse,
+      $color-primary-alpha-20 0%,
+      transparent 70%
+    );
+    z-index: -1;
+    pointer-events: none;
+  }
 }
 
 .home-tech__title {
@@ -122,10 +136,7 @@
   );
   border: 1px solid color-var-alpha('panel-border', 0.15);
   border-radius: $border-radius-xl;
-  box-shadow:
-          0 0 0 1px color-var-alpha('panel-border', 0.08),
-          0 10px 28px rgba(0, 0, 0, 0.2);
-  transition: transform $transition-base, box-shadow $transition-base, border-color $transition-base;
+  transition: transform $transition-base, border-color $transition-base;
   position: relative;
   overflow: hidden;
   animation: techCardEntrance 0.8s ease-out backwards;
@@ -135,21 +146,17 @@
   &::before {
     content: '';
     position: absolute;
-    inset: -50%;
-    background: conic-gradient(
-                    from 0deg at 50% 50%,
-                    transparent,
-                    $color-primary-alpha-12,
-                    transparent 90deg,
-                    $color-secondary-alpha-16,
-                    transparent 180deg,
-                    $color-accent-alpha-18,
-                    transparent 270deg
+    inset: -40%;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      $color-primary-alpha-12 0%,
+      $color-secondary-alpha-05 40%,
+      transparent 70%
     );
-    animation: techCardRotate 8s linear infinite;
-    animation-play-state: var(--animation-state);
     opacity: 0;
     transition: opacity $transition-base;
+    pointer-events: none;
   }
 
   &::after {
@@ -169,10 +176,6 @@
   &:hover {
     transform: translateY(-6px);
     border-color: $color-primary;
-    box-shadow:
-            0 0 0 1px $color-primary-alpha-32,
-            0 0 30px $color-primary-alpha-24,
-            0 16px 40px rgba(0, 0, 0, 0.3);
 
     &::before {
       opacity: 1;
@@ -236,56 +239,7 @@
 }
 
 .home-tech__particles {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.home-tech__particle {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: radial-gradient(circle, $color-primary, transparent);
-  opacity: 0.6;
-
-  $colors: ($color-primary, $color-secondary, $color-accent);
-
-  @for $i from 1 through 15 {
-    &:nth-child(#{$i}) {
-      $size: 3 + random(4) + px;
-      $left: random(100) + %;
-      $top: random(100) + %;
-      $duration: 8 + random(12) + s;
-      $delay: random(5) + s;
-
-      width: $size;
-      height: $size;
-      left: $left;
-      top: $top;
-      background: radial-gradient(circle, nth($colors, random(3)), transparent);
-      animation: techParticleFloat#{$i} $duration ease-in-out infinite;
-      animation-delay: -$delay;
-      animation-play-state: var(--animation-state);
-    }
-  }
-}
-
-@for $i from 1 through 15 {
-  @keyframes techParticleFloat#{$i} {
-    $moveX: -30 + random(60);
-    $moveY: -30 + random(60);
-
-    0%, 100% {
-      transform: translate(0, 0);
-      opacity: 0.3;
-    }
-    50% {
-      transform: translate(#{$moveX}px, #{$moveY}px);
-      opacity: 0.8;
-    }
-  }
+  display: none;
 }
 
 .home-tech__glow {
@@ -305,8 +259,6 @@
                     $color-secondary-alpha-16,
                     transparent 70%
     );
-    animation: techGlow1 10s ease-in-out infinite;
-    animation-play-state: var(--animation-state);
   }
 
   &_2 {
@@ -320,17 +272,15 @@
                     $color-accent-alpha-18,
                     transparent 70%
     );
-    animation: techGlow2 12s ease-in-out infinite;
-    animation-play-state: var(--animation-state);
   }
 }
 
 @keyframes techEyebrowPulse {
   0%, 100% {
-    box-shadow: 0 0 20px $color-primary-alpha-20;
+    transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 30px $color-primary-alpha-32;
+    transform: scale(1.02);
   }
 }
 
@@ -354,36 +304,7 @@
   }
 }
 
-@keyframes techCardRotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
 
-@keyframes techGlow1 {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: translate(50px, -30px) scale(1.1);
-    opacity: 1;
-  }
-}
-
-@keyframes techGlow2 {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.7;
-  }
-  50% {
-    transform: translate(-40px, 40px) scale(1.15);
-    opacity: 0.9;
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .home-tech__eyebrow,

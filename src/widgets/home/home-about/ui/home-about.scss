@@ -160,9 +160,22 @@
   height: 90px;
   border-radius: 28px;
   background: linear-gradient(145deg, $color-accent-alpha-90, $color-secondary-alpha-20);
-  box-shadow: 0 12px 26px $color-accent-alpha-20;
   transform: rotate(-6deg);
   animation: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -60%;
+    border-radius: 50%;
+    background: radial-gradient(
+      ellipse,
+      $color-accent-alpha-20 0%,
+      rgba(0, 0, 0, 0) 70%
+    );
+    z-index: -1;
+    pointer-events: none;
+  }
 
   .home-about.is-visible & {
     animation: pulseCore 4s ease-in-out infinite;
@@ -178,9 +191,9 @@
 }
 
 @keyframes pulseCore {
-  0% { transform: rotate(-6deg) scale(1); box-shadow: 0 12px 26px $color-accent-alpha-20; }
-  50% { transform: rotate(4deg) scale(1.05); box-shadow: 0 16px 34px $color-accent-alpha-28; }
-  100% { transform: rotate(-6deg) scale(1); box-shadow: 0 12px 26px $color-accent-alpha-20; }
+  0% { transform: rotate(-6deg) scale(1); }
+  50% { transform: rotate(4deg) scale(1.05); }
+  100% { transform: rotate(-6deg) scale(1); }
 }
 
 
