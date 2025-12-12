@@ -6,18 +6,9 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: linear-gradient(
-                  135deg,
-                  color-var-alpha('color-bg-secondary', 0.4),
-                  color-var-alpha('color-bg-primary', 0.6),
-                  color-var-alpha('color-bg-secondary', 0.4)
-  );
+  background: $about-background;
   border: 1px solid color-var-alpha('panel-border', 0.1);
   border-radius: $border-radius-2xl;
-  box-shadow:
-          0 0 0 1px color-var-alpha('panel-border', 0.05),
-          0 20px 52px rgba(0, 0, 0, 0.3),
-          0 12px 32px $color-primary-alpha-12;
 
   &.is-visible {
     --animation-state: running;
