@@ -1,4 +1,5 @@
 .home-tech {
+  --animation-state: paused;
   margin-top: $space-3xl;
   margin-bottom: $space-3xl;
   padding: $space-3xl $space-2xl;
@@ -17,6 +18,10 @@
           0 0 0 1px color-var-alpha('panel-border', 0.05),
           0 20px 52px rgba(0, 0, 0, 0.3),
           0 12px 32px $color-primary-alpha-12;
+
+  &.is-visible {
+    --animation-state: running;
+  }
 
   @media (min-width: $breakpoint-lg) {
     padding: $space-3xl;
@@ -47,6 +52,7 @@
   margin-bottom: $space-md;
   box-shadow: 0 0 20px $color-primary-alpha-20;
   animation: techEyebrowPulse 3s ease-in-out infinite;
+  animation-play-state: var(--animation-state);
 }
 
 .home-tech__title {
@@ -59,6 +65,7 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: techTitleShift 6s ease-in-out infinite;
+  animation-play-state: var(--animation-state);
 
   @media (min-width: $breakpoint-md) {
     font-size: $font-size-3xl;
@@ -123,6 +130,7 @@
   overflow: hidden;
   animation: techCardEntrance 0.8s ease-out backwards;
   animation-delay: calc(var(--tech-index) * 0.1s);
+  animation-play-state: var(--animation-state);
 
   &::before {
     content: '';
@@ -139,6 +147,7 @@
                     transparent 270deg
     );
     animation: techCardRotate 8s linear infinite;
+    animation-play-state: var(--animation-state);
     opacity: 0;
     transition: opacity $transition-base;
   }
@@ -258,6 +267,7 @@
       background: radial-gradient(circle, nth($colors, random(3)), transparent);
       animation: techParticleFloat#{$i} $duration ease-in-out infinite;
       animation-delay: -$delay;
+      animation-play-state: var(--animation-state);
     }
   }
 }
@@ -296,6 +306,7 @@
                     transparent 70%
     );
     animation: techGlow1 10s ease-in-out infinite;
+    animation-play-state: var(--animation-state);
   }
 
   &_2 {
@@ -310,6 +321,7 @@
                     transparent 70%
     );
     animation: techGlow2 12s ease-in-out infinite;
+    animation-play-state: var(--animation-state);
   }
 }
 

@@ -127,8 +127,12 @@
   border-radius: 50%;
   background: radial-gradient(80% 80% at 30% 30%, rgba(255, 255, 255, 0.5), $color-primary-alpha-22);
   box-shadow: 0 12px 30px $color-primary-alpha-22;
-  animation: floatSoft 5s ease-in-out infinite;
-  will-change: transform;
+  animation: none;
+
+  .home-about.is-visible & {
+    animation: floatSoft 5s ease-in-out infinite;
+    will-change: transform;
+  }
 }
 
 .home-about__visual-orbit {
@@ -140,8 +144,12 @@
   border-radius: 50%;
   background: radial-gradient(70% 70% at 50% 50%, $color-secondary-alpha-24, $color-secondary-alpha-05);
   box-shadow: 0 10px 28px $color-secondary-alpha-18;
-  animation: floatSoft 6s ease-in-out infinite reverse;
-  will-change: transform;
+  animation: none;
+
+  .home-about.is-visible & {
+    animation: floatSoft 6s ease-in-out infinite reverse;
+    will-change: transform;
+  }
 }
 
 .home-about__visual-core {
@@ -154,8 +162,12 @@
   background: linear-gradient(145deg, $color-accent-alpha-90, $color-secondary-alpha-20);
   box-shadow: 0 12px 26px $color-accent-alpha-20;
   transform: rotate(-6deg);
-  animation: pulseCore 4s ease-in-out infinite;
-  will-change: transform;
+  animation: none;
+
+  .home-about.is-visible & {
+    animation: pulseCore 4s ease-in-out infinite;
+    will-change: transform;
+  }
 }
 
 

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <section class="home-showcase">
+    <section ref="sectionRef" class="home-showcase" :class="{ 'is-visible': isVisible }">
       <p class="home-showcase__eyebrow">{{ t('HOME.SHOWCASE_TAG') }}</p>
       <h2 class="home-showcase__title">{{ t('HOME.SHOWCASE_TITLE') }}</h2>
 
@@ -157,8 +157,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { NavLink } from '@/shared/ui'
+import { useSectionVisibility } from '@/shared/composables'
 
 const { t } = useI18n()
+const { sectionRef, isVisible } = useSectionVisibility()
 </script>
 
 <style lang="scss" scoped src="./home-showcase.scss"></style>

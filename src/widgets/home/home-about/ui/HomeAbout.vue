@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <section class="home-about">
+    <section ref="sectionRef" class="home-about" :class="{ 'is-visible': isVisible }">
       <div class="home-about__text">
         <p class="home-about__eyebrow">{{ t('HOME.ABOUT_TAG') }}</p>
         <h2 class="home-about__title">{{ t('HOME.ABOUT_TITLE') }}</h2>
@@ -28,8 +28,10 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { useSectionVisibility } from '@/shared/composables'
 
 const { t } = useI18n()
+const { sectionRef, isVisible } = useSectionVisibility()
 </script>
 
 <style lang="scss" scoped src="./home-about.scss"></style>

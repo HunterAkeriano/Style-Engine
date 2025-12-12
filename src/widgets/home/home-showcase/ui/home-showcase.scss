@@ -1,11 +1,28 @@
 .home-showcase {
+  --animation-state: paused;
   margin-top: $space-3xl;
   margin-bottom: $space-3xl;
   padding: $space-2xl;
   text-align: center;
 
+  &.is-visible {
+    --animation-state: running;
+  }
+
   @media (min-width: $breakpoint-lg) {
     padding: $space-3xl;
+  }
+
+  .holographic-dream,
+  .aurora-sunset,
+  .shadow-dance,
+  .morph-magic,
+  .grid-flow,
+  .icon-genesis {
+    &,
+    * {
+      animation-play-state: var(--animation-state);
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <section class="home-tech">
+    <section ref="sectionRef" class="home-tech" :class="{ 'is-visible': isVisible }">
       <div class="home-tech__story">
         <p class="home-tech__eyebrow">{{ t("HOME.TECH_TAG") }}</p>
         <h2 class="home-tech__title">{{ t("HOME.TECH_TITLE") }}</h2>
@@ -44,8 +44,10 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { Icon } from "@/shared/ui";
+import { useSectionVisibility } from "@/shared/composables";
 
 const { t } = useI18n();
+const { sectionRef, isVisible } = useSectionVisibility();
 
 const technologies = [
   {
