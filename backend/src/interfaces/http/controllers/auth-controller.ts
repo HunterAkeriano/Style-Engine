@@ -289,7 +289,7 @@ export class AuthController implements HttpController {
         });
       }
       try {
-        const { accessToken, refreshToken, user } =
+        const { accessToken, refreshToken, user, isNewUser } =
           await this.service.googleAuth(parsed.data.credential);
         const cookie = serializeCookie(
           "refreshToken",
@@ -298,6 +298,31 @@ export class AuthController implements HttpController {
         );
         res.setHeader("Set-Cookie", cookie);
         res.json({ token: accessToken, user });
+
+        if (isNewUser) {
+          try {
+            const lang = this.getPreferredLanguage(req);
+            const appUrl = buildLocalizedUrl(
+              this.env.APP_URL || "http://localhost:5173",
+              lang,
+            );
+            const builder = new MailBuilder();
+            await new MailerService(this.env).send({
+              to: user.email,
+              subject: builder.welcomeSubject(lang),
+              text: builder.plainWelcome(
+                { appUrl, userName: user.name },
+                lang,
+              ),
+              html: builder.htmlWelcome(
+                { appUrl, userName: user.name },
+                lang,
+              ),
+            });
+          } catch (mailErr) {
+            console.error("Failed to send welcome email (Google)", mailErr);
+          }
+        }
       } catch (err: any) {
         if (err?.status)
           return sendApiError(res, err.status, err.message, {

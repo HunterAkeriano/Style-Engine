@@ -224,6 +224,8 @@ export class AuthService {
       'subscriptionExpiresAt'
     ])
 
+    let isNewUser = false
+
     if (!user) {
       const randomPassword = crypto.randomBytes(32).toString('hex')
       const passwordHash = await bcrypt.hash(randomPassword, 10)
@@ -233,6 +235,7 @@ export class AuthService {
         name,
         avatarUrl
       })
+      isNewUser = true
     } else if (!user.avatarUrl && avatarUrl) {
       await this.users.update(user, { avatarUrl })
     }
@@ -245,6 +248,11 @@ export class AuthService {
       revoked: false
     })
 
-    return { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken, user: this.toSafeUser(user)! }
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user: this.toSafeUser(user)!,
+      isNewUser
+    }
   }
 }
