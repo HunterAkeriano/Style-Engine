@@ -255,4 +255,116 @@ export class AuthService {
       isNewUser
     }
   }
+
+  async githubAuth(code: string, redirectUri?: string) {
+    if (!this.env.GITHUB_CLIENT_ID || !this.env.GITHUB_CLIENT_SECRET) {
+      throw toApiError(500, 'GitHub OAuth not configured')
+    }
+
+    const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
+      method: 'POST',
+      headers: { Accept: 'application/json' },
+      body: new URLSearchParams({
+        client_id: this.env.GITHUB_CLIENT_ID,
+        client_secret: this.env.GITHUB_CLIENT_SECRET,
+        code,
+        ...(redirectUri ? { redirect_uri: redirectUri } : {})
+      })
+    })
+
+    const tokenPayload = await tokenResponse.json() as any
+    if (!tokenResponse.ok || !tokenPayload?.access_token) {
+      console.error('GitHub token exchange failed', tokenPayload)
+      throw toApiError(401, 'Invalid GitHub code')
+    }
+
+    const accessToken = tokenPayload.access_token as string
+
+    const profileResponse = await fetch('https://api.github.com/user', {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+        'User-Agent': 'css-zone-backend'
+      }
+    })
+    const profile = await profileResponse.json() as any
+    if (!profileResponse.ok || !profile?.id) {
+      console.error('GitHub user fetch failed', profile)
+      throw toApiError(401, 'Failed to fetch GitHub user')
+    }
+
+    let email: string | null = profile.email || null
+    if (!email) {
+      try {
+        const emailsRes = await fetch('https://api.github.com/user/emails', {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+            'User-Agent': 'css-zone-backend'
+          }
+        })
+        const emails = (await emailsRes.json()) as Array<{ email: string; primary?: boolean; verified?: boolean }>
+        const primary = emails.find((e) => e.primary && e.verified) || emails.find((e) => e.verified) || emails[0]
+        email = primary?.email || null
+      } catch (err) {
+        console.warn('Failed to fetch GitHub emails', err)
+      }
+    }
+
+    if (!email) {
+      throw toApiError(401, 'GitHub account has no email')
+    }
+
+    const normalizedEmail = email.toLowerCase()
+    const name = profile.name || profile.login || null
+    const avatarUrl = profile.avatar_url || null
+
+    let user = await this.users.findByEmail(normalizedEmail, [
+      'id',
+      'email',
+      'passwordHash',
+      'name',
+      'avatarUrl',
+      'createdAt',
+      'isPayment',
+      'subscriptionTier',
+      'subscriptionExpiresAt'
+    ])
+
+    let isNewUser = false
+
+    if (!user) {
+      const randomPassword = crypto.randomBytes(32).toString('hex')
+      const passwordHash = await bcrypt.hash(randomPassword, 10)
+      user = await this.users.create({
+        email: normalizedEmail,
+        passwordHash,
+        name,
+        avatarUrl
+      })
+      isNewUser = true
+    } else {
+      const updates: Partial<{ avatarUrl: string | null; name: string | null }> = {}
+      if (!user.avatarUrl && avatarUrl) updates.avatarUrl = avatarUrl
+      if (!user.name && name) updates.name = name
+      if (Object.keys(updates).length > 0) {
+        await this.users.update(user, updates as any)
+      }
+    }
+
+    const tokens = this.tokenService.signPair(user.id)
+    await this.refreshTokens.create({
+      userId: user.id,
+      tokenHash: tokens.refreshHash,
+      expiresAt: tokens.refreshExpires,
+      revoked: false
+    })
+
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user: this.toSafeUser(user)!,
+      isNewUser
+    }
+  }
 }

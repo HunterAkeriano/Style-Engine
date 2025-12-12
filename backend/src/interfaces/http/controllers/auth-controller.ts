@@ -54,6 +54,11 @@ const googleAuthSchema = z.object({
   credential: z.string().min(1),
 });
 
+const githubAuthSchema = z.object({
+  code: z.string().min(1),
+  redirectUri: z.string().url().optional(),
+});
+
 export class AuthController implements HttpController {
   readonly basePath = "/auth";
 
@@ -329,6 +334,57 @@ export class AuthController implements HttpController {
             details: err.details,
           });
         return sendApiError(res, 500, "Failed to authenticate with Google");
+      }
+    });
+
+    router.post("/github", async (req, res) => {
+      const parsed = githubAuthSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return sendApiError(res, 400, "Invalid payload", {
+          details: parsed.error.issues,
+        });
+      }
+      try {
+        const { accessToken, refreshToken, user, isNewUser } =
+          await this.service.githubAuth(parsed.data.code, parsed.data.redirectUri);
+        const cookie = serializeCookie(
+          "refreshToken",
+          refreshToken,
+          this.cookieConfig(),
+        );
+        res.setHeader("Set-Cookie", cookie);
+        res.json({ token: accessToken, user });
+
+        if (isNewUser) {
+          try {
+            const lang = this.getPreferredLanguage(req);
+            const appUrl = buildLocalizedUrl(
+              this.env.APP_URL || "http://localhost:5173",
+              lang,
+            );
+            const builder = new MailBuilder();
+            await new MailerService(this.env).send({
+              to: user.email,
+              subject: builder.welcomeSubject(lang),
+              text: builder.plainWelcome(
+                { appUrl, userName: user.name },
+                lang,
+              ),
+              html: builder.htmlWelcome(
+                { appUrl, userName: user.name },
+                lang,
+              ),
+            });
+          } catch (mailErr) {
+            console.error("Failed to send welcome email (GitHub)", mailErr);
+          }
+        }
+      } catch (err: any) {
+        if (err?.status)
+          return sendApiError(res, err.status, err.message, {
+            details: err.details,
+          });
+        return sendApiError(res, 500, "Failed to authenticate with GitHub");
       }
     });
   }

@@ -917,6 +917,8 @@
     OR_CONTINUE: "або продовжити з",
     SIGN_IN_WITH_GOOGLE: "Увійти через Google",
     SIGN_UP_WITH_GOOGLE: "Зареєструватися через Google",
+    SIGN_IN_WITH_GITHUB: "Увійти через GitHub",
+    SIGN_UP_WITH_GITHUB: "Зареєструватися через GitHub",
     SIGNING_IN: "Вхід...",
     CREATING_ACCOUNT: "Створюємо акаунт...",
     OR: "або",
@@ -934,6 +936,7 @@
     USER_EXISTS: "Користувач з таким email вже існує",
     INVALID_CREDENTIALS: "Невірний email або пароль",
     GOOGLE_DISABLED: "Вхід через Google заблоковано в браузері. Дозвольте сторонній вхід і спробуйте знову.",
+    GITHUB_DISABLED: "Вхід через GitHub недоступний. Перевірте налаштування браузера й спробуйте ще раз.",
   },
   PROFILE: {
     TITLE: "Профіль",
