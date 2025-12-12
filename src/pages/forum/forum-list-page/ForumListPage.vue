@@ -13,12 +13,12 @@
 </template>
 
 <script setup lang="ts">
-import { Breadcrumbs } from '@/widgets/common'
-import ForumTopicList from '@/widgets/forum/topic-list/ForumTopicList.vue'
+import { Breadcrumbs } from "@/widgets/common";
+import ForumTopicList from "@/widgets/forum/topic-list/ForumTopicList.vue";
 </script>
 
 <style lang="scss" scoped>
-@import '@/app/styles/variables';
+@import "@/app/styles/variables";
 
 .forum {
   position: relative;
@@ -45,19 +45,26 @@ import ForumTopicList from '@/widgets/forum/topic-list/ForumTopicList.vue'
   width: 800px;
   height: 800px;
   border-radius: 50%;
-  filter: blur(150px);
   opacity: 0.2;
 
   &_left {
     top: -300px;
     left: -300px;
-    background: radial-gradient(circle, color-var-alpha('color-primary', 0.5), transparent 70%);
+    background: radial-gradient(
+      circle,
+      color-var-alpha("color-primary", 0.5),
+      transparent 70%
+    );
   }
 
   &_right {
     bottom: -300px;
     right: -300px;
-    background: radial-gradient(circle, color-var-alpha('color-secondary', 0.5), transparent 70%);
+    background: radial-gradient(
+      circle,
+      color-var-alpha("color-secondary", 0.5),
+      transparent 70%
+    );
   }
 }
 
@@ -70,10 +77,22 @@ import ForumTopicList from '@/widgets/forum/topic-list/ForumTopicList.vue'
   height: 100%;
   border-radius: $border-radius-3xl;
   background-image:
-    linear-gradient(90deg, color-var-alpha('panel-border', 0.08) 1px, transparent 1px),
-    linear-gradient(0deg, color-var-alpha('panel-border', 0.08) 1px, transparent 1px);
+    linear-gradient(
+      90deg,
+      color-var-alpha("panel-border", 0.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      0deg,
+      color-var-alpha("panel-border", 0.08) 1px,
+      transparent 1px
+    );
   background-size: 80px 80px;
-  mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 15%, transparent 80%);
+  mask-image: radial-gradient(
+    ellipse 100% 100% at 50% 50%,
+    black 15%,
+    transparent 80%
+  );
   pointer-events: none;
   z-index: 0;
   opacity: 0.4;

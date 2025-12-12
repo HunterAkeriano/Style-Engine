@@ -88,11 +88,9 @@
 @keyframes sparkle {
   0%, 100% {
     transform: scale(1) rotate(0deg);
-    filter: brightness(1);
   }
   50% {
     transform: scale(1.2) rotate(180deg);
-    filter: brightness(1.5);
   }
 }
 

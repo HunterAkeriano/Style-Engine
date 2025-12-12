@@ -491,13 +491,10 @@
 
   &__owner-crown_pro {
     color: color-var('color-primary');
-    filter: drop-shadow(0 0 6px color-var-alpha('color-primary', 0.6));
   }
 
   &__owner-crown_premium {
-    color: color-var('color-success');
-    filter: drop-shadow(0 0 6px color-var-alpha('color-success', 0.6));
-  }
+    color: color-var('color-success');}
 
   &__owner-plan {
     margin-top: 4px;
