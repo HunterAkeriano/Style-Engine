@@ -1,68 +1,75 @@
-import { onBeforeUnmount, onMounted } from 'vue'
+import { onBeforeUnmount, onMounted } from "vue";
 
-const CSS_VAR = '--app-vh'
-const listeners: Array<() => void> = []
-let initialized = false
-let teardown: (() => void) | null = null
+const CSS_VAR = "--app-vh";
+const CSS_VAR_HEIGHT = "--app-height";
+const listeners: Array<() => void> = [];
+let initialized = false;
+let teardown: (() => void) | null = null;
 
 const isIOS = () => {
-  if (typeof window === 'undefined') return false
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-}
+  if (typeof window === "undefined") return false;
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+  );
+};
 
 function setViewportVar() {
-  if (typeof window === 'undefined' || typeof document === 'undefined') return
-  const viewportHeight = window.innerHeight
-  const vh = viewportHeight * 0.01
-  document.documentElement.style.setProperty(CSS_VAR, `${vh}px`)
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  const viewportHeight = window.innerHeight;
+  const vh = viewportHeight * 0.01;
+  document.documentElement.style.setProperty(CSS_VAR, `${vh}px`);
+  document.documentElement.style.setProperty(
+    CSS_VAR_HEIGHT,
+    `${window.innerHeight}px`,
+  );
 }
 
 function setup() {
-  if (initialized || typeof window === 'undefined') return
-  initialized = true
-  setViewportVar()
+  if (initialized || typeof window === "undefined") return;
+  initialized = true;
+  setViewportVar();
 
   const handler = () => {
-    setViewportVar()
-    listeners.forEach(fn => fn())
-  }
+    setViewportVar();
+    listeners.forEach((fn) => fn());
+  };
 
   if (isIOS()) {
-    window.addEventListener('orientationchange', handler)
+    window.addEventListener("orientationchange", handler);
 
     teardown = () => {
-      window.removeEventListener('orientationchange', handler)
-    }
+      window.removeEventListener("orientationchange", handler);
+    };
   } else {
-    window.addEventListener('resize', handler)
-    window.addEventListener('orientationchange', handler)
+    window.addEventListener("resize", handler);
+    window.addEventListener("orientationchange", handler);
 
     teardown = () => {
-      window.removeEventListener('resize', handler)
-      window.removeEventListener('orientationchange', handler)
-    }
+      window.removeEventListener("resize", handler);
+      window.removeEventListener("orientationchange", handler);
+    };
   }
 }
 
 export function useViewportHeight(onUpdate?: () => void) {
-  setup()
+  setup();
 
   onMounted(() => {
     if (onUpdate) {
-      listeners.push(onUpdate)
+      listeners.push(onUpdate);
     }
-  })
+  });
 
   onBeforeUnmount(() => {
     if (onUpdate) {
-      const idx = listeners.indexOf(onUpdate)
-      if (idx !== -1) listeners.splice(idx, 1)
+      const idx = listeners.indexOf(onUpdate);
+      if (idx !== -1) listeners.splice(idx, 1);
     }
     if (listeners.length === 0 && teardown) {
-      teardown()
-      teardown = null
-      initialized = false
+      teardown();
+      teardown = null;
+      initialized = false;
     }
-  })
+  });
 }
