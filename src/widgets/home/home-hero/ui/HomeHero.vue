@@ -1,6 +1,10 @@
 <template>
   <div class="container">
-    <section class="home-hero">
+    <section
+      ref="sectionRef"
+      class="home-hero"
+      :class="{ 'is-visible': isVisible }"
+    >
       <div class="home-hero__title-row">
         <Logo class="home-hero__logo" not-show />
         <h1 class="home-hero__title">{{ t("HOME.TITLE") }}</h1>
@@ -68,8 +72,10 @@
 import { useI18n } from "vue-i18n";
 import Logo from "@/shared/ui/Logo/Logo.vue";
 import { NavLink } from "@/shared/ui";
+import { useSectionVisibility } from "@/shared/composables";
 
 const { t } = useI18n();
+const { sectionRef, isVisible } = useSectionVisibility();
 </script>
 
 <style lang="scss" scoped src="./home-hero.scss"></style>

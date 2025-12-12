@@ -1,4 +1,5 @@
 .home-hero {
+  --animation-state: paused;
   text-align: center;
   padding: $space-2xl $space-md;
   position: relative;
@@ -10,9 +11,14 @@
   opacity: 0;
   transform: translate3d(0, 18px, 0);
   animation: heroEntrance 900ms ease-out 80ms forwards;
+  animation-play-state: var(--animation-state);
   color: $color-text-primary;
   backface-visibility: hidden;
   margin-top: 15%;
+
+  &.is-visible {
+    --animation-state: running;
+  }
 
   @media (min-width: $breakpoint-md) {
     padding: $space-3xl 0;
@@ -34,6 +40,7 @@
     background-position: 0 0;
     opacity: 0.9;
     animation: heroGlow 16s ease-in-out infinite alternate;
+    animation-play-state: var(--animation-state);
     z-index: -1;
     will-change: transform;
   }
@@ -71,6 +78,7 @@
     opacity: 0.75;
     z-index: -1;
     animation: snowfall 7.5s linear infinite;
+    animation-play-state: var(--animation-state);
     will-change: transform;
   }
 }
@@ -84,6 +92,7 @@
   opacity: 0;
   transform: translate3d(0, 16px, 0);
   animation: heroItemRise 900ms cubic-bezier(0.25, 0.9, 0.35, 1) 140ms forwards;
+  animation-play-state: var(--animation-state);
   backface-visibility: hidden;
 }
 
@@ -92,6 +101,7 @@
   height: 64px;
   margin: 0;
   animation: heroLogoFloat 4s ease-in-out infinite;
+  animation-play-state: var(--animation-state);
   will-change: transform;
 
   @media (min-width: $breakpoint-md) {
@@ -110,6 +120,7 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: heroGradientShift 6s ease-in-out infinite;
+  animation-play-state: var(--animation-state);
   will-change: background-position, transform;
 
   @media (min-width: $breakpoint-md) {
@@ -133,6 +144,7 @@
   opacity: 0;
   transform: translate3d(0, 12px, 0);
   animation: heroItemRise 880ms cubic-bezier(0.25, 0.9, 0.35, 1) 260ms forwards;
+  animation-play-state: var(--animation-state);
   backface-visibility: hidden;
 
   @media (min-width: $breakpoint-md) {
@@ -155,6 +167,7 @@
   opacity: 0;
   transform: translate3d(0, 10px, 0);
   animation: heroItemRise 840ms cubic-bezier(0.25, 0.9, 0.35, 1) 380ms forwards;
+  animation-play-state: var(--animation-state);
   backface-visibility: hidden;
   max-width: 900px;
   margin: 0 auto;
