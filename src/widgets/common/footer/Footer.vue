@@ -63,22 +63,6 @@
             </NavLink>
           </nav>
         </div>
-
-        <div class="footer__section">
-          <h4 class="footer__section-title">{{ t("FOOTER.SETTINGS") }}</h4>
-          <div class="footer__settings">
-            <div class="footer__setting">
-              <span class="footer__setting-label">{{ t("FOOTER.THEME") }}</span>
-              <ThemeSwitcher />
-            </div>
-            <div class="footer__setting">
-              <span class="footer__setting-label">{{
-                t("FOOTER.LANGUAGE")
-              }}</span>
-              <LanguageSwitcher />
-            </div>
-          </div>
-        </div>
       </div>
 
       <div class="footer__bottom">
@@ -120,8 +104,6 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import Logo from "@/shared/ui/Logo/Logo.vue";
 import { NavLink } from "@/shared/ui";
-import ThemeSwitcher from "@/shared/ui/theme-switcher/ThemeSwitcher.vue";
-import { LanguageSwitcher } from "@/features";
 
 const { t } = useI18n();
 const currentYear = computed(() => new Date().getFullYear());

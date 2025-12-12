@@ -72,6 +72,8 @@
       content: '';
       width: 10px;
       height: 10px;
+      min-width: 10px;
+      min-height: 10px;
       border-radius: 50%;
       background: linear-gradient(135deg, $color-primary, $color-secondary);
       box-shadow: 0 0 0 4px $color-primary-alpha-12;
