@@ -13,7 +13,7 @@ import { PasswordResetRepository } from "../../../infrastructure/repositories/pa
 import type { Models } from "../../../models";
 import { sendApiError } from "../../../utils/apiError";
 import { MailBuilder } from "../mail-builder";
-import { resolveRequestLanguage } from "../../../utils/language";
+import { buildLocalizedUrl, resolveRequestLanguage } from "../../../utils/language";
 import type { HttpController } from "../api-router";
 
 const strongPassword = z
@@ -97,6 +97,29 @@ export class AuthController implements HttpController {
         );
         res.setHeader("Set-Cookie", cookie);
         res.status(201).json({ token: accessToken, user });
+
+        try {
+          const lang = this.getPreferredLanguage(req);
+          const appUrl = buildLocalizedUrl(
+            this.env.APP_URL || "http://localhost:5173",
+            lang,
+          );
+          const builder = new MailBuilder();
+          await new MailerService(this.env).send({
+            to: parsed.data.email,
+            subject: builder.welcomeSubject(lang),
+            text: builder.plainWelcome(
+              { appUrl, userName: user?.name || parsed.data.name },
+              lang,
+            ),
+            html: builder.htmlWelcome(
+              { appUrl, userName: user?.name || parsed.data.name },
+              lang,
+            ),
+          });
+        } catch (mailErr) {
+          console.error("Failed to send welcome email", mailErr);
+        }
       } catch (err: any) {
         if (err?.status)
           return sendApiError(res, err.status, err.message, {
@@ -175,8 +198,12 @@ export class AuthController implements HttpController {
           parsed.data.recaptchaToken,
         );
         const appUrl = this.env.APP_URL || "http://localhost:5173";
-        const resetLink = `${appUrl}/reset-password?token=${token}`;
         const lang = this.getPreferredLanguage(req);
+        const resetLink = buildLocalizedUrl(
+          appUrl,
+          lang,
+          `reset-password?token=${token}`,
+        );
         const builder = new MailBuilder();
         await new MailerService(this.env).send({
           to: userEmail,

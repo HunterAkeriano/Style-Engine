@@ -20,3 +20,31 @@ export function resolveRequestLanguage(
     | undefined
   return resolvePreferredLanguage(header, fallback)
 }
+
+function normalizeBaseUrl(baseUrl: string) {
+  return baseUrl.replace(/\/+$/, "")
+}
+
+function stripLocaleFromUrl(url: string) {
+  return url.replace(/\/uk$/, "")
+}
+
+export function buildLocalizedUrl(
+  baseUrl: string,
+  locale: PreferredLanguage,
+  path: string = "",
+) {
+  const cleanBase = normalizeBaseUrl(baseUrl || "")
+  const baseHasLocale = /\/uk$/i.test(cleanBase)
+  const baseWithLocale =
+    locale === "uk"
+      ? baseHasLocale
+        ? cleanBase
+        : `${cleanBase}/uk`
+      : baseHasLocale
+        ? stripLocaleFromUrl(cleanBase)
+        : cleanBase
+
+  const normalizedPath = path ? `/${path.replace(/^\/+/, "")}` : ""
+  return `${baseWithLocale}${normalizedPath}`
+}

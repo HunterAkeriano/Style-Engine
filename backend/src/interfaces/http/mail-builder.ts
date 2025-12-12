@@ -23,6 +23,12 @@ export class MailBuilder {
       : "Your forum topic status was updated"
   }
 
+  welcomeSubject(locale?: PreferredLanguage) {
+    return this.normalizeLocale(locale) === "uk"
+      ? "Ласкаво просимо до CSS-Zone"
+      : "Welcome to CSS-Zone"
+  }
+
   private formatStatus(status: string, locale?: PreferredLanguage) {
     const lang = this.normalizeLocale(locale)
     switch (status) {
@@ -57,6 +63,76 @@ export class MailBuilder {
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
+  }
+
+  private welcomeFeatures(appUrl: string, locale?: PreferredLanguage) {
+    const lang = this.normalizeLocale(locale)
+    return [
+      {
+        title: lang === "uk" ? "Генератор грідів" : "Grid generator",
+        desc:
+          lang === "uk"
+            ? "Створюйте адаптивні сітки та копіюйте CSS в один клік."
+            : "Build responsive grids and copy the CSS in one click.",
+        link: `${appUrl}/grid`,
+      },
+      {
+        title: lang === "uk" ? "Градієнти" : "Gradients",
+        desc:
+          lang === "uk"
+            ? "Грайтеся зі слоями, напрямками і готовими пресетами."
+            : "Layer gradients, tweak directions, and use ready presets.",
+        link: `${appUrl}/gradient`,
+      },
+      {
+        title: lang === "uk" ? "Анімації" : "Animations",
+        desc:
+          lang === "uk"
+            ? "Збирайте keyframe-анімації з живим прев'ю."
+            : "Compose keyframe animations with live preview.",
+        link: `${appUrl}/animation`,
+      },
+      {
+        title: lang === "uk" ? "Тіні та світло" : "Shadows & lights",
+        desc:
+          lang === "uk"
+            ? "Готові пресети і точні налаштування для box-shadow."
+            : "Ready-made presets and fine control for box-shadow.",
+        link: `${appUrl}/shadow`,
+      },
+      {
+        title: lang === "uk" ? "Clip-path студія" : "Clip-path studio",
+        desc:
+          lang === "uk"
+            ? "Малюйте фігури, експортуйте полігони без мороки."
+            : "Draw shapes and export clip-path polygons effortlessly.",
+        link: `${appUrl}/clip-path`,
+      },
+      {
+        title: lang === "uk" ? "Favicon майстерня" : "Favicon workshop",
+        desc:
+          lang === "uk"
+            ? "Створюйте фавікони та одразу тестуйте їх у вкладці."
+            : "Create favicons and preview them instantly in-tab.",
+        link: `${appUrl}/favicon`,
+      },
+      {
+        title: lang === "uk" ? "CSS квіз" : "CSS quiz",
+        desc:
+          lang === "uk"
+            ? "Тестуйте знання, отримуйте рейтинг і навчайтесь на поясненнях."
+            : "Test your knowledge, climb the leaderboard, learn from explanations.",
+        link: `${appUrl}/quiz`,
+      },
+      {
+        title: lang === "uk" ? "Форум" : "Forum",
+        desc:
+          lang === "uk"
+            ? "Питайте, діліться кодом і отримуйте фідбек від спільноти."
+            : "Ask, share code, and get feedback from the community.",
+        link: `${appUrl}/forum`,
+      },
+    ];
   }
 
   plainReset(resetLink: string, locale?: PreferredLanguage) {
@@ -274,7 +350,7 @@ If you have questions, reach out:
 - Viber: ${options.contacts.viber}
 - Email: ${options.contacts.email}
 
-You can also open the app: ${options.appUrl}`
+  You can also open the app: ${options.appUrl}`
   }
 
   htmlTopicStatus(options: {
@@ -330,6 +406,98 @@ You can also open the app: ${options.appUrl}`
             <li>Email: <a href="mailto:${options.contacts.email}" style="color: #a5b4fc; text-decoration: none;">${options.contacts.email}</a></li>
           </ul>
         </div>
+      </div>
+    </div>
+  </div>
+  `
+  }
+
+  plainWelcome(
+    options: {
+      appUrl: string
+      userName?: string | null
+    },
+    locale?: PreferredLanguage,
+  ) {
+    const lang = this.normalizeLocale(locale)
+    const name = options.userName
+      ? options.userName
+      : lang === "uk"
+        ? "друже"
+        : "there"
+    const features = this.welcomeFeatures(options.appUrl, lang)
+
+    if (lang === "uk") {
+      return `Привіт, ${name}! Дякуємо, що приєдналися до CSS-Zone.
+
+Ось що можна спробувати просто зараз:
+${features.map((f) => `- ${f.title}: ${f.desc} (${f.link})`).join("\n")}
+
+Натхнення та крутих проєктів!
+Команда CSS-Zone`
+    }
+
+    return `Hi ${name}! Thanks for joining CSS-Zone.
+
+Here’s what you can try right away:
+${features.map((f) => `- ${f.title}: ${f.desc} (${f.link})`).join("\n")}
+
+Have fun building!
+The CSS-Zone team`
+  }
+
+  htmlWelcome(
+    options: {
+      appUrl: string
+      userName?: string | null
+    },
+    locale?: PreferredLanguage,
+  ) {
+    const lang = this.normalizeLocale(locale)
+    const name = options.userName
+      ? this.escape(options.userName)
+      : lang === "uk"
+        ? "друже"
+        : "there"
+    const features = this.welcomeFeatures(options.appUrl, lang)
+    const intro =
+      lang === "uk"
+        ? "Дякуємо, що приєдналися до CSS-Zone. Ось ключові інструменти, які допоможуть вам стартувати швидко:"
+        : "Thanks for joining CSS-Zone. Here are the key tools to get you building fast:"
+    const ctaPrimary = lang === "uk" ? "Відкрити застосунок" : "Open the app"
+    const ctaSecondary = lang === "uk" ? "Перейти на форум" : "Go to forum"
+    const signOff =
+      lang === "uk" ? "Натхнення та крутих проєктів!" : "Have fun building!"
+
+    const featureCards = features
+      .map(
+        (f) => `
+        <div style="flex: 1 1 220px; min-width: 0; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 14px 16px; backdrop-filter: blur(8px);">
+          <p style="margin: 0 0 4px; color: #f8fafc; font-weight: 700; font-size: 15px;">${this.escape(f.title)}</p>
+          <p style="margin: 0 0 10px; color: #cbd5e1; font-size: 13px; line-height: 1.5;">${this.escape(f.desc)}</p>
+          <a href="${f.link}" style="color: #a5b4fc; text-decoration: none; font-weight: 700; font-size: 13px;">${lang === "uk" ? "Спробувати" : "Try it"}</a>
+        </div>`
+      )
+      .join("")
+
+    return `
+  <div style="font-family: 'Inter', Arial, sans-serif; background: #0b1220; color: #e2e8f0; padding: 32px;">
+    <div style="max-width: 620px; margin: 0 auto; background: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(236,72,153,0.18)); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.35);">
+      <div style="padding: 24px 28px; background: radial-gradient(circle at 20% 20%, rgba(99,102,241,0.25), transparent 45%), radial-gradient(circle at 80% 0%, rgba(236,72,153,0.2), transparent 45%), rgba(15,23,42,0.94);">
+        <p style="margin: 0; text-transform: uppercase; letter-spacing: 0.08em; color: #a5b4fc; font-size: 12px;">CSS-Zone</p>
+        <h1 style="margin: 8px 0 4px; color: #f8fafc; font-size: 22px;">${lang === "uk" ? "Ласкаво просимо!" : "Welcome aboard!"}</h1>
+        <p style="margin: 0; color: #cbd5e1; line-height: 1.6;">${lang === "uk" ? `Привіт, ${name}!` : `Hi ${name},`}</p>
+        <p style="margin: 6px 0 0; color: #cbd5e1; line-height: 1.6;">${intro}</p>
+      </div>
+      <div style="padding: 22px 24px; background: rgba(15,23,42,0.94); backdrop-filter: blur(10px);">
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+          ${featureCards}
+        </div>
+        <div style="text-align: center; margin: 18px 0 6px;">
+          <a href="${options.appUrl}" style="display: inline-block; padding: 12px 18px; border-radius: 999px; background: linear-gradient(135deg, #6366f1, #ec4899); color: #fff; text-decoration: none; font-weight: 700; box-shadow: 0 10px 30px rgba(99,102,241,0.35); margin-right: 10px;">${ctaPrimary}</a>
+          <a href="${options.appUrl}/forum" style="display: inline-block; padding: 12px 18px; border-radius: 999px; background: rgba(255,255,255,0.08); color: #e2e8f0; text-decoration: none; font-weight: 600; border: 1px solid rgba(255,255,255,0.12);">${ctaSecondary}</a>
+        </div>
+        <p style="margin: 10px 0 0; color: #94a3b8; font-size: 13px; text-align: center;">${signOff}<br/>CSS-Zone</p>
       </div>
     </div>
   </div>

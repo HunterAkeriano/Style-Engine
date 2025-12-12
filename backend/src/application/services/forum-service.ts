@@ -12,7 +12,7 @@ import type { Env } from "../../config/env";
 import { MailerService } from "./mailer-service";
 import { MailBuilder } from "../../interfaces/http/mail-builder";
 import { resolveUserRole } from "../../utils/roles";
-import type { PreferredLanguage } from "../../utils/language";
+import { buildLocalizedUrl, type PreferredLanguage } from "../../utils/language";
 
 export interface ForumAttachment {
   type: "image" | "youtube";
@@ -614,9 +614,11 @@ export class ForumService {
     const user = await this.repo.findUserById(userId);
     if (!user?.email) return;
 
-    const appUrl = (this.env.APP_URL || "http://localhost:5173").replace(
-      /\/$/,
-      "",
+    const locale = lang === "uk" ? "uk" : "en";
+
+    const appUrl = buildLocalizedUrl(
+      this.env.APP_URL || "http://localhost:5173",
+      locale,
     );
 
     const contacts = {
@@ -625,8 +627,6 @@ export class ForumService {
       viber: "viber://chat?number=%2B380974779784",
       email: "gamerstaject@gmail.com",
     };
-
-    const locale = lang === "uk" ? "uk" : "en";
 
     try {
       await this.mailer.send({
@@ -661,9 +661,11 @@ export class ForumService {
     const owner = topic.owner;
     if (!owner?.email) return;
 
-    const appUrl = (this.env.APP_URL || "http://localhost:5173").replace(
-      /\/$/,
-      "",
+    const locale = lang === "uk" ? "uk" : "en";
+
+    const appUrl = buildLocalizedUrl(
+      this.env.APP_URL || "http://localhost:5173",
+      locale,
     );
 
     const contacts = {
@@ -674,8 +676,6 @@ export class ForumService {
     };
 
     const topicLink = `${appUrl}/forum/${topic.id}`;
-
-    const locale = lang === "uk" ? "uk" : "en";
 
     try {
       await this.mailer.send({
