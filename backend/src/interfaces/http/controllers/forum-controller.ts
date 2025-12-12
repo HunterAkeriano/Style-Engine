@@ -18,6 +18,7 @@ import { sendApiError } from "../../../utils/apiError";
 import { uploadForumAttachment } from "../../../middleware/upload";
 import { broadcastForumEvent, sendUserNotification } from "../../ws/forum-ws";
 import { MailerService } from "../../../application/services/mailer-service";
+import { resolveRequestLanguage } from "../../../utils/language";
 
 const topicSchema = z.object({
   title: z.string().min(3).max(300),
@@ -195,10 +196,12 @@ export class ForumController implements HttpController {
           });
         }
         try {
+          const lang = resolveRequestLanguage(req);
           const topic = await this.service.updateStatus(
             req.params.id,
             parsed.data.status,
             Boolean(req.authUser && (req.authUser.role === "moderator" || req.authUser.role === "super_admin")),
+            lang,
           );
           broadcastForumEvent(req.params.id, "status", topic);
           res.json({ topic });
@@ -401,12 +404,14 @@ export class ForumController implements HttpController {
           : null;
 
         try {
+          const lang = resolveRequestLanguage(req);
           await this.service.muteUser({
             userId: req.params.userId,
             mutedBy: req.userId!,
             expiresAt,
             reason: parsed.data.reason,
             isModerator: Boolean(req.authUser && (req.authUser.role === "moderator" || req.authUser.role === "super_admin")),
+            lang,
           });
           res.json({ success: true });
         } catch (err: any) {

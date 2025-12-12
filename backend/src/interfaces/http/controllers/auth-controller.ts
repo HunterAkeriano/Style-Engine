@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, type Request } from "express";
 import { z } from "zod";
 import jwt from "jsonwebtoken";
 import type { Env } from "../../../config/env";
@@ -13,6 +13,7 @@ import { PasswordResetRepository } from "../../../infrastructure/repositories/pa
 import type { Models } from "../../../models";
 import { sendApiError } from "../../../utils/apiError";
 import { MailBuilder } from "../mail-builder";
+import { resolveRequestLanguage } from "../../../utils/language";
 import type { HttpController } from "../api-router";
 
 const strongPassword = z
@@ -175,12 +176,13 @@ export class AuthController implements HttpController {
         );
         const appUrl = this.env.APP_URL || "http://localhost:5173";
         const resetLink = `${appUrl}/reset-password?token=${token}`;
+        const lang = this.getPreferredLanguage(req);
         const builder = new MailBuilder();
         await new MailerService(this.env).send({
           to: userEmail,
-          subject: "Reset your CSS-Zone password",
-          text: builder.plainReset(resetLink),
-          html: builder.htmlReset(resetLink),
+          subject: builder.resetSubject(lang),
+          text: builder.plainReset(resetLink, lang),
+          html: builder.htmlReset(resetLink, lang),
         });
         res.json({ ok: true });
       } catch (err: any) {
@@ -289,5 +291,9 @@ export class AuthController implements HttpController {
       path: "/api",
       maxAge: 30 * 24 * 60 * 60,
     };
+  }
+
+  private getPreferredLanguage(req: Request) {
+    return resolveRequestLanguage(req);
   }
 }
