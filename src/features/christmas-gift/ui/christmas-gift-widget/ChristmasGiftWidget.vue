@@ -1,6 +1,8 @@
 <template>
   <div class="christmas-gift-widget">
-    <ChristmasTree v-if="treeVisible" @click="handleTreeClick" />
+    <Transition name="christmas-tree-appear" appear>
+      <ChristmasTree v-if="treeVisible" @click="handleTreeClick" />
+    </Transition>
 
     <Modal
       :visible="isModalOpen"

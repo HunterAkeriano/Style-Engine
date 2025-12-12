@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { authAPI } from '@/shared/api/auth'
 import { christmasGiftAPI } from '@/entities/christmas-gift'
 import { useAuthStore } from '@/entities/user'
@@ -11,6 +11,7 @@ export function useChristmasGift() {
   const premiumGrantedDate = ref<string>()
   const alreadyClaimed = ref(false)
   const claimedLocal = ref(false)
+  const eligibilityChecked = ref(false)
 
   const authStore = useAuthStore()
   const isAuthenticated = computed(() => authAPI.isAuthenticated())
@@ -41,11 +42,22 @@ export function useChristmasGift() {
     claimedLocal.value = false
   }
 
-  if (typeof window !== 'undefined' && checkIfClaimed()) {
-    claimedLocal.value = true
-  }
+  onMounted(async () => {
+    claimedLocal.value = checkIfClaimed()
 
-  const treeVisible = computed(() => !claimedLocal.value && !hasActiveSubscription.value)
+    try {
+      const sessionPromise = authStore.ensureSession()
+      if (sessionPromise) {
+        await sessionPromise
+      }
+    } catch (error) {
+      console.warn('Failed to hydrate auth session for christmas gift widget', error)
+    } finally {
+      eligibilityChecked.value = true
+    }
+  })
+
+  const treeVisible = computed(() => eligibilityChecked.value && !claimedLocal.value && !hasActiveSubscription.value)
 
   async function handleTreeClick() {
     if (!isAuthenticated.value) {

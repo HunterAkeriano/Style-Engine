@@ -8,6 +8,23 @@
   }
 }
 
+:global(.christmas-tree-appear-enter-active),
+:global(.christmas-tree-appear-leave-active) {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+:global(.christmas-tree-appear-enter-from),
+:global(.christmas-tree-appear-leave-to) {
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+}
+
+:global(.christmas-tree-appear-enter-to),
+:global(.christmas-tree-appear-leave-from) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
 .christmas-gift-modal {
   display: flex;
   flex-direction: column;
