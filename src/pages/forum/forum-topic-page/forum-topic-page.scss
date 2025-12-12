@@ -4,6 +4,7 @@
   position: relative;
   min-height: calc(var(--app-vh, 1vh) * 90);
   padding: $space-2xl 0 80px;
+  padding-top: 120px;
   color: $color-text-primary;
   background:
     radial-gradient(ellipse 100% 80% at 50% 0%, color-var-alpha('color-primary', 0.12), transparent 60%),
@@ -16,6 +17,7 @@
 
   @media (max-width: $breakpoint-md) {
     padding: $space-xl 0 60px;
+    padding-top: 120px;
   }
 }
 
