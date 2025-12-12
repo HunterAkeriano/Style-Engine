@@ -12,6 +12,7 @@ interface SendMailOptions {
 
 let transporter: nodemailer.Transporter | null = null
 let testAccountPromise: Promise<nodemailer.TestAccount> | null = null
+const DEFAULT_TIMEOUT_MS = 8000
 
 export function initMailer(env: Env) {
   if (
@@ -21,15 +22,7 @@ export function initMailer(env: Env) {
     env.SMTP_PASS &&
     env.SMTP_FROM
   ) {
-    transporter = nodemailer.createTransport({
-      host: env.SMTP_HOST,
-      port: Number(env.SMTP_PORT),
-      secure: Number(env.SMTP_PORT) === 465,
-      auth: {
-        user: env.SMTP_USER,
-        pass: env.SMTP_PASS
-      }
-    })
+    transporter = nodemailer.createTransport(buildSmtpConfig(env))
     return transporter
   }
 
@@ -72,15 +65,7 @@ async function getTransport(env?: Env | null) {
     env.SMTP_USER &&
     env.SMTP_PASS
   ) {
-    transporter = nodemailer.createTransport({
-      host: env.SMTP_HOST,
-      port: Number(env.SMTP_PORT),
-      secure: Number(env.SMTP_PORT) === 465,
-      auth: {
-        user: env.SMTP_USER,
-        pass: env.SMTP_PASS
-      }
-    })
+    transporter = nodemailer.createTransport(buildSmtpConfig(env))
     return transporter
   }
 
@@ -96,7 +81,10 @@ async function getTransport(env?: Env | null) {
       auth: {
         user: account.user,
         pass: account.pass
-      }
+      },
+      connectionTimeout: DEFAULT_TIMEOUT_MS,
+      greetingTimeout: DEFAULT_TIMEOUT_MS,
+      socketTimeout: DEFAULT_TIMEOUT_MS
     })
     return transporter
   } catch (err) {
@@ -124,5 +112,24 @@ async function logEmail(options: SendMailOptions) {
     }
   } catch (err) {
     console.warn('Failed to write email to disk', err)
+  }
+}
+
+function buildSmtpConfig(env: Env) {
+  const port = Number(env.SMTP_PORT)
+  const secure = port === 465
+  return {
+    host: env.SMTP_HOST,
+    port,
+    secure,
+    requireTLS: !secure,
+    auth: {
+      user: env.SMTP_USER,
+      pass: env.SMTP_PASS
+    },
+    // keep connect/handshake short to avoid 30s hangs on blocked ports
+    connectionTimeout: DEFAULT_TIMEOUT_MS,
+    greetingTimeout: DEFAULT_TIMEOUT_MS,
+    socketTimeout: DEFAULT_TIMEOUT_MS
   }
 }
