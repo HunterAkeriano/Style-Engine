@@ -13,12 +13,48 @@ import {
 } from "../i18n";
 import GeneratorLayout from "@/app/layouts/generator-layout/GeneratorLayout.vue";
 import DocsLayout from "@/app/layouts/docs-layout/DocsLayout.vue";
+import MainLayout from "@/app/layouts/main-layout/MainLayout.vue";
+import HomePage from "@/pages/home/HomePage.vue";
+import AboutPage from "@/pages/about/AboutPage.vue";
+import ForumListPage from "@/pages/forum/forum-list-page/ForumListPage.vue";
+import ForumCreatePage from "@/pages/forum/forum-create-page/ForumCreatePage.vue";
+import ForumTopicPage from "@/pages/forum/forum-topic-page/ForumTopicPage.vue";
+import PrivacyPolicyPage from "@/pages/policy/PrivacyPolicyPage.vue";
+import CookiePolicyPage from "@/pages/policy/CookiePolicyPage.vue";
+import ProfilePage from "@/pages/profile/ProfilePage.vue";
+import ProfileSettingsPage from "@/pages/profile/settings/ProfileSettingsPage.vue";
+import SavedGradientsPage from "@/pages/profile/saved/SavedGradientsPage.vue";
+import SavedShadowsPage from "@/pages/profile/saved/SavedShadowsPage.vue";
+import SavedAnimationsPage from "@/pages/profile/saved/SavedAnimationsPage.vue";
+import SavedClipPathsPage from "@/pages/profile/saved/SavedClipPathsPage.vue";
+import SavedFaviconsPage from "@/pages/profile/saved/SavedFaviconsPage.vue";
+import QuizHistoryPage from "@/pages/quiz/quiz-history-page/QuizHistoryPage.vue";
+import QuizStartPage from "@/pages/quiz/quiz-start-page/QuizStartPage.vue";
+import QuizTestPage from "@/pages/quiz/quiz-test-page/QuizTestPage.vue";
+import QuizLeaderboardPage from "@/pages/quiz/quiz-leaderboard-page/QuizLeaderboardPage.vue";
+import QuizManagementPage from "@/pages/quiz/quiz-management-page/QuizManagementPage.vue";
+import GradientPage from "@/pages/gradient/GradientPage.vue";
+import ShadowPage from "@/pages/shadow/ShadowPage.vue";
+import AnimationPage from "@/pages/animation/AnimationPage.vue";
+import AnimationDetailPage from "@/pages/animation/detail/AnimationDetailPage.vue";
+import ClipPathPage from "@/pages/clip-path/ClipPathPage.vue";
+import GridPage from "@/pages/grid/GridPage.vue";
+import FaviconPage from "@/pages/favicon/FaviconPage.vue";
+import LoginPage from "@/pages/login/LoginPage.vue";
+import RegisterPage from "@/pages/register/RegisterPage.vue";
+import ForgotPasswordPage from "@/pages/forgot-password/ForgotPasswordPage.vue";
+import ResetPasswordPage from "@/pages/reset-password/ResetPasswordPage.vue";
+import ModerationPage from "@/pages/moderation/ModerationPage.vue";
+import UserManagementPage from "@/pages/moderation/UserManagementPage.vue";
+import DocsPage from "@/pages/docs/ui/docs-page/DocsPage.vue";
+import DocsTopicPage from "@/pages/docs/ui/docs-topic-page/DocsTopicPage.vue";
+import NotFoundPage from "@/pages/not-found/NotFoundPage.vue";
 
 const mainLayoutChildren: RouteRecordRaw[] = [
   {
     path: "",
     name: "home",
-    component: () => import("@/pages/home/HomePage.vue"),
+    component: HomePage,
     meta: {
       titleKey: "META.HOME",
       descriptionKey: "META_DESCRIPTION.HOME",
@@ -28,7 +64,7 @@ const mainLayoutChildren: RouteRecordRaw[] = [
   {
     path: "about",
     name: "about",
-    component: () => import("@/pages/about/AboutPage.vue"),
+    component: AboutPage,
     meta: {
       titleKey: "META.ABOUT",
       descriptionKey: "META_DESCRIPTION.ABOUT",
@@ -38,7 +74,7 @@ const mainLayoutChildren: RouteRecordRaw[] = [
   {
     path: "forum",
     name: "forum",
-    component: () => import("@/pages/forum/forum-list-page/ForumListPage.vue"),
+    component: ForumListPage,
     meta: {
       titleKey: "META.FORUM",
       descriptionKey: "META_DESCRIPTION.FORUM",
@@ -48,7 +84,7 @@ const mainLayoutChildren: RouteRecordRaw[] = [
   {
     path: "forum/create",
     name: "forum-create",
-    component: () => import("@/pages/forum/forum-create-page/ForumCreatePage.vue"),
+    component: ForumCreatePage,
     meta: {
       titleKey: "META.FORUM_CREATE",
       descriptionKey: "META_DESCRIPTION.FORUM_CREATE",
@@ -59,7 +95,7 @@ const mainLayoutChildren: RouteRecordRaw[] = [
   {
     path: "forum/status/:status",
     name: "forum-status",
-    component: () => import("@/pages/forum/forum-list-page/ForumListPage.vue"),
+    component: ForumListPage,
     meta: {
       titleKey: "META.FORUM",
       descriptionKey: "META_DESCRIPTION.FORUM",
@@ -69,7 +105,7 @@ const mainLayoutChildren: RouteRecordRaw[] = [
   {
     path: "forum/:id",
     name: "forum-topic",
-    component: () => import("@/pages/forum/forum-topic-page/ForumTopicPage.vue"),
+    component: ForumTopicPage,
     meta: {
       titleKey: "META.FORUM_TOPIC",
       descriptionKey: "META_DESCRIPTION.FORUM_TOPIC",
@@ -79,7 +115,7 @@ const mainLayoutChildren: RouteRecordRaw[] = [
   {
     path: "privacy-policy",
     name: "privacy-policy",
-    component: () => import("@/pages/policy/PrivacyPolicyPage.vue"),
+    component: PrivacyPolicyPage,
     meta: {
       titleKey: "META.PRIVACY",
       descriptionKey: "META_DESCRIPTION.PRIVACY",
@@ -89,7 +125,7 @@ const mainLayoutChildren: RouteRecordRaw[] = [
   {
     path: "cookie-policy",
     name: "cookie-policy",
-    component: () => import("@/pages/policy/CookiePolicyPage.vue"),
+    component: CookiePolicyPage,
     meta: {
       titleKey: "META.COOKIE",
       descriptionKey: "META_DESCRIPTION.COOKIE",
@@ -98,7 +134,7 @@ const mainLayoutChildren: RouteRecordRaw[] = [
   },
   {
     path: "profile",
-    component: () => import("@/pages/profile/ProfilePage.vue"),
+    component: ProfilePage,
     meta: {
       titleKey: "META.PROFILE",
       descriptionKey: "META_DESCRIPTION.PROFILE",
@@ -109,46 +145,43 @@ const mainLayoutChildren: RouteRecordRaw[] = [
       {
         path: "",
         name: "profile",
-        component: () =>
-          import("@/pages/profile/settings/ProfileSettingsPage.vue"),
+        component: ProfileSettingsPage,
         meta: { requiresAuth: true },
       },
       {
         path: "gradients",
         name: "profile-gradients",
-        component: () => import("@/pages/profile/saved/SavedGradientsPage.vue"),
+        component: SavedGradientsPage,
         meta: { requiresAuth: true },
       },
       {
         path: "shadows",
         name: "profile-shadows",
-        component: () => import("@/pages/profile/saved/SavedShadowsPage.vue"),
+        component: SavedShadowsPage,
         meta: { requiresAuth: true },
       },
       {
         path: "animations",
         name: "profile-animations",
-        component: () =>
-          import("@/pages/profile/saved/SavedAnimationsPage.vue"),
+        component: SavedAnimationsPage,
         meta: { requiresAuth: true },
       },
       {
         path: "clip-paths",
         name: "profile-clip-paths",
-        component: () => import("@/pages/profile/saved/SavedClipPathsPage.vue"),
+        component: SavedClipPathsPage,
         meta: { requiresAuth: true },
       },
       {
         path: "favicons",
         name: "profile-favicons",
-        component: () => import("@/pages/profile/saved/SavedFaviconsPage.vue"),
+        component: SavedFaviconsPage,
         meta: { requiresAuth: true },
       },
       {
         path: "quiz-history",
         name: "profile-quiz-history",
-        component: () =>
-          import("@/pages/quiz/quiz-history-page/QuizHistoryPage.vue"),
+        component: QuizHistoryPage,
         meta: { requiresAuth: true },
       },
     ],
@@ -164,8 +197,7 @@ const quizLayoutRoutes: RouteRecordRaw[] = [
       {
         path: "",
         name: "quiz-start",
-        component: () =>
-          import("@/pages/quiz/quiz-start-page/QuizStartPage.vue"),
+        component: QuizStartPage,
         meta: {
           titleKey: "META.QUIZ",
           descriptionKey: "META_DESCRIPTION.QUIZ",
@@ -175,7 +207,7 @@ const quizLayoutRoutes: RouteRecordRaw[] = [
       {
         path: "test",
         name: "quiz-test",
-        component: () => import("@/pages/quiz/quiz-test-page/QuizTestPage.vue"),
+        component: QuizTestPage,
         meta: {
           titleKey: "META.QUIZ",
           descriptionKey: "META_DESCRIPTION.QUIZ",
@@ -185,8 +217,7 @@ const quizLayoutRoutes: RouteRecordRaw[] = [
       {
         path: "leaderboard",
         name: "quiz-leaderboard",
-        component: () =>
-          import("@/pages/quiz/quiz-leaderboard-page/QuizLeaderboardPage.vue"),
+        component: QuizLeaderboardPage,
         meta: {
           titleKey: "META.QUIZ_LEADERBOARD",
           descriptionKey: "META_DESCRIPTION.QUIZ_LEADERBOARD",
@@ -196,8 +227,7 @@ const quizLayoutRoutes: RouteRecordRaw[] = [
       {
         path: "manage",
         name: "quiz-manage",
-        component: () =>
-          import("@/pages/quiz/quiz-management-page/QuizManagementPage.vue"),
+        component: QuizManagementPage,
         meta: {
           titleKey: "META.QUIZ_MANAGE",
           descriptionKey: "META_DESCRIPTION.QUIZ_MANAGE",
@@ -219,7 +249,7 @@ const generatorLayoutRoutes: RouteRecordRaw[] = [
       {
         path: "",
         name: "gradient",
-        component: () => import("@/pages/gradient/GradientPage.vue"),
+        component: GradientPage,
         meta: {
           titleKey: "META.GRADIENT",
           descriptionKey: "META_DESCRIPTION.GRADIENT",
@@ -235,7 +265,7 @@ const generatorLayoutRoutes: RouteRecordRaw[] = [
       {
         path: "",
         name: "shadow",
-        component: () => import("@/pages/shadow/ShadowPage.vue"),
+        component: ShadowPage,
         meta: {
           titleKey: "META.SHADOW",
           descriptionKey: "META_DESCRIPTION.SHADOW",
@@ -251,7 +281,7 @@ const generatorLayoutRoutes: RouteRecordRaw[] = [
       {
         path: "",
         name: "animation",
-        component: () => import("@/pages/animation/AnimationPage.vue"),
+        component: AnimationPage,
         meta: {
           titleKey: "META.ANIMATION",
           descriptionKey: "META_DESCRIPTION.ANIMATION",
@@ -260,8 +290,7 @@ const generatorLayoutRoutes: RouteRecordRaw[] = [
       {
         path: ":id",
         name: "animation-detail",
-        component: () =>
-          import("@/pages/animation/detail/AnimationDetailPage.vue"),
+        component: AnimationDetailPage,
         meta: {
           titleKey: "META.ANIMATION",
           descriptionKey: "META_DESCRIPTION.ANIMATION",
@@ -278,7 +307,7 @@ const generatorLayoutRoutes: RouteRecordRaw[] = [
       {
         path: "",
         name: "clip-path",
-        component: () => import("@/pages/clip-path/ClipPathPage.vue"),
+        component: ClipPathPage,
         meta: {
           titleKey: "META.CLIP_PATH",
           descriptionKey: "META_DESCRIPTION.CLIP_PATH",
@@ -294,7 +323,7 @@ const generatorLayoutRoutes: RouteRecordRaw[] = [
       {
         path: "",
         name: "grid",
-        component: () => import("@/pages/grid/GridPage.vue"),
+        component: GridPage,
         meta: {
           titleKey: "META.GRID",
           descriptionKey: "META_DESCRIPTION.GRID",
@@ -310,7 +339,7 @@ const generatorLayoutRoutes: RouteRecordRaw[] = [
       {
         path: "",
         name: "favicon",
-        component: () => import("@/pages/favicon/FaviconPage.vue"),
+        component: FaviconPage,
         meta: {
           titleKey: "META.FAVICON",
           descriptionKey: "META_DESCRIPTION.FAVICON",
@@ -324,7 +353,7 @@ const authLayoutRoutes: RouteRecordRaw[] = [
   {
     path: "login",
     name: "login",
-    component: () => import("@/pages/login/LoginPage.vue"),
+    component: LoginPage,
     meta: {
       titleKey: "META.AUTH",
       descriptionKey: "META_DESCRIPTION.AUTH",
@@ -335,7 +364,7 @@ const authLayoutRoutes: RouteRecordRaw[] = [
   {
     path: "register",
     name: "register",
-    component: () => import("@/pages/register/RegisterPage.vue"),
+    component: RegisterPage,
     meta: {
       titleKey: "META.AUTH",
       descriptionKey: "META_DESCRIPTION.AUTH",
@@ -346,7 +375,7 @@ const authLayoutRoutes: RouteRecordRaw[] = [
   {
     path: "forgot-password",
     name: "forgot-password",
-    component: () => import("@/pages/forgot-password/ForgotPasswordPage.vue"),
+    component: ForgotPasswordPage,
     meta: {
       titleKey: "META.AUTH",
       descriptionKey: "META_DESCRIPTION.AUTH",
@@ -357,7 +386,7 @@ const authLayoutRoutes: RouteRecordRaw[] = [
   {
     path: "reset-password",
     name: "reset-password",
-    component: () => import("@/pages/reset-password/ResetPasswordPage.vue"),
+    component: ResetPasswordPage,
     meta: {
       titleKey: "META.AUTH",
       descriptionKey: "META_DESCRIPTION.AUTH",
@@ -370,7 +399,7 @@ const authLayoutRoutes: RouteRecordRaw[] = [
 const baseRoutes: RouteRecordRaw[] = [
   {
     path: "",
-    component: () => import("@/app/layouts/main-layout/MainLayout.vue"),
+    component: MainLayout,
     children: mainLayoutChildren,
   },
   ...generatorLayoutRoutes,
@@ -379,7 +408,7 @@ const baseRoutes: RouteRecordRaw[] = [
   {
     path: "moderation",
     name: "moderation",
-    component: () => import("@/pages/moderation/ModerationPage.vue"),
+    component: ModerationPage,
     meta: {
       titleKey: "META.MODERATION",
       descriptionKey: "META_DESCRIPTION.MODERATION",
@@ -391,7 +420,7 @@ const baseRoutes: RouteRecordRaw[] = [
   {
     path: "moderation/users",
     name: "moderation-users",
-    component: () => import("@/pages/moderation/UserManagementPage.vue"),
+    component: UserManagementPage,
     meta: {
       titleKey: "MODERATION.USERS_TITLE",
       descriptionKey: "MODERATION.USERS_SUBTITLE",
@@ -408,7 +437,7 @@ const baseRoutes: RouteRecordRaw[] = [
       {
         path: "",
         name: "docs",
-        component: () => import("@/pages/docs/ui/docs-page/DocsPage.vue"),
+        component: DocsPage,
         meta: {
           titleKey: "META.DOCS",
           descriptionKey: "META_DESCRIPTION.DOCS",
@@ -417,8 +446,7 @@ const baseRoutes: RouteRecordRaw[] = [
       {
         path: ":topic",
         name: "docs-topic",
-        component: () =>
-          import("@/pages/docs/ui/docs-topic-page/DocsTopicPage.vue"),
+        component: DocsTopicPage,
         props: (route) => ({ topic: String(route.params.topic ?? "") }),
         meta: {
           titleKey: "META.DOCS",
@@ -482,12 +510,12 @@ const localizedRoutes: RouteRecordRaw[] = AVAILABLE_LOCALES.flatMap((locale) =>
 
 const notFoundRoute: RouteRecordRaw = {
   path: "/:pathMatch(.*)*",
-  component: () => import("@/app/layouts/main-layout/MainLayout.vue"),
+  component: MainLayout,
   children: [
     {
       path: "",
       name: "not-found",
-      component: () => import("@/pages/not-found/NotFoundPage.vue"),
+      component: NotFoundPage,
       meta: {
         titleKey: "META.NOT_FOUND",
         descriptionKey: "META_DESCRIPTION.NOT_FOUND",

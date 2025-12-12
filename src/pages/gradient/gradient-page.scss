@@ -1,4 +1,5 @@
 .gradient-page {
+  --gradient-motion-state: paused;
   padding: $space-3xl 0;
   min-height: calc(var(--app-vh, 1vh) * 100);
   padding-top: 120px;
@@ -24,6 +25,7 @@
     background-repeat: no-repeat;
     opacity: 0.7;
     animation: nebulaDrift 65s ease-in-out infinite alternate;
+    animation-play-state: var(--gradient-motion-state);
     z-index: -2;
     will-change: transform;
     backface-visibility: hidden;
@@ -45,6 +47,7 @@
     opacity: 0.45;
     mask-image: radial-gradient(120% 120% at 50% 48%, rgba(0, 0, 0, 0.92), transparent 94%);
     animation: gridPulse 60s ease-in-out infinite alternate;
+    animation-play-state: var(--gradient-motion-state);
     z-index: -1;
     pointer-events: none;
     will-change: transform;
@@ -131,6 +134,7 @@
   opacity: 0.55;
   mix-blend-mode: screen;
   animation: orbitSweep 85s linear infinite;
+  animation-play-state: var(--gradient-motion-state);
   z-index: -2;
   pointer-events: none;
   mask-image: radial-gradient(72% 72% at 50% 48%, rgba(0, 0, 0, 0.95), transparent 92%);
@@ -149,6 +153,7 @@
     background: radial-gradient(circle, color-var-alpha('color-primary', 0.42), transparent 70%);
     border-radius: 50%;
     animation: floatingOrb1 30s ease-in-out infinite alternate;
+    animation-play-state: var(--gradient-motion-state);
     will-change: transform;
     backface-visibility: hidden;
     contain: layout paint;
@@ -164,10 +169,15 @@
     background: radial-gradient(circle, color-var-alpha('color-accent', 0.38), transparent 70%);
     border-radius: 50%;
     animation: floatingOrb2 35s ease-in-out infinite alternate-reverse;
+    animation-play-state: var(--gradient-motion-state);
     will-change: transform;
     backface-visibility: hidden;
     contain: layout paint;
   }
+}
+
+.gradient-page:is(:hover, :focus-within) {
+  --gradient-motion-state: running;
 }
 
 @keyframes nebulaDrift {
