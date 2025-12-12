@@ -133,7 +133,7 @@ function manageTemplates() {
     border-radius: $border-radius-md;
     color: $color-text-secondary;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background-color 0.2s ease, color 0.2s ease;
 
     &:hover {
       background: color-var-alpha('color-text-primary', 0.1);

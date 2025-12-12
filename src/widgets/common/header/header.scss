@@ -1,6 +1,7 @@
 .header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  width: 100%;
   z-index: $z-modal + 1;
   background: linear-gradient(180deg, color-var-alpha('color-bg-primary', 0.92), color-var-alpha('color-bg-primary', 0.88));
   border-bottom: 1px solid $color-border;

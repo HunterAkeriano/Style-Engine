@@ -90,7 +90,7 @@ const longCodeMap = {
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .gradient-box:hover {
@@ -105,7 +105,7 @@ $gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-5px);
@@ -120,7 +120,7 @@ $gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
   border-radius: 12px
   padding: 2rem
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2)
-  transition: all 0.3s ease
+  transition: transform 0.3s ease, box-shadow 0.3s ease
 
   &:hover
     transform: translateY(-5px)
@@ -133,12 +133,12 @@ gradient-primary = linear-gradient(135deg, #667eea 0%, #764ba2 100%)
   border-radius 12px
   padding 2rem
   box-shadow 0 10px 30px rgba(0, 0, 0, 0.2)
-  transition all 0.3s ease
+  transition transform 0.3s ease, box-shadow 0.3s ease
 
   &:hover
     transform translateY(-5px)
     box-shadow 0 15px 40px rgba(0, 0, 0, 0.3)`,
-  inline: `style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 2rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); transition: all 0.3s ease;"`
+  inline: `style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 2rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); transition: transform 0.3s ease, box-shadow 0.3s ease;"`
 }
 
 const getLongCode = (format: string | number) => {

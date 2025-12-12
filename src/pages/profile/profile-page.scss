@@ -227,7 +227,7 @@
     border: 1px solid color-var-alpha('color-border', 0.35);
     border-radius: $border-radius-xl;
     box-shadow: 0 8px 32px color-var-alpha('color-border', 0.25);
-    transition: all 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
       border-color: color-var-alpha('color-primary', 0.4);

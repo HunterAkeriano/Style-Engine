@@ -12,11 +12,11 @@
   animation: heroEntrance 900ms ease-out 80ms forwards;
   color: $color-text-primary;
   backface-visibility: hidden;
-  margin-top: unset;
+  margin-top: 15%;
 
   @media (min-width: $breakpoint-md) {
     padding: $space-3xl 0;
-    margin-top: -3%;
+    margin-top: 3%;
   }
 
   > * {

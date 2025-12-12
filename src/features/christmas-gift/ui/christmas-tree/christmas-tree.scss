@@ -5,6 +5,7 @@
   z-index: 9999;
   cursor: pointer;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
 
   &:hover {
     transform: scale(1.1) rotate(-2deg);
@@ -68,7 +69,8 @@
   transform: translateX(-50%);
   background: linear-gradient(135deg, #1a4d2e 0%, #2d5f3f 30%, #3a7a4f 60%, #2d5f3f 100%);
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
+  will-change: transform;
 
   &::before {
     content: '';

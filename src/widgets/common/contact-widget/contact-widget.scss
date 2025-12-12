@@ -33,9 +33,6 @@
     color: #fff;
     font-weight: $font-weight-semibold;
     letter-spacing: 0.01em;
-    box-shadow:
-      0 12px 35px rgba(var(--color-primary), 0.35),
-      0 4px 18px rgba(0, 0, 0, 0.3);
     transition: box-shadow $transition-base, border-color $transition-base, background-position $transition-base;
     cursor: pointer;
     transform: none;
