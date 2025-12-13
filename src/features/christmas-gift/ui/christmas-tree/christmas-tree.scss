@@ -1,14 +1,18 @@
-.christmas-tree {
+.christmas-gift {
   position: fixed;
   bottom: 24px;
   left: 24px;
-  z-index: 9999;
+  z-index: 10;
   cursor: pointer;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   will-change: transform;
 
   &:hover {
-    transform: scale(1.1) rotate(-2deg);
+    transform: scale(1.05);
+
+    .christmas-gift__container {
+      animation: gift-bounce-hover 0.6s ease-in-out;
+    }
   }
 
   &:active {
@@ -21,236 +25,261 @@
     transform: scale(0.85);
 
     &:hover {
-      transform: scale(0.93) rotate(-2deg);
+      transform: scale(0.9);
     }
   }
 }
 
-.christmas-tree__container {
+.christmas-gift__container {
   position: relative;
-  width: 100px;
-  height: 130px;
+  width: 80px;
+  height: 80px;
+  animation: gift-bounce 2s ease-in-out infinite;
+  transform-style: preserve-3d;
 }
 
-.christmas-tree__star {
+.christmas-gift__box {
   position: absolute;
-  top: -8px;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 24px;
-  color: #ffd700;
-  text-shadow:
-    0 0 10px rgba(255, 215, 0, 0.8),
-    0 0 20px rgba(255, 215, 0, 0.5);
-  animation: star-twinkle 2s ease-in-out infinite;
-  z-index: 10;
+  width: 70px;
+  height: 70px;
+  transform-style: preserve-3d;
 }
 
-@keyframes star-twinkle {
-  0%, 100% {
-    transform: translateX(-50%) scale(1);
-  }
-  50% {
-    transform: translateX(-50%) scale(1.2);
-  }
-}
-
-.christmas-tree__tree {
+.christmas-gift__box-main {
   position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 0;
+  left: 0;
   width: 100%;
-}
-
-.christmas-tree__layer {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, #1a4d2e 0%, #2d5f3f 30%, #3a7a4f 60%, #2d5f3f 100%);
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  transition: transform 0.3s ease;
-  will-change: transform;
+  height: 80%;
+  background: linear-gradient(135deg, #c62828 0%, #e53935 40%, #ef5350 60%, #c62828 100%);
+  border-radius: 4px;
 
   &::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent);
-    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    top: 5%;
+    left: 8%;
+    width: 30%;
+    height: 40%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+    border-radius: 4px;
+    filter: blur(2px);
   }
 
   &::after {
     content: '';
     position: absolute;
     right: 0;
-    top: 0;
     bottom: 0;
-    width: 30%;
-    background: linear-gradient(to left, rgba(0, 0, 0, 0.2), transparent);
-    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    width: 35%;
+    height: 100%;
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.15), transparent);
+    border-radius: 0 4px 4px 0;
   }
 }
 
-.christmas-tree__layer-highlight {
-  position: absolute;
-  left: 25%;
-  top: 20%;
-  width: 20%;
-  height: 40%;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
-  border-radius: 50%;
-}
-
-.christmas-tree__layer--1 {
-  width: 75px;
-  height: 45px;
-  bottom: 22px;
-}
-
-.christmas-tree__layer--2 {
-  width: 65px;
-  height: 40px;
-  bottom: 48px;
-}
-
-.christmas-tree__layer--3 {
-  width: 55px;
-  height: 35px;
-  bottom: 70px;
-}
-
-.christmas-tree__layer--4 {
-  width: 45px;
-  height: 30px;
-  bottom: 88px;
-}
-
-.christmas-tree__trunk {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 16px;
-  height: 22px;
-  background: linear-gradient(135deg, #5c3d2e 0%, #8b6f47 50%, #5c3d2e 100%);
-  border-radius: 2px;
-  box-shadow:
-    inset -2px 0 4px rgba(0, 0, 0, 0.3),
-    2px 2px 4px rgba(0, 0, 0, 0.2);
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 2px;
-    top: 2px;
-    width: 4px;
-    height: 80%;
-    background: linear-gradient(to right, rgba(255, 255, 255, 0.2), transparent);
-    border-radius: 1px;
-  }
-}
-
-.christmas-tree__lights {
+.christmas-gift__box-top {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.christmas-tree__light {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  animation: light-glow 1.5s ease-in-out infinite;
+  left: -4px;
+  width: calc(100% + 8px);
+  height: 22%;
+  background: linear-gradient(135deg, #b71c1c 0%, #d32f2f 50%, #b71c1c 100%);
+  border-radius: 4px 4px 2px 2px;
+  transform: translateY(-2px);
 
   &::before {
     content: '';
     position: absolute;
-    inset: -3px;
-    border-radius: 50%;
-    background: radial-gradient(circle, currentColor 0%, transparent 70%);
-    opacity: 0.6;
+    top: 2px;
+    left: 8%;
+    width: 25%;
+    height: 60%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), transparent);
+    border-radius: 2px;
+    filter: blur(1px);
   }
 }
 
-.christmas-tree__light--red {
-  top: 40px;
-  left: 20px;
-  background: #ff4444;
-  animation-delay: 0s;
-}
-
-.christmas-tree__light--yellow {
-  top: 45px;
-  left: 72px;
-  background: #ffeb3b;
-  animation-delay: 0.2s;
-}
-
-.christmas-tree__light--blue {
-  top: 60px;
-  left: 15px;
-  background: #2196f3;
-  animation-delay: 0.4s;
-}
-
-.christmas-tree__light--green {
-  top: 65px;
-  left: 78px;
-  background: #4caf50;
-  animation-delay: 0.6s;
-}
-
-.christmas-tree__light--purple {
-  top: 80px;
-  left: 22px;
-  background: #9c27b0;
-  animation-delay: 0.8s;
-}
-
-.christmas-tree__light--cyan {
-  top: 82px;
-  left: 70px;
-  background: #00bcd4;
-  animation-delay: 1s;
-}
-
-.christmas-tree__light--orange {
-  top: 95px;
-  left: 30px;
-  background: #ff9800;
-  animation-delay: 1.2s;
-}
-
-.christmas-tree__light--pink {
-  top: 98px;
-  left: 62px;
-  background: #e91e63;
-  animation-delay: 1.4s;
-}
-
-@keyframes light-glow {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.3);
-  }
-}
-
-.christmas-tree__gift {
+.christmas-gift__box-side {
   position: absolute;
+  right: -2px;
   bottom: 0;
-  right: 5px;
-  width: 24px;
+  width: 15px;
+  height: 80%;
+  background: linear-gradient(to left, #b71c1c 0%, #c62828 100%);
+  border-radius: 0 4px 4px 0;
+  transform: translateX(100%) skewY(-2deg);
+  transform-origin: left;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2));
+    border-radius: 0 4px 4px 0;
+  }
+}
+
+.christmas-gift__ribbon {
+  position: absolute;
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffc107 100%);
+  z-index: 10;
+  box-shadow:
+    inset -1px -1px 3px rgba(0, 0, 0, 0.2),
+    inset 1px 1px 3px rgba(255, 255, 255, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.2);
+
+  &--h {
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 8px;
+    border-radius: 1px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 5%;
+      width: 40%;
+      height: 50%;
+      background: linear-gradient(to right, rgba(255, 255, 255, 0.4), transparent);
+      border-radius: 1px;
+    }
+  }
+
+  &--v {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 70px;
+    border-radius: 1px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 5%;
+      left: 1px;
+      width: 50%;
+      height: 40%;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
+      border-radius: 1px;
+    }
+  }
+}
+
+.christmas-gift__bow {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
   height: 24px;
-  animation: gift-bounce 2s ease-in-out infinite;
+  z-index: 20;
+}
+
+.christmas-gift__bow-left {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 20px;
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffc107 100%);
+  border-radius: 50% 20% 50% 20%;
+  transform: translateY(-50%) rotate(-10deg);
+  box-shadow:
+    inset -2px -2px 4px rgba(0, 0, 0, 0.2),
+    inset 1px 1px 3px rgba(255, 255, 255, 0.3),
+    0 3px 6px rgba(0, 0, 0, 0.3);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(ellipse at 30% 30%, rgba(255, 255, 255, 0.5), transparent);
+    border-radius: 50%;
+    filter: blur(1px);
+  }
+}
+
+.christmas-gift__bow-right {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 16px;
+  height: 20px;
+  background: linear-gradient(135deg, #ffc107 0%, #ffed4e 50%, #ffd700 100%);
+  border-radius: 20% 50% 20% 50%;
+  transform: translateY(-50%) rotate(10deg);
+  box-shadow:
+    inset 2px -2px 4px rgba(0, 0, 0, 0.2),
+    inset -1px 1px 3px rgba(255, 255, 255, 0.3),
+    0 3px 6px rgba(0, 0, 0, 0.3);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(ellipse at 70% 30%, rgba(255, 255, 255, 0.5), transparent);
+    border-radius: 50%;
+    filter: blur(1px);
+  }
+}
+
+.christmas-gift__bow-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffc107 100%);
+  border-radius: 50%;
+  box-shadow:
+    inset -1px -1px 3px rgba(0, 0, 0, 0.3),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.4),
+    0 3px 8px rgba(0, 0, 0, 0.3);
+  z-index: 5;
+}
+
+.christmas-gift__bow-knot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  background: linear-gradient(135deg, #ffb300 0%, #ffc107 100%);
+  border-radius: 50%;
+  box-shadow:
+    inset 1px 1px 2px rgba(0, 0, 0, 0.4),
+    0 1px 2px rgba(255, 255, 255, 0.2);
+  z-index: 6;
+}
+
+.christmas-gift__shadow {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 8px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.3), transparent);
+  border-radius: 50%;
+  filter: blur(4px);
+  animation: shadow-bounce 2s ease-in-out infinite;
 }
 
 @keyframes gift-bounce {
@@ -258,64 +287,29 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-4px);
+    transform: translateY(-15px);
   }
 }
 
-.christmas-tree__gift-box {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, #c62828 0%, #e53935 50%, #c62828 100%);
-  border-radius: 3px;
-}
-
-.christmas-tree__gift-ribbon {
-  position: absolute;
-  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
-
-  &--h {
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 4px;
-    transform: translateY(-50%);
+@keyframes gift-bounce-hover {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
   }
-
-  &--v {
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    width: 4px;
-    transform: translateX(-50%);
+  25% {
+    transform: translateY(-10px) rotate(-3deg);
+  }
+  75% {
+    transform: translateY(-10px) rotate(3deg);
   }
 }
 
-.christmas-tree__gift-bow {
-  position: absolute;
-  top: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 12px;
-  height: 8px;
-  background: #ffd700;
-  border-radius: 50% 50% 0 0;
-
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: 2px;
-    width: 6px;
-    height: 6px;
-    background: #ffd700;
-    border-radius: 50%;
+@keyframes shadow-bounce {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translateX(-50%) scale(1);
   }
-
-  &::before {
-    left: -4px;
-  }
-
-  &::after {
-    right: -4px;
+  50% {
+    opacity: 0.15;
+    transform: translateX(-50%) scale(0.8);
   }
 }

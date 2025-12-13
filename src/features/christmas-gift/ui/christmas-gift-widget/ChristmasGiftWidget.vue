@@ -12,10 +12,6 @@
       @close="closeModal"
     >
       <div class="christmas-gift-modal">
-        <div class="christmas-gift-modal__icon">
-          <Icon name="icon-gift" :size="64" />
-        </div>
-
         <h2 class="christmas-gift-modal__title">
           {{ isAuthenticated ? t('CHRISTMAS_GIFT.MODAL_TITLE_AUTHENTICATED') : t('CHRISTMAS_GIFT.MODAL_TITLE_UNAUTHENTICATED') }}
         </h2>
