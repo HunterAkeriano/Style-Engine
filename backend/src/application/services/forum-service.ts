@@ -12,6 +12,7 @@ import type { Env } from "../../config/env";
 import { MailerService } from "./mailer-service";
 import { MailBuilder } from "../../interfaces/http/mail-builder";
 import { resolveUserRole } from "../../utils/roles";
+import { buildLocalizedUrl, type PreferredLanguage } from "../../utils/language";
 
 export interface ForumAttachment {
   type: "image" | "youtube";
@@ -366,6 +367,7 @@ export class ForumService {
     topicId: string,
     status: ForumStatus,
     actorIsModerator: boolean,
+    lang?: PreferredLanguage,
   ) {
     if (!actorIsModerator) throw toApiError(403, "Admin access required");
     const topic = await this.repo.findTopicById(topicId);
@@ -373,7 +375,7 @@ export class ForumService {
     await this.repo.updateTopic(topic, { status, lastActivityAt: new Date() });
     const updated = await this.repo.findTopicById(topicId);
     const serialized = this.serializeTopic(updated || topic);
-    await this.notifyTopicStatusChange(serialized, status);
+    await this.notifyTopicStatusChange(serialized, status, lang);
     return serialized;
   }
 
@@ -459,6 +461,7 @@ export class ForumService {
     expiresAt: Date | null;
     reason?: string;
     isModerator: boolean;
+    lang?: PreferredLanguage;
   }) {
     if (!payload.isModerator) {
       throw toApiError(403, "Moderator or admin access required");
@@ -477,6 +480,7 @@ export class ForumService {
       payload.userId,
       payload.expiresAt,
       payload.reason,
+      payload.lang,
     );
 
     return { success: true };
@@ -603,15 +607,18 @@ export class ForumService {
     userId: string,
     expiresAt: Date | null,
     reason?: string,
+    lang?: PreferredLanguage,
   ) {
     if (!this.mailer || !this.env) return;
 
     const user = await this.repo.findUserById(userId);
     if (!user?.email) return;
 
-    const appUrl = (this.env.APP_URL || "http://localhost:5173").replace(
-      /\/$/,
-      "",
+    const locale = lang === "uk" ? "uk" : "en";
+
+    const appUrl = buildLocalizedUrl(
+      this.env.APP_URL || "http://localhost:5173",
+      locale,
     );
 
     const contacts = {
@@ -624,21 +631,21 @@ export class ForumService {
     try {
       await this.mailer.send({
         to: user.email,
-        subject: "You were muted on the CSS-Zone forum",
+        subject: this.mailBuilder.muteSubject(locale),
         text: this.mailBuilder.plainMute({
           appUrl,
           userName: user.name,
           reason,
           expiresAt,
           contacts,
-        }),
+        }, locale),
         html: this.mailBuilder.htmlMute({
           appUrl,
           userName: user.name,
           reason,
           expiresAt,
           contacts,
-        }),
+        }, locale),
       });
     } catch (err) {
       console.error("Failed to send mute notification email", err);
@@ -648,14 +655,17 @@ export class ForumService {
   private async notifyTopicStatusChange(
     topic: ReturnType<ForumService["serializeTopic"]>,
     status: ForumStatus,
+    lang?: PreferredLanguage,
   ) {
     if (!this.mailer || !this.env) return;
     const owner = topic.owner;
     if (!owner?.email) return;
 
-    const appUrl = (this.env.APP_URL || "http://localhost:5173").replace(
-      /\/$/,
-      "",
+    const locale = lang === "uk" ? "uk" : "en";
+
+    const appUrl = buildLocalizedUrl(
+      this.env.APP_URL || "http://localhost:5173",
+      locale,
     );
 
     const contacts = {
@@ -670,7 +680,7 @@ export class ForumService {
     try {
       await this.mailer.send({
         to: owner.email,
-        subject: "Your forum topic status was updated",
+        subject: this.mailBuilder.topicStatusSubject(locale),
         text: this.mailBuilder.plainTopicStatus({
           appUrl,
           topicTitle: topic.title,
@@ -678,7 +688,7 @@ export class ForumService {
           topicLink,
           userName: owner.name,
           contacts,
-        }),
+        }, locale),
         html: this.mailBuilder.htmlTopicStatus({
           appUrl,
           topicTitle: topic.title,
@@ -686,7 +696,7 @@ export class ForumService {
           topicLink,
           userName: owner.name,
           contacts,
-        }),
+        }, locale),
       });
     } catch (err) {
       console.error("Failed to send topic status email", err);

@@ -61,7 +61,7 @@
           </div>
         </form>
 
-        <div class="login-page__google">
+        <div class="login-page__oauth">
           <div class="login-page__divider">
             <span>{{ t("AUTH.OR_CONTINUE") }}</span>
           </div>
@@ -72,22 +72,41 @@
             aria-hidden="true"
           ></div>
 
-          <Button
-            class="login-page__google-button"
-            variant="outline"
-            size="md"
-            :disabled="isSubmitting || !isGoogleReady"
-            @click="handleGoogleClick"
-          >
-            <template #icon>
-              <Icon
-                name="icon-google"
-                class-name="login-page__google-icon"
-                size="18"
-              />
-            </template>
-            {{ t("AUTH.SIGN_IN_WITH_GOOGLE") }}
-          </Button>
+          <div class="login-page__oauth-buttons">
+            <Button
+              class="login-page__oauth-button"
+              variant="outline"
+              size="md"
+              :disabled="isSubmitting || !isGoogleReady"
+              @click="handleGoogleClick"
+            >
+              <template #icon>
+                <Icon
+                  name="icon-google"
+                  class-name="login-page__oauth-icon"
+                  size="18"
+                />
+              </template>
+              {{ t("AUTH.SIGN_IN_WITH_GOOGLE") }}
+            </Button>
+
+            <Button
+              class="login-page__oauth-button login-page__oauth-button_dark"
+              variant="outline"
+              size="md"
+              :disabled="isSubmitting || !isGithubReady"
+              @click="handleGithubClick"
+            >
+              <template #icon>
+                <Icon
+                  name="icon-github"
+                  class-name="login-page__oauth-icon"
+                  size="18"
+                />
+              </template>
+              {{ t("AUTH.SIGN_IN_WITH_GITHUB") }}
+            </Button>
+          </div>
         </div>
 
         <div class="login-page__footer">
@@ -145,6 +164,25 @@ const isGoogleReady = ref(false);
 const googleButtonRef = ref<HTMLElement | null>(null);
 let renderedGoogleBtn: HTMLElement | null = null;
 let googleInitialized = false;
+
+const githubClientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+const isGithubReady = computed(() => Boolean(githubClientId));
+const githubRedirectUri = computed(() => {
+  const origin =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : import.meta.env.VITE_APP_URL || "";
+  const path = route.path.startsWith("/") ? route.path : `/${route.path}`;
+  const withProvider = path.includes("?")
+    ? `${path}&provider=github`
+    : `${path}?provider=github`;
+  return `${origin}${withProvider}`;
+});
+const githubRedirectPath = computed(() =>
+  typeof route.query.redirect === "string"
+    ? route.query.redirect
+    : `/${locale.value}/profile`,
+);
 
 function clearFieldError(field: keyof LoginFormData) {
   errors[field] = "";
@@ -242,6 +280,53 @@ function handleGoogleError() {
   serverError.value = t("VALIDATION.SERVER_ERROR");
 }
 
+function handleGithubClick() {
+  serverError.value = "";
+  if (!isGithubReady.value) {
+    serverError.value = t("VALIDATION.GITHUB_DISABLED");
+    return;
+  }
+  const authorizeUrl = new URL("https://github.com/login/oauth/authorize");
+  authorizeUrl.searchParams.set("client_id", githubClientId);
+  authorizeUrl.searchParams.set("scope", "user:email");
+  authorizeUrl.searchParams.set("allow_signup", "true");
+  authorizeUrl.searchParams.set("redirect_uri", githubRedirectUri.value);
+  authorizeUrl.searchParams.set("state", githubRedirectPath.value);
+  window.location.href = authorizeUrl.toString();
+}
+
+async function handleGithubCallback() {
+  if (route.query.provider !== "github") return;
+  const code = route.query.code;
+  if (typeof code !== "string" || !code) return;
+
+  isSubmitting.value = true;
+  serverError.value = "";
+
+  try {
+    await authStore.githubAuth(code, githubRedirectUri.value);
+
+    if (authStore.error) {
+      serverError.value = authStore.error;
+      return;
+    }
+
+    const redirectTarget =
+      typeof route.query.state === "string" && route.query.state
+        ? route.query.state
+        : githubRedirectPath.value;
+
+    const { code: _code, provider: _provider, state: _state, ...rest } =
+      route.query;
+    await router.replace({ path: route.path, query: rest });
+    router.push(redirectTarget);
+  } catch {
+    serverError.value = t("VALIDATION.SERVER_ERROR");
+  } finally {
+    isSubmitting.value = false;
+  }
+}
+
 watch(
   () => isGsiScriptLoaded.value,
   (loaded) => {
@@ -258,6 +343,14 @@ watch(
     setupGoogleButton();
   },
   { immediate: true },
+);
+
+watch(
+  () => route.query,
+  () => {
+    handleGithubCallback();
+  },
+  { immediate: true, deep: true },
 );
 
 function setupGoogleButton() {

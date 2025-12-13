@@ -66,7 +66,7 @@
           </div>
         </form>
 
-        <div class="register-page__google">
+        <div class="register-page__oauth">
           <div class="register-page__divider">
             <span>{{ t("AUTH.OR_CONTINUE") }}</span>
           </div>
@@ -77,22 +77,41 @@
             aria-hidden="true"
           ></div>
 
-          <Button
-            class="register-page__google-button"
-            variant="outline"
-            size="md"
-            :disabled="isSubmitting || !isGoogleReady"
-            @click="handleGoogleClick"
-          >
-            <template #icon>
-              <Icon
-                name="icon-google"
-                class-name="register-page__google-icon"
-                size="18"
-              />
-            </template>
-            {{ t("AUTH.SIGN_UP_WITH_GOOGLE") }}
-          </Button>
+          <div class="register-page__oauth-buttons">
+            <Button
+              class="register-page__oauth-button"
+              variant="outline"
+              size="md"
+              :disabled="isSubmitting || !isGoogleReady"
+              @click="handleGoogleClick"
+            >
+              <template #icon>
+                <Icon
+                  name="icon-google"
+                  class-name="register-page__oauth-icon"
+                  size="18"
+                />
+              </template>
+              {{ t("AUTH.SIGN_UP_WITH_GOOGLE") }}
+            </Button>
+
+            <Button
+              class="register-page__oauth-button register-page__oauth-button_dark"
+              variant="outline"
+              size="md"
+              :disabled="isSubmitting || !isGithubReady"
+              @click="handleGithubClick"
+            >
+              <template #icon>
+                <Icon
+                  name="icon-github"
+                  class-name="register-page__oauth-icon"
+                  size="18"
+                />
+              </template>
+              {{ t("AUTH.SIGN_UP_WITH_GITHUB") }}
+            </Button>
+          </div>
         </div>
 
         <div class="register-page__footer">
@@ -157,6 +176,22 @@ const isGoogleReady = ref(false);
 const googleButtonRef = ref<HTMLElement | null>(null);
 let renderedGoogleBtn: HTMLElement | null = null;
 let googleInitialized = false;
+
+const githubClientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+const isGithubReady = computed(() => Boolean(githubClientId));
+const githubRedirectUri = computed(() => {
+  const origin =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : import.meta.env.VITE_APP_URL || "";
+  const path = router.currentRoute.value.path;
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  const withProvider = normalized.includes("?")
+    ? `${normalized}&provider=github`
+    : `${normalized}?provider=github`;
+  return `${origin}${withProvider}`;
+});
+const githubRedirectPath = computed(() => `/${locale.value}/profile`);
 
 function clearFieldError(field: keyof RegisterFormData) {
   errors[field] = "";
@@ -249,6 +284,48 @@ function handleGoogleError() {
   serverError.value = t("VALIDATION.SERVER_ERROR");
 }
 
+function handleGithubClick() {
+  serverError.value = "";
+  if (!isGithubReady.value) {
+    serverError.value = t("VALIDATION.GITHUB_DISABLED");
+    return;
+  }
+  const authorizeUrl = new URL("https://github.com/login/oauth/authorize");
+  authorizeUrl.searchParams.set("client_id", githubClientId);
+  authorizeUrl.searchParams.set("scope", "user:email");
+  authorizeUrl.searchParams.set("allow_signup", "true");
+  authorizeUrl.searchParams.set("redirect_uri", githubRedirectUri.value);
+  authorizeUrl.searchParams.set("state", githubRedirectPath.value);
+  window.location.href = authorizeUrl.toString();
+}
+
+async function handleGithubCallback() {
+  if (router.currentRoute.value.query.provider !== "github") return;
+  const code = router.currentRoute.value.query.code;
+  if (typeof code !== "string" || !code) return;
+
+  isSubmitting.value = true;
+  serverError.value = "";
+
+  try {
+    await authStore.githubAuth(code, githubRedirectUri.value);
+
+    if (authStore.error) {
+      serverError.value = authStore.error;
+      return;
+    }
+
+    const { code: _code, provider: _provider, state: _state, ...rest } =
+      router.currentRoute.value.query;
+    await router.replace({ path: router.currentRoute.value.path, query: rest });
+    router.push(githubRedirectPath.value);
+  } catch {
+    serverError.value = t("VALIDATION.SERVER_ERROR");
+  } finally {
+    isSubmitting.value = false;
+  }
+}
+
 watch(
   () => isGsiScriptLoaded.value,
   (loaded) => {
@@ -265,6 +342,14 @@ watch(
     setupGoogleButton();
   },
   { immediate: true },
+);
+
+watch(
+  () => router.currentRoute.value.query,
+  () => {
+    handleGithubCallback();
+  },
+  { immediate: true, deep: true },
 );
 
 function setupGoogleButton() {

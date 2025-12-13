@@ -88,12 +88,19 @@
   }
 }
 
-.login-page__google {
+.login-page__oauth {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: $space-md;
   margin-top: $space-xl;
+}
+
+.login-page__oauth-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $space-md;
+  width: 100%;
 }
 
 .login-page__divider {
@@ -224,7 +231,7 @@
   animation: error-slide-in 0.3s ease-out;
 }
 
-.login-page__google-button {
+.login-page__oauth-button {
   width: 100%;
   max-width: 100%;
   background: $color-bg-primary;
@@ -236,7 +243,11 @@
   }
 }
 
-.login-page__google-icon {
+.login-page__oauth-button_dark {
+  background: color-var-alpha('surface-panel-1', 0.9);
+}
+
+.login-page__oauth-icon {
   width: 18px;
   height: 18px;
   fill: unset;

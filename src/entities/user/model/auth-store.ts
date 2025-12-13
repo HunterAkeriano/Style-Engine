@@ -157,6 +157,30 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function githubAuth(code: string, redirectUri?: string) {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await apiClient.post<{ token: string; user: User }>('/auth/github', {
+        code,
+        redirectUri
+      })
+      setToken(response.data.token)
+      setUser(response.data.user)
+      try {
+        const freshUser = await fetchProfile()
+        setUser(freshUser)
+      } catch (err) {
+        console.error('Failed to refresh profile after github auth', err)
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'GitHub authentication failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   async function logout() {
     try {
       await apiClient.post('/auth/logout')
@@ -187,6 +211,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     register,
     googleAuth,
+    githubAuth,
     logout
   }
 })

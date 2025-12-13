@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, type Request } from "express";
 import { z } from "zod";
 import jwt from "jsonwebtoken";
 import type { Env } from "../../../config/env";
@@ -13,6 +13,7 @@ import { PasswordResetRepository } from "../../../infrastructure/repositories/pa
 import type { Models } from "../../../models";
 import { sendApiError } from "../../../utils/apiError";
 import { MailBuilder } from "../mail-builder";
+import { buildLocalizedUrl, resolveRequestLanguage } from "../../../utils/language";
 import type { HttpController } from "../api-router";
 
 const strongPassword = z
@@ -51,6 +52,11 @@ const changePasswordSchema = z.object({
 
 const googleAuthSchema = z.object({
   credential: z.string().min(1),
+});
+
+const githubAuthSchema = z.object({
+  code: z.string().min(1),
+  redirectUri: z.string().url().optional(),
 });
 
 export class AuthController implements HttpController {
@@ -96,6 +102,29 @@ export class AuthController implements HttpController {
         );
         res.setHeader("Set-Cookie", cookie);
         res.status(201).json({ token: accessToken, user });
+
+        try {
+          const lang = this.getPreferredLanguage(req);
+          const appUrl = buildLocalizedUrl(
+            this.env.APP_URL || "http://localhost:5173",
+            lang,
+          );
+          const builder = new MailBuilder();
+          await new MailerService(this.env).send({
+            to: parsed.data.email,
+            subject: builder.welcomeSubject(lang),
+            text: builder.plainWelcome(
+              { appUrl, userName: user?.name || parsed.data.name },
+              lang,
+            ),
+            html: builder.htmlWelcome(
+              { appUrl, userName: user?.name || parsed.data.name },
+              lang,
+            ),
+          });
+        } catch (mailErr) {
+          console.error("Failed to send welcome email", mailErr);
+        }
       } catch (err: any) {
         if (err?.status)
           return sendApiError(res, err.status, err.message, {
@@ -174,13 +203,18 @@ export class AuthController implements HttpController {
           parsed.data.recaptchaToken,
         );
         const appUrl = this.env.APP_URL || "http://localhost:5173";
-        const resetLink = `${appUrl}/reset-password?token=${token}`;
+        const lang = this.getPreferredLanguage(req);
+        const resetLink = buildLocalizedUrl(
+          appUrl,
+          lang,
+          `reset-password?token=${token}`,
+        );
         const builder = new MailBuilder();
         await new MailerService(this.env).send({
           to: userEmail,
-          subject: "Reset your CSS-Zone password",
-          text: builder.plainReset(resetLink),
-          html: builder.htmlReset(resetLink),
+          subject: builder.resetSubject(lang),
+          text: builder.plainReset(resetLink, lang),
+          html: builder.htmlReset(resetLink, lang),
         });
         res.json({ ok: true });
       } catch (err: any) {
@@ -260,7 +294,7 @@ export class AuthController implements HttpController {
         });
       }
       try {
-        const { accessToken, refreshToken, user } =
+        const { accessToken, refreshToken, user, isNewUser } =
           await this.service.googleAuth(parsed.data.credential);
         const cookie = serializeCookie(
           "refreshToken",
@@ -269,12 +303,88 @@ export class AuthController implements HttpController {
         );
         res.setHeader("Set-Cookie", cookie);
         res.json({ token: accessToken, user });
+
+        if (isNewUser) {
+          try {
+            const lang = this.getPreferredLanguage(req);
+            const appUrl = buildLocalizedUrl(
+              this.env.APP_URL || "http://localhost:5173",
+              lang,
+            );
+            const builder = new MailBuilder();
+            await new MailerService(this.env).send({
+              to: user.email,
+              subject: builder.welcomeSubject(lang),
+              text: builder.plainWelcome(
+                { appUrl, userName: user.name },
+                lang,
+              ),
+              html: builder.htmlWelcome(
+                { appUrl, userName: user.name },
+                lang,
+              ),
+            });
+          } catch (mailErr) {
+            console.error("Failed to send welcome email (Google)", mailErr);
+          }
+        }
       } catch (err: any) {
         if (err?.status)
           return sendApiError(res, err.status, err.message, {
             details: err.details,
           });
         return sendApiError(res, 500, "Failed to authenticate with Google");
+      }
+    });
+
+    router.post("/github", async (req, res) => {
+      const parsed = githubAuthSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return sendApiError(res, 400, "Invalid payload", {
+          details: parsed.error.issues,
+        });
+      }
+      try {
+        const { accessToken, refreshToken, user, isNewUser } =
+          await this.service.githubAuth(parsed.data.code, parsed.data.redirectUri);
+        const cookie = serializeCookie(
+          "refreshToken",
+          refreshToken,
+          this.cookieConfig(),
+        );
+        res.setHeader("Set-Cookie", cookie);
+        res.json({ token: accessToken, user });
+
+        if (isNewUser) {
+          try {
+            const lang = this.getPreferredLanguage(req);
+            const appUrl = buildLocalizedUrl(
+              this.env.APP_URL || "http://localhost:5173",
+              lang,
+            );
+            const builder = new MailBuilder();
+            await new MailerService(this.env).send({
+              to: user.email,
+              subject: builder.welcomeSubject(lang),
+              text: builder.plainWelcome(
+                { appUrl, userName: user.name },
+                lang,
+              ),
+              html: builder.htmlWelcome(
+                { appUrl, userName: user.name },
+                lang,
+              ),
+            });
+          } catch (mailErr) {
+            console.error("Failed to send welcome email (GitHub)", mailErr);
+          }
+        }
+      } catch (err: any) {
+        if (err?.status)
+          return sendApiError(res, err.status, err.message, {
+            details: err.details,
+          });
+        return sendApiError(res, 500, "Failed to authenticate with GitHub");
       }
     });
   }
@@ -289,5 +399,9 @@ export class AuthController implements HttpController {
       path: "/api",
       maxAge: 30 * 24 * 60 * 60,
     };
+  }
+
+  private getPreferredLanguage(req: Request) {
+    return resolveRequestLanguage(req);
   }
 }

@@ -915,6 +915,8 @@ export default {
     OR_CONTINUE: "or continue with",
     SIGN_IN_WITH_GOOGLE: "Sign in with Google",
     SIGN_UP_WITH_GOOGLE: "Sign up with Google",
+    SIGN_IN_WITH_GITHUB: "Sign in with GitHub",
+    SIGN_UP_WITH_GITHUB: "Sign up with GitHub",
     SIGNING_IN: "Signing in...",
     CREATING_ACCOUNT: "Creating account...",
     OR: "or",
@@ -932,6 +934,7 @@ export default {
     USER_EXISTS: "User with this email already exists",
     INVALID_CREDENTIALS: "Invalid email or password",
     GOOGLE_DISABLED: "Google sign-in is blocked in your browser. Allow third-party sign-in and try again.",
+    GITHUB_DISABLED: "GitHub sign-in is unavailable. Check your browser settings and try again.",
   },
   PROFILE: {
     TITLE: "Profile",
