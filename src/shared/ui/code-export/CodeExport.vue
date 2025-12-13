@@ -36,7 +36,7 @@
         <div class="code-export__window-controls">
           <span></span><span></span><span></span>
         </div>
-        <pre class="code-export__content"><code>{{ code }}</code></pre>
+        <pre class="code-export__content"><code v-html="highlightedCode"></code></pre>
       </div>
     </div>
   </div>
@@ -116,6 +116,9 @@ const saveLabelText = computed(() => props.saveLabel ?? t('COMMON.SAVE'))
 
 const code = computed(() => props.getCode(String(selectedFormat.value)))
 const copied = ref(false)
+const highlightedCode = computed(() =>
+  highlightCssLike(code.value)
+)
 
 async function handleCopy() {
   const success = await copyToClipboard(code.value)
@@ -147,6 +150,41 @@ function downloadCode() {
   document.body.removeChild(link)
   URL.revokeObjectURL(link.href)
 }
+
+function highlightCssLike(raw: string): string {
+  const escapeHtml = (str: string) =>
+    str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+
+  let highlighted = escapeHtml(raw)
+
+  const patterns: { regex: RegExp; className: string }[] = [
+    { regex: /\/\*[\s\S]*?\*\//g, className: 'token comment' },
+    { regex: /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, className: 'token string' },
+    { regex: /(#(?:[0-9a-fA-F]{3,8}))/g, className: 'token color' },
+    { regex: /\b(@[a-z-]+)/gi, className: 'token at-rule' },
+    { regex: /\b(\d+(?:\.\d+)?(?:px|rem|em|%|vh|vw|fr|deg|s|ms)?)\b/g, className: 'token number' },
+    {
+      regex: /\b(var|calc|clamp|min|max|repeat|linear-gradient|rgba?|hsla?|url|inset)\b/g,
+      className: 'token function'
+    },
+    { regex: /\b([a-z-]+)(?=\s*:)/g, className: 'token property' },
+    { regex: /([{};:,])/g, className: 'token punctuation' }
+  ]
+
+  patterns.forEach(({ regex, className }) => {
+    highlighted = highlighted.replace(regex, `<span class="${className}">$1</span>`)
+  })
+
+  highlighted = highlighted.replace(
+    /(^|\n)\s*([^@{}\n][^{\n]+?)(?=\s*\{)/g,
+    (match, prefix, selector) => `${prefix}<span class="token selector">${selector.trim()}</span>`
+  )
+
+  return highlighted
+}
 </script>
 
-<style scoped lang="scss" src="./code-export.scss"></style>
+<style lang="scss" src="./code-export.scss"></style>
