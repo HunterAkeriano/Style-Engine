@@ -101,6 +101,20 @@ const modalClass = computed(() => `modal__card_${props.size}`)
 const modalRef = ref<HTMLElement | null>(null)
 const cardRef = ref<HTMLElement | null>(null)
 
+function setScrollbarGap(isLocked: boolean) {
+  const root = document.documentElement
+  if (!root) return
+
+  if (isLocked) {
+    const gap = window.innerWidth - root.clientWidth
+    if (gap > 0) {
+      root.style.setProperty('--scrollbar-gap', `${gap}px`)
+    }
+  } else {
+    root.style.removeProperty('--scrollbar-gap')
+  }
+}
+
 function handleConfirm() {
   emit('confirm')
 }
@@ -123,9 +137,11 @@ watch(
     if (props.lockScroll) {
       const target = document.body
       if (isVisible) {
+        setScrollbarGap(true)
         disableBodyScroll(target, { reserveScrollBarGap: true })
       } else {
         clearAllBodyScrollLocks()
+        setScrollbarGap(false)
       }
     }
   }
@@ -133,6 +149,7 @@ watch(
 
 onBeforeUnmount(() => {
   clearAllBodyScrollLocks()
+  setScrollbarGap(false)
 })
 </script>
 

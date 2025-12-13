@@ -7,6 +7,7 @@
   background: linear-gradient(180deg, color-var-alpha('color-bg-primary', 0.92), color-var-alpha('color-bg-primary', 0.88));
   border-bottom: 1px solid $color-border;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+  padding-right: var(--scrollbar-gap, 0);
   overflow: visible;
   transition: background $transition-base, border-color $transition-base, box-shadow $transition-base;
 
