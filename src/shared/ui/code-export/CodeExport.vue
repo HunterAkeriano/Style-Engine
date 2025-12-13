@@ -180,7 +180,7 @@ function highlightCssLike(raw: string): string {
 
   highlighted = highlighted.replace(
     /(^|\n)\s*([^@{}\n][^{\n]+?)(?=\s*\{)/g,
-    (match, prefix, selector) => `${prefix}<span class="token selector">${selector.trim()}</span>`
+    (_, prefix, selector) => `${prefix}<span class="token selector">${selector.trim()}</span>`
   )
 
   return highlighted
