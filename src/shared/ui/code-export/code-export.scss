@@ -78,7 +78,7 @@
     .token.function { color: #82aaff; }
     .token.at-rule { color: #f78c6c; }
     .token.color { color: #f08c73; }
-    .token.punctuation { color: color-var-alpha('color-text-primary', 0.7); }
+    .token.punctuation { color: color-var-alpha('code-text', 0.85); }
   }
 
   &__window-controls {

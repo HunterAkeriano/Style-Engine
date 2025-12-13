@@ -40,7 +40,6 @@
 
     &:hover:not(.button_disabled) {
       background: $color-primary-hover;
-      box-shadow: $shadow-md;
     }
   }
 
@@ -50,7 +49,6 @@
 
     &:hover:not(.button_disabled) {
       background: $button-secondary-hover;
-      box-shadow: $shadow-md;
     }
   }
 
@@ -81,7 +79,6 @@
 
     &:hover:not(.button_disabled) {
       background: $button-danger-hover;
-      box-shadow: $shadow-md;
     }
   }
 
