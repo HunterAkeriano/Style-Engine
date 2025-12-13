@@ -25,6 +25,10 @@
     margin-top: 3%;
   }
 
+  @media (max-width: $breakpoint-md) {
+    margin-top: 0;
+  }
+
   > * {
     position: relative;
     z-index: 1;
@@ -340,10 +344,10 @@
 }
 
 @keyframes heroGradientShift {
-  0% { background-position: 0% 40%; transform: translate3d(0, 0, 0); }
-  35% { background-position: 55% 55%; transform: translate3d(0.5%, 0.5%, 0); }
-  70% { background-position: 25% 75%; transform: translate3d(-0.5%, 0.8%, 0); }
-  100% { background-position: 0% 40%; transform: translate3d(0, 0, 0); }
+  0% { background-position: 0% 40%; }
+  35% { background-position: 55% 55%; }
+  70% { background-position: 25% 75%; }
+  100% { background-position: 0% 40%;}
 }
 
 

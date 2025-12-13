@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue';
 import { fileURLToPath, URL } from 'node:url';
 import path from 'node:path';
 import { playwright } from '@vitest/browser-playwright';
+import postcss from 'postcss';
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 process.env.SASS_SILENCE_DEPRECATIONS = process.env.SASS_SILENCE_DEPRECATIONS || 'all';
@@ -33,6 +34,30 @@ const ssgPublicRoutes = [
 ];
 const ssgIncludedRoutes = locales.flatMap(locale => ssgPublicRoutes.map(route => `/${locale}${route === '/' ? '' : route}`));
 const base = process.env.VITE_BASE ?? '/css-lab/';
+
+const wrapHoverWithMedia = (): postcss.Plugin => ({
+  postcssPlugin: 'wrap-hover-with-media',
+  Once(root) {
+    const rulesToWrap: postcss.Rule[] = [];
+    root.walkRules(rule => {
+      if (!rule.selector.includes(':hover')) return;
+      let parent = rule.parent;
+      while (parent) {
+        if (parent.type === 'atrule' && parent.name === 'media' && parent.params.includes('hover')) {
+          return;
+        }
+        parent = parent.parent;
+      }
+      rulesToWrap.push(rule);
+    });
+
+    rulesToWrap.forEach(rule => {
+      const media = postcss.atRule({ name: 'media', params: '(hover:hover)' });
+      rule.replaceWith(media);
+      media.append(rule);
+    });
+  }
+});
 
 export default defineConfig(async ({ command }) => {
   const shouldConfigureTests = command === 'test' || process.env.VITEST;
@@ -89,6 +114,9 @@ export default defineConfig(async ({ command }) => {
             }
           }
         }
+      },
+      postcss: {
+        plugins: [wrapHoverWithMedia()]
       }
     },
     ssgOptions: {
