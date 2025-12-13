@@ -4,7 +4,9 @@
   padding: $space-2xl $space-md;
   position: relative;
   isolation: isolate;
-  min-height: calc(var(--app-vh, 1vh) * 100);
+  min-height: 900px;
+  height: 100lvh;
+  max-height: 100lvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
