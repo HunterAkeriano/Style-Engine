@@ -49,6 +49,13 @@
         0 12px 35px rgba(var(--color-primary), 0.35),
         0 4px 18px rgba(0, 0, 0, 0.3);
     }
+
+    svg {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: unset;
+    }
   }
 
   &__dropdown {
