@@ -42,18 +42,15 @@
     &:focus-visible {
       outline: none;
       border-color: $color-primary;
-      box-shadow: 0 0 0 3px $color-primary-alpha-12;
     }
   }
 
   &_error &__control {
     border-color: $color-error;
-    box-shadow: 0 0 0 1px color-var-alpha('color-error', 0.2);
   }
 
   &_open &__control {
     border-color: $color-primary;
-    box-shadow: 0 8px 24px color-var-alpha('color-text-primary', 0.08), 0 0 0 2px $color-primary-alpha-12;
   }
 
   &__value {
@@ -89,7 +86,6 @@
     border: 1px solid $color-border;
     border-radius: $border-radius-md;
     background: $color-bg-secondary;
-    box-shadow: 0 16px 40px color-var-alpha('color-text-primary', 0.12), 0 0 0 1px $color-border-alpha-40;
     overflow: auto;
     max-height: 320px;
     display: flex;

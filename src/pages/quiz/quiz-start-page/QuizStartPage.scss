@@ -236,7 +236,9 @@
 }
 
 .quiz-start-page__limit-icon {
-  font-size: $font-size-2xl;
+  width: 28px;
+  height: 28px;
+  color: #ef4444;
   flex-shrink: 0;
   animation: quizIconBounce 1s ease-in-out infinite;
 }
@@ -283,8 +285,11 @@
   background: $color-primary;
   border-radius: 50%;
   color: white;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
+
+  .icon {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 .quiz-start-page__start-button {
@@ -337,7 +342,10 @@
 }
 
 .quiz-start-page__button-icon {
-  font-size: $font-size-2xl;
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  color: inherit;
   transition: transform 0.3s ease;
 }
 
@@ -446,10 +454,26 @@
 }
 
 .quiz-start-page__feature-icon {
-  font-size: 3rem;
+  width: 3rem;
+  height: 3rem;
   margin-bottom: $space-lg;
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-primary;
   transition: transform 0.3s ease;
+}
+
+.quiz-start-page__feature-card:nth-child(2) .quiz-start-page__feature-icon {
+  color: $color-secondary;
+}
+
+.quiz-start-page__feature-card:nth-child(3) .quiz-start-page__feature-icon {
+  color: $color-accent;
+}
+
+.quiz-start-page__feature-card:nth-child(4) .quiz-start-page__feature-icon {
+  color: $color-text-primary;
 }
 
 .quiz-start-page__feature-title {

@@ -35,8 +35,12 @@
 }
 
 .christmas-gift-modal__icon {
-  font-size: 4rem;
-  line-height: 1;
+  width: 4rem;
+  height: 4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #dc143c;
   animation: modal-icon-bounce 1.5s ease-in-out infinite;
 }
 
@@ -98,7 +102,12 @@
 }
 
 .christmas-gift-modal__success-icon {
-  font-size: 2rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: color-var('color-success');
   animation: sparkle 1.5s ease-in-out infinite;
 }
 

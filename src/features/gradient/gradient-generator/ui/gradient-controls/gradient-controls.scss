@@ -6,7 +6,6 @@
   background: linear-gradient(145deg, $surface-panel-1, $surface-panel-2);
   border: 1px solid $panel-border;
   border-radius: $border-radius-xl;
-  box-shadow: $shadow-md;
 
   &__group {
     display: flex;
@@ -120,7 +119,6 @@
 
     &:hover {
       border-color: $color-border-hover;
-      box-shadow: 0 10px 20px $color-text-primary-alpha-05;
     }
   }
 
@@ -169,7 +167,6 @@
 
     &:hover {
       border-color: $color-border-hover;
-      box-shadow: 0 10px 20px $color-text-primary-alpha-05;
     }
   }
 

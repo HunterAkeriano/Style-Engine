@@ -36,7 +36,11 @@
             v-if="limitInfo && !limitInfo.allowed"
             class="quiz-start-page__limit-warning"
           >
-            <div class="quiz-start-page__limit-icon">⚠</div>
+            <Icon
+              name="icon-alert"
+              :size="28"
+              class-name="quiz-start-page__limit-icon"
+            />
             <div class="quiz-start-page__limit-content">
               <p class="quiz-start-page__limit-text">
                 {{ t("QUIZ.LIMIT_REACHED", { limit: limitInfo.limit }) }}
@@ -54,7 +58,9 @@
             v-if="limitInfo && limitInfo.allowed"
             class="quiz-start-page__limit-info"
           >
-            <div class="quiz-start-page__limit-icon-success">✓</div>
+            <div class="quiz-start-page__limit-icon-success">
+              <Icon name="icon-check" :size="14" />
+            </div>
             <span>{{ attemptsText }}</span>
           </div>
 
@@ -64,7 +70,11 @@
             @click="showModal = true"
           >
             <span class="quiz-start-page__button-text">{{ t("QUIZ.START_TEST") }}</span>
-            <span class="quiz-start-page__button-icon">→</span>
+            <Icon
+              name="icon-arrow-right"
+              :size="22"
+              class-name="quiz-start-page__button-icon"
+            />
           </Button>
         </div>
       </section>
@@ -76,22 +86,38 @@
         </div>
         <div class="quiz-start-page__features-grid">
           <div class="quiz-start-page__feature-card">
-            <div class="quiz-start-page__feature-icon">⚡</div>
+            <Icon
+              name="icon-bolt"
+              :size="48"
+              class-name="quiz-start-page__feature-icon"
+            />
             <h3 class="quiz-start-page__feature-title">{{ t("QUIZ.FEATURE_1_TITLE") }}</h3>
             <p class="quiz-start-page__feature-description">{{ t("QUIZ.FEATURE_1_DESC") }}</p>
           </div>
           <div class="quiz-start-page__feature-card">
-            <div class="quiz-start-page__feature-icon">🎯</div>
+            <Icon
+              name="icon-target"
+              :size="48"
+              class-name="quiz-start-page__feature-icon"
+            />
             <h3 class="quiz-start-page__feature-title">{{ t("QUIZ.FEATURE_2_TITLE") }}</h3>
             <p class="quiz-start-page__feature-description">{{ t("QUIZ.FEATURE_2_DESC") }}</p>
           </div>
           <div class="quiz-start-page__feature-card">
-            <div class="quiz-start-page__feature-icon">📊</div>
+            <Icon
+              name="icon-analytics"
+              :size="48"
+              class-name="quiz-start-page__feature-icon"
+            />
             <h3 class="quiz-start-page__feature-title">{{ t("QUIZ.FEATURE_3_TITLE") }}</h3>
             <p class="quiz-start-page__feature-description">{{ t("QUIZ.FEATURE_3_DESC") }}</p>
           </div>
           <div class="quiz-start-page__feature-card">
-            <div class="quiz-start-page__feature-icon">🏆</div>
+            <Icon
+              name="icon-trophy"
+              :size="48"
+              class-name="quiz-start-page__feature-icon"
+            />
             <h3 class="quiz-start-page__feature-title">{{ t("QUIZ.FEATURE_4_TITLE") }}</h3>
             <p class="quiz-start-page__feature-description">{{ t("QUIZ.FEATURE_4_DESC") }}</p>
           </div>
@@ -165,6 +191,7 @@ import { checkQuizLimit, getQuizLeaderboard } from "@/shared/api/quiz";
 import { useAuthStore } from "@/entities/user/model/auth-store";
 import { Breadcrumbs } from "@/widgets/common";
 import Button from "@/shared/ui/Button/Button.vue";
+import Icon from "@/shared/ui/Icon/Icon.vue";
 import QuizTestModal from "@/widgets/quiz/QuizTestModal/QuizTestModal.vue";
 import QuizLeaderboardSection from "@/widgets/quiz/QuizLeaderboardSection/QuizLeaderboardSection.vue";
 import type {

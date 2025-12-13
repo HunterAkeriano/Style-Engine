@@ -12,7 +12,9 @@
       @close="closeModal"
     >
       <div class="christmas-gift-modal">
-        <div class="christmas-gift-modal__icon">🎄🎁</div>
+        <div class="christmas-gift-modal__icon">
+          <Icon name="icon-gift" :size="64" />
+        </div>
 
         <h2 class="christmas-gift-modal__title">
           {{ isAuthenticated ? t('CHRISTMAS_GIFT.MODAL_TITLE_AUTHENTICATED') : t('CHRISTMAS_GIFT.MODAL_TITLE_UNAUTHENTICATED') }}
@@ -23,7 +25,9 @@
         </p>
 
         <div class="christmas-gift-modal__success" v-if="isAuthenticated && premiumGrantedDate && !alreadyClaimed">
-          <div class="christmas-gift-modal__success-icon">✨</div>
+          <div class="christmas-gift-modal__success-icon">
+            <Icon name="icon-check" :size="24" />
+          </div>
           <p class="christmas-gift-modal__success-text">
             {{ t('CHRISTMAS_GIFT.MODAL_PREMIUM_GRANTED', { date: formattedDate }) }}
           </p>
@@ -62,7 +66,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import ChristmasTree from '../christmas-tree/ChristmasTree.vue'
-import { Modal, Button } from '@/shared/ui'
+import { Modal, Button, Icon } from '@/shared/ui'
 import { useChristmasGift } from '../../model/use-christmas-gift'
 
 const { t, locale } = useI18n()
