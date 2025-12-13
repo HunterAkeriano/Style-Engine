@@ -78,6 +78,8 @@
   overflow: hidden;
   background: $visual-card-background;
   border: 1px solid color-var-alpha('panel-border', 0.1);
+  contain: layout style paint;
+  will-change: contents;
 }
 
 .home-showcase__info {
@@ -173,6 +175,8 @@
     );
   animation: holoCoreRotate 10s linear infinite, holoCorePulse 4s ease-in-out infinite;
   z-index: 10;
+  will-change: transform;
+  transform: translateZ(0);
 
   &::before {
     content: '';
@@ -205,6 +209,7 @@
   border-radius: 50%;
   border: 2px solid;
   animation: holoRingRotate 20s linear infinite;
+  will-change: transform;
 
   &::before {
     content: '';
@@ -259,7 +264,7 @@
 
   $colors: (#ff1493, #8a2be2, #00bfff, #00ff7f, #ffff00);
 
-  @for $i from 1 through 20 {
+  @for $i from 1 through 8 {
     &:nth-child(#{$i}) {
       $angle: random(360) + deg;
       $distance: 25% + random(35) + %;
@@ -274,11 +279,12 @@
       top: 50%;
       animation: holoParticleOrbit#{$i} $duration linear infinite;
       animation-delay: -$delay;
+      will-change: transform, opacity;
     }
   }
 }
 
-@for $i from 1 through 20 {
+@for $i from 1 through 8 {
   @keyframes holoParticleOrbit#{$i} {
     $angle: random(360);
     $radius: 80 + random(120);
@@ -326,6 +332,7 @@
 .holographic-dream__orb {
   position: absolute;
   border-radius: 50%;
+  will-change: transform;
 
   &_1 {
     width: 80px;
@@ -443,6 +450,7 @@
   inset: 0;
   mix-blend-mode: screen;
   opacity: 0.7;
+  will-change: transform, opacity;
 
   &_1 {
     background:
@@ -593,6 +601,7 @@
   border-radius: 50%;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
+  will-change: transform;
 
   &::before {
     content: '';
@@ -812,6 +821,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  will-change: transform, clip-path;
 
   &_1 {
     background: linear-gradient(135deg, #ff6b6b, #ee5a6f, #c44569);
@@ -846,9 +856,9 @@
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.9), transparent);
 
-  @for $i from 1 through 12 {
+  @for $i from 1 through 6 {
     &:nth-child(#{$i}) {
-      $angle: ($i - 1) * 30deg;
+      $angle: ($i - 1) * 60deg;
       $distance: 60 + random(80) + px;
       $duration: 4 + random(4) + s;
       $delay: random(4) + s;
@@ -860,13 +870,14 @@
       top: 50%;
       animation: morphParticleOrbit#{$i} $duration ease-in-out infinite;
       animation-delay: -$delay;
+      will-change: transform, opacity;
     }
   }
 }
 
-@for $i from 1 through 12 {
+@for $i from 1 through 6 {
   @keyframes morphParticleOrbit#{$i} {
-    $angle: ($i - 1) * 30;
+    $angle: ($i - 1) * 60;
     $distance: 80 + random(60);
 
     0%, 100% {
@@ -1024,6 +1035,7 @@
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(147, 51, 234, 0.2));
   border: 1px solid rgba(59, 130, 246, 0.4);
   animation: gridCellPulse 3s ease-in-out infinite;
+  will-change: transform, opacity;
 
   &::before {
     content: '';
@@ -1155,6 +1167,7 @@
   border-radius: 12px;
   background: linear-gradient(135deg, #f59e0b, #d97706, #ea580c);
   animation: iconFloat 4s ease-in-out infinite;
+  will-change: transform;
 
   &::before {
     content: '';
@@ -1200,6 +1213,7 @@
   transform: translate(-50%, -50%);
   border-radius: 50%;
   border: 2px solid;
+  will-change: transform;
 
   &_1 {
     width: 200px;

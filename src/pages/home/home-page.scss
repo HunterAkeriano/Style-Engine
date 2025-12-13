@@ -4,6 +4,11 @@
   background: $hero-background;
   color: $color-text-primary;
 
+  > section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 600px;
+  }
+
   &.motion-off {
     .home-hero,
     .home-hero * {

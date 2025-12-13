@@ -29,7 +29,7 @@
       <div class="home-tech__particles">
         <div
           class="home-tech__particle"
-          v-for="n in 15"
+          v-for="n in 8"
           :key="n"
           :style="{ '--particle-index': n }"
         ></div>

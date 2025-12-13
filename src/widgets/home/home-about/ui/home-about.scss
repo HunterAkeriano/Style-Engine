@@ -95,6 +95,7 @@
   background: $visual-card-background;
   border: 1px solid color-var-alpha('panel-border', 0.1);
   overflow: hidden;
+  contain: layout style paint;
 
   &::after {
     content: '';

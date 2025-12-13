@@ -15,7 +15,7 @@
               <div class="holographic-dream__ring holographic-dream__ring_2"></div>
               <div class="holographic-dream__ring holographic-dream__ring_3"></div>
               <div class="holographic-dream__particles">
-                <div class="holographic-dream__particle" v-for="n in 20" :key="n" :style="{ '--particle-index': n }"></div>
+                <div class="holographic-dream__particle" v-for="n in 8" :key="n" :style="{ '--particle-index': n }"></div>
               </div>
               <div class="holographic-dream__orbs">
                 <div class="holographic-dream__orb holographic-dream__orb_1"></div>
@@ -83,7 +83,7 @@
               <div class="morph-magic__shape morph-magic__shape_2"></div>
               <div class="morph-magic__shape morph-magic__shape_3"></div>
               <div class="morph-magic__particles">
-                <div class="morph-magic__particle" v-for="n in 12" :key="n"></div>
+                <div class="morph-magic__particle" v-for="n in 6" :key="n"></div>
               </div>
               <div class="morph-magic__glow"></div>
             </div>
