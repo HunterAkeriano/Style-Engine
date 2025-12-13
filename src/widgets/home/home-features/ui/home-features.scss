@@ -1,7 +1,7 @@
 .home-features {
   margin-top: $space-3xl;
   margin-bottom: $space-3xl;
-  padding: $space-2xl;
+  padding: $space-xl $space-md ;
   background: $about-background;
   border: 1px solid color-var-alpha('panel-border', 0.08);
   border-radius: $border-radius-2xl;
@@ -42,8 +42,8 @@
 
 .home-features__grid {
   display: grid;
-  gap: $space-lg;
-  grid-template-columns: 1fr;
+  gap: $space-md;
+  grid-template-columns: 1fr 1fr;
 
   @media (min-width: $breakpoint-md) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -51,6 +51,10 @@
 
   @media (min-width: $breakpoint-lg) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
   }
 }
 

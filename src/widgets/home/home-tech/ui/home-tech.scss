@@ -17,6 +17,10 @@
   @media (min-width: $breakpoint-lg) {
     padding: $space-3xl;
   }
+
+  @media (max-width: $breakpoint-md) {
+    padding: $space-3xl $space-md;
+  }
 }
 
 .home-tech__story {
@@ -107,7 +111,7 @@
 .home-tech__grid {
   display: grid;
   gap: $space-lg;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
 
   @media (min-width: $breakpoint-sm) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -115,6 +119,14 @@
 
   @media (min-width: $breakpoint-lg) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @media (max-width: $breakpoint-md) {
+    gap: $space-md;
+  }
+
+  @media (max-width: $breakpoint-xs) {
+    grid-template-columns: 1fr;
   }
 }
 
